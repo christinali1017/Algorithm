@@ -24,6 +24,8 @@
 
 
 # leetcode
+### 157 Read N Characters Given Read4 
+### 158 Read N Characters Given Read4 II - Call multiple times. 
 ### 159 Longest String with At Most Two Distinct Characters
 > Given a string, find longest substring T that contains at most 2 distinct characters.For example, Given s = “eceba”,T is "ece" which its length is 3.
 
