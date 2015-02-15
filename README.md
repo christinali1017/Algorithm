@@ -40,7 +40,7 @@ Structure of result tree:
 * 3) Left child becomes root. 
 
 		public TreeNode upsideDownBinaryTree(TreeNode root){
-			TreeNode parent = null, rightChild = null, leftChild;
+			TreeNode parent = null, rightChild = null, leftChild = null;
 			while(root != null){
 				leftChild = root.left;
 				root.left = rightChild; //  Right child turn to left child
@@ -137,9 +137,7 @@ Structure of result tree:
 		int max = 0;
 		Map<Character, Integer> map = new HashMap<Character, Integer>();
 		for(int i = 0; i < s.length(); i++){
-			/*check for string contains <= 2 characters.
-			  && check for longest substring ends at the end of string 
-			*/
+			//check: contains <= 2 characters && substring ends at the end 
 			if(i == s.length()-1 && map.size() <= 2 && map.containsKey(s.charAt(i))){
 				if(end == 0) return s;
 				else{
@@ -184,9 +182,7 @@ Structure of result tree:
 		int max = 0;
 		Map<Character, Integer> map = new HashMap<Character, Integer>();
 		for(int i = 0; i < s.length(); i++){
-			/*check for string contains <= 2 characters.
-			  && check for longest substring ends at the end of string 
-			*/
+			//check: contains <= 2 characters && substring ends at the end 
 			if(i == s.length()-1 && map.size() <= k && map.containsKey(s.charAt(i))){
 				if(end == 0) return s;
 				else{
