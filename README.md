@@ -24,12 +24,8 @@ return the root of the binary tree [4,5,2,#,#,3,1].
   / \
  5   2
     / \
-<<<<<<< HEAD
    3   1  				   
-=======
-   3   1  
    
->>>>>>> 4e7a0589a9f9d296d8e8b67d196ff0c6e9ca4c9e
 </pre>
 
 **Idea:** The structure of the tree: 
@@ -40,7 +36,7 @@ return the root of the binary tree [4,5,2,#,#,3,1].
 Structure of result tree:
 
 * 1) Right child turn to left child: p.left = parent.right
-* 2) Parant becomes right child: p.right = parent. 
+* 2) Parant becomes right child: p.right = parent 
 * 3) Left child becomes root. 
 
 		public TreeNode upsideDownBinaryTree(TreeNode root){
