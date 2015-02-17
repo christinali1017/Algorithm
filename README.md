@@ -2,8 +2,8 @@
 # leetcode
 ## Overview
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
-* [122 Best Time to Buy and Sell Stock II](#121-best-time-to-buy-and-sell-stock-ii)
-* [123 Best Time to Buy and Sell Stock III](#121-best-time-to-buy-and-sell-stock-iii)
+* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
+* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
 * [156 Binary Tree Upside Down](#156-binary-tree-upside-down)
 * [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
@@ -15,9 +15,14 @@
 
 > If you were only permitted to complete **at most one transaction** (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
 
-**Idea:** We are allowed at most one transaction. Thus we only need to maintain a local  min stock price before prices[i]. Traverse prices one pass to get the max profit use **max = Math.max(max, prices[i] - min)** and **min = Math.min(min, prices[i])**
+**Idea:** We are allowed at most one transaction. Thus we only need to maintain a local  min stock price before prices[i]. Traverse prices one pass to get the max profit.
 
-**Time complexity**: O(n) 
+**max = Math.max(max, prices[i] - min)** 
+
+**min = Math.min(min, prices[i])**
+
+**Time complexity**: O(n)
+ 
 **Space** : O(1)
 
 
@@ -40,9 +45,14 @@
 
 >Design an algorithm to find the maximum profit. You may complete **as many transactions** as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
 
-**Idea:** We are allowed as many transactions. Thus we only need to each neighbor pair, if prices[i] > prices[i-1], we add the difference to our result. We can get the max one pass. **dif = Math.max(0, prices[i] - prices[i-1])** and **max = max + dif** 
+**Idea:** We are allowed as many transactions. Thus we only need to each neighbor pair, if prices[i] > prices[i-1], we add the difference to our result. We can get the max one pass. 
+
+**dif = Math.max(0, prices[i] - prices[i-1])** 
+
+**max = max + dif** 
 
 **Time complexity**: O(n) 
+
 **Space** : O(1)
 
 	public int maxProfit(int[] prices){
@@ -95,13 +105,18 @@
 	
 **Another solution:** 
 
-global[i][j]: denotes max profit, at most j transactions before day i: **global[i][j]=max(local[i][j],global[i-1][j])**
+global[i][j]: denotes max profit, at most j transactions before day i: 
 
-local[i][j]: denotes max profit, at most j transactions before day i, and last transaction is saled on day i: **local[i][j]=max(global[i-1][j-1]+max(diff,0),local[i-1][j]+diff)**
+**global[i][j]=max(local[i][j],global[i-1][j])**
+
+local[i][j]: denotes max profit, at most j transactions before day i, and last transaction is saled on day i: 
+
+**local[i][j]=max(global[i-1][j-1]+max(diff,0),local[i-1][j]+diff)**
 
 From above, we know that we can change the two dimensional array to one dimensional to save space. Because we only use two rows in the two dimensional array. 
 
 **Time complexity**: O(n) 
+
 **Space** : O(1) (O(k), but k is 2 in this problem)
 
 	public int maxProfit1(int[] prices){
@@ -341,11 +356,16 @@ Structure of result tree:
 >You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
 
 **First try:** Use the idea in [Best time to buy and sale stock iii](#123-best-time-to-buy-and-sale-stock-iii).
-global[i][j]: denotes max profit, at most j transactions before day i: **global[i][j]=max(local[i][j],global[i-1][j])**
+global[i][j]: denotes max profit, at most j transactions before day i:
 
-local[i][j]: denotes max profit, at most j transactions before day i, and last transaction is saled on day i: **local[i][j]=max(global[i-1][j-1]+max(diff,0),local[i-1][j]+diff)**
+ **global[i][j]=max(local[i][j],global[i-1][j])**
+
+local[i][j]: denotes max profit, at most j transactions before day i, and last transaction is saled on day i: 
+
+**local[i][j]=max(global[i-1][j-1]+max(diff,0),local[i-1][j]+diff)**
 
 **Time complexity**: O(k * n)
+
 **Space** : O(k)
 
 Looks good, right? But we'll get out of memory error. Because in one test case, k = 100000. 
