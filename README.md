@@ -1,10 +1,126 @@
 
 # leetcode
 ## Overview
+* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
+* [122 Best Time to Buy and Sell Stock II](#121-best-time-to-buy-and-sell-stock-ii)
+* [123 Best Time to Buy and Sell Stock III](#121-best-time-to-buy-and-sell-stock-iii)
 * [156 Binary Tree Upside Down](#156-binary-tree-upside-down)
 * [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
+* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+
+###121 Best Time to Buy and Sell Stock
+>Say you have an array for which the ith element is the price of a given stock on day i.
+
+> If you were only permitted to complete **at most one transaction** (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
+
+**Idea:** We are allowed at most one transaction. Thus we only need to maintain a local  min stock price before prices[i]. Traverse prices one pass to get the max profit use **max = Math.max(max, prices[i] - min)** and **min = Math.min(min, prices[i])**
+
+**Time complexity**: O(n) 
+**Space** : O(1)
+
+
+	public int maxProfit(int[] prices){
+		if(prices == null || prices.length == 0) return 0;
+		int max = 0;
+		int min = prices[0];
+		for(int i = 1; i < prices.length; i++){
+			max = Math.max(max, prices[i] - min);
+			min = Math.min(min, prices[i]);
+		}
+		return max;
+	}
+
+
+	
+###122 Best Time to Buy and Sell Stock II
+
+>Say you have an array for which the ith element is the price of a given stock on day i.
+
+>Design an algorithm to find the maximum profit. You may complete **as many transactions** as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+**Idea:** We are allowed as many transactions. Thus we only need to each neighbor pair, if prices[i] > prices[i-1], we add the difference to our result. We can get the max one pass. **dif = Math.max(0, prices[i] - prices[i-1])** and **max = max + dif** 
+
+**Time complexity**: O(n) 
+**Space** : O(1)
+
+	public int maxProfit(int[] prices){
+		int max = 0;
+		int dif = 0;
+		for(int i = 1; i < prices.length; i++){
+			dif = Math.max(0, prices[i] - prices[i-1]);
+			max = max + dif;
+		}
+		return max;
+	}
+###123 Best Time to Buy and Sell Stock III
+
+>Say you have an array for which the ith element is the price of a given stock on day i. 
+> 
+>Design an algorithm to find the maximum profit. You may complete **at most two transactions**.
+
+>Note:
+>You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+**Idea:** We are only allowed  at most two transactions. Thus, we can use two arrays to record the max profit before profits[i](including i), denote as l[i], and max profits after profits[i](including i), denote as r[i]. Then find the max of l[i] + r[i]. 
+
+**Time complexity**: O(n) 
+**Space** : O(n)
+
+	public int maxProfit(int[] prices){
+		if(prices == null || prices.length <= 1) return 0;
+		int[] l = new int[prices.length];
+		int[] r = new int[prices.length];
+		int max = 0;
+		int min = prices[0];
+		for(int i = 1; i < prices.length; i++){
+			max = Math.max(max, prices[i] - min);
+			min = Math.min(min, prices[i]);
+			l[i] = max;
+		}
+		int maxR = prices[prices.length-1];
+		max = 0;
+		for(int i = prices.length - 2; i >= 0; i--){
+			max = Math.max(max, maxR - prices[i]);
+			maxR = Math.max(maxR, prices[i]);
+			r[i] = max;
+		}
+		max = 0;
+		for(int i = 0; i < prices.length; i++){
+			max = Math.max(max, l[i] + r[i]);
+		}
+		return max;
+	}
+	
+**Another solution:** 
+
+global[i][j]: denotes max profit, at most j transactions before day i: **global[i][j]=max(local[i][j],global[i-1][j])**
+
+local[i][j]: denotes max profit, at most j transactions before day i, and last transaction is saled on day i: **local[i][j]=max(global[i-1][j-1]+max(diff,0),local[i-1][j]+diff)**
+
+From above, we know that we can change the two dimensional array to one dimensional to save space. Because we only use two rows in the two dimensional array. 
+
+**Time complexity**: O(n) 
+**Space** : O(1) (O(k), but k is 2 in this problem)
+
+	public int maxProfit1(int[] prices){
+		return maxProfit(prices, 2);
+	}
+	public int maxProfit(int[] prices, int k){
+		if(prices == null || prices.length <= 1) return 0;
+		int[] global = new int[k+1];
+		int[] local = new int[k+1];
+		for(int i = 1; i < prices.length; i++){
+			int dif = prices[i] - prices[i-1];
+			for(int j = k; j >= 1; j--){
+				local[j] = Math.max(global[j-1] + Math.max(dif, 0), local[j] + dif);
+				global[j] = Math.max(local[j], global[j]);
+			}
+		}
+		return global[k];
+	}
+
 
 ### 156 Binary Tree Upside Down
 
@@ -213,6 +329,43 @@ Structure of result tree:
 		}
 		return s.substring(start, end+1);
 	}
+	
+### 188 Best Time to Buy and Sell Stock IV
+
+> Say you have an array for which the ith element is the price of a given stock on day i.
+
+>Design an algorithm to find the maximum profit. You may complete **at most k transactions**.
+
+>Note:
+
+>You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+**First try:** Use the idea in [Best time to buy and sale stock iii](#123-best-time-to-buy-and-sale-stock-iii).
+global[i][j]: denotes max profit, at most j transactions before day i: **global[i][j]=max(local[i][j],global[i-1][j])**
+
+local[i][j]: denotes max profit, at most j transactions before day i, and last transaction is saled on day i: **local[i][j]=max(global[i-1][j-1]+max(diff,0),local[i-1][j]+diff)**
+
+**Time complexity**: O(k * n)
+**Space** : O(k)
+
+Looks good, right? But we'll get out of memory error. Because in one test case, k = 100000. 
+
+	public int maxProfit(int k, int[] prices){
+		if(prices == null || prices.length <= 1) return 0;
+		int[] global = new int[k+1];
+		int[] local = new int[k+1];
+		for(int i = 1; i < prices.length; i++){
+			int dif = prices[i] - prices[i-1];
+			for(int j = k; j >= 1; j--){
+				local[j] = Math.max(global[j-1] + Math.max(dif, 0), local[j] + dif);
+				global[j] = Math.max(local[j], global[j]);
+			}
+		}
+		return global[k];
+	}
+
+**Solution:**
+
 
 
 
