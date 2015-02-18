@@ -1,6 +1,7 @@
 
 # leetcode
 ## Overview
+* [89 Gray Code](#89-gray-code)
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
@@ -9,6 +10,110 @@
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+
+###89 Gray Code
+>The gray code is a binary numeral system where two successive values differ in only one bit.
+
+>Given a non-negative integer n representing the total number of bits in the code, print the sequence of gray code. A gray code sequence must begin with 0.
+
+>For example, given n = 2, return [0,1,3,2]. Its gray code sequence is:
+
+>00 - 0
+
+>01 - 1
+
+>11 - 3
+
+>10 - 2
+
+>Note:
+>For a given n, a gray code sequence is not uniquely defined.
+
+>For example, [0,2,3,1] is also a valid gray code sequence according to the above definition.
+
+>For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.
+
+Let's first see a few example of gray code and find the laws to create gray code
+
+	n = 1: 0 
+		   1
+	
+	n = 2: 00 
+		   01
+		   11
+		   10
+
+	n = 3: 000
+	       001
+	       011
+	       010
+	       110
+	       111
+	       101
+	       100
+	       
+	 n = 4: 0000
+	 	    0001
+	 	    0011
+	 	    0010
+	 	    0110
+	 	    0111
+	 	    0101
+	 	    0100
+	 	    1100
+	 	    1101
+	 	    1111
+	 	    1110
+	 	    1010
+	 	    1011
+	 	    1001
+	 	    1000
+		   
+**Some laws from above** : we can find that the first half of  2 ^ n numbers could be create by add a 0 to 2 ^ (n-1) numbers. For the last half of 2 ^ n, we can add 1 to the reversed order number of 2 ^ (n-1). 
+
+For example, based on 2 bit gray code, we can get the first half of 3 bit gray code by adding 0, eg: 000 001 011 010, for the last half, we first reverse the order 10, 11, 01, 00, then add 1 to each of them, we can get 110 111 101 100.
+
+**Time Complexity**: we have 2 ^ n gray code numbers, thus the time complexity is 2 ^ n
+**Space**: 2 ^ n
+
+	    public List<Integer> grayCode(int n) {
+        	List<Integer> list = new ArrayList<Integer>();
+        	if(n < 0) return list;
+        	list.add(0);
+        	if(n == 0) return list;
+        	list.add(1);
+        	for(int i = 2; i <= n; i++){
+            	for(int j = list.size()-1; j >= 0; j--){
+                	list.add(list.get(j) + (1 <<(i-1)));
+            	}
+        	}
+        	return list;
+    	 }
+
+
+**Related Questions** : check if two bytes can be put successively in a gray code sequence.
+
+**Idea**: we know that the neighbor gray code numbers is different with 1 bit. We need to check if these two numbers have only one bit diffenence.
+
+
+	public boolean isSuccesive(byte b1, byte b2){
+		int count = 0;
+		while(b1 > 0 || b2 > 0){
+			if((b1 & 1) != (b2 & 1))
+				count++;
+			b1 >>>= 1;
+			b2 >>>= 1;
+		}
+		return count == 1;
+	}
+	
+If the numbers are unsigned numbers, we can first ^ then check if it is the power of 2
+	
+	temp = b1 ^ b2;
+	
+	return (temp > 0) && ((temp & -temp) == temp); 
+	
+	return (temp > 0) && ((temp & (temp -1)) == 0);	
 
 ###121 Best Time to Buy and Sell Stock
 >Say you have an array for which the ith element is the price of a given stock on day i.
@@ -76,6 +181,7 @@
 **Idea:** We are only allowed  at most two transactions. Thus, we can use two arrays to record the max profit before profits[i](including i), denote as l[i], and max profits after profits[i](including i), denote as r[i]. Then find the max of l[i] + r[i]. 
 
 **Time complexity**: O(n) 
+
 **Space** : O(n)
 
 	public int maxProfit(int[] prices){
@@ -355,7 +461,7 @@ Structure of result tree:
 
 >You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
 
-**First try:** Use the idea in [Best time to buy and sale stock iii](#123-best-time-to-buy-and-sale-stock-iii).
+**First try:** Use the idea in [Best time to buy and sale stock iii](#123-best-time-to-buy-and-sell-stock-iii).
 global[i][j]: denotes max profit, at most j transactions before day i:
 
  **global[i][j]=max(local[i][j],global[i-1][j])**
