@@ -1,6 +1,11 @@
 
 # leetcode
 ## Overview
+* [1 Two Sum](#1-two-sum)
+* [15 3Sum](#15-3sum)
+* [16 3Sum Closest](#16-3sum-closest)
+* [18 4Sum](#18-4sum)
+* [8 String to Integer atoi](#8-string-to-integer-atoi)
 * [89 Gray Code](#89-gray-code)
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
@@ -10,6 +15,369 @@
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+
+
+### 1 Two Sum
+>Given an array of integers, find two numbers such that they add up to a specific target number.
+
+>The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
+
+>You may assume that each input would have exactly one solution.
+
+>Input: numbers={2, 7, 11, 15}, target=9
+
+>Output: index1=1, index2=2
+
+**Solution1**: Use hashmap to record the number and its index, each time check if map containsKey target - num[i].
+
+**Time complexity** O(n)
+
+**Space** O(n)
+
+
+	public int[] twoSum(int[] numbers, int target) {
+        //use hashmap
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int[] result = new int[2];
+        if(numbers == null || numbers.length == 0) return result;
+        
+        for(int i = 0; i < numbers.length; i++){
+            if(map.containsKey(target - numbers[i])){
+                result[0] = map.get(target - numbers[i]) + 1;
+                result[1] = i + 1;
+                return result;
+            }
+            map.put(numbers[i], i);
+        }
+        return result;
+    }
+
+**Solution2**: We can first sort the numbers. Then use two pointers, the first pointer points to the begining and the second points to the end. Each time compares the target and num[p1]+num[p2], if target is bigger, p1++, else p2--. But it doesn't work for this problem, because we need to return the index. If we are requested to return the nunbers, we can use the following way.
+
+**Time**: O(nlgn)
+
+**Spae**: O(1)
+
+	//this function returns the numbers, not the index
+    public int[] twoSum(int[] numbers, int target) {
+        //First sort, then use two pointers
+        int[] res = new int[2];
+        if(numbers == null || numbers.length <= 1) return res;
+        Arrays.sort(numbers);
+        int l = 0;
+        int r = numbers.length -1;
+        while(l < r){
+            if(numbers[l] + numbers[r] == target){
+                res[0] = numbers[l];
+                res[1] = numbers[r];
+                return res;
+            }else if(numbers[l] + numbers[r] > target)
+                r--;
+            else l++;
+        }
+        return res;
+    }
+
+
+Related problem: 
+
+* [1 Two Sum](#1-two-sum)
+* [15 3Sum](#15-3sum)
+* [16 3Sum Closest](#16-3sum-closest)
+* [18 4Sum](#18-4sum)
+
+<br>
+<br>
+
+
+
+
+
+###8 String to Integer atoi
+
+>Implement atoi to convert a string to an integer.
+
+>Hint: Carefully consider all possible input cases. If you want a challenge, please do not see below and ask yourself what are the possible input cases.
+
+>Notes: It is intended for this problem to be specified vaguely (ie, no given input specs). You are responsible to gather all the input requirements up front.
+
+
+**Some rules**: 
+
+1) if can not convert, return 0;
+
+2) if value if out of range, return INT_MAX or INT_MIN
+
+3) discard any whitespace until first non-whitespace character is found
+
+4) takes as many characters as possible to form a valid character until encounter an unvalid
+
+	public int atoi(String str){
+		if(str == null || str.length() == 0) return 0;
+		str = str.trim();
+		boolean positive = true;
+		int result = 0;
+		for(int i = 0; i < str.length(); i++){
+			if(i == 0 && (str.charAt(i) == '-' || str.charAt(i) == '+')) {
+				if(str.charAt(i) == '-') positive = false;
+				continue;
+			}
+			if(!isNum(str.charAt(i))) break;
+			if(result > (Integer.MAX_VALUE - ((int)str.charAt(i) - 48))/10) return positive ? Integer.MAX_VALUE: Integer.MIN_VALUE;
+			result = result * 10 + ((int)str.charAt(i) - 48);
+		}
+		return positive ? result : -result;
+	}
+	
+	public boolean isNum(char c){
+		if(c < '0' || c > '9') return false;
+		return true;
+	}
+
+
+<br>
+<br>
+
+###15 3Sum
+
+>Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+
+>Note:
+
+- Elements in a triplet (a,b,c) must be in **non-descending order**. (ie, a ≤ b ≤ c)
+
+- The solution set **must not contain duplicate triplets**.
+    
+    
+    
+  		For example, given array S = {-1 0 1 2 -1 -4},
+    	A solution set is:
+    	(-1, 0, 1)
+    	(-1, -1, 2)
+    
+**Idea**: We need to find the three numbers triplets that sum to 0. We can change to this problem to two subproblems. Target + (-target) = 0, num1 + num2 = - target.
+Thus we can use the method in two sum to solve this problem. For each number num1 in the array, we find the other two numbers that sum to -num1. 
+
+We first need to sort the array, then use two pointers to find the two sum numbers sum to -num1.
+
+**Time** O(n ^ 2)
+
+**Space** O(n ^ 2)
+
+**Attention**: 
+
+1) Silly check: num is null or num's length less than 3
+
+2) *Duplication*: Both the threeSum and twoSum helper function need to check the duplication. If just need to check if the current is equal to the number before it. 
+
+3) Non-descending order
+
+
+    public List<List<Integer>> threeSum(int[] num) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        if(num == null || num.length < 3) return list;
+        Arrays.sort(num);
+        for(int i = 0; i <= num.length - 3; i++){
+            if(i != 0 && num[i] == num[i-1]) continue;
+            List<List<Integer>> current = twoSum(num, i+1, -num[i]);
+            if(current.size() > 0){
+                for(List<Integer> l : current ){
+                    l.add(0, num[i]);
+                }
+                list.addAll(current);
+            }
+        }
+        return list;
+    }
+    
+    public List<List<Integer>> twoSum(int[] num, int start, int target){
+        int r = num.length -1;
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        int l = start;
+        while(l < r){
+            if(target == num[l] + num[r]){
+                List<Integer> cur = new ArrayList<Integer>();
+                cur.add(num[l]);
+                cur.add(num[r]);
+                list.add(cur);
+                l++;
+                r--;
+                while(l < r && num[l] == num[l-1]) l++;
+                while(l < r && num[r] == num[r+1]) r--;
+            }else if(target < num[l] + num[r])
+                r--;
+            else l++;
+        }
+        return list;
+    }
+   
+
+
+Related problem: 
+
+* [1 Two Sum](#1-two-sum)
+* [15 3Sum](#15-3sum)
+* [16 3Sum Closest](#16-3sum-closest)
+* [18 4Sum](#18-4sum)
+
+<br>
+<br>
+
+
+###16 3Sum Closest
+
+
+>Given an array S of n integers, find three integers in S such that the sum is closest to a given number, target. Return the sum of the three integers. **You may assume that each input would have exactly one solution**.
+
+    For example, given array S = {-1 2 1 -4}, and target = 1.
+
+    The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+    
+**Idea**: It's much similar with the method in three sum, the only difference here is that we calculate the minimum difference use the twosum helper funtion for each item in the array. 
+
+**Attention**: 
+
+1) The initial difference for both the threesum function and twosum function should be Integer.MAX_VALUE
+
+2) Each time we compare the **abs** of the difference 
+
+**Time** O(n ^ 2)
+
+**Space** O(1)
+
+    public int threeSumClosest(int[] num, int target) {
+	    if(num == null || num.length == 0) return 0;
+	    int res = Integer.MAX_VALUE;
+	    Arrays.sort(num);
+	    for(int i = 0; i <= num.length -3; i++){
+	        if(i != 0 && num[i] == num[i-1]) continue;
+	        int dif = twoSumClosest(num, i + 1, target-num[i]);
+	        if(Math.abs(dif) < Math.abs(res)) res = dif;
+	    }
+	    return res+target;
+	}
+	
+	public int twoSumClosest(int[] num, int start, int target){
+	    int r = num.length - 1;
+	    int l = start;
+	    int res = Integer.MAX_VALUE;
+	    while(l < r){
+	        if(Math.abs(num[l] + num[r] - target) < Math.abs(res))
+	            res = num[l] + num[r] - target;
+	        if(num[l] + num[r] == target)
+	            return 0;
+	        else if(num[l] + num[r] > target)
+	            r--;
+	        else 
+	            l++;
+	        
+	    }
+	    return res;
+	}
+	
+
+* [1 Two Sum](#1-two-sum)
+* [15 3Sum](#15-3sum)
+* [16 3Sum Closest](#16-3sum-closest)
+* [18 4Sum](#18-4sum)
+
+<br>
+<br>
+
+
+###18 4Sum
+
+>Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.
+
+>Note:
+
+- Elements in a quadruplet (a,b,c,d) must be in **non-descending order**. (ie, a ≤ b ≤ c ≤ d)
+
+- The solution set must **not contain duplicate quadruplets**.
+ 
+ 
+   		For example, given array S = {1 0 -1 0 -2 2}, and target = 0.
+
+    	A solution set is:
+   	 	(-1,  0, 0, 1)
+    	(-2, -1, 1, 2)
+    	(-2,  0, 0, 2)
+    
+<br>
+
+**Idea**: Use the 3Sum to calculate 4Sum. 
+
+**Time** O(n ^ 3)
+
+**Space** O(n ^ 2)
+
+ 	public List<List<Integer>> fourSum(int[] num, int target) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        if(num == null || num.length <= 3) return list;
+        Arrays.sort(num);
+        for(int i = 0; i <= num.length - 4; i++){
+            if(i != 0 && num[i] == num[i-1]) continue;
+            List<List<Integer>> current = threeSum(num, i+1, target - num[i]);
+            for(List<Integer> l : current){
+                l.add(0, num[i]);
+            }
+            list.addAll(current);
+        }
+        return list;
+    }
+    
+    public List<List<Integer>> threeSum(int[] num, int start, int target){
+         List<List<Integer>> list = new ArrayList<List<Integer>>();
+         for(int i = start; i <= num.length - 3; i++){
+             if(i != start && num[i] == num[i-1]) continue;
+             List<List<Integer>> current = twoSum(num, i+1, target - num[i]);
+              for(List<Integer> l : current){
+                l.add(0, num[i]);
+            }
+            list.addAll(current);
+         }
+         return list;
+    }
+    
+    public List<List<Integer>> twoSum(int[] num, int start, int target){
+         List<List<Integer>> list = new ArrayList<List<Integer>>();
+         int r = num.length -1;
+         int l = start;
+         while(l < r){
+             if(num[l] + num[r] == target){
+                 List<Integer> cur = new ArrayList<Integer>();
+                 cur.add(num[l]);
+                 cur.add(num[r]);
+                 list.add(cur);
+                 l++;
+                 r--;
+                 while(l < r && num[l] == num[l-1]) l++;
+                 while(l < r && num[r] == num[r+1]) r--;
+             }else if(num[l] + num[r] < target) l++;
+             else r--;
+         }
+         return list;
+    }
+ 
+ 
+ 
+ **Other Idea**: 
+ 
+ we can twoSum combine twoSum to calculate 4Sum. Time complexity would be O(n^2 * lgn)
+ 
+
+    
+
+* [1 Two Sum](#1-two-sum)
+* [15 3Sum](#15-3sum)
+* [16 3Sum Closest](#16-3sum-closest)
+* [18 4Sum](#18-4sum)
+
+<br>
+<br>
+
+
+
 
 ###89 Gray Code
 >The gray code is a binary numeral system where two successive values differ in only one bit.
@@ -113,7 +481,12 @@ If the numbers are unsigned numbers, we can first ^ then check if it is the powe
 	
 	return (temp > 0) && ((temp & -temp) == temp); 
 	
-	return (temp > 0) && ((temp & (temp -1)) == 0);	
+	return (temp > 0) && ((temp & (temp -1)) == 0);
+	
+	
+<br>
+<br>
+	
 
 ###121 Best Time to Buy and Sell Stock
 >Say you have an array for which the ith element is the price of a given stock on day i.
@@ -142,8 +515,16 @@ If the numbers are unsigned numbers, we can first ^ then check if it is the powe
 		return max;
 	}
 
+Related problem: 
 
+* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
+* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
+* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
+* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 	
+<br>
+<br>
+
 ###122 Best Time to Buy and Sell Stock II
 
 >Say you have an array for which the ith element is the price of a given stock on day i.
@@ -169,6 +550,17 @@ If the numbers are unsigned numbers, we can first ^ then check if it is the powe
 		}
 		return max;
 	}
+	
+Related problem: 
+
+* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
+* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
+* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
+* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+
+<br>
+<br>
+
 ###123 Best Time to Buy and Sell Stock III
 
 >Say you have an array for which the ith element is the price of a given stock on day i. 
@@ -242,6 +634,15 @@ From above, we know that we can change the two dimensional array to one dimensio
 		return global[k];
 	}
 
+* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
+* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
+* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
+* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+
+<br>
+<br>
+
+
 
 ### 156 Binary Tree Upside Down
 
@@ -290,6 +691,10 @@ Structure of result tree:
 		}	
 
 
+<br>
+<br>
+
+
 ### 157 Read N Characters Given Read4 
 
 > The API: int read4(char *buf) reads 4 characters at a time from a file.
@@ -320,6 +725,15 @@ Structure of result tree:
 			}
 		}
 	}
+	
+Related problem:
+
+* [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
+* [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
+
+<br>
+<br>
+
 	
 
 ### 158 Read N Characters Given Read4 II - Call multiple times. 
@@ -356,6 +770,15 @@ Structure of result tree:
 			
 		}
 	}
+	
+Related problem:
+
+* [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
+* [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
+
+<br>
+<br>
+
 
 ### 159 Longest String with At Most Two Distinct Characters
 > Given a string, find longest substring T that contains at most 2 distinct characters.For example, Given s = “eceba”,T is "ece" which its length is 3.
@@ -493,5 +916,12 @@ Looks good, right? But we'll get out of memory error. Because in one test case, 
 **Solution:**
 
 
+* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
+* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
+* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
+* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+
+<br>
+<br>
 
 
