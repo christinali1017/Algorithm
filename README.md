@@ -1,19 +1,24 @@
 
+
 # leetcode
 ## Overview
 * [1 Two Sum](#1-two-sum)
+* [8 String to Integer atoi](#8-string-to-integer-atoi)
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
 * [18 4Sum](#18-4sum)
-* [8 String to Integer atoi](#8-string-to-integer-atoi)
+* [29 Divide Two Integers](#29-divide-two-integers)
+* [50 Pow(x,n)](#50-pow(x,n))
+* [69 Sqrt(x)](#69-sqrt(x))
 * [89 Gray Code](#89-gray-code)
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
 * [156 Binary Tree Upside Down](#156-binary-tree-upside-down)
 * [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
-* [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
+* [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characters-given-read4-ii-call-multiple-times) 
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
+* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 
 
@@ -377,6 +382,168 @@ Related problem:
 <br>
 
 
+###29 Divide Two Integers
+
+>Divide two integers without using multiplication, division and mod operator.
+
+If it is overflow, return MAX_INT.
+
+
+**Idea**: Each integer can be represent as binary format, so n = (0 or 1) * 2 ^ n +(0 or 1) * 2 ^ (n-1) + ......
+
+We can respresent the result = (0 or 1) * 2 ^ n +(0 or 1) * 2 ^ (n-1) + ......
+
+Thus [(0 or 1) * 2 ^ n +(0 or 1) * 2 ^ (n-1) + ......)] * divisor = dividend
+
+Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them together.
+
+
+**Time complexity** : O(lgn)
+
+**Space**: O(1)
+
+**Attention**:
+
+- abs (Integer.MIN_VALUE) = Integer.MIN_VALUE
+- when calculate n, eg:  while(divisor <= (dividend >> 1)) we can not change to while((divisor<<1) <= dividend). It might overflow and keep loop forever.
+- Take care of some corner case, eg: dividend = Integer.MIN_VALUE or divisor = Integer.MIN_VALUE
+
+
+<br>
+
+
+
+	public int divide( int dividend, int divisor){
+	       if(divisor == 0) return Integer.MAX_VALUE;
+	       int result = 0;
+	       boolean positive = ((dividend ^ divisor) >>> 31) == 0;
+	       if(divisor == Integer.MIN_VALUE){
+	           if(dividend == Integer.MIN_VALUE) return 1;
+	           else return 0;
+	       }
+	       if(dividend == Integer.MIN_VALUE){
+	           if(divisor == 1) return Integer.MIN_VALUE;
+	           else if(divisor == -1) return Integer.MAX_VALUE;
+	           dividend += Math.abs(divisor);
+	           result += 1;
+	       }
+	       
+	       dividend = Math.abs(dividend);
+	       divisor = Math.abs(divisor);
+	       
+	       int count = 0;
+	       while(divisor <= (dividend >> 1)){
+	           count++;
+	           divisor <<= 1;
+	       }
+	       
+	       while(count >= 0){
+	           if(dividend >= divisor){
+	               result += 1 << count;
+	               dividend -= divisor;
+	           }
+	           divisor >>= 1;
+	           count --;
+	       }
+	       return positive ? result : -result;
+	    }
+
+
+
+
+
+
+
+
+* [29 Divide Two Integers](#29-divide-two-integers)
+* [50 Pow(x,n)](#50-pow(x,n))
+* [69 Sqrt(x)](#69-sqrt(x))
+* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
+
+<br>
+
+<br>
+
+
+###50 Pow(x,n)
+
+>Implement pow(x, n).
+
+**Idea**: Dichotomy and calculate recursively. 
+
+
+	public double pow(double x, int n){
+	    if (n == 0) return 1;
+	    double result = pow(x, n/2);
+	    if(n % 2 == 0) return result * result;
+	    else if(n % 2 == 1) return result * result * x;
+	    else return result * result / x;
+	}
+
+
+
+* [29 Divide Two Integers](#29-divide-two-integers)
+* [50 Pow(x,n)](#50-pow(x,n))
+* [69 Sqrt(x)](#69-sqrt(x))
+* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
+
+<br>
+
+<br>
+
+
+
+###69 Sqrt(x)
+
+>Implement int sqrt(int x).
+
+>Compute and return the square root of x.
+
+
+**Idea**: The result = x/result, so each time we can give a better guess result = (result + x/result)/2 until we get the correct answer.
+
+
+	public int sqrt(int x){
+		if(x < 1) return 0;
+		double result = 1;
+		while(Math.abs(x/result-result) > 0.000000001){
+			result = (x/result + result)/2;
+		}
+		return (int)result;
+	}
+	
+**Other Idea**: Dichotomy. l = smallest possible result, r the largest possible result. mid = (l + r)/2 , check the relationship between mid and result
+
+**Attention**: mid <= x/mid && (mid + 1) > x/(mid+1) can not change to mid * mid <= x && (mid+1) * (mid+1) > x. Because, when **mid * mid overflows**, the result might change, also, it might lead to Time limit exceeded.
+
+
+    public int sqrt(int x){
+        if(x < 1) return 0;
+        if(x == 1) return 1;
+        int l = 1; 
+        int r = x/2 + 1;
+    	while(l <= r ){
+    	    int mid = (l+r)/2;
+    	    if(mid <= x/mid && (mid + 1) > x/(mid+1)) return mid;
+    	    else if(mid > x/mid) r = mid - 1;
+    	    else l = mid + 1;
+    	}
+    	return 0;
+    }
+
+	
+ 
+
+
+
+* [29 Divide Two Integers](#29-divide-two-integers)
+* [50 Pow(x,n)](#50-pow(x,n))
+* [69 Sqrt(x)](#69-sqrt(x))
+* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
+
+<br>
+
+<br>
 
 
 ###89 Gray Code
@@ -873,6 +1040,90 @@ Related problem:
 		}
 		return s.substring(start, end+1);
 	}
+
+<br>
+
+<br>
+
+
+###166 Fraction to Recurring Decimal
+
+>Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
+	
+>If the fractional part is repeating, enclose the repeating part in parentheses.
+
+	For example,
+
+	Given numerator = 1, denominator = 2, return "0.5".
+	Given numerator = 2, denominator = 1, return "2".
+	Given numerator = 2, denominator = 3, return "0.(6)".
+
+<br>
+
+**Idea**: Just do the divide like what we normally do in math. 
+
+For example, 3/7 
+
+- quotient = 0, remainer = 3 , string = 0.
+- **3 * 10/7** quotient = 4, remainder = 2; string = 0.4
+- 2 * 10/ 7 quotient = 2, remainder = 6; string = 0.42
+- 6 * 10/7 quotient = 8, remainder = 4; string = 0.428
+- 4 * 10 /7 quotient = 5, remainder = 5; string = 0.4285
+- 5 * 10/7 quotient = 7, remainder = 1, string = 0.42857
+- 1 * 10/7 quotient = 1, remainder = 3, string = 0.428571
+- **3 * 10/7**
+
+Thus, we know the result is 0.(428571)
+
+In order to know when the recuisive begins, we need to record the remainder at each iteration.
+
+**Attention**
+
+- 1)We need to do abs for both numbers, otherwise, there might be unnecessary "-" in the result string
+- 2)abs(Integer.MIN_VALUE)
+- 3)use hashmap to record the position of each remainder.
+
+
+<br>
+
+    public String fractionToDecimal(int numerator, int denominator) {
+        if(denominator == 0 || numerator == 0) return "0";
+        StringBuilder res = new StringBuilder();
+        Map<Long, Integer> map = new HashMap<Long, Integer>();
+        boolean positive = ((numerator ^ denominator) >>> 31) == 0;
+        if(!positive) res.append("-");
+        long num = Math.abs((long)numerator);
+        long den = Math.abs((long)denominator);
+        res.append(num/den);
+        if(num % den == 0) return res.toString();
+        res.append(".");
+        long mod = num % den;
+        while(mod != 0){
+            if(map.containsKey(mod)){
+                res.insert(map.get(mod), "(");
+                res.append(")");
+                return res.toString();
+            }
+            map.put(mod, res.length());
+            mod = mod * 10;
+            long divide = mod/den;
+            mod = mod % den;
+            res.append(divide);
+        }
+        return res.toString();
+    }
+
+
+* [29 Divide Two Integers](#29-divide-two-integers)
+* [50 Pow(x,n)](#50-pow(x,n))
+* [69 Sqrt(x)](#69-sqrt(x))
+* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
+
+<br>
+
+<br>
+
+
 	
 ### 188 Best Time to Buy and Sell Stock IV
 
