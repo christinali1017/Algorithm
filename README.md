@@ -7,10 +7,20 @@
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
 * [18 4Sum](#18-4sum)
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#merge-k-sorted-lists)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
+* [61 Rotate List](#rotate-list)
 * [69 Sqrt(x)](#69-sqrt(x))
+* [82 Remove Duplicates from Sorted List](82-remove-duplicate-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](83-remove-duplicate-from-sorted-list-ii)
+* [86 Partition List](#86-partition-list)
 * [89 Gray Code](#89-gray-code)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](109-convert-sorted-list-to-binary-search-tree)
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
@@ -18,9 +28,24 @@
 * [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characters-given-read4-ii-call-multiple-times) 
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
+* [160 Intersection of Two Linked Lists](160-intersection-of-two-linked-lists)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
+* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
+* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 
+
+
+* [19 Remove Nth Node From End of List](#remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#merge-k-sorted-lists)
+* [61 Rotate List](#rotate-list)
+* [82 Remove Duplicates from Sorted List](82-remove-duplicate-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](83-remove-duplicate-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](109-convert-sorted-list-to-binary-search-tree)
+* [160 Intersection of Two Linked Lists](160-intersection-of-two-linked-lists)
 
 ### 1 Two Sum
 >Given an array of integers, find two numbers such that they add up to a specific target number.
@@ -90,6 +115,8 @@ Related problem:
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
 * [18 4Sum](#18-4sum)
+* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
+* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 
 <br>
 <br>
@@ -224,6 +251,8 @@ Related problem:
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
 * [18 4Sum](#18-4sum)
+* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
+* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 
 <br>
 <br>
@@ -285,6 +314,8 @@ Related problem:
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
 * [18 4Sum](#18-4sum)
+* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
+* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 
 <br>
 <br>
@@ -377,9 +408,236 @@ Related problem:
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
 * [18 4Sum](#18-4sum)
+* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
+* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 
 <br>
 <br>
+
+
+
+###19 Remove Nth Node From End of List
+>Given a linked list, remove the nth node from the end of list and return its head.
+
+For example,
+
+   Given linked list: 1->2->3->4->5, and n = 2.
+
+After removing the second node from the end, the linked list becomes 1->2->3->5.
+Note:
+
+Given n will always be valid.
+Try to do this in one pass.
+
+**Idea**: Use two pointers, p1, p2. First move p1 k steps, then move p1 and p2 together until p1 change to null. At this time, p2 points to the node we need to delete. 
+
+**Attention**: 
+
+- 1) if after k steps, p1 is null, then return head.next
+- 2) record pre
+
+<br>
+
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+    	if(head == null) return null;
+    	ListNode l1 = head;
+    	ListNode l2 = head;
+    	while(n > 0){
+    	    l1 = l1.next;
+    	    n--;
+    	}
+    	if(l1 == null) return head.next;
+    	ListNode pre = null;
+    	while(l1 != null){
+    	    pre = l2;
+    	    l2 = l2.next;
+    	    l1 = l1.next;
+    	}
+    	pre.next = l2.next;
+    	return head;
+    }
+
+
+
+###21 Merge Two Sorted Lists
+
+> Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
+
+**Attention**:
+
+- 1) Use a fake head, thus we don't need to check if head is null
+
+<br>
+
+<br>
+
+   	public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if(l1 == null && l2 == null) return null;
+        ListNode head1 = new ListNode(-1);
+        ListNode h1 = head1;
+        while(l1 != null || l2 != null){
+            if(l1 != null && l2 != null){
+                 if(l1.val < l2.val){
+                     h1.next = l1;
+                    l1 = l1.next;
+                }else{
+                    h1.next = l2;
+                    l2 = l2.next;
+                }
+            }else if(l1 != null){
+                h1.next = l1;
+                l1 = l1.next;
+            }else{
+                h1.next = l2;
+                l2 = l2.next;
+            }
+          h1 = h1.next;
+        }
+        return head1.next;
+    }
+  
+
+<br>
+
+<br>
+
+###23 Merge k Sorted Lists
+
+> Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
+
+**Idea**:
+
+1) Solution1:
+
+Use priorityqueue, add the head of k lists two queue, each time poll the smallest element from the queue then add the smallest.next to the queue until queue is empty. We need to to give another another parameter to priorityqueue when initialize.
+<pre> 
+	PriorityQueue queue = new PriorityQueue(size, new Comparator<ListNode>(){
+		public int compare(ListNode arg1, ListNode arg2){
+			return arg1 - arg2;
+		}
+	});
+</pre>
+
+**Time complexity: nklgk** (lgk for insert element, nk elements).
+
+**Space** O(k)
+
+2) Solution2:
+
+Use the idea in merge sort and use the method in [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists) to merge two elements.
+
+**Time**: O(knlgk)
+
+**Solution1 code**:
+
+<br>
+
+		public static ListNode mergeKLists(List<ListNode> lists){
+        if(lists == null || lists.size() == 0) return null;
+        ListNode res = new ListNode(-1);
+        ListNode h1 = res;
+        PriorityQueue<ListNode> queue = new PriorityQueue<ListNode>(lists.size(),new Comparator<ListNode>(){
+            public int compare(ListNode l1, ListNode l2){
+                return l1.val - l2.val;
+            }
+        });
+        for(ListNode l : lists){
+            if(l != null) queue.add(l);
+        }
+        while(!queue.isEmpty()){
+            ListNode current = queue.poll();
+            h1.next = current;
+            h1 = h1.next;
+            if(current.next != null)
+                queue.offer(current.next);
+        }
+        return res.next;
+	}
+
+**Solution 2 code**
+
+	public  ListNode mergeKLists1(List<ListNode> lists){
+		  if(lists == null || lists.size() == 0) return null;
+		  return helper(lists, 0, lists.size()-1);
+		}
+		public ListNode helper(List<ListNode> lists, int start, int end){
+		    if(start >= end) return lists.get(start);
+		    int mid = (start + end)/2;
+		    return mergeTwoLists(helper(lists, start, mid), helper(lists, mid+1, end));
+		}
+		
+	    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+	      if(l1 == null && l2 == null) return null;
+	      ListNode head = new ListNode(-1);
+	      ListNode temp = head;
+	      while(l1 != null || l2 != null){
+	          if(l1 != null && l2 != null){
+	              if(l1.val < l2.val){
+	                  temp.next = l1;
+	                  l1 = l1.next;
+	              }else{
+	                  temp.next = l2;
+	                  l2 = l2.next;
+	              }
+	          }else if(l1 != null){
+	              temp.next = l1;
+	              l1 = l1.next;
+	          }else{
+	              temp.next = l2;
+	              l2 = l2.next;
+	          }
+	          temp = temp.next;
+	      }
+	      return head.next;
+	    }
+
+
+**Brute force** time limit exceeded
+
+method1: each time find the minimum from the k nodes, and add it to the result list. Time k * n * k = O(k^2*n)
+
+	 /* Brute force: time limit exceeded*/
+		public  ListNode mergeKLists2(List<ListNode> lists){
+		    if(lists == null || lists.size() == 0) return null;
+		    ListNode head = new ListNode(-1);
+		    ListNode temp = head;
+		    List<ListNode> l = new ArrayList<ListNode>();
+		    for(int i = 0; i < lists.size(); i++){
+		        if(lists.get(i) != null) l.add(lists.get(i));
+		    }
+		    while(l.size() > 0){
+		    	int min = 0;
+		        for(int i = 0; i < l.size(); i++){
+		            if(l.get(i) == null) l.remove(i);
+		            else {
+		            	if(l.get(i).val < l.get(min).val) min = i;
+		            }
+		        }
+		        if(l.size() > 0){
+		        	temp.next = l.get(min);
+		        	if(l.get(min).next != null) l.set(min,l.get(min).next);
+		        	else l.remove(min);
+		        	temp = temp.next;
+		        }
+		    }
+		    return head.next;
+		}
+	
+
+method2: each time merge two lists, until all lists are merged.
+
+	/*Brute force, use merge2 method */
+	public  ListNode mergeKLists3(List<ListNode> lists) {
+		if( lists == null || lists.size() == 0) return null;
+		ListNode result = lists.get(0);
+		for(int i = 1; i < lists.size(); i++){
+			ListNode currentList = lists.get(i);
+			result = mergeTwoLists(result, currentList);
+
+		}
+		
+		return result;
+	}
 
 
 ###29 Divide Two Integers
@@ -451,10 +709,6 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 
 
 
-
-
-
-
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [69 Sqrt(x)](#69-sqrt(x))
@@ -490,6 +744,53 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 <br>
 
 <br>
+
+
+###61 Rotate List
+
+> Given a list, rotate the list to the right by k places, where k is non-negative.
+
+<pre>
+For example:
+Given 1->2->3->4->5->NULL and k = 2,
+return 4->5->1->2->3->NULL.
+</pre>
+
+**Idea**: First calculate the length of list and record the tail, then move len - n steps. Connect tail and head, disconnect the (len-n)th and (len-n+1)th node.
+
+**Attention**: 
+
+- 1) we need to mode n = n%len
+- 2) Take care of null pointer
+
+
+code:
+
+	    public ListNode rotateRight(ListNode head, int n) {
+        if(n < 0 || head == null) return head;
+        ListNode temp = head;
+        int len = 0;
+        ListNode tail = null;
+        while(temp != null){
+            len++;
+            tail = temp;
+            temp = temp.next;
+        }
+        n = n % len;
+        len = len - n;
+        if(n == 0 || len == 0) return head;
+        temp = head;
+        ListNode pre = null;
+        while(len > 0){
+            pre = temp;
+            temp = temp.next;
+            len--;
+        }
+        pre.next = null;
+        tail.next = head;
+        return temp;
+    }
+
 
 
 
@@ -544,6 +845,115 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 <br>
 
 <br>
+
+
+###82 Remove Duplicates from Sorted List
+
+>Given a sorted linked list, delete all duplicates such that each element appear only once.
+
+For example,
+Given 1->1->2, return 1->2.
+Given 1->1->2->3->3, return 1->2->3.
+
+
+	 public ListNode deleteDuplicates(ListNode head) {
+        if(head == null) return null;
+        ListNode pre = head;
+        ListNode temp = head.next;
+        while(temp != null){
+            if(temp.val == pre.val) {
+                pre.next = temp.next;
+                temp = temp.next;
+            }else{
+                pre = temp;
+                temp = temp.next;
+            }
+        }
+        return head;
+    }
+
+###83 Remove Duplicates from Sorted List II
+
+>Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.
+
+<pre>
+For example,
+Given 1->2->3->3->4->4->5, return 1->2->5.
+Given 1->1->1->2->3, return 2->3.
+</pre>
+
+**Idea**:
+
+1) Compare each node with it's next, count++ if duplicate is found. if head.val != head.next.val, then check if count == 1. If yes, add node, else reset head to 1 and  continue.
+
+
+**Attention**: Remember to check count at the end. If count == 1, add the last node. else set result's tail.next = null. 
+
+	 public ListNode deleteDuplicates(ListNode head) {
+        if(head == null) return head;
+        ListNode feakHead = new ListNode(-1);
+        ListNode h1 = feakHead;
+        int count = 1;
+        while(head != null && head.next != null){
+            if(head.val == head.next.val){
+                head = head.next;
+                count++;
+            }else{
+                if(count == 1){
+                    h1.next = head;
+                    head = head.next;
+                    h1 = h1.next;
+                }else{
+                    head = head.next;
+                    count = 1;
+                }
+            }
+        }
+        if(count == 1) h1.next = head;
+        else h1.next = null;
+        return feakHead.next;
+    }
+
+
+###86 Partition List
+
+>Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.
+
+You should **preserve the original relative order** of the nodes in each of the two partitions.
+
+<pre>
+For example,
+Given 1->4->3->2->5->2 and x = 3,
+return 1->2->2->4->3->5.
+</pre>
+
+**Idea**: We need to preserve the original order, thus we can maintain two pointers, h1 and tail. h1 is the place we need to insert the element which smaller than x. tail is the end of the result list from which we add the elements equal or larger than x. 
+
+**Attention**: We need to 
+
+	  public ListNode partition(ListNode head, int x) {
+        if(head == null) return null;
+        ListNode feakHead = new ListNode(-1);
+        ListNode h = feakHead;
+        ListNode tail = feakHead;
+        while(head != null){
+            if(head.val >= x){
+                tail.next = head;
+                head = head.next;
+                tail = tail.next;
+                tail.next = null;
+            }else{
+                 ListNode saveH = h;
+                 ListNode temp = h.next;
+                 h.next = head;
+                 head = head.next;
+                 h = h.next;
+                 h.next = temp;
+                if(tail.equals(saveH)) tail = h;
+            }
+        }
+        return feakHead.next;
+    }
 
 
 ###89 Gray Code
@@ -611,19 +1021,20 @@ For example, based on 2 bit gray code, we can get the first half of 3 bit gray c
 **Time Complexity**: we have 2 ^ n gray code numbers, thus the time complexity is 2 ^ n
 **Space**: 2 ^ n
 
-	    public List<Integer> grayCode(int n) {
-        	List<Integer> list = new ArrayList<Integer>();
-        	if(n < 0) return list;
-        	list.add(0);
-        	if(n == 0) return list;
-        	list.add(1);
-        	for(int i = 2; i <= n; i++){
-            	for(int j = list.size()-1; j >= 0; j--){
-                	list.add(list.get(j) + (1 <<(i-1)));
-            	}
-        	}
-        	return list;
-    	 }
+    public List<Integer> grayCode(int n) {
+        List<Integer> list = new ArrayList<Integer>();
+        if(n < 0) return list;
+        list.add(0);
+        if(n == 0) return list;
+        list.add(1);
+        for(int i = 2; i <= n; i++){
+            for(int j = list.size()-1; j >= 0; j--){
+                list.add(list.get(j) + (1 <<(i-1)));
+            }
+        }
+        return list;
+     }
+    
 
 
 **Related Questions** : check if two bytes can be put successively in a gray code sequence.
@@ -653,7 +1064,262 @@ If the numbers are unsigned numbers, we can first ^ then check if it is the powe
 	
 <br>
 <br>
+
+###92 Reverse Linked List II
+
+>Reverse a linked list from position m to n. Do it in-place and in one-pass.
+
+<pre>
+
+For example:
+Given 1->2->3->4->5->NULL, m = 2 and n = 4,
+
+return 1->4->3->2->5->NULL.
+
+Note:
+Given m, n satisfy the following condition:
+1 ≤ m ≤ n ≤ length of list.
 	
+</pre>
+
+**Idea**: 1) Find begining node of reverse. 2) reverse m-n 3) concatenate 
+
+**Attention**:
+
+- 1) when concatenate, take care of null pointer. ***(When use node.next, always check if node is null)***
+- 2) If m == 1, what should we return? So check the previous node of the reverse list's head, if it's null, just return the reverse head. 
+- 3) Take care of the steps. We need to move ***m-1*** steps to find the beginning of the reverse. We need take another ***n-m+1*** steps to reverse the nodes. 
+
+	  public ListNode reverseBetween1(ListNode head, int m, int n) {
+        if(head == null || head.next == null || (m == n)) return head;
+        ListNode saveHead = head;
+        ListNode preReverse = null;
+        while(m-1 > 0){
+            preReverse = head;
+            head = head.next;
+            m--;
+            n--;
+        }
+        ListNode reverseHead = null;
+        ListNode reverseTail = null;
+        ListNode next = null;
+        while(n-1 >= 0){
+            n--;
+            if(reverseHead == null){
+                reverseHead = head;
+                reverseTail = head;
+                head = head.next;
+                continue;
+            }
+            next = head.next;
+            head.next = reverseHead;
+            reverseHead = head;
+            head = next;
+        }
+        if(preReverse != null) preReverse.next = reverseHead;
+        if(reverseTail != null) reverseTail.next = head;
+        if(preReverse == null) return reverseHead;
+        return saveHead;
+      }
+   
+   <br>
+   
+
+Pretty much the save with the above, just change while to for:
+
+  	public ListNode reverseBetween(ListNode head, int m, int n) {
+    	if(head == null) return null;
+    	if(m < 0) m = 0;
+    	if(m > n){
+    		int tempValue = m;
+    		m = n;
+    		n = tempValue;
+    	}
+    	
+    	ListNode temp = head;
+    	ListNode previousM = null;
+    	
+    	/* find node at m */
+    	for(int i = 1; i < m && temp != null; i++){
+    		previousM = temp;
+    		temp = temp.next;
+    	}
+    	ListNode saveTemp = temp;
+    	
+    	/* reverse node between m and n */
+    	ListNode pre = null;
+    	ListNode next = null;
+    	for(int i = m; i <= n && temp != null; i++){
+    		next = temp.next;
+    		temp.next = pre;
+    		pre = temp;
+    		temp = next;
+    	}
+    	
+    	/* concatenate */
+    	if(previousM != null) previousM.next = pre;
+    	if(saveTemp != null) saveTemp.next = temp;
+    	
+    	if(m == 1) return pre; 
+    	return head;
+     }
+     
+     
+###108 Convert Sorted Array to Binary Search Tree  
+
+>Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+
+**Idea**: 
+
+Just find the mid of the list each time and create the tree from root.
+root = mid
+root.left = mid of (0, mid -1)
+root.right = mid of (mid + 1, end)
+
+**Time: O(n)**, because we need to traverse all the nodes. 
+
+**Space** O(lg(n)) for recursion. 
+
+
+	public TreeNode sortedArrayToBST(int[] num) {
+        if(num == null || num.length == 0) return null;
+        return helper(num, 0, num.length-1);
+    }
+    public TreeNode helper(int[] num, int start, int end){
+        if(start > end) return null;
+        int mid = (start + end)/2;
+        TreeNode root = new TreeNode(num[mid]);
+        root.left = helper(num, start, mid-1);
+        root.right = helper(num, mid + 1, end);
+        return root;
+    }
+
+ 
+###109 Convert Sorted List to Binary Search Tree
+>Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+
+**Idea**: 
+
+1) solution1: Bottom-up
+
+The list is sorted and we need to convert it to a **balanced BST**. When visit the linkedlist, we can only visit node by node. Thus we visit the nodes in ascending order: **Inorder Traversal !**. Thus, we create the binary tree **Bottom-up**. The bottom-up approach enables us to access the list in its order while creating nodes.
+
+**Time O(n)**
+
+**Space**: O(n) + O(lgn) = O(n)
+
+
+2) solution2 : Top-down
+
+Just find the mid of the list each time and create the tree from root.
+root = mid
+root.left = mid of (0, mid -1)
+root.right = mid of (mid + 1, end)
+
+**Time: O(nlgn)**
+
+**Space**: O(n) + O(lgn) = O(n)
+
+3) solution3: 
+
+Store all the nodes in an array, then use the array to create the BST. just like the method in   However, not recommend this method. If we do in this way, then this question is meaningless. 
+
+**Time: O(n)**
+
+**Space**: O(n) + O(lgn) = O(n)
+
+*Solution1 code:*
+
+<br>
+
+		 public TreeNode sortedListToBST(ListNode head) {
+		    if(head == null) return null;
+		    int len = 0;
+		    ListNode temp = head;
+		    while(temp != null){
+		        temp = temp.next;
+		        len++;
+		    }
+		    ListNode[] saveHead = new ListNode[1];
+		    saveHead[0] = head;
+		    return helper(saveHead, 0, len-1);
+		 }
+		 public TreeNode helper(ListNode[] saveHead, int start, int end){
+		    if(start > end) return null;
+		    int mid = (start + end)/2;
+		    TreeNode left = helper(saveHead, start, mid-1);
+		    TreeNode root = new TreeNode(saveHead[0].val);
+		    root.left = left;
+		    saveHead[0] = saveHead[0].next;
+		    root.right = helper(saveHead, mid + 1, end);
+		    return root;
+		 }
+		 
+		 
+*solution 2 code*
+
+ 		public TreeNode sortedListToBST1(ListNode head) {
+			    if(head == null) return null;
+			    if(head.next == null) return new TreeNode(head.val);
+			    ListNode pre = getMidPre(head);
+			    ListNode mid = pre.next;
+			    pre.next = null;
+			    TreeNode root= new TreeNode(mid.val);
+			    root.left = sortedListToBST(head);
+			    root.right = sortedListToBST(mid.next);
+			    return root;
+			 }
+			 
+			 public ListNode getMidPre(ListNode head){
+		        ListNode fast = head;  
+		        ListNode pre = head;  
+		        while(fast!=null) {  
+		            fast = fast.next;  
+		            if(fast != null){
+		                fast = fast.next;  
+		                pre = head;  
+		                head = head.next;  
+		            } 
+		        }  
+		        return pre;  
+			 }
+			 
+*solution3 code*
+
+	 public TreeNode sortedListToBST2(ListNode head) {
+		    if(head == null) return null;
+		    if(head.next == null) return new TreeNode(head.val);
+	        int count = 0;
+	        ListNode temp = head;
+	        while(temp != null){
+	            count++;
+	            temp = temp.next;
+	        }
+	        int[] num = new int[count];
+	        temp = head;
+	        count = 0;
+	        while(temp != null){
+	            num[count++] = temp.val;
+	            temp = temp.next;
+	        }
+	        return sortedArrayToBST(num);
+		 }
+		 
+	    public TreeNode sortedArrayToBST(int[] num) {
+	        if(num == null || num.length == 0) return null;
+	        return helper(num, 0, num.length-1);
+	    }
+	    public TreeNode helper(int[] num, int start, int end){
+	        if(start > end) return null;
+	        int mid = (start + end)/2;
+	        TreeNode root = new TreeNode(num[mid]);
+	        root.left = helper(num, start, mid-1);
+	        root.right = helper(num, mid + 1, end);
+	        return root;
+	    }
+		 
+
+
 
 ###121 Best Time to Buy and Sell Stock
 >Say you have an array for which the ith element is the price of a given stock on day i.
@@ -1046,6 +1712,110 @@ Related problem:
 <br>
 
 
+###160 Intersection of Two Linked Lists
+>Write a program to find the node at which the intersection of two singly linked lists begins.
+
+
+<pre>
+For example, the following two linked lists:
+
+A:          a1 → a2
+                   ↘
+                     c1 → c2 → c3
+                   ↗            
+B:     b1 → b2 → b3
+
+begin to intersect at node c1.
+
+</pre>
+
+
+Notes:
+
+If the two linked lists have no intersection at all, return null.
+
+The linked lists must retain their original structure after the function returns.
+
+You may assume there are no cycles anywhere in the entire linked structure.
+
+Your code should preferably run in O(n) time and use only O(1) memory.
+
+
+<br>
+
+**Idea**: 
+
+Solustion1: 
+
+We can get the length of two linkedlist, assume len1 > len2. We move head1 move len1-len2 steps, then compare each node in list1 and list2, until two lists have the same nodes. 
+
+Solution2: We don't need to calculae the length of list1 and list2. Use two pointers p1 p2, when one pointer reaches the end, assume it's p1, we change p1  to head2. Then continues until p2 reach to the end. By this time, p1 is pointer to len2 -len1 of list2, we let p2 points to head1. So we can continue to compare until we encounter same nodes. 
+
+
+**Attention**: Null pointer! We need to take care of null pointer for all linkedlist problems.
+
+Solution1 :
+
+	 public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+	       if(headA == null || headB == null) return null;
+	       int lenA = 0;
+	       int lenB = 0;
+	       ListNode temp = headA;
+	       while(temp != null){
+	           lenA++;
+	           temp = temp.next;
+	       }
+	       temp = headB;
+	       while(temp != null){
+	           temp = temp.next;
+	           lenB++;
+	       }
+	       int diff = Math.abs(lenA - lenB);
+	       if(lenA > lenB){
+	           while(diff > 0) {
+	               headA = headA.next;
+	               diff--;
+	           }
+	       }else{
+	           while(diff > 0){
+	               headB = headB.next;
+	               diff--;
+	           }
+	       }
+	       while(headA != null && headB != null && !headA.equals(headB)){
+	           headA = headA.next;
+	           headB = headB.next;
+	       }
+	       return headA;
+	 }
+
+Solution2:
+
+	 public ListNode getIntersectionNode2(ListNode headA, ListNode headB) {
+	       if(headA == null || headB == null) return null;
+	       ListNode tempA = headA;
+	       ListNode tempB = headB;
+	       while(tempA != null && tempB != null){
+	           tempA = tempA.next;
+	           tempB = tempB.next;
+	       }
+	       tempA = tempA == null ? headB : tempA;
+	       tempB = tempB == null? headA : tempB;
+	       while(tempA != null && tempB != null){
+	           tempA = tempA.next;
+	           tempB = tempB.next;
+	       }
+	      tempA = tempA == null ? headB : tempA;
+	      tempB = tempB == null ? headA : tempB;
+	      while(tempA != null && tempB != null && !tempA.equals(tempB)){
+	          tempA = tempA.next;
+	          tempB = tempB.next;
+	      }
+	      return tempA;
+	 }
+
+
+
 ###166 Fraction to Recurring Decimal
 
 >Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
@@ -1124,6 +1894,110 @@ In order to know when the recuisive begins, we need to record the remainder at e
 <br>
 
 
+###167 Two Sum II Input array is sorted
+
+>Given an array of integers that is already **sorted in ascending order**, find two numbers such that they add up to a specific target number.
+
+>The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are **not zero-based**.
+You may assume that each input would have exactly one solution.
+
+	Input: numbers={2, 7, 11, 15}, target=9
+	Output: index1=1, index2=2
+
+<br>
+
+**Idea**: We can solve this problem use the second method in * [1 Two Sum](#1-two-sum). Just use two pointers, one at the beginning, one at the ending. Compare num[l] + num[r] and target. If the former is larger, then r--, if the latter is larger, l++.
+
+
+	public int[] twoSum(int[] numbers, int target){
+		int[] res = new int[2];
+		if(numbers == null || numbers.length <= 1) return res;
+		int l = 0;
+		int r = numbers.length -1;
+		while(l < r){
+			if(numbers[l] + numbers[r] == target){
+				res[0] = l+1;
+				res[1] = r+1;
+				return res;
+			}else if(numbers[l] + numbers[r] > target) r--;
+			else l++;
+		}
+		return res;
+	}
+
+
+* [1 Two Sum](#1-two-sum)
+* [15 3Sum](#15-3sum)
+* [16 3Sum Closest](#16-3sum-closest)
+* [18 4Sum](#18-4sum)
+* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
+* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
+
+<br>
+
+<br>
+
+
+###170 Two Sum III Data Structure Design
+
+>Design and implement a TwoSum class. It should support the following operations: add and find.
+
+>add - Add the number to an internal data structure.
+
+>find - Find if there exists any pair of numbers which sum is equal to the value.
+
+	For example,
+	add(1); add(3); add(5);
+	find(4) -> true
+	find(7) -> false
+	
+<br>
+
+**Idea**: How to design the structure is based on our needs. Remember in * [1 Two Sum](#1-two-sum) , the first method we use hashmap to record each number, and check if sum - number exist. If we do this the same way in this problem, we can use hashmap to record each number when add, and find the number use the method in * [1 Two Sum](#1-two-sum). 
+
+**Time complexity** : add O(1) find O(n)
+
+**Space**: O(n)
+
+***What if we want to find sum in O(1)?***
+
+We need to record the all possible sum when add new numbers. Then the time complexity would change to O(n). Also, we need a set to record the possible sum. So we need to increase the space. 
+
+	public class TwoSum{
+		private Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+		public void add(int number){
+			if(map.containsKey(number)) map.put(number, map.get(number)+1);
+			else map.put(number, 1);
+		}
+		
+		public boolean find(int value){
+			for(Integer i : map.keySet()){
+				int remain = value -i;
+				if(map.containsKey(remain)){
+					if(remain == i && map.get(remain) < 2) continue;
+					else return true;
+				}
+			}
+			return false;
+		}
+	}
+	
+
+
+
+
+
+
+* [1 Two Sum](#1-two-sum)
+* [15 3Sum](#15-3sum)
+* [16 3Sum Closest](#16-3sum-closest)
+* [18 4Sum](#18-4sum)
+* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
+* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
+
+<br>
+
+<br>
 	
 ### 188 Best Time to Buy and Sell Stock IV
 
