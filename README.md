@@ -9,18 +9,18 @@
 * [18 4Sum](#18-4sum)
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#merge-k-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
-* [61 Rotate List](#rotate-list)
+* [61 Rotate List](#61-rotate-list)
 * [69 Sqrt(x)](#69-sqrt(x))
-* [82 Remove Duplicates from Sorted List](82-remove-duplicate-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](83-remove-duplicate-from-sorted-list-ii)
+* [82 Remove Duplicates from Sorted List](82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](83-remove-duplicates-from-sorted-list-ii)
 * [86 Partition List](#86-partition-list)
 * [89 Gray Code](#89-gray-code)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](109-convert-sorted-list-to-binary-search-tree)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
@@ -38,14 +38,14 @@
 
 * [19 Remove Nth Node From End of List](#remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#merge-k-sorted-lists)
-* [61 Rotate List](#rotate-list)
-* [82 Remove Duplicates from Sorted List](82-remove-duplicate-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](83-remove-duplicate-from-sorted-list-ii)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](83-remove-duplicates-from-sorted-list-ii)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](109-convert-sorted-list-to-binary-search-tree)
-* [160 Intersection of Two Linked Lists](160-intersection-of-two-linked-lists)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 ### 1 Two Sum
 >Given an array of integers, find two numbers such that they add up to a specific target number.
@@ -1222,7 +1222,7 @@ root.right = mid of (mid + 1, end)
 
 3) solution3: 
 
-Store all the nodes in an array, then use the array to create the BST. just like the method in   However, not recommend this method. If we do in this way, then this question is meaningless. 
+Store all the nodes in an array, then use the array to create the BST. just like the method in  * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree). However, not recommend this method. If we do in this way, then this question is meaningless. 
 
 **Time: O(n)**
 
