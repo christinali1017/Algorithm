@@ -14,16 +14,23 @@
 * [50 Pow(x,n)](#50-pow(x,n))
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt(x)](#69-sqrt(x))
-* [82 Remove Duplicates from Sorted List](82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](83-remove-duplicates-from-sorted-list-ii)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 * [86 Partition List](#86-partition-list)
 * [89 Gray Code](#89-gray-code)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
 * [156 Binary Tree Upside Down](#156-binary-tree-upside-down)
 * [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characters-given-read4-ii-call-multiple-times) 
@@ -35,17 +42,7 @@
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 
 
-
-* [19 Remove Nth Node From End of List](#remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+<br>
 
 ### 1 Two Sum
 >Given an array of integers, find two numbers such that they add up to a specific target number.
@@ -458,6 +455,29 @@ Try to do this in one pass.
     }
 
 
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
+
 
 ###21 Merge Two Sorted Lists
 
@@ -471,35 +491,50 @@ Try to do this in one pass.
 
 <br>
 
-   	public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        if(l1 == null && l2 == null) return null;
-        ListNode head1 = new ListNode(-1);
-        ListNode h1 = head1;
-        while(l1 != null || l2 != null){
-            if(l1 != null && l2 != null){
-                 if(l1.val < l2.val){
-                     h1.next = l1;
-                    l1 = l1.next;
-                }else{
-                    h1.next = l2;
-                    l2 = l2.next;
-                }
-            }else if(l1 != null){
-                h1.next = l1;
-                l1 = l1.next;
-            }else{
-                h1.next = l2;
-                l2 = l2.next;
-            }
-          h1 = h1.next;
-        }
-        return head1.next;
-    }
-  
+       public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+	    if(l1 == null) return l2;
+	    if(l2 == null) return l1;
+	    ListNode fakeHead = new ListNode(-1);
+	    ListNode temp = fakeHead;
+	    while(l1 != null && l2 != null){
+	        if(l1.val > l2.val){
+	            temp.next = l2;
+	            l2 = l2.next;
+	        }else{
+	            temp.next = l1;
+	            l1 = l1.next;
+	        }
+	        temp = temp.next;
+	    }
+	    if(l1 != null) temp.next = l1;
+	    if(l2 != null) temp.next = l2;
+	    return fakeHead.next;
+    }  
+
+
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
-
 <br>
+
 
 ###23 Merge k Sorted Lists
 
@@ -566,30 +601,25 @@ Use the idea in merge sort and use the method in [21 Merge Two Sorted Lists](#21
 		    return mergeTwoLists(helper(lists, start, mid), helper(lists, mid+1, end));
 		}
 		
-	    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-	      if(l1 == null && l2 == null) return null;
-	      ListNode head = new ListNode(-1);
-	      ListNode temp = head;
-	      while(l1 != null || l2 != null){
-	          if(l1 != null && l2 != null){
-	              if(l1.val < l2.val){
-	                  temp.next = l1;
-	                  l1 = l1.next;
-	              }else{
-	                  temp.next = l2;
-	                  l2 = l2.next;
-	              }
-	          }else if(l1 != null){
-	              temp.next = l1;
-	              l1 = l1.next;
-	          }else{
-	              temp.next = l2;
-	              l2 = l2.next;
-	          }
-	          temp = temp.next;
-	      }
-	      return head.next;
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+	    if(l1 == null) return l2;
+	    if(l2 == null) return l1;
+	    ListNode fakeHead = new ListNode(-1);
+	    ListNode temp = fakeHead;
+	    while(l1 != null && l2 != null){
+	        if(l1.val > l2.val){
+	            temp.next = l2;
+	            l2 = l2.next;
+	        }else{
+	            temp.next = l1;
+	            l1 = l1.next;
+	        }
+	        temp = temp.next;
 	    }
+	    if(l1 != null) temp.next = l1;
+	    if(l2 != null) temp.next = l2;
+	    return fakeHead.next;
+    }
 
 
 **Brute force** time limit exceeded
@@ -638,6 +668,31 @@ method2: each time merge two lists, until all lists are merged.
 		
 		return result;
 	}
+
+
+
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
 
 
 ###29 Divide Two Integers
@@ -792,7 +847,28 @@ code:
     }
 
 
+***Related problems***:
 
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
 
 ###69 Sqrt(x)
 
@@ -871,6 +947,29 @@ Given 1->1->2->3->3, return 1->2->3.
         }
         return head;
     }
+    
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
 
 ###83 Remove Duplicates from Sorted List II
 
@@ -914,6 +1013,28 @@ Given 1->1->1->2->3, return 2->3.
         return feakHead.next;
     }
 
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
 
 ###86 Partition List
 
@@ -1164,7 +1285,30 @@ Pretty much the save with the above, just change while to for:
     	return head;
      }
      
-     
+ 
+ ***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
+    
 ###108 Convert Sorted Array to Binary Search Tree  
 
 >Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
@@ -1194,6 +1338,28 @@ root.right = mid of (mid + 1, end)
         return root;
     }
 
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
  
 ###109 Convert Sorted List to Binary Search Tree
 >Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
@@ -1318,8 +1484,130 @@ Store all the nodes in an array, then use the array to create the BST. just like
 	        return root;
 	    }
 		 
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
+
+###114 Flatten Binary Tree to Linked List
+>Given a binary tree, flatten it to a linked list **in-place**.
+
+<pre>
+For example,
+Given
+
+         1
+        / \
+       2   5
+      / \   \
+     3   4   6
+The flattened tree should look like:
+   1
+    \
+     2
+      \
+       3
+        \
+         4
+          \
+           5
+            \
+             6
+
+</pre>
 
 
+**Idea**: From the structure of the original tree and result tree, we know that we need to traverse the tree preorder. We can solve it recursively or use a stack to record the right child. 
+
+**Attention**: we can use a fake node pre so that each time we can add the current node to the right of pre, set pre.left = null and recursively solve this problem. Also, we need to save the right child, because the right child has changed when we visit the left child. 
+
+*Reversion code* : 
+
+		public void flatten(TreeNode root){
+		   if(root == null) return;
+		   TreeNode[] pre  = new TreeNode[1];
+		   pre[0] = new TreeNode(-1);
+		   helper(root, pre);
+		}
+		
+		public void helper(TreeNode root, TreeNode[] pre){
+		    if(root == null) return;
+		    TreeNode right = root.right;
+		    pre[0].left = null;
+		    pre[0].right = root;
+		    pre[0] = root;
+		    helper(root.left, pre);
+		    helper(right, pre);
+		}
+
+
+*Stack*:
+
+	public void flatten(TreeNode root){
+		   if(root == null) return;
+		   TreeNode pre = new TreeNode(-1);
+		   Stack<TreeNode> stack = new Stack<TreeNode>();
+		   int status = 0;
+		   while(!stack.isEmpty() || root != null){
+		       if(status == 0){
+		           if(root == null){
+		               status = 1;
+		               continue;
+		           }
+		           pre.right = root;
+		           pre.left = null;
+		           pre = root;
+		           stack.push(root.right);
+		           root = root.left;
+		       }else{
+		           root = stack.pop();
+		           status = 0;
+		       }
+		   }
+		}
+
+
+<br>
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
 
 ###121 Best Time to Buy and Sell Stock
 >Say you have an array for which the ith element is the price of a given stock on day i.
@@ -1477,9 +1765,477 @@ From above, we know that we can change the two dimensional array to one dimensio
 
 
 
+###138 Copy List With Random Pointer
+
+>A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null. Return a deep copy of the list.
+ 
+
+**Idea** :
+
+**Solution1:**Copy each node in the list, then divide the list into two lists. For example: 1->2->3, we copy nodes and the list turns to 1->1->2->2->3->3. Then we divide it into two 1->2->3
+
+**Attention**: ***we should copy the random pointer seperatel after we copy all the nodes***. At the beginning, I thought that I can copy the random pointer at the same time and just let it pointer to the same node with the original node, when breaking the list, I change the copy node's random to origin's random's next. It works only when the node that random pointer points to is after to the current pointer. What if it is before the current node? we might not able to find the random's next because when breaking the list we have changed the structure of the list. 
+
+**Solution2**: Use hashmap store old and copy, then copy the random pointer
+
+***Solution1 code***
+
+  	public RandomListNode copyRandomList(RandomListNode head) {
+        if(head == null) return null;
+        RandomListNode temp = head;
+        while(temp != null){
+            RandomListNode next = temp.next;
+            temp.next = new RandomListNode(temp.label);
+            temp.next.next = next;
+            temp = next;
+        }
+        temp = head;
+        while(temp != null){
+            if(temp.random != null){
+                temp.next.random = temp.random.next;
+            }
+            temp = temp.next.next;
+        }
+        RandomListNode fakeHead = new RandomListNode(-1);
+        RandomListNode copy = fakeHead;
+        while(head != null){
+            RandomListNode next = head.next.next;
+            copy.next = head.next;
+            copy = copy.next;
+            copy.next = null;
+            head.next = next;
+            head = next;
+        }
+        return fakeHead.next;
+    }
+    
+***Solution2 code***
+
+ 	public RandomListNode copyRandomList1(RandomListNode head) {
+        if(head == null) return null;
+        RandomListNode copy = new RandomListNode(-1);
+        RandomListNode temp = head;
+        HashMap<RandomListNode, RandomListNode> map = new HashMap<RandomListNode, RandomListNode>();
+        while(temp != null){
+            copy.next = new RandomListNode(temp.label);
+            map.put(temp, copy.next);
+            copy = copy.next;
+            temp = temp.next;
+        }
+        copy = map.get(head);
+        RandomListNode saveHead = copy;
+        while(head != null){
+            copy.random = map.get(head.random);
+            head = head.next;
+            copy = copy.next;
+        }
+        return saveHead;
+    }
+
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
+
+###141 Linked List Cycle
+
+>Given a linked list, determine if it has a cycle in it.
+
+Follow up:
+Can you solve it without using extra space?
+
+**Idea**: Use two pointers, one pointer move one step each time, the other pointer move two step each time. If they encounter, then a cycle exist.
+
+**Attention**: when check if they encounter, if check if they are null! Otherwise, if(f.equals(s)) will have null pointer. 
+
+    public boolean hasCycle(ListNode head) {
+        if(head == null) return false;
+        ListNode f = head;
+        ListNode s = head;
+        while(f != null){
+            f = f.next;
+            if(f != null) f = f.next;
+            s = s.next;
+            if(f == null) return false;
+            if(f.equals(s)) return true;
+        }
+        return false;
+    }
+
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>    
+
+###142 Linked List Cycle II
+
+>Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
+
+Follow up:
+Can you solve it without using extra space?
+
+**Idea**: 
+
+- 1) Use the method in [141 Linked List Cycle](#141-linked-list-cycle) to check if cycle exist. 
+- 2) when faster and slower encounters, change the faster to head, and move faster and slower one step each time until they encounter. At this time, the faster and slower point to the node where the cycle begins.
+
+**Attention**: when check if they encounter, if check if they are null! Otherwise, if(f.equals(s)) will have null pointer. 
+
+	 public ListNode detectCycle(ListNode head) {
+        if(head == null) return null;
+        ListNode f = head;
+        ListNode s = head;
+        while(f != null){
+            f = f.next;
+            if(f != null) f = f.next;
+            s = s.next;
+            if(f == null) return null;
+            if(f.equals(s)) break;
+        }
+        f = head;
+        while(f != null){
+            if(f.equals(s)) return s;
+            f = f.next;
+            s = s.next;
+        }
+        return null;
+    }
+
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
+
+###143 Reorder List
+
+>Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+
+You must do this in-place without altering the nodes' values.
+
+For example,
+Given {1,2,3,4}, reorder it to {1,4,2,3}.
+
+**Idea**: We can solve this problem in two ways.
+- 1) copy a reversed linked list, then insert half of the list into original list.
+- 2) Reverse the last half of the list, then insert it into the first half. 
+
+**Attention**: When reverse, remember to set the first node's next to null, otherwise their will have a loop. 
+
+
+***Solution1 code ***:
+
+
+	 public void reorderList(ListNode head) {
+        if(head == null) return;
+        ListNode copy = new ListNode(-1);
+        int count = 0;
+        ListNode temp = head;
+        while(temp != null){
+            ListNode current = new ListNode(temp.val);
+            current.next = copy;
+            copy = current;
+            temp = temp.next;
+            count++;
+        }
+        if(count <= 2) return;
+        temp = head;
+        ListNode next = null, copyNext = null, pre = null;
+        for(int i = 0; i < count/2; i++){
+            next = temp.next;
+            copyNext = copy.next;
+            temp.next = copy;
+            copy.next = next;
+            pre = copy;
+            temp = next;
+            copy = copyNext;
+        }
+        if(count % 2 != 0) temp.next = null;
+        else pre.next = null;
+    }
+    
+***Solution2 code ***:
+    
+      public void reorderList1(ListNode head) {
+        if(head == null || head.next == null || head.next.next == null) return;
+        ListNode f = head;
+        ListNode s = head;
+        ListNode pre = null;
+        while(f != null){
+            f = f.next;
+            if(f != null) f = f.next;
+            pre = s;
+            s = s.next;
+        }
+        pre.next = null;
+        ListNode lastHalf = null;
+        ListNode next = null;
+        while(s != null){
+        	next = s.next;
+            if(lastHalf == null) {
+            	lastHalf = s;
+            	lastHalf.next = null;
+            }else{
+                s.next = lastHalf;
+                lastHalf = s;
+            }
+            s = next;
+        }
+        ListNode temp = head;
+        ListNode lastHalfNext = null;
+        while(temp != null && lastHalf != null){
+            next = temp.next;
+            lastHalfNext = lastHalf.next;
+            temp.next = lastHalf;
+            lastHalf.next = next;
+            temp = next;
+            lastHalf = lastHalfNext;
+        }
+    }
+
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
+
+###147 Insertion Sort List	
+> Sort a linked list using insertion sort.
+
+
+**Idea**: It's similar to insertion sort array. The difference is that in array, if we want to insert i into (0....i-1), we can swap form i-1 if array[i] < array[i-1]. But we can not visit a linkedlist by index. What we can do is visit from the first element.
+
+Something we can do to simplify the insert:
+ 
+- 1) first check if current.val >= pre.val. If true, it's already in right place. we can just go to the next element. 
+- 2) then check if current.val <= head.val. If true, we can just insert it before the head.
+- 3) If it's not eh two cases above, we need to find the right place to insert the element. Because we have eliminate the corner case above, thus we just need to find the insertion spot, then change the relationship of the pointers.
+
+If we add a fakeHead pointer to avoid the null pointer cases, we can have more concise code.
+
+**Time***: O(n^2)
+
+<br>
+
+	public ListNode insertionSortList(ListNode head) {
+        if(head == null) return null;
+        ListNode fakeHead = new ListNode(-1);
+        ListNode cur = head;
+        ListNode temp = fakeHead;
+        while(cur != null){
+            ListNode next = cur.next;
+            ListNode pre = fakeHead;
+            temp = fakeHead.next;
+            while(temp != null && temp.val < cur.val){
+                pre = temp;
+                temp = temp.next;
+            }
+            pre.next = cur;
+            cur.next = temp;
+            cur = next;
+        }
+        return fakeHead.next;
+    }
+
+
+<br>
+
+	/* Actually, in some cases the code below is a little faster then above. 	Because when the element is alreay in the right place, we don't need to find 	from the beginning */
+	
+	 public ListNode insertionSortList(ListNode head) {
+	        if(head == null) return null;
+	        ListNode cur = head.next;
+	        ListNode preCur = head;
+	        while(cur != null){
+	            ListNode next = cur.next;
+	            if(cur.val >= preCur.val){
+	                preCur = cur;
+	            }else if(cur.val <= head.val){
+	                cur.next = head;
+	                head = cur;
+	                preCur.next = next;
+	            }else{
+	                ListNode insertPre = head;
+	                ListNode temp = head.next;
+	                while(temp != null && temp.val < cur.val){
+	                    insertPre = temp;
+	                    temp = temp.next;
+	                }
+	                insertPre.next = cur;
+	                cur.next = temp;
+	                preCur.next = next;
+	            }
+	            cur = next;
+	        }
+	        return head;
+	    }
+
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
+
+###148 Sort List
+
+> Sort a linked list in O(n log n) time using constant space complexity.
+
+**Idea**: It require us to sort in O(nlgn) time. "Mergesort" and "Quicksort" is the typical O(nlgn) sort algorithm. When use merge sort, similar with mergesort an array, we fisrt need to find the mid of the list. (The typical two pointer method to find the middle). Then sort(left, mid-1), sort(mid , right) and merge the result.
+
+
+<br>
+
+	   public ListNode sortList(ListNode head){
+		    if(head == null || head.next == null) return head;
+		    ListNode f = head;
+		    ListNode s = head;
+		    ListNode pre = null;
+		    while(f != null){
+		        f = f.next;
+		        if(f != null){
+		            f = f.next;
+		            pre = s;
+		            s = s.next;
+		        }
+		    }
+		    pre.next = null;
+		    return merge(sortList(s), sortList(head));
+		}
+		
+		public ListNode merge(ListNode l1, ListNode l2){
+		    if(l1 == null) return l2;
+		    if(l2 == null) return l1;
+		    ListNode fakeHead = new ListNode(-1);
+		    ListNode temp = fakeHead;
+		    while(l1 != null && l2 != null){
+		        if(l1.val > l2.val){
+		            temp.next = l2;
+		            l2 = l2.next;
+		        }else{
+		            temp.next = l1;
+		            l1 = l1.next;
+		        }
+		        temp = temp.next;
+		    }
+		    if(l1 != null) temp.next = l1;
+		    if(l2 != null) temp.next = l2;
+		    return fakeHead.next;
+		}
+		
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>		
+    
 ### 156 Binary Tree Upside Down
 
-> Given a binary tree where all the right nodes are either leaf nodes with a sibling (a left node that shares the same parent node) or empty, flip it upside down and turn it into a tree where the original right nodes turned into left leaf nodes. Return the new root.
+> Given a binary tree where all the right nodes are either leaf nodes with a sibling (a left node that shares th> e same parent node) or empty, flip it upside down and turn it into a tree where the original right nodes turned into left leaf nodes. Return the new root.
 
 <pre>
 For example:
@@ -1507,7 +2263,8 @@ return the root of the binary tree [4,5,2,#,#,3,1].
 Structure of result tree:
 
 * 1) Right child turn to left child: p.left = parent.right
-* 2) Parant becomes right child: p.right = parent 
+
+2) Parant becomes right child: p.right = parent 
 * 3) Left child becomes root. 
 
 		public TreeNode upsideDownBinaryTree(TreeNode root){
@@ -1814,6 +2571,28 @@ Solution2:
 	      return tempA;
 	 }
 
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
 
 
 ###166 Fraction to Recurring Decimal

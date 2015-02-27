@@ -1,28 +1,23 @@
 package leetcode;
 public class MergeTwoSortedList {
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        if(l1 == null && l2 == null) return null;
-        ListNode head1 = new ListNode(-1);
-        ListNode h1 = head1;
-        while(l1 != null || l2 != null){
-            if(l1 != null && l2 != null){
-                 if(l1.val < l2.val){
-                     h1.next = l1;
-                    l1 = l1.next;
-                }else{
-                    h1.next = l2;
-                    l2 = l2.next;
-                }
-            }else if(l1 != null){
-                h1.next = l1;
-                l1 = l1.next;
-            }else{
-                h1.next = l2;
-                l2 = l2.next;
-            }
-          h1 = h1.next;
-        }
-        return head1.next;
+	    if(l1 == null) return l2;
+	    if(l2 == null) return l1;
+	    ListNode fakeHead = new ListNode(-1);
+	    ListNode temp = fakeHead;
+	    while(l1 != null && l2 != null){
+	        if(l1.val > l2.val){
+	            temp.next = l2;
+	            l2 = l2.next;
+	        }else{
+	            temp.next = l1;
+	            l1 = l1.next;
+	        }
+	        temp = temp.next;
+	    }
+	    if(l1 != null) temp.next = l1;
+	    if(l2 != null) temp.next = l2;
+	    return fakeHead.next;
     }
     public static void main(String[] args) {
     	MergeTwoSortedList m = new MergeTwoSortedList();

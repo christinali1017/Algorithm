@@ -41,28 +41,23 @@ public class MergeKSortedLists {
 		}
 		
 	    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-	      if(l1 == null && l2 == null) return null;
-	      ListNode head = new ListNode(-1);
-	      ListNode temp = head;
-	      while(l1 != null || l2 != null){
-	          if(l1 != null && l2 != null){
-	              if(l1.val < l2.val){
-	                  temp.next = l1;
-	                  l1 = l1.next;
-	              }else{
-	                  temp.next = l2;
-	                  l2 = l2.next;
-	              }
-	          }else if(l1 != null){
-	              temp.next = l1;
-	              l1 = l1.next;
-	          }else{
-	              temp.next = l2;
-	              l2 = l2.next;
-	          }
-	          temp = temp.next;
-	      }
-	      return head.next;
+		    if(l1 == null) return l2;
+		    if(l2 == null) return l1;
+		    ListNode fakeHead = new ListNode(-1);
+		    ListNode temp = fakeHead;
+		    while(l1 != null && l2 != null){
+		        if(l1.val > l2.val){
+		            temp.next = l2;
+		            l2 = l2.next;
+		        }else{
+		            temp.next = l1;
+		            l1 = l1.next;
+		        }
+		        temp = temp.next;
+		    }
+		    if(l1 != null) temp.next = l1;
+		    if(l2 != null) temp.next = l2;
+		    return fakeHead.next;
 	    }
 	    
 	    /* Brute force: time limit exceeded*/
@@ -107,35 +102,33 @@ public class MergeKSortedLists {
 	}
 	
 	public static void main(String[] args) {
-//		ListNode ln = new ListNode(2);
-//		ln.next = new ListNode(5);	
-//		ln.next.next = new ListNode(8); 
-//		ln.next.next.next= new ListNode(33); 
-//		ln.next.next.next.next= new ListNode(50);
-//		
-//		ListNode list1 = new ListNode(1);
-//		list1.next = new ListNode(2);	
-//		list1.next.next = new ListNode(3); 
-//		list1.next.next.next= new ListNode(4); 
-//		list1.next.next.next.next= new ListNode(5);
-//		list1.next.next.next.next.next= new ListNode(6);
-//		list1.next.next.next.next.next.next= new ListNode(7);
-//		
-//		
-//		ListNode list2 = new ListNode(11);
-//		list2.next = new ListNode(12);	
-//		list2.next.next = new ListNode(13); 
-//		list2.next.next.next= new ListNode(14); 
-//		list2.next.next.next.next= new ListNode(15);
-//		list2.next.next.next.next.next= new ListNode(16);
-//		list2.next.next.next.next.next.next= new ListNode(17);
+		ListNode ln = new ListNode(2);
+		ln.next = new ListNode(5);	
+		ln.next.next = new ListNode(8); 
+		ln.next.next.next= new ListNode(33); 
+		ln.next.next.next.next= new ListNode(50);
+		
+		ListNode list1 = new ListNode(1);
+		list1.next = new ListNode(2);	
+		list1.next.next = new ListNode(3); 
+		list1.next.next.next= new ListNode(4); 
+		list1.next.next.next.next= new ListNode(5);
+		list1.next.next.next.next.next= new ListNode(6);
+		list1.next.next.next.next.next.next= new ListNode(7);
+		
+		
+		ListNode list2 = new ListNode(11);
+		list2.next = new ListNode(12);	
+		list2.next.next = new ListNode(13); 
+		list2.next.next.next= new ListNode(14); 
+		list2.next.next.next.next= new ListNode(15);
+		list2.next.next.next.next.next= new ListNode(16);
+		list2.next.next.next.next.next.next= new ListNode(17);
 		
 		List<ListNode> lists = new ArrayList<ListNode>();
-		ListNode ln = null;
-		ListNode list1 = null;
 		lists.add(ln);
 		lists.add(list1);
-//		lists.add(list2);
+		lists.add(list2);
 		MergeKSortedLists m = new MergeKSortedLists();
 		ListNode result = m.mergeKLists2(lists);
 		while(result != null){
