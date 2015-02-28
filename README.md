@@ -22,6 +22,9 @@
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [118 Pascal's Triangle](#118-pascal's-triangle)
+* [119 Pascal's Triangle II](#119-pascal's-triangle-ii)
+* [120 Triangle](#120-triangle)
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
@@ -40,6 +43,7 @@
 * [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
 * [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+* [189 Rotate Array](#189-rotate-array)
 
 
 <br>
@@ -1609,6 +1613,176 @@ The flattened tree should look like:
 <br>
 <br>
 
+###118 Pascal's Triangle
+
+>Given numRows, generate the first numRows of Pascal's triangle.
+
+<pre>
+For example, given numRows = 5,
+Return
+
+[
+     [1],
+    [1,1],
+   [1,2,1],
+  [1,3,3,1],
+ [1,4,6,4,1]
+]
+
+</pre>
+
+
+**Idea**: First row : 1. Then each row is calculated based on the last row. In each row the first element and the last element is 1. Thus val = j == 0 || j == pre.size() ? 1 : pre.get(j-1)+pre.get(j);
+
+		 public List<List<Integer>> generate(int numRows) {
+	        List<List<Integer>> list = new ArrayList<List<Integer>>();
+	        if(numRows <= 0) return list;
+	        List<Integer> firstR = new ArrayList<Integer>();
+	        firstR.add(1);
+	        list.add(firstR);
+	        for(int i = 1; i < numRows; i++){
+	            List<Integer> current = new ArrayList<Integer>();
+	            List<Integer> pre = list.get(list.size()-1);
+	            for(int j = 0; j <= pre.size(); j++){
+	                int val = j == 0 || j == pre.size() ? 1 : pre.get(j-1)+pre.get(j);
+	                current.add(val);
+	            }
+	            list.add(current);
+	        }
+	        return list;
+	    }
+	    
+
+***Related Problems***:
+
+* [118 Pascal's Triangle](#118-pascal's-triangle)
+* [119 Pascal's Triangle II](#119-pascal's-triangle-ii)
+* [120 Triangle](#120-triangle)
+
+<br>
+<br>
+
+
+###119 Pascal's Triangle II
+
+>Given an index k, return the kth row of the Pascal's triangle.
+
+For example, given k = 3,
+Return [1,3,3,1].
+
+Note:
+Could you optimize your algorithm to use only O(k) extra space?
+
+**Idea**: If we can only use O(k) space, then we need to store all rows info in a single array. So the current row is calculated based on the last row. Eg: the last row is 1 2 1, we need to replace it with 1 3 3 1. We can ignore the first 1. Then 3 = 1 + 2 = pre + list.get(j). We need to store the current elment before we overwrite it. 
+
+If there is no other requirements, then we can just use the result in [118 Pascal's Triangle](#118-pascal's-triangle) and get the last row. 
+
+
+**Attention**:
+
+- 1) k = 3, we return the fourth row.
+- 2) we need to store the current elment before we overwrite it. 
+
+<br>
+
+	public List<Integer> getRow(int rowIndex) {
+	    List<Integer> list = new ArrayList<Integer>();
+    	if(rowIndex < 0) return list;
+    	list.add(1);
+    	for(int i = 0; i < rowIndex; i++){
+    	    int pre = 1;
+    	    int current = 0;
+    	    for(int j = 0; j < list.size(); j++){
+    	        if(j == 0) continue;
+    	        current = list.get(j);
+    	        list.set(j, pre + list.get(j));
+    	        pre = current;
+    	    } 
+    	    list.add(1);
+    	}
+        return list;
+	}
+
+***Related Problems***:
+
+* [118 Pascal's Triangle](#118-pascal's-triangle)
+* [119 Pascal's Triangle II](#119-pascal's-triangle-ii)
+* [120 Triangle](#120-triangle)
+
+<br>
+<br>
+
+###120 Triangle
+
+>Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
+
+<pre>
+For example, given the following triangle
+[
+     [2],
+    [3,4],
+   [6,5,7],
+  [4,1,8,3]
+]
+The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+
+Note:
+Bonus point if you are able to do this using only O(n) extra space, where n is the total number of rows in the triangle.
+</pre>
+
+**Idea**: Begin from the second-last layer, calculate the min sum of the last layer and last second layer, then continue the second-last layer and third-last layer....eg: the sum of last layer and last-second layer: min(4, 1) + 6, min(1, 8) + 5, min(8, 3) + 7. If we are only allowed to use O(n) space, then we need to replace the sum each time.
+
+For example: Assume we use int[] res = new int[triangle.get(triangle.size()-1).size()] to store the sum
+
+<pre>
+
+Original triangle:             
+
+[							   
+     [2],					   
+    [3,4],					  
+   [6,5,7],					   
+  [4,1,8,3]                  
+] 
+
+
+res array:
+11
+9, 10
+7, 6, 10
+4, 1, 8, 3
+
+</pre>
+
+**Space**: O(n)
+
+
+We can also calculate from the top layer, then go down. It's similar to the method above. It's easier to handle the index if we begin from the last layer.
+
+	public int minimumTotal(List<List<Integer>> triangle) {
+	    if(triangle == null || triangle.size() == 0) return 0;
+	    int[] res = new int[triangle.get(triangle.size()-1).size()];
+	    for(int i = 0; i < res.length; i++){
+	        res[i] = triangle.get(triangle.size()-1).get(i);
+	    }
+	    for(int i = triangle.size()-2; i >= 0; i--){
+	        List<Integer> current = triangle.get(i);
+	        for(int j = 0; j < current.size(); j++){
+	            res[j] = Math.min(res[j], res[j+1]) + current.get(j);
+	        }
+	    }
+	    return res[0];
+	 }
+
+***Related Problems***:
+
+* [118 Pascal's Triangle](#118-pascal's-triangle)
+* [119 Pascal's Triangle II](#119-pascal's-triangle-ii)
+* [120 Triangle](#120-triangle)
+
+<br>
+<br>
+
 ###121 Best Time to Buy and Sell Stock
 >Say you have an array for which the ith element is the price of a given stock on day i.
 
@@ -2827,5 +3001,61 @@ Looks good, right? But we'll get out of memory error. Because in one test case, 
 
 <br>
 <br>
+
+
+###189Rotate Array
+
+>Rotate an array of n elements to the right by k steps.
+
+For example, with n = 7 and k = 3, the array [1,2,3,4,5,6,7] is rotated to [5,6,7,1,2,3,4].
+
+
+Note:
+Try to come up as many solutions as you can, there are at least 3 different ways to solve this problem.
+
+**Idea**
+
+- 1)Solution1:  In place. Reverse the array three times. (0, n-1) (0, k-1), (k-n-1)
+- 2)Solution2:  Use an extra array, and copy to the right place.
+
+<br>
+**Solution1**:
+
+	 public void rotate(int[] nums, int k) {
+        if(nums == null || nums.length == 0 || k <= 0) return;
+        k = k % nums.length;
+       reverse(nums, 0, nums.length-1);
+       reverse(nums, 0, k-1);
+       reverse(nums, k, nums.length-1);
+    }
+    
+    public void reverse(int[] nums, int left, int right){
+        while(left < right){
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            left++;
+            right--;
+        }
+    }
+    
+**Solution 2**:
+
+    public void rotate1(int[] nums, int k) {
+        if(nums == null || nums.length == 0 || k <= 0) return;
+        int[] result = new int[nums.length];
+        k = k % nums.length;
+        for(int i = 0; i < k; i++){
+            result[i] = nums[nums.length -k + i];
+        }
+        for(int i = k; i < nums.length; i++){
+            result[i] = nums[i-k];
+        }
+        for(int i = 0; i < nums.length; i++){
+            nums[i] = result[i];
+        }
+    }
+
+
 
 
