@@ -67,8 +67,8 @@
 
 **Space** O(n)
 
-
-	public int[] twoSum(int[] numbers, int target) {
+```java
+   public int[] twoSum(int[] numbers, int target) {
         //use hashmap
         Map<Integer, Integer> map = new HashMap<Integer, Integer>();
         int[] result = new int[2];
@@ -84,6 +84,7 @@
         }
         return result;
     }
+```    
 
 **Solution2**: We can first sort the numbers. Then use two pointers, the first pointer points to the begining and the second points to the end. Each time compares the target and num[p1]+num[p2], if target is bigger, p1++, else p2--. But it doesn't work for this problem, because we need to return the index. If we are requested to return the nunbers, we can use the following way.
 
