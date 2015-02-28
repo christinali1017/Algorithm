@@ -28,6 +28,8 @@
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
+* [126 Word Ladder](#126-word-ladder)
+* [127 word Ladder II](#127-word-ladder-ii)
 * [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
 * [141 Linked List Cycle](#141-linked-list-cycle)
 * [142 Linked List Cycle II](#142-linked-list-cycle-ii)
@@ -1933,6 +1935,207 @@ From above, we know that we can change the two dimensional array to one dimensio
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+
+<br>
+<br>
+
+###126 Word Ladder
+
+>Given two words (start and end), and a dictionary, find the length of shortest transformation sequence from start to end, such that:
+
+
+Only one letter can be changed at a time
+Each intermediate word must exist in the dictionary
+For example,
+
+Given:
+
+start = "hit"
+
+end = "cog"
+
+dict = ["hot","dot","dog","lot","log"]
+
+As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+
+return its length 5.
+
+Note:
+
+Return 0 if there is no such transformation sequence.
+
+All words have the same length.
+
+All words contain **only lowercase alphabetic characters**.
+
+
+
+
+**Idea**: This shortest transformation ladder is just like a shortest path in a graph. We teat each string as a graph node. If these two strings only have one different char, then we add an edge to these two nodes. When we come to the end string, we find the shortest path. 
+
+If we use bfs, we can use an additional lenqueue to record the path length of each node. 
+
+
+**Attention**: 
+
+- 1)Everytime, we visit a string in dict and add an edge, we need to remove it from dict. 
+- 2) char arr = start.toCharArray() should be inside the first for while loop. Otherwise, it may change more than one character of the string. 
+
+
+
+**Solution**:
+
+		 public static int ladderLength(String start, String end, Set<String> dict) {
+	        if(dict == null || dict.size() == 0 || start == null || end == null) return 0;
+	        Deque<String> queue = new LinkedList<String>();
+	        Deque<Integer> qlen = new LinkedList<Integer>();
+	        queue.offer(start);
+	        qlen.offer(1);
+	        while(!queue.isEmpty()){
+	            start = queue.pollFirst();
+	            int len = qlen.pollFirst();
+	            if(start.equals(end)) return len;
+	            for(int i = 0; i < start.length(); i++){
+	                char[] arr = start.toCharArray();
+	                for(arr[i] = 'a'; arr[i] <='z'; arr[i]++){
+	                    String s = new String(arr);
+	                    if(dict.contains(s)){
+	                        queue.addLast(s);
+	                        qlen.addLast(len+1);
+	                        dict.remove(s);
+	                    }
+	                }
+	            }
+	        }
+	        return 0;
+	    }
+    
+
+
+* [126 Word Ladder](#126-word-ladder)
+* [127 word Ladder II](#127-word-ladder-ii)
+
+<br>
+<br>
+
+###127 Word Ladder II
+
+>Given two words (start and end), and a dictionary, find all shortest transformation sequence(s) from start to end, such that:
+
+<pre>
+Only one letter can be changed at a time
+Each intermediate word must exist in the dictionary
+For example,
+
+Given:
+start = "hit"
+end = "cog"
+dict = ["hot","dot","dog","lot","log"]
+Return
+  [
+    ["hit","hot","dot","dog","cog"],
+    ["hit","hot","lot","log","cog"]
+  ]
+Note:
+All words have the same length.
+All words contain only lowercase alphabetic characters.
+</pre>
+
+
+<br>
+
+**Idea**: Becuase we need to output all the shortest paths, thus we need to record the parent node in the path. Then build paths based on these parent nodes.
+
+**Attention**:
+
+- 1) we need to remove end from dict if dict contains end, otherwise, we might have duplicates.
+- 2) When we find all the path to end, we can break and rebuild the paths.
+- 3) We can not remove element immediately when we find an neighbors in dict, because one node might have two or more parents. Thus we need to remove it after we have build the relationships between the node and all its parents. *We can remove it at the beginning of the next while loop*
+- 4) when add element to queue, check if queue has alreay contains this element.
+
+<br>
+
+	public List<List<String>> findLadders(String start, String end, Set<String> dict) {
+        List<List<String>> res = new ArrayList<List<String>>();
+        if(dict == null || dict.size() == 0 || start == null || end == null) return res;
+        /*if start equals end, we can return [[start, end]]*/
+        if(start.equals(end)){
+            List<String> temp = new ArrayList<String>();
+            temp.add(start);
+            temp.add(end);
+            return res;
+        }
+        
+        /*if dict contains end, remove end from dict, otherwise we might have duplicates */
+        dict.remove(end); 
+        
+        Queue<String> queue = new LinkedList<String> ();
+        
+        /*store the parent node of each node*/
+        Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+        queue.offer(start);
+        for(String s : dict){
+            map.put(s, new ArrayList<String>());
+        }
+        map.put(end, new ArrayList<String>());
+        List<String> cur = new ArrayList<String>();
+        
+        while(!queue.isEmpty()){
+            cur.clear();
+            for(int i = 0, size = queue.size(); i < size; i++){
+            	String temp = queue.poll();
+                cur.add(temp);
+                dict.remove(temp);
+            }
+            for(String s : cur){
+                for(int i = 0; i < s.length(); i++){
+                    char[] arr = s.toCharArray();
+                    for(arr[i] = 'a'; arr[i] <= 'z'; arr[i]++){
+                        String temp = new String(arr);
+                        /* It's ok not add this sentence. just to jump unnecessary operations*/
+                        if(temp.equals(s)) continue;
+                        if(temp.equals(end)){
+                            map.get(end).add(s);
+                        }
+                        if(dict.contains(temp)){
+                            if(!map.containsKey(temp)){
+                                map.put(temp, new ArrayList<String>());
+                            }
+                            map.get(temp).add(s);
+                            if(!queue.contains(temp)) queue.offer(temp);
+                        }
+                    }
+                }
+            }
+            
+            if(map.get(end).size()>0) break;
+        }
+        
+        List<String> path = new ArrayList<String>();
+        path.add(end);
+        buildPaths(map, res, end, start, path);
+        return res;
+ 	}
+ 	
+ 	public void buildPaths(Map<String, ArrayList<String>> map, List<List<String>> res, String end, String start, List<String> path){
+ 	    if(end.equals(start)){
+ 	        List<String> apath = new ArrayList<String>(path);
+ 	        Collections.reverse(apath);
+ 	        res.add(apath);
+ 	        return;
+ 	    }
+ 	    List<String> pre = map.get(end);
+ 	    for(String s : pre){
+ 	        path.add(s);
+ 	        buildPaths(map, res, s, start, path);
+ 	        path.remove(path.size()-1);
+ 	    }
+ 	}
+ 	
+
+
+* [126 Word Ladder](#126-word-ladder)
+* [127 word Ladder II](#127-word-ladder-ii)
 
 <br>
 <br>
