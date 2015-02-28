@@ -2043,6 +2043,8 @@ All words contain only lowercase alphabetic characters.
 
 
 <br>
+<span style="background-color:#303030 ">
+
 
 **Idea**: Becuase we need to output all the shortest paths, thus we need to record the parent node in the path. Then build paths based on these parent nodes.
 
@@ -2052,6 +2054,8 @@ All words contain only lowercase alphabetic characters.
 - 2) When we find all the path to end, we can break and rebuild the paths.
 - 3) We can not remove element immediately when we find an neighbors in dict, because one node might have two or more parents. Thus we need to remove it after we have build the relationships between the node and all its parents. *We can remove it at the beginning of the next while loop*
 - 4) when add element to queue, check if queue has alreay contains this element.
+
+</span>
 
 <br>
 
