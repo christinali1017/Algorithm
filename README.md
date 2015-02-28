@@ -85,9 +85,9 @@
         return result;
     }
 ```    
-
+<p style = "background-color: #303030; color: #ffffff">
 **Solution2**: We can first sort the numbers. Then use two pointers, the first pointer points to the begining and the second points to the end. Each time compares the target and num[p1]+num[p2], if target is bigger, p1++, else p2--. But it doesn't work for this problem, because we need to return the index. If we are requested to return the nunbers, we can use the following way.
-
+</p>
 **Time**: O(nlgn)
 
 **Spae**: O(1)
