@@ -22,8 +22,8 @@
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [118 Pascal's Triangle](#118-pascal's-triangle)
-* [119 Pascal's Triangle II](#119-pascal's-triangle-ii)
+* [118 Pascal Triangle](#118-pascal-triangle)
+* [119 Pascal Triangle II](#119-pascal-triangle-ii)
 * [120 Triangle](#120-triangle)
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
@@ -1613,7 +1613,7 @@ The flattened tree should look like:
 <br>
 <br>
 
-###118 Pascal's Triangle
+###118 Pascal Triangle
 
 >Given numRows, generate the first numRows of Pascal's triangle.
 
@@ -1655,15 +1655,15 @@ Return
 
 ***Related Problems***:
 
-* [118 Pascal's Triangle](#118-pascal's-triangle)
-* [119 Pascal's Triangle II](#119-pascal's-triangle-ii)
+* [118 Pascal Triangle](#118-pascal-triangle)
+* [119 Pascal Triangle II](#119-pascal-triangle-ii)
 * [120 Triangle](#120-triangle)
 
 <br>
 <br>
 
 
-###119 Pascal's Triangle II
+###119 Pascal Triangle II
 
 >Given an index k, return the kth row of the Pascal's triangle.
 
@@ -1675,7 +1675,7 @@ Could you optimize your algorithm to use only O(k) extra space?
 
 **Idea**: If we can only use O(k) space, then we need to store all rows info in a single array. So the current row is calculated based on the last row. Eg: the last row is 1 2 1, we need to replace it with 1 3 3 1. We can ignore the first 1. Then 3 = 1 + 2 = pre + list.get(j). We need to store the current elment before we overwrite it. 
 
-If there is no other requirements, then we can just use the result in [118 Pascal's Triangle](#118-pascal's-triangle) and get the last row. 
+If there is no other requirements, then we can just use the result in [118 Pascal Triangle](#118-pascal-triangle) and get the last row. 
 
 
 **Attention**:
@@ -1705,8 +1705,8 @@ If there is no other requirements, then we can just use the result in [118 Pasca
 
 ***Related Problems***:
 
-* [118 Pascal's Triangle](#118-pascal's-triangle)
-* [119 Pascal's Triangle II](#119-pascal's-triangle-ii)
+* [118 Pascal Triangle](#118-pascal-triangle)
+* [119 Pascal Triangle II](#119-pascal-triangle-ii)
 * [120 Triangle](#120-triangle)
 
 <br>
