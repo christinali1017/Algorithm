@@ -3,6 +3,7 @@
 # leetcode
 ## Overview
 * [1 Two Sum](#1-two-sum)
+* [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
 * [8 String to Integer atoi](#8-string-to-integer-atoi)
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
@@ -127,7 +128,77 @@ Related problem:
 <br>
 
 
+###3 Longest Substring without Repeating Characters
+>Given a string, find the length of the longest substring without repeating characters. For example, the longest substring without repeating letters for "abcabcbb" is "abc", which the length is 3. For "bbbbb" the longest substring is "b", with the length of 1.
 
+
+**Idea**: if encounter duplicates, start from the character after the dulicate appear at the first time. eg: abcab, at index 4 a is duplicated, we start count from index 1(after the first a).
+
+```java
+
+    public int lengthOfLongestSubstring(String s) {
+        if(s == null || s.length() == 0) return 0;
+        int start = 0;
+        int current = 0;
+        int max = 0;
+        Set<Character> set = new HashSet<Character>();
+        while(current < s.length()){
+            if(set.contains(s.charAt(current))){
+                max = Math.max(max, current - start);
+                while(s.charAt(start) != s.charAt(current)){
+                    set.remove(s.charAt(start));
+                    start++;
+                }
+                start++;
+            }else{
+                set.add(s.charAt(current));
+            }
+            current++;
+        }
+        max = Math.max(current- start, max);
+        return max;
+    }
+    
+
+```
+
+There is another solution use primitive string methods, such as indexOf, subString and contains. Because indexOf and contains take O(n*m), so it's really slow. It can be AC by leetcode, but when network is bad, it may time limit exceeded.
+
+```java
+
+    public int lengthOfLongestSubstring(String s) {
+    	if(s == null || s.length() == 0) return 0;  	
+    	int longest = 0;
+    	int current = 0;
+    	StringBuilder sBuilder = new StringBuilder();
+    	for(int i = 0, len = s.length(); i < len; i++){
+
+    		if(sBuilder.toString().contains(s.charAt(i)+"")){
+    			longest = Math.max(longest, current);
+    			int index = sBuilder.indexOf(s.charAt(i)+"");
+    			sBuilder = new StringBuilder(sBuilder.substring(index+1));
+    			sBuilder.append(s.charAt(i));
+    			current = sBuilder.length();
+    		}else{
+    			sBuilder.append(s.charAt(i));
+    			current++;
+    		}
+    	}
+    	longest = Math.max(longest, current);
+   		return longest;        
+    }
+
+```
+<br>
+
+
+***Related Problems***
+
+* [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
+
+* [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
+
+<br>
 
 
 ###8 String to Integer atoi
@@ -2819,9 +2890,49 @@ Related problem:
 				map.put(s.charAt(i), i);
 		}
 		return s.substring(start, end+1);
-	}
+	
 	
 ```	
+
+**Another way**: This is **not as fast as** the method above. If we encounter the third different element, we can find back from this element and reset the start window to make it contains only two different elements.
+
+```java
+	public String subStr(String s){
+		if(s == null || s.length() == 0) return s;
+		Map<Character, Integer> map = new HashMap<Character, Integer>();
+		int start = 0;
+		int max = 0;
+		int end = 0;
+		int j = 0;
+		for(int i = 0; i < s.length(); i++){
+			if(i == s.length()-1 && map.size() <= 2 && map.containsKey(s.charAt(i))){
+				if(end == 0) return s;
+				else{
+					if(max < s.length() - j){
+						start = j;
+						end = s.length()-1;	
+					}
+				}
+			}
+			if(!map.containsKey(s.charAt(i)) && map.size() == 2){
+				if(i - j > max){
+					start = j;
+					end = i-1;
+					max = i-j;
+				}
+				int temp = i-1;
+				char c = s.charAt(temp);
+				while(temp >= 0 && s.charAt(temp) == c) temp--;
+				j = temp + 1;
+				map.remove(s.charAt(temp));
+			}
+			map.put(s.charAt(i), i);
+		}
+		return j == 0 ? s : s.substring(start, end+1);
+		
+	}
+
+```
 **Extention:** Find the longest substring contains at most k unique elements. Idea is much similar with k = 2. When we encounter the k+1 character, we need to calculate the length of string do related operations and move slide window, let it contains only k-1 different characters, add the k+1 character, and keep going.  
 
 **Time Complexity:** O(k * n)
@@ -2866,7 +2977,12 @@ Related problem:
 		return s.substring(start, end+1);
 	}
 ```
-<br>
+
+***Related Problems***
+
+* [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
+
+* [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
 
 <br>
 
