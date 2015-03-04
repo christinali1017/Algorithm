@@ -575,9 +575,7 @@ Try to do this in one pass.
 
 - 1) Use a fake head, thus we don't need to check if head is null
 
-<br>
 
-<br>
 ```java
        public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
 	    if(l1 == null) return l2;
