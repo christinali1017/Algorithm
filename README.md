@@ -1648,8 +1648,7 @@ return its zigzag level order traversal as:
 
 **Idea** we can solve this problem by changing a little bit about BFS. We need tp print zigzag, thus we print one row then reversely print next row. 
 
-
-	```java
+```java
 	
 	  public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
         List<List<Integer>> list = new ArrayList<List<Integer>>();
@@ -1677,7 +1676,7 @@ return its zigzag level order traversal as:
     	return list;
     }
     
-	```
+```
 
 
     
