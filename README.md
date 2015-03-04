@@ -1626,7 +1626,7 @@ Both the left and right subtrees must also be binary search trees.
 ```
 
 
-###103 Binary Tree Zigzag Lvel Order Traversal
+###103 Binary Tree Zigzag Level Order Traversal
 
 > Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
 
