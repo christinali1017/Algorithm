@@ -11,15 +11,18 @@
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt(x)](#69-sqrt(x))
+* [70 Climbing Stairs](#70-climbing-stairs)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 * [86 Partition List](#86-partition-list)
 * [89 Gray Code](#89-gray-code)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
@@ -50,6 +53,10 @@
 
 
 <br>
+
+
+* [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
+
 
 ### 1 Two Sum
 >Given an array of integers, find two numbers such that they add up to a specific target number.
@@ -540,6 +547,7 @@ Try to do this in one pass.
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -597,6 +605,7 @@ Try to do this in one pass.
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -625,15 +634,17 @@ Try to do this in one pass.
 1) Solution1:
 
 Use priorityqueue, add the head of k lists two queue, each time poll the smallest element from the queue then add the smallest.next to the queue until queue is empty. We need to to give another another parameter to priorityqueue when initialize.
-<pre> 
+
 ```java
+
 	PriorityQueue queue = new PriorityQueue(size, new Comparator<ListNode>(){
 		public int compare(ListNode arg1, ListNode arg2){
 			return arg1 - arg2;
 		}
 	});
+	
 ```	
-</pre>
+
 
 **Time complexity: nklgk** (lgk for insert element, nk elements).
 
@@ -761,6 +772,63 @@ method2: each time merge two lists, until all lists are merged.
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
+* [61 Rotate List](#61-rotate-list)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
+* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [141 Linked List Cycle](#141-linked-list-cycle)
+* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
+* [143 Reorder List](#143-reorder-list)
+* [147 Insertion Sort List](#147-insertion-sort-list)
+* [148 Sort List](#148-sort-list)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
+<br>
+<br>
+
+
+###24 Swap Nodes in Pairs
+
+>Given a linked list, swap every two adjacent nodes and return its head.
+
+For example,
+Given 1->2->3->4, you should return the list as 2->1->4->3.
+
+Your algorithm should use only constant space. You may not modify the values in the list, only nodes itself can be changed.
+
+**Idea**: Just swap pair each time until end. 
+
+**Attention**: If the number of nodes is odd, we need to add the last node to the list.
+
+```java
+   public ListNode swapPairs(ListNode head) {
+	    if(head == null || head.next == null) return head;
+	    ListNode fakeHead = new ListNode(-1);
+	    ListNode temp = fakeHead;
+	    while(head != null && head.next != null){
+	        ListNode nextnext = head.next.next;
+	        temp.next = head.next;
+	        temp.next.next = head;
+	        temp = head;
+	        head = nextnext;
+	    }
+	    temp.next = head;
+	    return fakeHead.next;
+	  }
+```
+
+
+***Related problems***:
+
+* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -936,6 +1004,7 @@ code:
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -1006,6 +1075,96 @@ code:
 
 <br>
 
+###70 Climbing Stairs
+
+>You are climbing a stair case. It takes n steps to reach to the top.
+
+Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+**Idea**: Each time we can climb 1 steps or 2 steps, thus Fn = Fn-1 + Fn-2. It's just a fibonacci sequence. 
+
+**Solution1** Use dp, Time O(n), Space O(1)
+
+```java
+ public int climbStairs(int n){
+        if(n == 0) return 1;
+        if(n == 1) return 1;
+        int n1 = 1;
+        int n2 = 1;
+        int n3 = 0;
+        for(int i = 2; i <= n; i++){
+            n3 = n1 + n2;
+            n1 = n2;
+            n2 = n3;
+        }
+        return n3;
+    }
+```    
+ 
+ 
+ **Solution2**: Use matrix, O(lgn) time.
+ 
+ ```java
+ 
+   public int climbStairs2(int n){
+        if(n < 0) return 0;
+        if(n <= 1) return 1;
+        int[][] res = {{1, 0}, {0, 1}};
+        int[][] m = {{1, 1}, {1, 0}};
+        while(n > 0){
+            if(n % 2 == 1) res = multiplyMatrix(res, m);
+            n = n/2;
+            m = multiplyMatrix(m, m);
+        }
+        return res[0][0];
+    }
+    
+    
+    public int[][] multiplyMatrix(int[][] m, int[][]n){
+        int a = m[0][0] * n[0][0] + m[0][1] * n[1][0];
+        int b = m[0][0] * n[0][1] + m[0][1] * n[1][1];
+        int c = m[1][0] * n[0][0] + m[1][1] * n[1][0];
+        int d = m[1][0] * n[0][1] + m[1][1] * n[1][1];
+        int[][] res = {{a, b}, {c, d}};
+        return res;
+    }
+ 
+```
+
+**Solution 3** : recursion, O(2 ^ n) time.
+```java
+    public int climbStairs(int n) {
+        if(n < 0) return 0;
+        if(n == 1 || n == 0) return 1;
+        return climbStairs(n-1)+climbStairs(n-2);
+    }
+    
+```
+
+We see that the value of Fibonacci increases exponentially. If we use int, then we can only compute to F47, if we use long, we can compute to F96. So if our required numbers are big, it's unreasonable to use in/long as return value. We can use BigInteger in java. Eg:
+
+```java
+
+	public static String bigFib(int n){
+    	if(n <= 0) return "0";
+    	if(n == 1) return "1";
+    	BigInteger n1 = new BigInteger("0");
+    	BigInteger n2 = new BigInteger("1");
+    	BigInteger n3 = new BigInteger("0");
+        for(int i = 2; i <= n; i++){
+        	n3 = n1.add(n2);
+        	n1 = n2;
+        	n2 = n3;
+        }
+        return n3.toString();
+    	
+    }
+    
+
+``` 
+
+
+
 
 ###82 Remove Duplicates from Sorted List
 
@@ -1014,6 +1173,8 @@ code:
 For example,
 Given 1->1->2, return 1->2.
 Given 1->1->2->3->3, return 1->2->3.
+
+**Idea**: It's simple compare to * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii). Because there are less corner cases related to null pointers. Just if head != null, start from the head.next, when encounter duplicates, delete that node. 
 
 ```java
    public ListNode deleteDuplicates(ListNode head) {
@@ -1038,6 +1199,7 @@ Given 1->1->2->3->3, return 1->2->3.
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -1104,6 +1266,7 @@ Given 1->1->1->2->3, return 2->3.
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -1376,6 +1539,7 @@ Pretty much the save with the above, just change while to for:
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -1393,6 +1557,75 @@ Pretty much the save with the above, just change while to for:
 
 <br>
 <br>
+
+###98 Validate Binary Search Tree
+
+>Given a binary tree, determine if it is a valid binary search tree (BST).
+
+Assume a BST is defined as follows:
+
+The left subtree of a node contains only nodes with keys **less than** the node's key.
+The right subtree of a node contains only nodes with keys **greater than** the node's key.
+Both the left and right subtrees must also be binary search trees.
+
+**Idea**: We know that if a tree is a binary search tree, then it's inorder traversal is sequential. Thus we can traverse the tree inorder to check if everynode's predecessor is less than the node. We can also traverse the tree inorder and save the sequence, then check if there is out of order nodes. But it will require addtional space. 
+
+**Time**: O(n) **Space**: O(lgn)
+
+```java
+   public boolean isValidBST(TreeNode root) {
+       if(root == null) return true;
+       boolean[] result = new boolean[1];
+       result[0] = true;
+       helper(root, new TreeNode[1], result);
+       return result[0];
+   }
+   
+   public void helper(TreeNode root, TreeNode[] pre, boolean[] result){
+       if(root == null) return;
+       helper(root.left, pre, result);
+       if(pre[0] != null && pre[0].val >= root.val) result[0] = false;
+       pre[0] = root;
+       helper(root.right, pre, result);
+   }
+```
+
+
+**Other idea**: We record the lower bound and upper bound for each node. If a node's value is not between the lower bound and upper bound, return false. There is a problem with this method: if the tree contains nodes with value of Integer.MIN_VALUE AND Integer.MAX_VALUE. 
+
+```java
+
+    public boolean isValidBST1(TreeNode root) {  
+        return helper1(root, Integer.MIN_VALUE, Integer.MAX_VALUE);   
+    }  
+    
+    public boolean helper1(TreeNode root, int min, int max)     
+    {    
+        if(root == null)    
+           return true;    
+        if(root.val <= min || root.val >= max)  
+             return false;    
+         return helper1(root.left, min, root.val) && helper1(root.right, root.val, max);  
+    }
+	
+
+```
+
+**Wrong answer**: The following code just check if each node maintains node.val > node.left.val and node.val < node.right.val. However, even though each node satisfies this condition, it might not be a binary search tree. ***Eg: 10,5,15,#,#,6,20***
+
+```java
+
+  public boolean isValidBST1(TreeNode root) {
+    	if(root == null) return true;
+    	if(root.left == null && root.right == null) return true;
+    	if(root.left != null && root.left.val >= root.val) return false;
+    	if(root.right != null && root.right.val <= root.val) return false;
+        return isValidBST(root.left) && isValidBST(root.right);
+   }
+```
+
+
+
     
 ###108 Convert Sorted Array to Binary Search Tree  
 
@@ -1428,6 +1661,7 @@ root.right = mid of (mid + 1, end)
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -1578,6 +1812,7 @@ Store all the nodes in an array, then use the array to create the BST. just like
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -1683,6 +1918,7 @@ The flattened tree should look like:
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -2309,6 +2545,7 @@ All words contain only lowercase alphabetic characters.
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -2357,6 +2594,7 @@ Can you solve it without using extra space?
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -2414,6 +2652,7 @@ Can you solve it without using extra space?
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -2525,6 +2764,7 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -2619,6 +2859,7 @@ If we add a fakeHead pointer to avoid the null pointer cases, we can have more c
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -2688,6 +2929,7 @@ If we add a fakeHead pointer to avoid the null pointer cases, we can have more c
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
@@ -3094,6 +3336,7 @@ Solution2:
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
+* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [61 Rotate List](#61-rotate-list)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
