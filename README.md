@@ -23,6 +23,7 @@
 * [89 Gray Code](#89-gray-code)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
 * [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
+* [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
@@ -40,6 +41,7 @@
 * [143 Reorder List](#143-reorder-list)
 * [147 Insertion Sort List](#147-insertion-sort-list)
 * [148 Sort List](#148-sort-list)
+* [155 Min Stack](#155-min-stack)
 * [156 Binary Tree Upside Down](#156-binary-tree-upside-down)
 * [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characters-given-read4-ii-call-multiple-times) 
@@ -56,6 +58,7 @@
 
 
 * [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
+* [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 
 
 ### 1 Two Sum
@@ -1623,6 +1626,59 @@ Both the left and right subtrees must also be binary search trees.
 ```
 
 
+###103 Binary Tree Zigzag Lvel Order Traversal
+
+> Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
+
+<pre>
+For example:
+Given binary tree {3,9,20,#,#,15,7},
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its zigzag level order traversal as:
+[
+  [3],
+  [20,9],
+  [15,7]
+]
+</pre>
+
+**Idea** we can solve this problem by changing a little bit about BFS. We need tp print zigzag, thus we print one row then reversely print next row. 
+
+
+	```java
+	
+	  public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+    	if(root == null) return list;
+    	Queue<TreeNode> queue = new LinkedList<TreeNode>();
+    	queue.offer(root);
+    	boolean inorder = true;
+    	while(!queue.isEmpty()){
+    	    List<Integer> cur = new ArrayList<Integer>();
+    	    for(int i = 0, size = queue.size(); i < size; i++){
+    	        TreeNode temp = queue.poll();
+    	        cur.add(temp.val);
+    	        if(temp.left != null) queue.offer(temp.left);
+    	        if(temp.right != null) queue.offer(temp.right);
+    	    }
+    	    if(inorder == true){
+    	        list.add(cur);
+    	        inorder = false;
+    	    }else{
+    	        Collections.reverse(cur);
+    	        list.add(cur);
+    	        inorder = true;
+    	    }
+    	}
+    	return list;
+    }
+    
+	```
+
 
     
 ###108 Convert Sorted Array to Binary Search Tree  
@@ -2944,7 +3000,57 @@ If we add a fakeHead pointer to avoid the null pointer cases, we can have more c
 * [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
-<br>		
+<br>
+
+###155 Min Stack
+>Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+<pre>
+push(x) -- Push element x onto stack.
+pop() -- Removes the element on top of the stack.
+top() -- Get the top element.
+getMin() -- Retrieve the minimum element in the stack.
+</pre>
+
+
+**Idea**: Memory limits. If we just a corresponding minstack with the same length of the stack, we would exceed the limit on leetcode. What should we do? We just need to keep the current smallest element. Eg: push(1) to stack, we push(1) to minstack. Next time we push(2) to stack, we don't need to push(2) to minstack. Because the min value is still 1. Thus, every time we push an element to stack, we check if element x > minstack.peek(), if true, we don't need to push. When pop, we check if element x == minstack.peek(), if equals, minstack.pop().
+
+**Attention** : Duplicate elements. (less or equal than, push into min stack). Eg: push (0), push(1), push(0), the minstack should have element 0, 0. 
+
+
+```java
+
+public class MinStack {
+	 Stack<Integer> stack; 
+	   Stack<Integer> minstack;
+	   public MinStack(){
+	       stack = new Stack<Integer>();
+	       minstack = new Stack<Integer>();
+	   }
+	    public void push(int x){
+	        stack.push(x);
+	        if(minstack.isEmpty() || minstack.peek() >= x)
+	            minstack.push(x);
+	    }
+	    
+	    public void pop(){
+	        if(stack.isEmpty()) return;
+	        int val = stack.pop();
+	        if(val == minstack.peek()) minstack.pop();
+	    }
+	    
+	    public int top(){
+	        if(stack.isEmpty()) return -1;
+	        return stack.peek();
+	    }
+	    
+	    public int getMin(){
+	    	if(stack.isEmpty()) return -1;
+	    	return minstack.peek();
+	    }
+	}
+
+```
+ 		
     
 ### 156 Binary Tree Upside Down
 
