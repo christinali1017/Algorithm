@@ -14,6 +14,7 @@
 * [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
+* [53 Maximum Subarray](#53-maximum-subarray)
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt(x)](#69-sqrt(x))
 * [70 Climbing Stairs](#70-climbing-stairs)
@@ -952,6 +953,67 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 <br>
 
 <br>
+
+
+###53 Maximum Subarray
+
+>Find the contiguous subarray within an array **(containing at least one number)** which has the largest sum.
+
+For example, given the array [−2,1,−3,4,−1,2,1,−5,4],
+the contiguous subarray [4,−1,2,1] has the largest sum = 6.
+
+**Idea**:
+- 1) solution1: use dp. Store a local max and global max. Local max represents the max subarray which includes the element A[i]. Thus Local Max = max(local+A[i], A[i]). global = max(global, local).
+
+**Attention**: Because the maxsubarray contains at least one number, thus the max sum might be negative when the array only contains one negative numbers or when all the numbers are negative.
+
+
+
+```java
+
+	 public int maxSubArray(int[] A) {
+		 if(A == null || A.length == 0) return 0;
+		 int local = A[0];
+		 int global = A[0];
+		 for(int i = 1; i < A.length; i++){
+			 local = Math.max(A[i], local+A[i]);
+			 global = Math.max(local, global);
+		 }
+		 return global;
+	 }
+
+```
+
+- 2) solution 2: One pass. When encounter a negative number, record the current max. when sum + A[i] < 0 && A[i] > 0, change the local max to A[i]. 
+
+```java
+
+    public int maxSubArray1(int[] A) {
+        if(A == null || A.length == 0) return 0;
+        int max = Integer.MIN_VALUE;
+        int temp = A[0];
+        for(int i = 1; i < A.length; i++){
+        	if(temp < 0){
+        		max = Math.max(max,temp);
+        		temp = A[i];
+        	}else{
+        		if(A[i] > 0) temp += A[i];
+        		else if(temp + A[i] < 0){
+        			max = Math.max(max,temp);
+            		temp = A[i];
+        		}else{
+        			max = Math.max(max,temp);
+            		temp += A[i];
+        		}
+        	}
+        }
+        max = Math.max(max,temp);
+        return max;
+    }
+
+``` 
+
+
 
 
 ###61 Rotate List
@@ -2156,6 +2218,34 @@ We can also calculate from the top layer, then go down. It's similar to the meth
 	    return res[0];
 	 }
 ```
+
+**Solution 2**: From top to bottom:
+
+```java
+	/* from top to bottom */
+	 public int minimumTotal1(List<List<Integer>> triangle) {
+		   if(triangle == null || triangle.size() == 0) return 0;
+		   int[] sum = new int[triangle.get(triangle.size()-1).size()];
+		   sum[0] = triangle.get(0).get(0);
+		   int min = Integer.MAX_VALUE;
+		   for(int i = 1; i < triangle.size(); i++){
+		       List<Integer> cur = triangle.get(i);
+		       for(int j = cur.size() -1 ; j >= 0; j--){
+		          if(j == cur.size()-1) sum[j] = cur.get(j) + sum[j-1];
+		          else if(j == 0) sum[j] = cur.get(j) + sum[0];
+		          else sum[j] = cur.get(j) + Math.min(sum[j], sum[j-1]);
+		       }
+		   }
+		   for(int i = 0; i < sum.length; i++){
+		       if(min > sum[i]) min = sum[i];
+		   }
+		   return min;
+		 }
+    
+
+
+```
+
 ***Related Problems***:
 
 * [118 Pascal's Triangle](#118-pascal's-triangle)

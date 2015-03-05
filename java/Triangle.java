@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Triangle {
+	/* from bottom to top*/
 	public int minimumTotal(List<List<Integer>> triangle) {
 	    if(triangle == null || triangle.size() == 0) return 0;
 	    int[] res = new int[triangle.get(triangle.size()-1).size()];
@@ -18,6 +19,26 @@ public class Triangle {
 	    }
 	    return res[0];
 	 }
+	
+	/* from top to bottom */
+	 public int minimumTotal1(List<List<Integer>> triangle) {
+		   if(triangle == null || triangle.size() == 0) return 0;
+		   int[] sum = new int[triangle.get(triangle.size()-1).size()];
+		   sum[0] = triangle.get(0).get(0);
+		   int min = Integer.MAX_VALUE;
+		   for(int i = 1; i < triangle.size(); i++){
+		       List<Integer> cur = triangle.get(i);
+		       for(int j = cur.size() -1 ; j >= 0; j--){
+		          if(j == cur.size()-1) sum[j] = cur.get(j) + sum[j-1];
+		          else if(j == 0) sum[j] = cur.get(j) + sum[0];
+		          else sum[j] = cur.get(j) + Math.min(sum[j], sum[j-1]);
+		       }
+		   }
+		   for(int i = 0; i < sum.length; i++){
+		       if(min > sum[i]) min = sum[i];
+		   }
+		   return min;
+		 }
     
     public static void main(String[] args) {
     	List<List<Integer>> triangle = new ArrayList<List<Integer>>();
