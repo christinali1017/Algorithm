@@ -324,6 +324,19 @@ There is another solution use primitive string methods, such as indexOf, subStri
 
 ```
 
+5) python accepts integer larger than INT_MAX and integer smaller than INT_MIN, so make an if-else on that.
+
+``` python
+class Solution:
+    INT_MIN = -2147483648
+    INT_MAX = 2147483647
+
+    if num < self.INT_MIN:
+        return self.INT_MIN
+    elif num > self.INT_MAX:
+        return self.INT_MAX
+```
+
 <br>
 <br>
 
