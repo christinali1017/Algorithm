@@ -3,6 +3,7 @@
 # leetcode
 ## Overview
 * [1 Two Sum](#1-two-sum)
+* [2 Add Two Numbers](#2-add-two-numbers)
 * [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
 * [8 String to Integer atoi](#8-string-to-integer-atoi)
 * [11 Container with Most Water](#11-container-with-most-water)
@@ -138,6 +139,72 @@ Related problem:
 <br>
 <br>
 
+### 2 Add Two Numbers
+
+> You are given two linked lists representing two non-negative numbers.
+> The digits are stored in reverse order and each of their nodes contain a single digit.
+> Add the two numbers and return it as a linked list.
+>
+> **`Input:`** `(2 -> 4 -> 3) + (5 -> 6 -> 4)`
+>
+> **`Output`** `(7 -> 0 -> 8)`
+
+**Idea**: 
+
+Digits are stored in reverse order, that means `(2 -> 4 -> 3)` is `342`. When it reaches 10 after addition, the next node shall add 1 and current node shall only keep the unit number: `(3 -> 2) + (9 -> 1) = (2 -> 4)`; if one integer doesn't have more numbers, add the remaining one with current result.
+
+**Code**:
+
+``` cpp
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+ListNode *p1 = l1, *p2 = l2;
+ListNode *r = new ListNode(0);
+ListNode *begin = r;
+int addup = 0, sum = 0;
+
+while (p1 && p2) {
+sum = p1->val + p2->val + addup;
+r->next = new ListNode(sum % 10);
+addup = sum / 10;
+p1 = p1->next;
+p2 = p2->next;
+r = r->next;
+}
+
+ListNode *px = NULL;
+if (p1) { px = p1; }
+else if (p2) { px = p2; }
+
+while (px) { 
+sum = addup + px->val;
+r->next = new ListNode(sum % 10);
+addup = sum / 10;
+px = px->next;
+r = r->next;
+}
+if (addup > 0) { r->next = new ListNode(addup); }
+
+return begin->next;
+}
+};
+```
+
+The time complexity is O(m+n) and space complexity is O(m+n).
+
+
+
+<br>
+<br>
 
 ###3 Longest Substring without Repeating Characters
 >Given a string, find the length of the longest substring without repeating characters. For example, the longest substring without repeating letters for "abcabcbb" is "abc", which the length is 3. For "bbbbb" the longest substring is "b", with the length of 1.
@@ -255,6 +322,19 @@ There is another solution use primitive string methods, such as indexOf, subStri
 		return true;
 	}
 
+```
+
+5) python accepts integer larger than INT_MAX and integer smaller than INT_MIN, so make an if-else on that.
+
+``` python
+class Solution:
+    INT_MIN = -2147483648
+    INT_MAX = 2147483647
+
+    if num < self.INT_MIN:
+        return self.INT_MIN
+    elif num > self.INT_MAX:
+        return self.INT_MAX
 ```
 
 <br>
