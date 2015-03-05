@@ -14,6 +14,7 @@
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
 * [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [29 Divide Two Integers](#29-divide-two-integers)
+* [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [53 Maximum Subarray](#53-maximum-subarray)
@@ -59,10 +60,6 @@
 
 
 <br>
-
-
-* [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
-* [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 
 
 ### 1 Two Sum
@@ -972,7 +969,25 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 
 <br>
 
-###Trapping Rain Water
+
+###38 Count and Say
+>The count-and-say sequence is the sequence of integers beginning as follows:
+
+>1, 11, 21, 1211, 111221, ...
+
+>1 is read off as "one 1" or 11.
+
+>11 is read off as "two 1s" or 21.
+
+>21 is read off as "one 2, then one 1" or 1211.
+
+>Given an integer n, generate the nth sequence.
+
+>Note: The sequence of integers will be represented as a string.
+
+
+
+###42 Trapping Rain Water
 
 >Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
@@ -1811,6 +1826,11 @@ Both the left and right subtrees must also be binary search trees.
    }
 ```
 
+***Related Problems ***
+
+* [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
+* [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
+
 
 ###103 Binary Tree Zigzag Level Order Traversal
 
@@ -2461,7 +2481,7 @@ Related problem:
 >Note:
 >You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
 
-**Idea:** We are only allowed  at most two transactions. Thus, we can use two arrays to record the max profit before profits[i](including i), denote as l[i], and max profits after profits[i](including i), denote as r[i]. Then find the max of l[i] + r[i]. 
+**Idea:** We are only allowed  at most two transactions. Thus, we can use two arrays to record the max profit before profits[i] (including i), denote as l[i], and max profits after profits[i] (including i), denote as r[i]. Then find the max of l[i] + r[i]. 
 
 **Time complexity**: O(n) 
 
