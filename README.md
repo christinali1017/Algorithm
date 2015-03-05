@@ -14,6 +14,7 @@
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
 * [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [29 Divide Two Integers](#29-divide-two-integers)
+* [42 Trapping Rain Water](#42-trapping-rain-water)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [61 Rotate List](#61-rotate-list)
@@ -36,7 +37,8 @@
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
 * [126 Word Ladder](#126-word-ladder)
-* [127 word Ladder II](#127-word-ladder-ii)
+* [127 Word Ladder II](#127-word-ladder-ii)
+* [135 Candy](#135-candy)
 * [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
 * [141 Linked List Cycle](#141-linked-list-cycle)
 * [142 Linked List Cycle II](#142-linked-list-cycle-ii)
@@ -287,6 +289,14 @@ Note: You may not slant the container.
 
 ```
 
+<br>
+<br>
+
+***Related***:
+
+* [11 Container with Most Water](#11-container-with-most-water)
+* [42 Trapping Rain Water](#42-trapping-rain-water)
+* [135 Candy](#135-candy)
 
 
 ###15 3Sum
@@ -957,6 +967,81 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 
 <br>
 
+<br>
+
+###Trapping Rain Water
+
+>Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
+
+For example, 
+Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
+
+**Idea**: 
+
+- 1) Solution1: Like [11 Container with Most Water](#11-container-with-most-water), we record two pointers, l and r, min = min(A[l], A[r]), if A[l] < A[r], we move right, and add water if A[l] < min; similarly, if A[l] > A[r], we move r left, and if A[r] < min, we add water. When l >= r, we get the total volumn. 
+
+
+```java
+
+ public int trap(int[] A) {
+    if(A == null || A.length == 0) return 0;
+    int res = 0;
+    int l = 0;
+    int r = A.length - 1;
+    while(l < r){
+        int min = Math.min(A[l], A[r]);
+        if(A[l] < A[r]){
+            l++;
+            while(l < r && A[l] < min){
+                res += min - A[l++];
+            }
+        }else{
+            r--;
+            while(l < r && A[r] < min){
+                res += min - A[r--];
+            }
+        }
+    }
+    return res;
+  }
+
+```
+
+<br>
+
+- 2)solution 2 : we traverse the array two times, left to right and right to left. Then we can get the min(max height on the left of A[i], max height on the right of A[i]). So add the capacity of each bar, we get the total capacity.
+
+```java
+
+	  public int trap(int[] A) {
+		if(A == null || A.length == 0) return 0;
+		int[] left = new int[A.length];
+		int max = 0;
+		for(int i = 0; i < A.length; i++){
+		    left[i] = max;
+		    max = Math.max(max, A[i]);
+		}
+		
+		int res = 0;
+		max = 0;
+		for(int i = A.length-1; i>=0; i--){
+		    res += Math.min(max, left[i]) - A[i] > 0 ? (Math.min(max, left[i]) - A[i]): 0 ;
+		    max = Math.max(max, A[i]);
+		}
+		return res;
+	}
+
+```
+
+
+
+***Related***:
+
+* [11 Container with Most Water](#11-container-with-most-water)
+* [42 Trapping Rain Water](#42-trapping-rain-water)
+* [135 Candy](#135-candy)
+
+<br>
 <br>
 
 
@@ -2644,12 +2729,186 @@ All words contain only lowercase alphabetic characters.
  	
 ```
 
+***Related problems***:
+
 * [126 Word Ladder](#126-word-ladder)
 * [127 word Ladder II](#127-word-ladder-ii)
 
 <br>
 <br>
 
+
+###135 Candy
+
+> There are N children standing in a line. Each child is assigned a rating value.
+
+> You are giving candies to these children subjected to the following requirements:
+
+> Each child must have at least one candy.
+
+> Children with a higher rating get more candies than their neighbors.
+
+> What is the minimum candies you must give?
+
+**Idea**: 
+
+- 1) Solution1 : Traverse the array two times, left to right and right to left. In the first traverse, we calculate the min candy for each child based on its left neighbor. In the right to left traverse, we calculate the min candy for each child based on its right neighbor. It's easier to use 2 array and traverse three times. We can reduce it to 1 array and 2 pass. 
+
+**Three pass, two array**
+
+```java
+
+ public static int candy(int[] ratings) {
+        if(ratings == null || ratings.length == 0) return 0;
+        int[] left = new int[ratings.length];
+        left[0] = 1;
+        for(int i = 1; i < ratings.length; i++){
+            if(ratings[i] > ratings[i-1]) left[i] = left[i-1] +1;
+            else left[i] = 1;
+        }
+        int[] right = new int[ratings.length];
+        right[ratings.length - 1] = 1;
+        for(int i = ratings.length - 2; i >= 0; i--){
+             if(ratings[i] > ratings[i+1]){
+                right[i] = right[i+1] + 1;
+            }else right[i] = 1;
+        }
+        int res = 0;
+        for(int i = 0; i < ratings.length; i++){
+            res += Math.max(left[i], right[i]);
+        }
+        return res;
+    }
+
+```
+
+<br>
+
+**Two pass, one array**
+
+```java
+
+    public static int candy(int[] ratings) {
+        if(ratings == null || ratings.length == 0) return 0;
+        int[] left = new int[ratings.length];
+        left[0] = 1;
+        for(int i = 1; i < ratings.length; i++){
+            if(ratings[i] > ratings[i-1]) left[i] = left[i-1] +1;
+            else left[i] = 1;
+        }
+        int res = left[ratings.length-1];
+        for(int i = ratings.length - 2; i >= 0; i--){
+            int right = 1;
+            if(ratings[i] > ratings[i+1]){
+                right = left[i+1] + 1;
+            }
+            res += Math.max(right, left[i]);
+            left[i] = right;
+        }
+        return res;
+    }
+
+```
+
+
+
+<br>
+
+- 2) solution 2: Brute force. O(n ^2 )
+
+```java
+
+    public static int candy(int[] ratings) {
+    	if(ratings == null || ratings.length == 0) return 0;
+    	
+    	int preRating = ratings[0],
+    		count = 1,
+    		preCandy = 1,
+    		lastIncreasingIndex = 0,
+    		lastDecreasingIndex = 0,
+    		lastIncreasingCandy = 1,
+    		changeFlag = 0;
+    	for(int i = 1, len = ratings.length; i < len; i++){
+    		if(ratings[i] >= preRating){
+    			if(changeFlag == 1){				
+    				if(ratings[i] == preRating){
+        				/*if increasing sequence is longer than deceasing sequence */
+        				if(lastIncreasingCandy > lastDecreasingIndex - lastIncreasingIndex +1){
+        					count += sumTools(lastDecreasingIndex - lastIncreasingIndex);
+        				}else{
+            				count -= lastIncreasingCandy;
+            				count += sumTools(lastDecreasingIndex - lastIncreasingIndex+1);
+        				}
+    					count += 1;
+    					preCandy = 1;
+    				}else{
+        				/*if increasing sequence is longer than deceasing sequence */
+        				if(lastIncreasingCandy > lastDecreasingIndex - lastIncreasingIndex +1){
+        					count += sumTools(lastDecreasingIndex - lastIncreasingIndex);
+        				}else{
+            				count -= lastIncreasingCandy;
+            				count += sumTools(lastDecreasingIndex - lastIncreasingIndex +1);
+        				}
+    					count += 2;
+        				preCandy = 2;
+    				}
+    				changeFlag = 0;
+        			lastIncreasingIndex = i;
+        			lastIncreasingCandy = preCandy;
+        			preRating = ratings[i];
+    				continue;
+    			}else{
+    				if(ratings[i] == preRating){
+    					preCandy = 1;
+    				}else{
+    					preCandy++;
+    				}
+        			count += preCandy;
+        			preRating = ratings[i];
+        			lastIncreasingIndex = i;
+        			lastIncreasingCandy = preCandy;
+    			}
+    			
+    		}else{
+    			lastDecreasingIndex = i;
+    			preRating = ratings[i];
+    			changeFlag = 1;
+    			continue;
+    		}
+    	}
+    	
+    	if(changeFlag == 1){
+    		if(lastIncreasingCandy > lastDecreasingIndex - lastIncreasingIndex +1){
+				count += sumTools(lastDecreasingIndex - lastIncreasingIndex);
+			}else{
+				count -= lastIncreasingCandy;
+				count += sumTools(lastDecreasingIndex - lastIncreasingIndex +1);
+			} 
+    	}
+        return count;
+    }
+    
+    public static int sumTools(int n){
+    	int sum = 0;
+    	for(int i = 1; i <= n; i++ ){
+    		sum += i;
+    	}
+    	return sum;
+    }
+
+```
+
+
+
+
+***Related problems***:
+
+* [11 Container with Most Water](#11-container-with-most-water)
+* [42 Trapping Rain Water](#42-trapping-rain-water)
+* [135 Candy](#135-candy)
+
+<br>
+<br>
 
 
 ###138 Copy List With Random Pointer
