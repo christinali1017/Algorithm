@@ -5,6 +5,7 @@
 * [1 Two Sum](#1-two-sum)
 * [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
 * [8 String to Integer atoi](#8-string-to-integer-atoi)
+* [11 Container with Most Water](#11-container-with-most-water)
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
 * [18 4Sum](#18-4sum)
@@ -230,7 +231,9 @@ There is another solution use primitive string methods, such as indexOf, subStri
 3) discard any whitespace until first non-whitespace character is found
 
 4) takes as many characters as possible to form a valid character until encounter an unvalid
+
 ```java
+
 	public int atoi(String str){
 		if(str == null || str.length() == 0) return 0;
 		str = str.trim();
@@ -254,8 +257,37 @@ There is another solution use primitive string methods, such as indexOf, subStri
 	}
 
 ```
+
 <br>
 <br>
+
+###11 Container with Most Water
+
+>Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
+Note: You may not slant the container.
+
+**Idea**: Thea easiest way we can do is brute force. We calcuate the possible value with element with all the values after it. The time complexity is O(n^2). Have have another efficient way. We set a window, l = 0, r = size -1. Each time we calculate the container of l r, then we compare the height[l] and height[r]. if(height[l] > height[r]), r--. Because we know that height[l] > height[r], if we move l pointer, then the volumn would decrease.
+
+
+```java
+
+    public int maxArea(int[] height) {
+    	if(height == null || height.length == 0) return 0;
+    	int left = 0;
+    	int right = height.length-1;
+    	int max = 0;
+    	while(left < right){
+    		max = Math.max(max, Math.min(height[left], height[right]) * (right-left));
+    		if(height[right] > height[left]) left++;
+    		else right--;
+    	}
+    	return max;
+    }
+
+
+```
+
+
 
 ###15 3Sum
 
@@ -984,6 +1016,8 @@ the contiguous subarray [4,−1,2,1] has the largest sum = 6.
 
 ```
 
+<br>
+
 - 2) solution 2: One pass. When encounter a negative number, record the current max. when sum + A[i] < 0 && A[i] > 0, change the local max to A[i]. 
 
 ```java
@@ -1014,6 +1048,8 @@ the contiguous subarray [4,−1,2,1] has the largest sum = 6.
 ``` 
 
 
+<br>
+<br>
 
 
 ###61 Rotate List
