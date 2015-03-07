@@ -152,9 +152,58 @@ Related problem:
 
 **Idea**: 
 
-Digits are stored in reverse order, that means `(2 -> 4 -> 3)` is `342`. When it reaches 10 after addition, the next node shall add 1 and current node shall only keep the unit number: `(3 -> 2) + (9 -> 1) = (2 -> 4)`; if one integer doesn't have more numbers, add the remaining one with current result.
+Digits are stored in reverse order, that means `(2 -> 4 -> 3)` is `342`. When it reaches 10 after addition, the next node shall add 1 and current node shall only keep the unit number: `(3 -> 2) + (9 -> 1) = (2 -> 4)`; if one integer doesn't have more numbers, add the remaining digits to  result.
 
-**Code**:
+
+**Attention**: After both l1 and l2 reach to the end, check the carry. If carry != 0, add an additional node to the result. 
+
+**More**: What if the numbers are store in order? It's a little complicated than the question above. One way is add the corresponding digits, notice that the numbers might have different number of bits, so we can not add from beginning. The other stupid method is first reverse the linkedlist, then use the method above. 
+
+**java code**:
+
+```java
+
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        if(l1 == null) return l2;
+        if(l2 == null) return l1;
+        ListNode fakeHead = new ListNode(-1);
+        ListNode res = fakeHead;
+        int carry = 0;
+        while(l1 != null && l2 != null){
+            int sum = l1.val + l2.val + carry;
+            int mod = sum % 10;
+            carry = sum / 10;
+            res.next = new ListNode(mod);
+            res = res.next;
+            l1 = l1.next;
+            l2 = l2.next;
+        }
+        while(l1 != null){
+            int sum = l1.val + carry;
+            int mod = sum % 10;
+            carry = sum / 10;
+            res.next = new ListNode(mod);
+            l1 = l1.next;
+            res = res.next;
+        }
+        while(l2 != null){
+            int sum = l2.val + carry;
+            int mod = sum % 10;
+            carry = sum / 10;
+            res.next = new ListNode(mod);
+            l2 = l2.next;
+            res = res.next;
+        }
+        if(carry != 0)
+            res.next = new ListNode(carry);
+        return fakeHead.next;
+    }
+
+```
+
+
+
+**c++ Code**:
 
 ``` cpp
 /**
