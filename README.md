@@ -4126,6 +4126,51 @@ We need to record the all possible sum when add new numbers. Then the time compl
 <br>
 
 <br>
+
+### 171 Excel Sheet Column Number
+
+> Given a column title as appear in an Excel sheet, return its corresponding column number.
+>
+> For example:
+>
+> ```
+>   A -> 1
+>   B -> 2
+>   C -> 3
+>   ...
+>   Z -> 26
+>   AA -> 27
+>   AB -> 28 
+> ```
+
+**Analysis:** 
+
+for example: CABD
+
+`C * 26 ^ 3 + A * 26 ^ 2 + B * 26 ^ 1 + D * 26 ^ 0`
+
+which is
+
+`3 * 26 ^ 3 + 1 * 26 ^ 2 + 2 * 26 ^ 1 + 4`
+
+The following code takes O(N) time and O(1) space.
+
+``` C
+int titleToNumber(char *s) {
+    int i = 0, val = 0, x = 1;
+    
+    if (s[0] == 0) { return 0; } // if empty string
+    for (; s[i+1] != 0; i ++); // find the end of string
+    
+    for (; i >= 0; i --) {
+        val += x * (s[i] - 'A' + 1);
+        x *= 26; // if we use something like pow(26, length - i) it 
+                 // will cause extra calculation and takes more time.
+    }
+    
+    return val;
+}
+```
 	
 ### 188 Best Time to Buy and Sell Stock IV
 
