@@ -58,6 +58,7 @@
 * [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
+* [190 Reverse Bits](#190-reverse-bits)
 
 
 <br>
@@ -4224,7 +4225,7 @@ Looks good, right? But we'll get out of memory error. Because in one test case, 
 <br>
 
 
-###189Rotate Array
+###189 Rotate Array
 
 >Rotate an array of n elements to the right by k steps.
 
@@ -4278,5 +4279,57 @@ Try to come up as many solutions as you can, there are at least 3 different ways
     }
 ```
 
+###190 Reverse Bits
 
+>Reverse bits of a given 32 bits unsigned integer.
+
+>For example, given input 43261596 (represented in binary as 00000010100101000001111010011100), return 964176192 (represented in binary as 00111001011110000010100101000000).
+
+>Follow up:
+
+>If this function is called many times, how would you optimize it?
+
+>Related problem: Reverse Integer
+
+
+**Idea**: Like reverse a string, we swap each bit i with 32 -i -1 for 1/2 of the total bit length. 
+
+```java
+
+    public int reverseBits(int n) {
+        if(n == 0) return 0;
+        for(int i = 0; i < 16; i++){
+        	n = swap(n, i, 32-i-1);
+        }
+        return n;
+    }
+    
+    public int swap(int n,int i, int j){
+    	int bitI = (n >> i) & 1;
+    	int bitJ = (n >> j) & 1;
+    	if((bitI ^ bitJ) != 0){
+    		n = n ^ ((1 << i) | (1 << j));
+    	}
+    	return n;
+    }
+
+```
+
+**Another solution in c++**: If the binary of number  a is  10001111 we can represent it as 2 ^ 7 + 2 ^ 3 + 2 ^2 + 2 ^ 1 + 2 ^ 0. Thus we use mod 2 and * 2 to reserve this number. Because in java int is not unsigned, so use this method in java have sign problem.
+
+```c++
+
+	uint32_t reverseBits(uint32_t n) {
+        if(n == 0) return 0;
+        int res = 0;
+        for(int i = 0; i < 32; i++){
+            int mod = n % 2;
+            n = n >> 1;
+            res = (res << 1) + mod;
+        }
+        return res;
+    }
+
+
+```
 
