@@ -3,6 +3,7 @@
 # leetcode
 ## Overview
 * [1 Two Sum](#1-two-sum)
+* [2 Add Two Numbers](#2-add-two-numbers)
 * [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
 * [8 String to Integer atoi](#8-string-to-integer-atoi)
 * [11 Container with Most Water](#11-container-with-most-water)
@@ -102,7 +103,7 @@
 
 **Time**: O(nlgn)
 
-**Spae**: O(1)
+**Space**: O(1)
 
 ```java
     //this function returns the numbers, not the index
@@ -138,6 +139,69 @@ Related problem:
 <br>
 <br>
 
+### 2 Add Two Numbers
+
+> You are given two linked lists representing two non-negative numbers.
+> The digits are stored in reverse order and each of their nodes contain a single digit.
+> Add the two numbers and return it as a linked list.
+>
+> **`Input:`** `(2 -> 4 -> 3) + (5 -> 6 -> 4)`
+>
+> **`Output`** `(7 -> 0 -> 8)`
+
+**Idea**: 
+
+Digits are stored in reverse order, that means `(2 -> 4 -> 3)` is `342`. When it reaches 10 after addition, the next node shall add 1 and current node shall only keep the unit number: `(3 -> 2) + (9 -> 1) = (2 -> 4)`; if one integer doesn't have more numbers, add the remaining one with current result.
+
+**Code**:
+
+``` cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+        ListNode *p1 = l1, *p2 = l2;
+        ListNode *r = new ListNode(0);
+        ListNode *begin = r;
+        int sum = 0;
+        
+        while (p1 && p2) {
+            sum = p1->val + p2->val + sum / 10;
+            r->next = new ListNode(sum % 10);
+            p1 = p1->next;
+            p2 = p2->next;
+            r = r->next;
+        }
+        
+        ListNode *px = NULL;
+        if (p1) { px = p1; }
+        else if (p2) { px = p2; }
+        
+        while (px) {
+            sum = sum / 10 + px->val;
+            r->next = new ListNode(sum % 10);
+            px = px->next;
+            r = r->next;
+        }
+        if (sum >= 10) { r->next = new ListNode(sum / 10); }
+        
+        return begin->next;
+    }
+    
+};
+```
+
+The time complexity is O(m+n) and space complexity is O(m+n).
+
+<br>
+<br>
 
 ###3 Longest Substring without Repeating Characters
 >Given a string, find the length of the longest substring without repeating characters. For example, the longest substring without repeating letters for "abcabcbb" is "abc", which the length is 3. For "bbbbb" the longest substring is "b", with the length of 1.
@@ -255,6 +319,19 @@ There is another solution use primitive string methods, such as indexOf, subStri
 		return true;
 	}
 
+```
+
+5) python accepts integer larger than INT_MAX and integer smaller than INT_MIN, so make an if-else on that.
+
+``` python
+class Solution:
+    INT_MIN = -2147483648
+    INT_MAX = 2147483647
+
+    if num < self.INT_MIN:
+        return self.INT_MIN
+    elif num > self.INT_MAX:
+        return self.INT_MAX
 ```
 
 <br>
@@ -464,10 +541,10 @@ Related problem:
  
  For example, given array S = {1 0 -1 0 -2 2}, and target = 0.
 
-    	A solution set is:
-   	(-1,  0, 0, 1)
-    	(-2, -1, 1, 2)
-    	(-2,  0, 0, 2)
+        A solution set is:
+   	    (-1,  0, 0, 1)
+        (-2, -1, 1, 2)
+        (-2,  0, 0, 2)
     
 <br>
 
@@ -4049,6 +4126,51 @@ We need to record the all possible sum when add new numbers. Then the time compl
 <br>
 
 <br>
+
+### 171 Excel Sheet Column Number
+
+> Given a column title as appear in an Excel sheet, return its corresponding column number.
+>
+> For example:
+>
+> ```
+>   A -> 1
+>   B -> 2
+>   C -> 3
+>   ...
+>   Z -> 26
+>   AA -> 27
+>   AB -> 28 
+> ```
+
+**Analysis:** 
+
+for example: CABD
+
+`C * 26 ^ 3 + A * 26 ^ 2 + B * 26 ^ 1 + D * 26 ^ 0`
+
+which is
+
+`3 * 26 ^ 3 + 1 * 26 ^ 2 + 2 * 26 ^ 1 + 4`
+
+The following code takes O(N) time and O(1) space.
+
+``` C
+int titleToNumber(char *s) {
+    int i = 0, val = 0, x = 1;
+    
+    if (s[0] == 0) { return 0; } // if empty string
+    for (; s[i+1] != 0; i ++); // find the end of string
+    
+    for (; i >= 0; i --) {
+        val += x * (s[i] - 'A' + 1);
+        x *= 26; // if we use something like pow(26, length - i) it 
+                 // will cause extra calculation and takes more time.
+    }
+    
+    return val;
+}
+```
 	
 ### 188 Best Time to Buy and Sell Stock IV
 
