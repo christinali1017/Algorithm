@@ -2481,7 +2481,7 @@ Related problem:
 >Note:
 >You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
 
-**Idea:** We are only allowed  at most two transactions. Thus, we can use two arrays to record the max profit before profits[i] (including i), denote as l[i], and max profits after profits[i] (including i), denote as r[i]. Then find the max of l[i] + r[i]. 
+**Idea:** We are only allowed  at most two transactions. Thus, we can use two arrays to record the max profit before profits[i], including i, denote as l[i], and max profits after profits[i], including i, denote as r[i]. Then find the max of l[i] + r[i]. 
 
 **Time complexity**: O(n) 
 
