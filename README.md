@@ -13,6 +13,8 @@
 * [9 Palindrome Number](#9-palindrome-number)
 * [10 Regular Expression Matching](#10-regular-expression-matching)
 * [11 Container with Most Water](#11-container-with-most-water)
+* [12 Integer to Roman](#12-integer-to-roman)
+* [13 Roman to Integer](#13-roman-to-integer)
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
 * [18 4Sum](#18-4sum)
@@ -761,7 +763,237 @@ Note: You may not slant the container.
 <br>
 <br>
 
+###12 Integer to Roman
 
+>Given an integer, convert it to a roman numeral.
+
+>Input is guaranteed to be within the range from 1 to 3999.
+
+
+**Some rules about Roman**:
+
+- I : 1
+- V : 5
+- X : 10
+- L : 50
+- C : 100
+- D : 500
+- M : 1000
+
+- When a larger number add some smaller numbers on its right side: larger + smaller
+- when a larger number add some smaller numbers on its left side : larger - smaller
+- when add a line on top of roman number, it means the number * 1000
+- The same roman code can repeat at most three times eg: XL: 40, we cannot write it as XXXX
+
+
+**Some Example**:
+
+- I : 1
+- II : 2
+- III : 3
+- IV : 4
+- V : 5
+- VI : 6
+- VII: 7
+- VIII : 8
+- IX : 9
+- X: 10
+- XI : 11
+- ......
+- XC: 90
+- CD : 400
+- DCCC: 800
+- .....
+
+**Idea**:
+
+- 1) Solution1: The most straight forward way is we add the value of each character. There are two cases to consider. 1. character I 2. character V, X....... For the first case, we just need to add I to the result. For the second case, we need to check if there are smaller characters before it. For example IV if 4, we need first add 1 then add 5 -2.
+
+- 2)  Solution2 : We add a map for each pair. These additional space can help make our code more concisely.
+
+**Solution1 code**:
+
+```java
+    public int romanToInt1(String s) {
+        if(s == null || s.length() == 0) return 0;
+        int res = 0;
+        for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            if(c == 'I') res += 1;
+            else if( c == 'V'){
+                if(i > 0 && s.charAt(i-1) == 'I') res += 3;
+                else res += 5;
+            }else if(c == 'X'){
+                if(i > 0 && s.charAt(i-1) == 'I') res += 8;
+                else res += 10;
+            }else if(c == 'L'){
+                if(i > 0 && s.charAt(i-1) == 'X') res += 30;
+                else res += 50;
+            }else if(c == 'C'){
+                if(i > 0 && s.charAt(i-1) == 'X') res += 80;
+                else res += 100;
+            }else if(c == 'D'){
+                if(i > 0 && s.charAt(i-1) == 'C') res += 300;
+                else res += 500;
+            }else if (c == 'M'){
+                if(i > 0 && s.charAt(i-1) == 'C') res += 800;
+                else res += 1000;
+            }
+        }
+        return res;
+    }
+
+```
+
+
+**Solution2 code**: Use hashmap
+
+```java
+
+    public int romanToInt(String s) {
+        if(s == null || s.length() == 0) return 0;
+        int res = 0;
+        Map<Character, Integer> map = new HashMap<Character, Integer>();
+        map.put('I', 1);
+        map.put('V', 5);
+        map.put('X', 10);
+        map.put('L', 50);
+        map.put('C', 100);
+        map.put('D', 500);
+        map.put('M', 1000);
+        for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            if(c == 'I') {
+                res += map.get(c);
+                continue;
+            }
+            if(i > 0 && map.get(s.charAt(i-1)) < map.get(c)) res = res + map.get(c) - 2 * map.get(s.charAt(i-1));
+            else res += map.get(c);
+        }
+        return res;
+    }
+
+```
+
+
+
+***Related Problem***:
+
+* [12 Integer to Roman](#12-integer-to-roman)
+* [13 Roman to Integer](#13-roman-to-integer)
+
+<br>
+
+<br>
+
+
+###13 Roman to Integer 
+
+**Rules**:
+
+See detailed rules at [12 Integer to Roman](#12-integer-to-roman)
+
+**Idea**: Just calculate each digit and append it to result string.
+
+**Code**:
+
+```java
+    public String intToRoman1(int num) {
+        if(num <= 0 || num >= 4000) return "";
+        int divide = 1000;
+        int[] digits = new int[4];
+        StringBuilder res = new StringBuilder();
+        for(int i = 3; i >= 0 && num > 0; i--){
+            digits[i] = num/divide;
+            num = num % divide;
+            divide /= 10;
+        }
+        res.append(helper(digits[3], 'M', ' ', ' '));
+        res.append(helper(digits[2], 'C', 'D', 'M'));
+        res.append(helper(digits[1], 'X', 'L', 'C'));
+        res.append(helper(digits[0], 'I', 'V', 'X'));
+        return res.toString();
+    }
+    
+    public String helper(int i, char one, char five, char ten){
+        StringBuilder res = new StringBuilder();
+        switch(i){
+            case 9: res.append(one + "" + ten); break;
+            case 8: res.append(five + "" + one + "" + one + "" + one); break;
+            case 7: res.append(five + "" + one + "" + one); break;
+            case 6: res.append(five + "" + one); break;
+            case 5: res.append(five); break;
+            case 4: res.append(one + "" + five); break;
+            case 3: res.append(one + "" + one + "" + one); break;
+            case 2: res.append(one + "" + one); break;
+            case 1: res.append(one);
+        }
+        return res.toString();
+    }
+```
+
+
+**Better code on appending part**:
+
+```java
+
+    public String intToRoman(int num) {
+    	if(num <= 0 || num >= 4000) return "";
+    	int divide = 1000;
+    	int[] digits = new int[4];
+    	for(int i = 3; i >= 0 && num > 0; i--){
+             digits[i] = num/divide;
+             num = num % divide;
+             divide /= 10;
+         }
+    	StringBuilder result = new StringBuilder();
+    	result.append(convert(digits[3], 'M', ' ', ' '));
+    	result.append(convert(digits[2], 'C', 'D', 'M'));
+    	result.append(convert(digits[1], 'X', 'L', 'C'));
+    	result.append(convert(digits[0], 'I', 'V', 'X'));
+        
+    	return result.toString();
+    }
+    
+    public String convert(int digit, char one, char five, char ten){
+    	StringBuilder result = new StringBuilder();
+    	switch(digit)
+    	{
+    		case 9:
+    			result.append(one);
+    			result.append(ten);
+    			break;
+    		case 8:
+    		case 7:
+    		case 6:
+    		case 5:
+    			result.append(five);
+    			for(int i = 5; i < digit; i++) result.append(one);
+    			break;
+    		case 4: 
+    			result.append(one);
+    			result.append(five);
+    			break;
+    		case 3:
+    		case 2:
+    		case 1:
+    			for(int i = 0; i < digit; i++) result.append(one);
+    			break;
+    		default:
+    			break;
+    	}
+    	return result.toString();
+    }
+
+```
+***Related Problem***:
+
+* [12 Integer to Roman](#12-integer-to-roman)
+* [13 Roman to Integer](#13-roman-to-integer)
+
+<br>
+
+<br>
 
 ###15 3Sum
 
@@ -1555,12 +1787,12 @@ isMatch("aab", "c*a*b") → false
 
 </pre>
 
-**Idea**: This problem is similar with [10 Regular Expression Matching](#10-regular-expression-matching). The difference is that '.' is replace with '?'. And '*' can match any sequence including empty. We can use the method in [10 Regular Expression Matching](#10-regular-expression-matching). Or we use two pointers to record the return place in s and p when encounter a '*'
+**Idea**: This problem is similar with [10 Regular Expression Matching](#10-regular-expression-matching). The difference is that '.' is replace with '?'. And '\*' can match any sequence including empty. We can use the method in [10 Regular Expression Matching](#10-regular-expression-matching). Or we use two pointers to record the return place in s and p when encounter a '\*'
 
 **Iterative Code**:
 
 ```java
-	   	public boolean isMatch(String s, String p) {
+	 public boolean isMatch(String s, String p) {
    	    if(s == null && p == null || p.equals("*")) return true;
 		int i = 0, j = 0, savei = -1, savej = -1;
 		while(i < s.length()){
