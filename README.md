@@ -15,10 +15,13 @@
 * [11 Container with Most Water](#11-container-with-most-water)
 * [12 Integer to Roman](#12-integer-to-roman)
 * [13 Roman to Integer](#13-roman-to-integer)
+* [14 Longest Common Prefix](#14-longest-common-prefix)
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
+* [17 Number Combinations of a Phone Number](#17-number-combinations-of-a-phone-number)
 * [18 4Sum](#18-4sum)
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
+* [20 Valid Parentheses](#20-valid-parentheses)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
 * [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
@@ -1000,6 +1003,43 @@ See detailed rules at [12 Integer to Roman](#12-integer-to-roman)
 
 <br>
 
+###14 Longest Common Prefix
+
+> Write a function to find the longest common prefix string amongst an array of strings.
+
+**Idea**: Choose the first string, then compare each of its character with the strings in strs. Return result when a mismatch happens.
+
+**Time complexity**: O(n * m), n is the length of prefix string. M is the length of strs. 
+
+
+**Java code**:
+
+
+```java
+
+    public String longestCommonPrefix(String[] strs) {
+        if(strs == null || strs.length == 0) return "";
+        StringBuilder res = new StringBuilder();
+        String s = strs[0];
+        for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            for(int j= 1; j < strs.length; j++){
+                if((i < strs[j].length() && c != strs[j].charAt(i)) || i >= strs[j].length()) return res.toString();
+            }
+            res.append(c);
+        }
+        return res.toString();
+    }
+
+
+```
+
+
+<br>
+
+<br>
+
+
 ###15 3Sum
 
 >Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
@@ -1101,9 +1141,7 @@ Related problem:
 
 **Attention**: 
 
-1) The initial difference for both the threesum function and twosum function should be Integer.MAX_VALUE
-
-2) Each time we compare the **abs** of the difference 
+1) Each time we compare the **abs** of the difference 
 
 **Time** O(n ^ 2)
 
@@ -1151,6 +1189,75 @@ Related problem:
 <br>
 <br>
 
+
+
+###17 Number Combinations of a Phone Number
+
+>  Given a digit string, return all possible letter combinations that the number could represent.
+
+> A mapping of digit to letters (just like on the telephone buttons) is given below.
+
+<pre>
+
+Input:Digit string "23"
+Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+
+</pre>
+
+> Note:
+
+> Although the above answer is in lexicographical order, your answer could be in any order you want.
+
+
+**Idea**: This problem is much similar to calculate the combinations. Each time we add each character of a string to all existing strings in the set. Then we go to the next String.
+
+**Time Complexity** : O(k ^ n), k is possible choice of each digit, n is the length of digits
+
+
+```java
+
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new ArrayList<String>();
+        if(digits == null || digits.length() == 0) return res;
+        for(int i = 0; i < digits.length(); i++){
+            String cur = getLetters(digits.charAt(i));
+            List<String> temp = new ArrayList<String>();
+            if(res.size() == 0){
+                for(int j = 0; j < cur.length(); j++){
+                    res.add(cur.charAt(j) + "");
+                }
+            }else{
+                for(String s : res){
+                    for(int k = 0; k < cur.length(); k++){
+                        temp.add(s + cur.charAt(k));
+                    }
+                }
+                res = temp;      
+            }
+        }
+        return res;
+        
+    }
+    
+    public String getLetters(char digit){
+        switch(digit){
+            case '9' : return "wxyz";
+            case '8' : return "tuv";
+            case '7' : return "pqrs";
+            case '6' : return "mno";
+            case '5' : return "jkl";
+            case '4' : return "ghi";
+            case '3' : return "def";
+         case '2' : return "abc";
+            default: return "";
+        }
+    }
+
+```
+
+<br>
+
+<br>
 
 ###18 4Sum
 
@@ -1312,6 +1419,50 @@ Try to do this in one pass.
 
 <br>
 <br>
+
+###20 Valid Parentheses
+
+> Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+> The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+
+
+**Idea**: Use a stack to record parentheses. When encounter ( , [, { push to stack.
+when encounter ), ], } pop corresponding parentheses.
+
+
+**Java code**:
+
+
+```java
+
+
+    public boolean isValid(String s) {
+        if(s == null || s.length() == 0) return true;
+        Stack<Character> stack = new Stack<Character>();
+        for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            if(stack.isEmpty() && (c == ')' || c == ']' || c == '}')) return false;
+            if(c == '(' || c == '[' || c == '{') stack.push(c);
+            else if(c == ')' || c == ']' || c == '}'){
+                if((c == ')' && stack.peek() != '(') || (c == ']' && stack.peek() != '[') || (c == '}' && stack.peek() != '{')) 
+                    return false;
+                else stack.pop();
+            }
+        }
+        return stack.isEmpty();
+    }
+
+
+```
+
+
+
+<br>
+
+
+<br>
+
 
 
 ###21 Merge Two Sorted Lists
