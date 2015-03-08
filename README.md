@@ -5,7 +5,13 @@
 * [1 Two Sum](#1-two-sum)
 * [2 Add Two Numbers](#2-add-two-numbers)
 * [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
+* [4 Median of Two Sorted Arrays](#4-median-of-two-sorted-arrays)
+* [5 Longest Palindromic Substring](#5-longest-palindromic-substring)
+* [6 Zigzag Conversion](#6-zigzag-conversion)
+* [7 Reverse Integer](#7-reverse-integer)
 * [8 String to Integer atoi](#8-string-to-integer-atoi)
+* [9 Palindrome Number](#9-palindrome-number)
+* [10 Regular Expression Matching](#10-regular-expression-matching)
 * [11 Container with Most Water](#11-container-with-most-water)
 * [15 3Sum](#15-3sum)
 * [16 3Sum Closest](#16-3sum-closest)
@@ -17,6 +23,7 @@
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
+* [44 Wildcard Matching](#44-wildcard-matching)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [61 Rotate List](#61-rotate-list)
@@ -325,6 +332,212 @@ There is another solution use primitive string methods, such as indexOf, subStri
 
 <br>
 
+###4 Median of Two Sorted Arrays
+
+>There are two sorted arrays A and B of size m and n respectively. Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).
+
+**Idea**: We need to find the median, thus if (lenA + lenB) % 2 == 1, we need to find the ((lenA + lenB)/2 + 1)th smallest element. If  (lenA + lenB) % 2 == 0, we return ( (lenA + lenB)/2)th + (lenA + lenB)/2 + 1)th)/ 2. So we can use the idea in find the kth element in an array. The steps are as follows:
+
+- 1) find the k/2 element of A and B
+- 2) when B[k/2 -1] = A[k/2 -1], then the kth element is A[k/2 -1]
+- 3) if A[k/2 -1] < B[k/2 -1], then the kth element is not in A[0.....k/2 -1] and  B[k/2.....B.length -1]
+- 4) if A[k/2 -1] > B[k/2 -1], then the kth element is not in B[0.....k/2 -1] and  A[k/2.....A.length -1]
+
+**Time complexity ** O(log(m+n))
+
+
+
+**Attention**: There are cases when one array is really longer than the other one, so we need to check the length of k/2 and length of array. Otherwise, there might be indexoutofbound exception. 
+
+
+```java
+
+    public double findMedianSortedArrays(int A[], int B[]) {
+        if(A == null && B == null) return 0;
+        if(A == null) return B.length % 2 == 0 ? (B[B.length/2 -1] + B[B.length/2])/2 : B[B.length/2];
+        if(B == null) return A.length % 2 == 0 ? (A[A.length/2 -1] + A[A.length/2])/2 : A[A.length/2];
+        return ((A.length + B.length) % 2 == 1) ? helper(A, B, 0, A.length-1, 0, B.length-1, (A.length + B.length)/2 + 1):((helper(A, B, 0, A.length-1, 0, B.length-1, (A.length + B.length)/2 )) + helper(A, B, 0, A.length-1, 0, B.length-1, (A.length + B.length)/2 + 1))/2;
+    }
+    
+    public double helper(int[] A, int[] B, int startA, int endA, int startB, int endB, int k){
+        int lenA = endA - startA + 1;
+        int lenB = endB - startB + 1;
+        if(lenA > lenB) return helper(B, A, startB, endB, startA, endA, k);
+        if(lenA == 0) return B[startB + k - 1];
+        if(lenB == 0) return A[startA + k - 1];
+        if(k == 1) return Math.min(A[startA], B[startB]);
+        int posA = Math.min(k/2, lenA);
+        int posB = k - posA;
+        if(A[startA + posA -1] == B[startB + posB -1]) return A[startA + posA -1];
+        if(A[startA + posA -1] < B[startB + posB -1]) return helper(A, B, posA+startA, endA, startB, posB+startB-1, k - posA);
+        else return helper(A, B, startA, posA + startA -1, startB + posB, endB, k - posB);
+        
+    }
+
+```
+
+
+<br>
+<br>
+
+
+###5 Longest Palindromic Substring
+>Given a string S, find the longest palindromic substring in S. You may assume that the maximum length of S is 1000, and there exists one unique longest palindromic substring.
+
+**Idea**:
+
+- 1) solution1: use dp, we dp[j][i] == true represents that j...i is a parlindromic substring.
+- 2) solution2: for each character s[i], we find the longest substring whose center is s[i] 
+
+**solution1 code**
+
+```java
+     public String longestPalindrome(String s) {
+        if(s == null || s.length() == 0) return s;
+        boolean[][] dp = new boolean[s.length()+1][s.length() + 1];
+        dp[0][0] = true;
+        int max = 0;
+        String res = "";
+        for(int i = 0; i < s.length(); i++){
+            for(int j = 0; j <= i; j++){
+                if(s.charAt(i) == s.charAt(j) && (i - j <= 2 || dp[j+1][i-1])){
+                    dp[j][i] = true;
+                    if(i - j + 1 > max){
+                        max = i-j+1;
+                        res = s.substring(j, i+1);
+                    }
+                }
+                
+            }
+        }
+        return res;
+  	}
+
+```
+
+
+**solution2 code**
+
+```java
+
+    public String longestPalindrome(String s) {
+        if(s == null || s.length() <= 1) return s;
+        int max = 0;
+        String res = "";
+        for(int i = 0; i < s.length(); i++){
+            String mid = helper(s, i-1, i+1);
+            String left =  helper(s, i-1, i);
+            String right =  helper(s, i, i+1);
+            String temp = mid.length() > left.length() ? mid : left;
+            temp = temp.equals(mid) ? (mid.length() > right.length() ? mid : right) : (left.length() > right.length() ? left : right);
+            if(temp.length() > max){
+                max = temp.length();
+                res = temp;
+            }
+        }
+        return res;
+  	}
+  	
+  	public String helper(String s, int l, int r){
+  	    while(l >= 0 && r < s.length()){
+  	        if(s.charAt(l) == s.charAt(r)) {
+  	            l--;
+  	            r++;
+  	        }else{
+  	            return s.substring(l+1, r);
+  	        }
+  	    }
+  	    return s.substring(l+1, r);
+  	}
+  	
+
+```
+
+###6 Zigzag Conversion
+>The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+<pre>
+
+P   A   H   N
+A P L S I I G
+Y   I   R
+
+</pre>
+And then read line by line: "PAHNAPLSIIGYIR"
+Write the code that will take a string and make this conversion given a number of rows:
+
+string convert(string text, int nRows);
+convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
+
+
+** Idea**: 
+
+size of zigzag: 2 * nRows - 2;
+
+index of middle element : size - i + j - i ; i is the row number, j is the starting index of each row.
+
+**code**:
+
+```java
+
+    public String convert(String s, int nRows) {
+        if(s == null || nRows == 1) return s;
+        StringBuilder res = new StringBuilder();
+        int size = nRows * 2 - 2;
+        for(int i = 0; i < nRows; i++){
+            for(int j = i; j < s.length(); j += size){
+                res.append(s.charAt(j));
+                if(i != 0 && i != nRows-1 && ((size - i + j - i) < s.length()))
+                    res.append(s.charAt(size - i + j - i));
+            }
+        }
+        return res.toString();
+    }
+
+```
+
+<br>
+<br>
+
+###7 Reverse Integer
+
+> Reverse digits of an integer.
+
+>Example1: x = 123, return 321
+
+>Example2: x = -123, return -321
+
+**Idea**: Record the sign of the number then take abs of the number. Move the lsb to the msb each time until the number change to 0.
+
+**Attention**: After reverse, the number might overflow, then we need to check during reverse. When overflow, we return 0;
+
+```java
+    public int reverse(int x) {
+        if(x <= 9 && x >= -9) return x;
+        int res = 0;
+        boolean positive = x > 0 ? true : false;
+        x = Math.abs(x);
+        while(x > 0 && (Integer.MAX_VALUE - x % 10) / 10 >= res){
+            int mod = x % 10;
+            res = res * 10 + mod;
+            x = x / 10;
+        }
+        if(x > 0) return 0;
+        return positive ?  res : -res;
+    }
+
+```
+
+
+***Related Questions:***
+
+* [7 Reverse Integer](#7-reverse-integer)
+* [29 Divide Two Integers](#29-divide-two-integers)
+* [50 Pow(x,n)](#50-pow(x,n))
+* [69 Sqrt(x)](#69-sqrt(x))
+* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
+
+
+
 
 ###8 String to Integer atoi
 
@@ -383,6 +596,130 @@ class Solution:
     elif num > self.INT_MAX:
         return self.INT_MAX
 ```
+
+<br>
+<br>
+
+
+###9 Palindrome Number
+
+> Determine whether an integer is a palindrome. Do this without extra space.
+
+
+**Idea**: Just like check if a string is a palindrom, we need to have two pointers, one from beginning and one from end. The difference is that for a integer, we can not use charAt. But we can still get the number of the two pointers use divide and mod. 
+
+
+**Jave Code**
+
+```java
+
+    public boolean isPalindrome(int x) {
+        if(x < 0) return false;
+	    if(x <= 9) return true;
+	    int divide = 1;
+	    while((divide < Integer.MAX_VALUE/10) && (divide * 10) <= x){
+	        divide *= 10;
+	    }
+	    while(x != 0){
+	        int ms = x/divide;
+	        int ls = x%10;
+	        if(ms != ls) return false;
+	        x = (x % divide) / 10;
+	        divide  = divide / 100;
+	    }
+	    return true;
+	}
+
+```
+
+<br>
+<br>
+
+
+###10 Regular Expression Matching
+
+
+>Implement regular expression matching with support for '.' and '*'.
+
+<>
+'.' Matches any single character.
+'*' Matches zero or more of the preceding element.
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "a*") → true
+isMatch("aa", ".*") → true
+isMatch("ab", ".*") → true
+isMatch("aab", "c*a*b") → true
+
+</pre>
+
+**Idea**:
+
+-  Solution1: We divide it into two cases: 1) p[j+1] == '\*'  2)p[j+1] != '\*'. In the first case, it's a little complicated. Because * can match 0 or more characters. Thus we need to check match(s, p, i, j+2), match(s, p, i+1, j+2)....... In the second case we just need to compare s[i] and p[j], if s[i] == p[j] or p[j] == '.', we continue to compare(s, p, i+1, j+1).
+
+
+**Solution1 code**:
+
+```java
+
+	public boolean isMatch(String s, String p) {
+        if((s == null && p == null) || p.equals(".*")) return true;
+        return helper(s, p, 0, 0);
+    }
+    public boolean helper(String s, String p, int i, int j){
+        if(j == p.length()) return i == s.length();
+         if(j+1 == p.length() || p.charAt(j+1) != '*'){
+            if(i < s.length() && (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.')) return helper(s, p, i+1, j+1);
+            else return false;
+         }
+         while(i < s.length() && (p.charAt(j) == '.' || p.charAt(j) == s.charAt(i))){
+             if(helper(s, p, i++, j+2)) return true;
+         }
+         return helper(s, p, i, j+2);
+    }
+```
+
+
+**Solution2**:
+
+```java
+    public boolean isMatch(String s, String p) {
+        if((s == null && p == null) || p.equals(".*")) return true;
+        boolean[][] dp = new boolean[s.length()+1][p.length()+1];
+        dp[0][0] = true;
+        for(int i = 2; i <= p.length(); i++){
+            if(p.charAt(i-1) == '*') dp[0][i] = dp[0][i-2];
+        }
+        for(int i = 1; i <= s.length(); i++){
+            for(int j = 1; j <= p.length(); j++){
+                if(p.charAt(j-1) != '*'){
+                    if(s.charAt(i-1) == p.charAt(j-1) || p.charAt(j-1) == '.') dp[i][j] = dp[i-1][j-1];
+                }else{
+                   if(j > 1 && (s.charAt(i-1) == p.charAt(j-2) || p.charAt(j-2) == '.'))
+                         dp[i][j] = dp[i][j-2] || dp[i-1][j];
+                   else dp[i][j] = dp[i][j-2];
+                }
+            }
+        }
+        return dp[s.length()][p.length()];
+     }
+
+```
+
+
+***Related Problem***:
+
+* [10 Regular Expression Matching](#10-regular-expression-matching)
+* [44 Wildcard Matching](#44-wildCard-matching)
+ 
 
 <br>
 <br>
@@ -1087,6 +1424,9 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 
 ```
 
+***Related Questions:***
+
+* [7 Reverse Integer](#7-reverse-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [69 Sqrt(x)](#69-sqrt(x))
@@ -1190,6 +1530,41 @@ Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 <br>
 
 
+###44 Wildcard Matching
+
+> Implement wildcard pattern matching with support for '?' and '*'.
+
+<pre>
+'?' Matches any single character.
+'*' Matches any sequence of characters (including the empty sequence).
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "*") → true
+isMatch("aa", "a*") → true
+isMatch("ab", "?*") → true
+isMatch("aab", "c*a*b") → false
+
+</pre>
+
+
+
+***Related Problem***:
+
+* [10 Regular Expression Matching](#10-regular-expression-matching)
+* [44 Wildcard Matching](#44-wildCard-matching)
+
+<br>
+<br>
+
+
 ###50 Pow(x,n)
 
 >Implement pow(x, n).
@@ -1207,6 +1582,9 @@ Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
 ```
 
+***Related Questions:***
+
+* [7 Reverse Integer](#7-reverse-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [69 Sqrt(x)](#69-sqrt(x))
@@ -1393,8 +1771,9 @@ code:
 ```	
  
 
+***Related Questions:***
 
-
+* [7 Reverse Integer](#7-reverse-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [69 Sqrt(x)](#69-sqrt(x))
@@ -4062,6 +4441,10 @@ In order to know when the recuisive begins, we need to record the remainder at e
     }
 
 ```
+
+***Related Questions:***
+
+* [7 Reverse Integer](#7-reverse-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow(x,n)](#50-pow(x,n))
 * [69 Sqrt(x)](#69-sqrt(x))
