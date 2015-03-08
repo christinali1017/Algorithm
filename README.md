@@ -641,7 +641,7 @@ class Solution:
 
 >Implement regular expression matching with support for '.' and '*'.
 
-<>
+<pre>
 '.' Matches any single character.
 '*' Matches zero or more of the preceding element.
 
@@ -718,7 +718,7 @@ isMatch("aab", "c*a*b") → true
 ***Related Problem***:
 
 * [10 Regular Expression Matching](#10-regular-expression-matching)
-* [44 Wildcard Matching](#44-wildCard-matching)
+* [44 Wildcard Matching](#44-wildcard-matching)
  
 
 <br>
@@ -1535,6 +1535,7 @@ Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 > Implement wildcard pattern matching with support for '?' and '*'.
 
 <pre>
+
 '?' Matches any single character.
 '*' Matches any sequence of characters (including the empty sequence).
 
@@ -1559,7 +1560,7 @@ isMatch("aab", "c*a*b") → false
 ***Related Problem***:
 
 * [10 Regular Expression Matching](#10-regular-expression-matching)
-* [44 Wildcard Matching](#44-wildCard-matching)
+* [44 Wildcard Matching](#44-wildcard-matching)
 
 <br>
 <br>
