@@ -1555,6 +1555,57 @@ isMatch("aab", "c*a*b") → false
 
 </pre>
 
+**Idea**: This problem is similar with [10 Regular Expression Matching](#10-regular-expression-matching). The difference is that '.' is replace with '?'. And '*' can match any sequence including empty. We can use the method in [10 Regular Expression Matching](#10-regular-expression-matching). Or we use two pointers to record the return place in s and p when encounter a '*'
+
+**Iterative Code**:
+
+```java
+	   	public boolean isMatch(String s, String p) {
+   	    if(s == null && p == null || p.equals("*")) return true;
+		int i = 0, j = 0, savei = -1, savej = -1;
+		while(i < s.length()){
+		    if(j < p.length() && (s.charAt(i) == p.charAt(j) || p.charAt(j) == '?')){
+		        i++;
+		        j++;
+		    }else if(j < p.length() && p.charAt(j) == '*'){
+		        savei = i;
+		        savej = j++;
+		    }else if(savej != -1){
+		        j = savej + 1;
+		        i = ++savei;
+		    }else return false;
+		}
+		while(j < p.length() && p.charAt(j) == '*') j++;
+		return j == p.length();
+	}
+
+```
+
+
+**Recursion**: it might exceed the time limit
+
+```java
+		
+    public boolean isMatch2(String s, String p) {
+        if((s == null && p == null) || p.equals("*")) return true;
+        return helper(s, p, 0, 0);
+    }
+    
+    public boolean helper(String s, String p, int i, int j){
+        if(j == p.length()) return i == s.length();
+        if(p.charAt(j) != '*'){
+            if(i < s.length() && (s.charAt(i) == p.charAt(j) || p.charAt(j) == '?')) return helper(s, p, i+1, j+1);
+            else return false;
+        }else{
+            while(i < s.length()){
+                if(helper(s, p, i++, j+1)) return true;
+            }
+            return helper(s, p, i, j+1);
+        }
+    }
+
+```
+
 
 
 ***Related Problem***:
