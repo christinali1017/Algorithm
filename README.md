@@ -772,6 +772,8 @@ Note: You may not slant the container.
 
 **Some rules about Roman**:
 
+*Numbers*:
+
 - I : 1
 - V : 5
 - X : 10
@@ -779,6 +781,9 @@ Note: You may not slant the container.
 - C : 100
 - D : 500
 - M : 1000
+
+
+*specific rules*: 
 
 - When a larger number add some smaller numbers on its right side: larger + smaller
 - when a larger number add some smaller numbers on its left side : larger - smaller
