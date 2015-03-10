@@ -23,9 +23,15 @@
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [20 Valid Parentheses](#20-valid-parentheses)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
+* [22 Generate Parentheses](#21-generate-parentheses)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
 * [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
+* [25 Reverse Nodes in kGroup](#25-reverse-nodes-in-kgroup)
+* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
+* [27 Remove Element](#27-remove-element)
+* [28 Implement strStr](#28-implement-strstr)
 * [29 Divide Two Integers](#29-divide-two-integers)
+* [30 Substring with Concatenation of All Words](#30-substring-with-concatenation-of-all-words)
 * [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
@@ -34,6 +40,7 @@
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt(x)](#69-sqrt(x))
 * [70 Climbing Stairs](#70-climbing-stairs)
+* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 * [86 Partition List](#86-partition-list)
@@ -71,6 +78,8 @@
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
+
+
 
 
 <br>
@@ -1521,6 +1530,81 @@ when encounter ), ], } pop corresponding parentheses.
 <br>
 
 
+###22 Generate Parentheses
+
+> Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+> For example, given n = 3, a solution set is:
+
+> "((()))", "(()())", "(())()", "()(())", "()()()"
+
+**Idea**: insert "\(\)" to possible spots of every parentheses string. eg : (), we have three spaces to insert. Inspite of duplicates, there are two possible ()() or (()). 
+
+**Iterative code **:
+
+```java
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<String>();
+        res.add("");
+        if(n <= 0) return res;
+        for(int i = 0; i < n; i++){
+            List<String> cur = new ArrayList<String>();
+            for(String s : res){
+                for(int j = 0; j <= s.length(); j++){
+                    String temp =  s.substring(0, j) + "()" + s.substring(j, s.length());
+                    if(!cur.contains(temp)) cur.add(temp);
+                }
+            }
+            res = cur;
+        }
+        return res;
+    }
+
+```
+
+
+**Recursion**:
+
+```java
+
+    public List<String> generateParenthesis1(int n) {
+    	List<String> list = new ArrayList<String>();
+    	if(n == 0){
+    		list.add("");
+    		return list;
+    	}else if (n == 1){
+    		list.add("()");
+    		return list;
+    	}
+    	
+    	return helper(n);
+    	
+    }
+    
+    public List<String> helper(int n){
+    	if(n == 0){
+    		List<String> list = new ArrayList<String>();
+    		list.add("");
+    		return list;
+    	}
+    	List<String> list  = helper(n-1);
+    	List<String> result = new ArrayList<String>();
+    	for(String s : list){
+    		for(int i = 0, len = s.length(); i <= len; i++){
+    			String newS = s.substring(0, i) + "()" + s.substring(i, s.length());
+    			if(!result.contains(newS)) result.add(newS);
+    		}
+    	}
+    	return result;
+    }
+
+```
+
+<br>
+
+<br>
+
+
 ###23 Merge k Sorted Lists
 
 > Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
@@ -1744,6 +1828,271 @@ Your algorithm should use only constant space. You may not modify the values in 
 <br>
 
 
+###25 Reverse Nodes in kGroup
+
+> Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.
+>
+>If the number of nodes is not a multiple of k then left-out nodes in the end should remain as it is.
+>
+>You may not alter the values in the nodes, only nodes itself may be changed.
+>
+>Only constant memory is allowed.
+>
+
+>For example,
+
+>Given this linked list: 1->2->3->4->5
+
+>For k = 2, you should return: 2->1->4->3->5
+
+>For k = 3, you should return: 3->2->1->4->5r
+
+
+
+**Idea**: Reverse k nodes each time then catenenate the current reverse list with the previous reverse list.
+
+
+**Attention**:
+
+- 1)the left-out nodes less than k nodes should remain the same.
+- 2)For the first node of each reverse list, we should set it's next to null to avoid cycle or double linked list. 
+
+
+
+```java
+
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if(head == null || head.next == null || k <= 1) return head;
+        int len = 0;
+        ListNode temp = head;
+        while(temp != null){
+            len++;
+            temp = temp.next;
+        }
+        if(k > len) return head;
+        ListNode res = null, cur = null, pre = null, next = null, savehead = null;
+        for(int i = 1; i <= len && i + k <= len+1; i += k){
+            savehead = head;
+            for(int j = 1; j <= k; j++){
+                next = head.next;
+                if(cur == null) {
+                    cur = head;
+                    cur.next = null;
+                }else{
+                    head.next = cur;
+                    cur = head;
+                }
+                head = next;
+            }
+            if(res == null) res = cur;
+            else{
+                pre.next = cur;
+            }
+            pre = savehead;
+            cur = null;
+        }
+        
+        if(head != null) pre.next = head;
+        return res;
+    }
+
+```
+
+
+
+<br>
+
+<br>
+
+
+
+### 26 Remove Duplicates from Sorted Array
+
+>Given a sorted array, remove the duplicates in place such that each element appear only once and return the new length.
+>
+>Do not allocate extra space for another array, you must do this in place with constant memory.
+>
+>For example,
+>
+>Given input array A = [1,1,2],
+>
+>Your function should return length = 2, and A is now [1,2].
+
+**Idea**: Record an index, all element before this index contains no duplicates. Insert the new unduplicate element at index. 
+
+
+**Java code**:
+
+```java
+
+    public int removeDuplicates(int[] A) {
+        if(A == null) return 0;
+        if(A.length <= 1) return A.length;
+        int count = 1;
+        int pre = A[0];
+        for(int i = 1; i < A.length; i++){
+            if(A[i] == pre) continue;
+            A[count++] = A[i];
+            pre = A[i];
+        }
+        return count;
+    }
+
+```
+
+
+***Related Problems***:
+
+* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
+* [27 Remove Element](#27-remove-element)
+* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+
+
+<br>
+
+<br>
+
+
+###27 Remove Element
+
+>Given an array and a value, remove all instances of that value in place and return the new length.
+
+>The order of elements can be changed. It doesn't matter what you leave beyond the new length
+
+**Idea**: if A[i] != elem, copy element to record index. 
+
+**Java Code**:
+
+
+```java
+
+    public int removeElement(int[] A, int elem) {
+        if(A == null || A.length == 0) return 0;
+        int count = 0;
+        for(int i = 0; i < A.length; i++){
+            if(A[i] == elem) continue;
+            A[count++] = A[i];
+        }
+        return count;
+    }
+
+
+```
+
+
+
+***Related Problems***:
+
+* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
+* [27 Remove Element](#27-remove-element)
+* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+
+
+<br>
+
+<br>
+
+
+###28 Implement strStr
+
+> Implement strStr().
+>
+>Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
+>
+>Update (2014-11-02):
+
+>The signature of the function had been updated to return the index instead of the pointer. If you still see your function signature returns a char * or String, please click the reload button  to reset your code definition.
+
+**Idea**: It asks us to implement a function like indexOf(string) in java. The easiest way is a O(n^2) solution, just like the time complexity of indexOf. We begin from the first chracter of haystack, check if it has the needle begin at index i. We can also use KMP string match algorithm to implement it in O(n) time. See detail at [kmp](http://wishyouhappy.github.io/2014/12/26/kmp%20algorithm\(knuth-morris-pratt\)).
+
+**Code of solution1**: O(n^2)
+
+
+```java
+  public int strStr1(String haystack, String needle) {
+        if(haystack == null || needle == null) return -1;
+        if(needle.equals("")) return 0;
+        boolean contain = true;
+        for(int i = 0; i <= haystack.length() - needle.length();i++){
+            for(int j = i; j < i + needle.length(); j++){
+                if(haystack.charAt(j) != needle.charAt(j-i)){
+                    contain = false;
+                    break;
+                } 
+            }
+            if(contain) return i;
+            contain = true;
+        }
+        return -1;
+    }
+
+```
+
+**Code of solution2**: O(n)
+ 
+```java
+
+	public int strStr(String haystack, String needle){
+		if(haystack == null || needle == null || (haystack.length() < needle.length())) return -1;
+        if(needle.equals("")) return 0;
+		int[] helper = getHelperArray(needle);
+		int i = 0,
+			j = 0,
+			textLen = haystack.length(),
+			patternLen = needle.length();
+		while(i < textLen && j < patternLen){
+			if(haystack.charAt(i) == needle.charAt(j)){
+				j++;
+				i++;
+			}
+			
+			if(j == patternLen){
+				return i - patternLen;
+				//j = helper[j-1]; //if we want find all matches. 
+			}else if((i < textLen && j < patternLen) &&haystack.charAt(i) != needle.charAt(j)){
+				if(j != 0) j = helper[j-1];
+				else i++;
+			}
+		}
+		return -1;
+	}
+	
+	public int[] getHelperArray(String pattern){
+		int i = 1, //suffix
+			j = 0, //prefix
+			len = pattern.length();
+		int[] helper = new int[len];
+		helper[0] = 0;
+		
+		while(i < len){
+			if(pattern.charAt(i) == pattern.charAt(j)){
+				j++;
+				helper[i] = j;
+				i++;
+			}else{
+				if(j != 0) j = helper[j-1];
+				else{
+					helper[i] = 0;
+					i++;
+				}
+			}
+		}
+		return helper; 
+	}
+
+```
+
+<br>
+
+<br>
+
+
+
+
 ###29 Divide Two Integers
 
 >Divide two integers without using multiplication, division and mod operator.
@@ -1819,6 +2168,72 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 * [50 Pow(x,n)](#50-pow(x,n))
 * [69 Sqrt(x)](#69-sqrt(x))
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
+
+<br>
+
+<br>
+
+
+###30 SubString with Concatenation of All Words
+
+> You are given a string, S, and a list of words, L, that are all of the same length. Find all starting indices of substring(s) in S that is a concatenation of each word in L exactly once and without any intervening characters.
+
+<pre>
+For example, given:
+S: "barfoothefoobarman"
+L: ["foo", "bar"]
+</pre>
+
+You should return the indices: [0,9].
+(order does not matter).
+
+**Idea**: Store a dictionary of L. We use map to record each word of L and their occurence. Then for each index of S from 0, check if there is matches. 
+
+
+**Java Code**:
+
+```java
+
+    public List<Integer> findSubstring(String S, String[] L) {
+    	List<Integer> list = new ArrayList<Integer>();
+    
+    	if(S == null || S.length() == 0 || L == null || L.length == 0) return list;
+    	if(S.length() < L.length * L[0].length()) return list;
+    	
+    	Map<String, Integer> map = new HashMap<String, Integer>();
+    	for(int i = 0, len = L.length; i < len; i++){
+    		String current = L[i];
+    		if(map.containsKey(current)) map.put(current, map.get(current)+1);
+    		else map.put(current, 1);
+    	}
+    	
+    	int unitLen = L[0].length();
+    	int sLen = S.length();
+    	int totalStr = L.length;
+    	int i = 0;
+    	
+    	while(sLen - i >= unitLen * totalStr){
+    		Map<String, Integer> tempMap = new HashMap<String, Integer>(map);
+    		for(int j = 0; j < totalStr; j++){
+    			String current = S.substring(i+j*unitLen, i + (j+1)*unitLen);
+    			if(!tempMap.containsKey(current)) break;
+    			if(tempMap.get(current) == 1) tempMap.remove(current);
+    			else tempMap.put(current,tempMap.get(current)-1);
+    		}
+			if(tempMap.size() == 0) list.add(i);
+    		i++;
+    	}
+    	
+    	return list;   
+    }
+
+
+```
+
+
+
+
+
 
 <br>
 
@@ -2311,6 +2726,53 @@ We see that the value of Fibonacci increases exponentially. If we use int, then 
 
 ``` 
 
+###80 Remove Duplicates From Sorted Array II
+
+>Follow up for "Remove Duplicates":
+>
+>What if duplicates are allowed at most twice?
+>
+>For example,
+>
+>Given sorted array A = [1,1,1,2,2,3],
+>
+>Your function should return length = 5, and A is now [1,1,2,2,3].
+
+**Idea**: It's the same method with [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array). Only diffence is that we need to compare with previous and previous previous element. 
+
+**Java Code**:
+
+
+```java
+
+    public int removeDuplicates(int[] A) {
+        if(A == null) return 0;
+        if(A.length <= 2) return A.length;
+        int count = 2;
+        int pre = A[1];
+        int prepre = A[0];
+        for(int i = 2; i < A.length; i++){
+            if(A[i] == pre && A[i] == prepre) continue;
+            A[count++] = A[i];
+            prepre = pre;
+            pre = A[i];
+        }
+        return count;
+    }
+	
+
+```
+
+***Related Problems***:
+
+* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
+* [27 Remove Element](#27-remove-element)
+* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
+* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
+* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+
+<br>
+<br>
 
 
 
@@ -2342,26 +2804,13 @@ Given 1->1->2->3->3, return 1->2->3.
     }
 
 ```    
-***Related problems***:
+***Related Problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
+* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
+* [27 Remove Element](#27-remove-element)
+* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -2409,26 +2858,15 @@ Given 1->1->1->2->3, return 2->3.
         return feakHead.next;
     }
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
+
+***Related Problems***:
+
+* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
+* [27 Remove Element](#27-remove-element)
+* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
