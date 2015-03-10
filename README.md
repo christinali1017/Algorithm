@@ -23,7 +23,7 @@
 * [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
 * [20 Valid Parentheses](#20-valid-parentheses)
 * [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [22 Generate Parentheses](#21-generate-parentheses)
+* [22 Generate Parentheses](#22-generate-parentheses)
 * [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
 * [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
 * [25 Reverse Nodes in kGroup](#25-reverse-nodes-in-kgroup)
