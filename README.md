@@ -33,7 +33,7 @@
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [30 Substring with Concatenation of All Words](#30-substring-with-concatenation-of-all-words)
 * [31 Next Permutation](#31-next-permutation)
-* [32 Longest Valid Parentheses](#31-longest-valid-parentheses)
+* [32 Longest Valid Parentheses](#32-longest-valid-parentheses)
 * [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
@@ -2356,15 +2356,31 @@ For example. a permutation of 1 2 3 4 5 would be:
 >Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
 
 
-**Idea**:
+**Idea**: This problem has some similarities with the valid parentheses, we need to use the method in that problem to check if the current sequence of parentheses is valid. We use a stack to match the parentheses. The difference is that we store the **index** of the parenthese other than index. Because there is only one type of parentheses, so it's ok to store just the index. 
 
-**Attention**:
+Then how to calculate the longest valid parentheses? Like the valid parentheses problem, everytime, we encounter a '(', we push the current index. Then if the parentheses is ')', Obviously, if the stack is empty, then the previous parentheses sequence cannot be a valid parentheses, so we update the valid parentheses start position. Otherwise, we need to calculate the local longest parentheses. 
+
+**Attention**: When we calculate the local longest, we need to compare the max with i-stack.peek() after we pop an element from the stack because we need to count in the previous valid sequences. Eg: (()(). 
 
 
 **Java code**:
 
 ```java
-
+    public int longestValidParentheses(String s) {
+        if(s == null || s.length() == 0) return 0;
+        int max = 0;
+        int start = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        for(int i = 0; i < s.length(); i++){
+            if(stack.isEmpty() && s.charAt(i) == ')') start = i+1;
+            else if(s.charAt(i) == ')'){
+                stack.pop();
+                max = stack.isEmpty()?Math.max(max, i -start+1) : Math.max(max, i-stack.peek());
+            } 
+            else if(s.charAt(i) == '(') stack.push(i);
+        }
+        return max;
+    }
 
 
 ```
