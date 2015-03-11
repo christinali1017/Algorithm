@@ -34,6 +34,7 @@
 * [30 Substring with Concatenation of All Words](#30-substring-with-concatenation-of-all-words)
 * [31 Next Permutation](#31-next-permutation)
 * [32 Longest Valid Parentheses](#32-longest-valid-parentheses)
+* [33 Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
 * [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
@@ -2390,6 +2391,76 @@ Then how to calculate the longest valid parentheses? Like the valid parentheses 
 
 <br>
 
+
+
+###33 Search in Rotated Sorted Array
+
+
+>Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+
+>(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+>You are given a target value to search. If found in the array return its index, otherwise return -1.
+
+>You may assume no duplicate exists in the array.
+
+**Idea**: There is no duplicate, so after rotation, the array can be look as two parts, and these two parts are all in ascending order. Thus we can use the binary search method, and update the l and r pointer based on the comparison. See details of comparison on the code.
+
+
+**Java code**:
+
+
+```java
+    public int search(int[] A, int target) {
+        if(A == null || A.length == 0) return -1;
+        int l = 0;
+        int r = A.length-1;
+        while(l <= r){
+            int mid = (l+r)/2;
+            if(A[mid] == target) return mid;
+            if(A[mid] > target && A[mid] < A[r]) r = mid-1;
+            else if(A[mid] < target && A[mid] > A[l]) l = mid + 1;
+            else if(A[l] != target) l++;
+            else return l;
+        }
+        return -1;
+    }
+
+
+```
+
+
+**Another way**: 
+
+```java
+
+	 public int search2(int[] A, int target){
+			if(A == null || A.length == 0) return -1;
+			int l = 0;
+			int r = A.length -1;
+			while( l <= r){
+				int mid = (l + r)/2;
+				if(A[mid] == target) return mid;
+				if(A[mid] >= A[l]){
+					if(A[l] <= target && A[mid] > target) r = mid -1;
+					else l = mid + 1;
+				}else {
+					if(A[mid] < target && A[r] >= target) l = mid + 1;
+					else r = mid -1;
+				}
+			}
+			return -1;
+		
+		}
+
+
+```
+
+
+
+
+<br>
+<br>
 
 
 
