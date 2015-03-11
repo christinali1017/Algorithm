@@ -32,6 +32,8 @@
 * [28 Implement strStr](#28-implement-strstr)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [30 Substring with Concatenation of All Words](#30-substring-with-concatenation-of-all-words)
+* [31 Next Permutation](#31-next-permutation)
+* [32 Longest Valid Parentheses](#31-longest-valid-parentheses)
 * [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
@@ -78,6 +80,7 @@
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
+* [191 Number of 1 Bits](#191-number-of-1-bits)
 
 
 
@@ -2238,6 +2241,141 @@ You should return the indices: [0,9].
 <br>
 
 <br>
+
+
+###31 Next Permutation
+
+>Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of numbers.
+
+>If such arrangement is not possible, it must rearrange it as the lowest possible order (ie, sorted in ascending order).
+
+>The replacement must be in-place, do not allocate extra memory.
+
+>Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
+
+<pre>
+1,2,3 → 1,3,2
+3,2,1 → 1,2,3
+1,1,5 → 1,5,1
+</pre>
+
+
+**Idea**: The next permutation is the permutation that larger than the original permutation and the immediate larger one. We can also think this as a successor. We can find the next permutation by the following steps:
+
+- 1) from the end, find the first non-increasing element, eg 1 2 3 5 4. Then we need to find is 3. Record this index. If it's -1, say 5, 4, 3, 2, 1. Then we can reverse the array to 1, 2, 3, 4, 5 and end the function.
+
+- 2) from the index1 we record in step 1, we find the smallest element larger than num[index1]. Record this index2.
+
+- 3) swap element and index1 and index2, then reverse element after index1. 
+
+For example. a permutation of 1 2 3 4 5 would be:
+
+1 2 3 4 5
+
+1 2 3 5 4
+
+1 2 4 3 5
+
+1 2 4 5 3
+
+1 2 5 3 4
+
+1 2 5 4 3
+
+1 3 2 4 5
+
+1 3 2 5 4
+
+1 3 4 2 5
+
+1 3 4 5 2 
+
+.......
+
+
+**Attention**
+
+- 1) for step 1, when find the non-inceasing element we allow the equal element. eg: 1 2 5 4 4 3. We should find 2, the index1. Consider test case "[1 1]"
+- 2) for step 2, we should find element larger then num[index1]. If change to >=, then it doesn't work. Consider test case "[1, 5, 1]"
+
+**Java code**:
+
+```java
+
+
+    public void nextPermutation(int[] num) {
+    	if(num == null || num.length == 0) return;
+    	
+    	int i = num.length - 2;
+    	while(i >= 0 && num[i] >= num[i+1]) i--;
+    	if(i == -1) {
+    		reverse(num, 0);
+    		return;
+    	}
+    	
+    	int j = i+1;
+    	while(j < num.length && num[j] > num[i]) j++;
+    	swap(num, i, j-1);
+    	
+    	reverse(num, i+1);
+    }
+    
+    public void reverse(int[] num, int start){
+    	int end = num.length-1;
+    	while(start < end){
+    		int temp = num[start];
+    		num[start] = num[end];
+    		num[end] = temp;
+    		start++;
+    		end--;
+    	}
+    }
+    
+    public void swap(int[] num, int i, int j){
+    	int temp = num[i];
+    	num[i] = num[j];
+    	num[j] = temp;
+    }
+
+```
+
+
+
+<br>
+
+<br>
+
+
+###32 Longest Valid Parentheses
+
+
+>Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
+
+>For "(()", the longest valid parentheses substring is "()", which has length = 2.
+
+>Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
+
+
+**Idea**:
+
+**Attention**:
+
+
+**Java code**:
+
+```java
+
+
+
+```
+
+
+<br>
+
+<br>
+
+
+
 
 
 ###38 Count and Say
@@ -5640,6 +5778,79 @@ Try to come up as many solutions as you can, there are at least 3 different ways
         return res;
     }
 
+
+```
+
+
+
+<br>
+
+<br>
+
+
+###191 Number of 1 Bits
+
+>Write a function that takes an unsigned integer and returns the number of ’1' bits it has (also known as the Hamming weight).
+
+>For example, the 32-bit integer ’11' has binary representation 00000000000000000000000000001011, so the function should return 3.
+
+
+**Idea**: There are three ways to deal with this problem.
+
+- 1) n & 1, if result is 1, count ++, n >>>= 1, till n = 0; ** Remember use >>>**
+- 2) use n = n & n-1 to remove the rightmost 1. **Time complexity is O(number od 1s)**
+- 3) use left shift. 
+
+
+
+**Solution1 : Java code**:
+
+
+
+```java
+
+
+    public int hammingWeight(int n) {
+        if(n == 0) return 0;
+        int res = 0;
+        while(n != 0){
+            if((n & 1) != 0) res++;
+            n = n >>> 1;
+        }
+        return res;
+    }
+
+```
+
+**Solution 2: c++ code**:
+
+```c++
+
+    int hammingWeight(uint32_t n) {
+          int res = 0;
+          while(n > 0){
+        	  n &= n-1;
+        	  res++;
+          }
+          return res;
+    }
+
+```
+
+**Solution 3: c++ code**:
+
+```c++
+    int hammingWeight(uint32_t n) {
+      int res = 0;
+      unsigned int flag = 1;
+      while(flag){
+         if(n&flag){
+            res++;
+        }
+        flag = flag << 1;
+      }
+      return res;
+    }
 
 ```
 
