@@ -35,6 +35,7 @@
 * [31 Next Permutation](#31-next-permutation)
 * [32 Longest Valid Parentheses](#32-longest-valid-parentheses)
 * [33 Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
+* [34 Search for a Range](#34-search-for-a-range)
 * [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
@@ -2463,6 +2464,107 @@ Then how to calculate the longest valid parentheses? Like the valid parentheses 
 <br>
 
 
+
+###34 Search for a Range
+
+>Given a sorted array of integers, find the starting and ending position of a given target value.
+
+>Your algorithm's runtime complexity must be in the order of O(log n).
+
+>If the target is not found in the array, return [-1, -1].
+
+>For example,
+
+>Given [5, 7, 7, 8, 8, 10] and target value 8,
+
+>return [3, 4].
+
+<br>
+
+**Idea**: We need to find the range in O(lgn), thus binary search comes to mind. We could use binary search to find the target, then for the left and right part, we do binary search again to find the left boundary and right boundary.
+
+The second solution is similar to the first one, the differce is that we do twice binary search to do the left boundary and right boundary. Remember to check the value of the two boundaries. Because in this method, we might not find the target element. 
+
+
+**Solution1**:
+
+
+```java
+    public int[] searchRange(int[] A, int target) {
+        int[] res = {-1, -1};
+        if(A == null || A.length == 0) return res;
+        int l = 0;
+        int r = A.length -1;
+        while(l <= r){
+            int mid = (l + r)/2;
+            if(A[mid] < target) l = mid + 1;
+            else if (A[mid] > target) r = mid - 1;
+            else{
+                int l1 = l;
+                int r1 = mid;
+                while(l1 <= r1){
+                    int mid1 = (l1+r1)/2;
+                    if(A[mid1] < target) l1 = mid1 + 1;
+                    else r1 = mid1 -1;
+                }
+                res[0] = l1;
+                
+                int l2 = mid;
+                int r2 = r;
+                while(l2 <= r2){
+                    int mid2 = (l2+r2)/2;
+                    if(A[mid2] <= target) l2 = mid2 + 1;
+                    else r2 = mid2 -1;
+                }
+                res[1] = r2;
+                
+                return res;
+            }
+        }
+        return res;
+    }
+    
+
+
+```
+
+
+**Solution 2**:
+
+```java
+    
+    public int[] searchRange1(int[] A, int target) {
+        int[] res = {-1, -1};
+        if(A == null || A.length == 0) return res;
+        int l1 = 0;
+        int r1 = A.length -1;
+        while(l1 <= r1){
+            int mid1 = (l1+r1)/2;
+            if(A[mid1] < target) l1 = mid1 + 1;
+            else r1 = mid1 -1;
+        }
+        int l2 = 0;
+        int r2 = A.length -1;
+        while(l2 <= r2){
+            int mid2 = (l2 + r2)/2;
+            if(A[mid2] <= target) l2 = mid2 + 1;
+            else r2 = mid2 -1;
+        }
+        if(l1 <= r2){
+            res[0] = l1;
+            res[1] = r2;
+        }
+        
+        return res;
+    }
+   
+
+
+```
+
+
+<br>
+<br>
 
 
 ###38 Count and Say
