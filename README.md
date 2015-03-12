@@ -36,6 +36,7 @@
 * [32 Longest Valid Parentheses](#32-longest-valid-parentheses)
 * [33 Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
 * [34 Search for a Range](#34-search-for-a-range)
+* [35 Search Insert Position](#35-search-insert-position)
 * [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
@@ -2566,6 +2567,49 @@ The second solution is similar to the first one, the differce is that we do twic
 <br>
 <br>
 
+
+###35 Search Insert Position
+
+
+>Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+>You may assume no duplicates in the array.
+
+>Here are few examples.
+
+<pre>
+[1,3,5,6], 5 → 2
+[1,3,5,6], 2 → 1
+[1,3,5,6], 7 → 4
+[1,3,5,6], 0 → 0
+</pre>
+
+
+<br>
+**Idea**: Just like the method used in search range, we use binary search, when l > r, l is the first element larger then the target. 
+
+
+
+```java 
+
+    public int searchInsert(int[] A, int target) {
+        if(A == null || A.length == 0) return 0;
+        int l = 0;
+        int r = A.length-1;
+        while(l <= r){
+            int mid = (l+r)/2;
+            if(A[mid] == target) return mid;
+            else if(A[mid] < target) l = mid+1;
+            else r = r=mid-1;
+        }
+        return l;
+    }
+
+```
+
+<br>
+
+<br>
 
 ###38 Count and Say
 >The count-and-say sequence is the sequence of integers beginning as follows:
