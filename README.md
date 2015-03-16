@@ -2822,9 +2822,11 @@ The second solution is similar to the first one, the differce is that we do twic
 >For example, given candidate set 2,3,6,7 and target 7, 
 
 <pre>
+
 A solution set is: 
 [7] 
 [2, 2, 3] 
+
 </pre>
 
 
@@ -2891,7 +2893,7 @@ A solution set is:
 [2, 6] 
 [1, 1, 6] 
 
-<pre>
+</pre>
 
 
 
