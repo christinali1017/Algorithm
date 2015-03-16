@@ -40,6 +40,8 @@
 * [36 Valid Sudoku](#36-valid-sudoku)
 * [37 Sudoku Solver](#37-sudoku-solver)
 * [38 Count and Say](#38-count-and-say)
+* [39 Combination Sum](#39-combination-Sum)
+* [40 Combination Sum II](#40-combination-sum-ii)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
 * [50 Pow(x,n)](#50-pow(x,n))
@@ -2800,6 +2802,132 @@ The second solution is similar to the first one, the differce is that we do twic
 
 ```
 
+<br>
+
+<br>
+
+###39 Combination Sum
+>Given a set of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+
+> **The same repeated number may be chosen from C unlimited number of times.**
+
+>Note:
+
+>All numbers (including target) will be positive integers.
+
+>Elements in a combination (a1, a2, … , ak) must be in non-descending order. (ie, a1 ≤ a2 ≤ … ≤ ak).
+
+>The solution set must not contain duplicate combinations.
+
+>For example, given candidate set 2,3,6,7 and target 7, 
+
+<pre>
+A solution set is: 
+[7] 
+[2, 2, 3] 
+</pre>
+
+
+**Idea**: We need to add combination in non-descending order, thus its better to first sort candidates. Off course, we can handle the duplicates and sequence in latter if we don't sort it. Then we add element to list, minus the current and go to the next recursion.
+
+
+**Java code**:
+
+
+```java
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if(candidates == null || candidates.length == 0) return res;
+        Arrays.sort(candidates);
+        helper(candidates, target, res, new ArrayList<Integer>(), 0);
+        return res;
+    }
+    public void helper(int[] candidates, int target, List<List<Integer>> res, List<Integer> cur, int start){
+        if(target < 0) return;
+        if(target == 0){
+            res.add(new ArrayList<Integer>(cur));
+            return;
+        }
+        for(int i = start; i < candidates.length; i++){
+            cur.add(candidates[i]);
+            helper(candidates, target-candidates[i], res, cur, i);
+            cur.remove(cur.size()-1);
+        }
+    }
+
+```
+
+
+***Related Problems***:
+
+* [39 Combination Sum](#39-combination-Sum)
+* [40 Combination Sum II](#40-combination-sum-ii)
+* 
+<br>
+
+<br>
+
+
+###40 Combination Sum II
+
+>Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+
+>**Each number in C may only be used once in the combination.**
+
+>Note:
+
+>All numbers (including target) will be positive integers.
+
+>Elements in a combination (a1, a2, … , ak) must be in non-descending order. (ie, a1 ≤ a2 ≤ … ≤ ak).
+
+<pre>
+
+The solution set must not contain duplicate combinations.
+For example, given candidate set 10,1,2,7,6,1,5 and target 8, 
+A solution set is: 
+[1, 7] 
+[1, 2, 5] 
+[2, 6] 
+[1, 1, 6] 
+
+<pre>
+
+
+
+**Idea**: The difference with [39 Combination Sum](#39-combination-Sum)] is that in ths problem we can only use each number once. So when go to next recursion, the start position should change to i+1, so that it will add itself again. 
+
+**Java code**:
+
+```java
+    public List<List<Integer>> combinationSum2(int[] num, int target) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if(num == null || num.length == 0) return res;
+        Arrays.sort(num);
+        helper(num, target, res, new ArrayList<Integer>(), 0);
+        return res;
+    }
+    public void helper(int[] candidates, int target, List<List<Integer>> res, List<Integer> cur, int start){
+        if(target < 0) return;
+        if(target == 0){
+            res.add(new ArrayList<Integer>(cur));
+            return;
+        }
+        for(int i = start; i < candidates.length; i++){
+            if(i > start && candidates[i] == candidates[i-1]) continue;
+            cur.add(candidates[i]);
+            helper(candidates, target-candidates[i], res, cur, i+1);
+            cur.remove(cur.size()-1);
+        }
+    }
+
+```
+
+***Related Problems***:
+
+* [39 Combination Sum](#39-combination-Sum)
+* [40 Combination Sum II](#40-combination-sum-ii)
+* 
 <br>
 
 <br>
