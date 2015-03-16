@@ -37,6 +37,8 @@
 * [33 Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array)
 * [34 Search for a Range](#34-search-for-a-range)
 * [35 Search Insert Position](#35-search-insert-position)
+* [36 Valid Sudoku](#36-valid-sudoku)
+* [37 Sudoku Solver](#37-sudoku-solver)
 * [38 Count and Say](#38-count-and-say)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
@@ -2611,6 +2613,142 @@ The second solution is similar to the first one, the differce is that we do twic
 
 <br>
 
+###36 Valid Sudoku
+
+>Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
+
+>The Sudoku board could be partially filled, where empty cells are filled with the character '.'.
+
+**Rules about sudoku**:
+
+- 1) 9×9 grid
+- 2) each column, each row, and each of the nine 3×3 sub-grids that compose the grid (also called "boxes", "blocks", "regions", or "sub-squares") contains all of the digits from 1 to 9
+
+**Idea**: Check each row, each column and each 3*3 blocks.
+
+
+**Java code**:
+
+```java
+
+
+    public boolean isValidSudoku(char[][] board) {
+        if(board == null || board.length != 9 || board[0].length != 9) return false;
+        for(int i = 0; i < board.length; i++){
+            Set<Character> rset = new HashSet<Character>();
+            Set<Character> cset = new HashSet<Character>();
+            for(int j = 0; j < board[0].length; j++){
+                char rc = board[i][j];
+                if((rc != '.' && (rc > '9' || rc < '1')) || rset.contains(rc)) return false;
+                if(rc != '.') rset.add(rc);
+                char cc = board[j][i];
+                if((cc != '.' && (cc > '9' || cc < '1')) || cset.contains(cc)) return false;
+                if(cc != '.') cset.add(cc);
+            }
+        }
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(!helper(i, j, board)) return false;
+            }
+        }
+        return true;
+    }
+    public boolean helper(int i, int j, char[][] board){
+        Set<Character> set = new HashSet<Character>();
+        for(int k = 3*i; k < 3*i+3; k++){
+            for(int l = 3*j; l <3*j+3; l++){
+                char c = board[k][l];
+                if((c != '.' &&(c > '9' || c < '1')) || set.contains(c)) return false;
+                if(c != '.') set.add(c);
+            }
+        }
+        return true;
+    }
+
+```
+
+***Related Problem***:
+
+* [36 Valid Sudoku](#36-valid-sudoku)
+* [37 Sudoku Solver](#37-sudoku-solver)
+
+
+
+<br>
+
+<br>
+
+
+###37 Sudoku Solver
+
+>Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+>Empty cells are indicated by the character '.'.
+
+>You may assume that there will be only one unique solution.
+
+
+**Idea**: we solve the sudoku line by line, every time we fill in a filed, we check if is valid. We can use the method in * [36 Valid Sudoku](#36-valid-sudoku) to check the sudoku
+
+
+
+
+**Java code**:
+
+```java
+
+    public void solveSudoku(char[][] board) {
+        if(board == null || board.length != 9 | board[0].length != 9) return;
+        solverHelper(board, 0, 0);
+    }
+    
+    public boolean solverHelper(char[][] board, int i, int j){
+        if(j == 9) return solverHelper(board, i+1, 0);
+        if(i == 9) return true;
+        if(board[i][j] == '.'){
+            for(int k = 1; k <=9; k++){
+                board[i][j] = (char)(k+'0');
+                if(isValid(board, i, j)){
+                   if(solverHelper(board, i, j+1)) return true;
+                }
+            }
+            board[i][j] = '.';
+        }else return  solverHelper(board, i, j+1);
+        return false;
+    }
+    public boolean isValid(char[][] board, int i, int j) {
+		 for(int k = 0; k < 9; k++){
+			 if(k != j && board[i][k] == board[i][j]) return false;
+			 if(k != i && board[i][j] == board[k][j]) return false;
+		 }
+		 
+		 for(int r = i/3 *3; r < i/3 *3 +3; r++){
+			 for(int c = j/3 * 3; c < j/3 * 3+3; c++){
+				 if((r != i || c != j) && board[r][c] == board[i][j]) return false;
+			 }
+		 }
+		 return true;
+	 }
+	 
+```
+
+***Related Problem***:
+
+* [36 Valid Sudoku](#36-valid-sudoku)
+* [37 Sudoku Solver](#37-sudoku-solver)
+
+
+
+
+
+<br>
+
+<br>
+
+
+
+
+
 ###38 Count and Say
 >The count-and-say sequence is the sequence of integers beginning as follows:
 
@@ -2625,6 +2763,8 @@ The second solution is similar to the first one, the differce is that we do twic
 >Given an integer n, generate the nth sequence.
 
 >Note: The sequence of integers will be represented as a string.
+
+
 
 
 
