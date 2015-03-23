@@ -49,12 +49,14 @@
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt(x)](#69-sqrt(x))
 * [70 Climbing Stairs](#70-climbing-stairs)
+* [75 Sort Colors](#75-sort-colors)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 * [86 Partition List](#86-partition-list)
 * [89 Gray Code](#89-gray-code)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [94 Binary Tree Inorder Traversal](#94-binary-tree-inorder-traversal)
 * [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
 * [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
@@ -2865,7 +2867,6 @@ A solution set is:
 
 * [39 Combination Sum](#39-combination-Sum)
 * [40 Combination Sum II](#40-combination-sum-ii)
-* 
 <br>
 
 <br>
@@ -2929,7 +2930,6 @@ A solution set is:
 
 * [39 Combination Sum](#39-combination-Sum)
 * [40 Combination Sum II](#40-combination-sum-ii)
-* 
 <br>
 
 <br>
@@ -3402,7 +3402,83 @@ We see that the value of Fibonacci increases exponentially. If we use int, then 
     }
     
 
-``` 
+```
+
+###75 Sort Colors
+
+
+> Given an array with n objects colored red, white or blue, sort them so that objects of the same color are adjacent, with the colors in the order red, white and blue.
+
+>Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
+
+>Note:
+>You are not suppose to use the library's sort function for this problem. 
+
+**Idea**:
+
+- Solution 1: Use counting sort, we can count the numbers of 0, 1, 2, then refill numbers into A. **Note that this is not inplace**
+- Solution 2: Use two pointers for 0 and 1, if we encounter 0, A[count1++] = 1, A[count0++] = 0, if we encounter 1, count1++
+
+**Attention**: 
+
+- 1) For the second method, the sequence of count1++ and count0++ is impoertant, we need first A[count1++] = 1
+- 2) Everytime before we move the two pointers, we need to assgin A[i] = 2. Because we don't maintain a pointer for 2, thus the last part would be 2.
+
+**Time complexity**
+
+Use method1 need two pass. Method 2 only need one pass. 
+
+
+**Java code Solution1**:
+
+```java
+
+    public void sortColors(int[] A) {
+    	if(A == null || A.length == 0) return;
+    	int count0 = 0;
+    	int count1 = 0;
+    	for(int i = 0; i < A.length; i++){
+    		if(A[i] == 0) count0++;
+    		else if(A[i] == 1) count1++;
+    	}
+    	for(int i = 0; i < A.length; i++){
+    		if(i < count0) A[i] = 0;
+    		else if(i >= count0 && i < count0+count1) A[i] = 1;
+    		else A[i] = 2;
+    	}
+    }
+    
+
+```
+
+
+**Java code solution 2**:
+
+```java
+
+    public void sortColors(int[] A) {
+        if(A == null || A.length == 0) return;
+        int count0 = 0, count1 = 0;
+        for(int i = 0; i < A.length; i++){
+            if(A[i] == 0){
+                A[i] = 2;
+                A[count1++] = 1;
+                A[count0++] = 0;
+            }else if(A[i] == 1){
+                A[i] = 2;
+                A[count1++] = 1;
+            }
+        }
+
+    }
+```
+
+
+
+<br>
+<br>
+
+
 
 ###80 Remove Duplicates From Sorted Array II
 
@@ -3821,6 +3897,118 @@ Pretty much the save with the above, just change while to for:
 
 <br>
 <br>
+
+
+###94 Binary Tree Inorder Traversal
+
+> Given a binary tree, return the inorder traversal of its nodes' values.
+
+<pre>
+For example:
+Given binary tree {1,#,2,3},
+   1
+    \
+     2
+    /
+   3
+return [1,3,2].
+
+</pre>
+
+**Idea**: 
+
+- 1) Solution 1: Recursion. It's the simplest method. Just visit in left, root, right order.
+
+- 2) Solution 2: Iterative. Use a stack to record the parant node, so we can go to it and its right child after visit its left child.
+
+- 3) Solution 3 : Morris Traversal. Use a pointer to go back to its parent after visit it's left child. Note that use this method we only need O(1) space. Want to know more about Morris traversal click on this link. [Morris Traversal](http://wishyouhappy.github.io/2014/12/17/morris%20traversal-traverse%20a%20binary%20tree%20without%20stack/). 
+
+
+**Solution 1, Recursion**:
+
+
+```java
+
+	    public List<Integer> inorderTraversal(TreeNode root) {
+	        List<Integer> res = new ArrayList<Integer>();
+	        helper(root, res);
+	        return res;
+	    }
+	    public void helper(TreeNode root, List<Integer> res){
+	        if(root == null) return;
+	        helper(root.left, res);
+	        res.add(root.val);
+	        helper(root.right, res);
+	    }
+
+
+```
+
+
+
+**Solution 2, Iterative**:
+
+```java
+    public static List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        while(!stack.isEmpty() || root != null){
+            if(root != null){
+                stack.push(root);
+                root = root.left;
+            }else{
+                root = stack.pop();
+                res.add(root.val);
+                root = root.right;
+            }
+        }
+        return res;
+    }
+    
+
+
+```
+
+
+
+**Solution 3: Morris Traversal**:
+
+```java
+
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        TreeNode pre = null;
+        while(root != null){
+            if(root.left == null){
+                res.add(root.val);
+                root = root.right;
+            }else{
+                pre = root.left;
+                while(pre.right != null && pre.right != root){
+                    pre = pre.right;
+                }
+                if(pre.right == null){
+                    pre.right = root;
+                    root = root.left;
+                }else{
+                    pre.right = null;
+                    res.add(root.val);
+                    root = root.right;
+                }
+            }
+        }
+        return res;
+        
+    }
+
+```
+
+
+<br>
+<br>
+
+
+Note: Recursive solution is trivial, could you do it iteratively?
 
 ###98 Validate Binary Search Tree
 
