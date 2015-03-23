@@ -3915,6 +3915,8 @@ return [1,3,2].
 
 </pre>
 
+> Note: Recursive solution is trivial, could you do it iteratively?
+
 **Idea**: 
 
 - 1) Solution 1: Recursion. It's the simplest method. Just visit in left, root, right order.
@@ -4008,7 +4010,7 @@ return [1,3,2].
 <br>
 
 
-Note: Recursive solution is trivial, could you do it iteratively?
+
 
 ###98 Validate Binary Search Tree
 
