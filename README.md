@@ -57,7 +57,10 @@
 * [89 Gray Code](#89-gray-code)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
 * [94 Binary Tree Inorder Traversal](#94-binary-tree-inorder-traversal)
+* [95 Unique Binary Search Trees](#95-unique-binary-search-trees)
+* [96 Unique Binary Search Trees II](#96-unique-binary-search-trees)
 * [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
+* [99 Recover Binary Search Tree](#99-recover-binary-search-tree)
 * [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
@@ -3832,7 +3835,8 @@ Given m, n satisfy the following condition:
       }
 ```   
    <br>
-   
+ 
+     
 
 Pretty much the save with the above, just change while to for:
 ```java
@@ -4011,6 +4015,121 @@ return [1,3,2].
 
 
 
+###95 Unique Binary Search Trees
+
+> Given n, how many structurally unique BST's (binary search trees) that store values 1...n?
+
+> For example,
+
+> Given n = 3, there are a total of 5 unique BST's.
+
+<pre>
+
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+
+
+</pre>
+
+
+
+**Idea**: Consider a binary rooted at certain node node1, the number of unique binary trees would be #left sub-BST * #right sub-BST. So the total number of binary search tree would be sum of binary trees rooted at each node. 
+
+This is similar to the [catalan numbers](http://en.wikipedia.org/wiki/Catalan_number). In this problem, we could use dynamic programming to store middle results.  
+
+
+**Java code**:
+
+```java
+    public int numTrees(int n) {
+        if(n <= 0) return 0;
+    
+        int result[] = new int[n+1];
+        result[0] = 1;
+        result[1] = 1;
+        
+        for(int i = 2; i <= n; i++){
+        	for(int j = 0; j < i; j++){
+        		result[i] += result[j] * result[i-j-1];
+        	}
+        }
+        
+        return result[n];
+    }
+
+```
+
+
+<br>
+<br>
+
+
+###96 Unique Binary Search Trees II
+
+> Given n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+
+<pre>
+For example,
+Given n = 3, your program should return all 5 unique BST's shown below.
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+confused what "{1,#,2,3}" means? > read more on how binary tree is serialized on OJ.
+
+</pre>
+
+**Idea**: The basic Idea is same as [95 Unique Binary Search Trees](#95-unique-binary-search-trees). We still need to create the left sub-BST and right sub-BST, then combine it with the root. 
+
+This is a bottom up approach, we create the trees from leaves. The time complexity is not polynomial. 
+
+**Attention**: In order to create all the combinations in the for loop. So when left subtree is null, we still need to add null to list. 
+
+```java
+	  public List<TreeNode> generateTrees(int n) {
+	        List<TreeNode> res = new ArrayList<TreeNode>();
+	        if(n < 0) return res;
+	        return helper(1, n);
+	    }
+	    
+	    public List<TreeNode> helper(int l, int r){
+	        List<TreeNode> res = new ArrayList<TreeNode>();
+	        if(l > r){
+	            res.add(null);
+	            return res;
+	        }
+	        
+	        for(int i = l; i <= r; i++){
+	            List<TreeNode> llist = helper(l, i-1);
+	            List<TreeNode> rlist = helper(i+1, r);
+	            for(int j = 0; j < llist.size(); j++){
+	                for(int k = 0; k < rlist.size(); k++){
+	                    TreeNode root = new TreeNode(i);
+	                    root.left = llist.get(j);
+	                    root.right = rlist.get(k);
+	                    res.add(root);
+	                }
+	            }
+	        }
+	        return res;
+	    }
+
+```
+
+
+
+
+<br>
+<br>
+
+
+
 
 ###98 Validate Binary Search Tree
 
@@ -4076,13 +4195,108 @@ Both the left and right subtrees must also be binary search trees.
     	if(root.right != null && root.right.val <= root.val) return false;
         return isValidBST(root.left) && isValidBST(root.right);
    }
+   
+
 ```
 
-***Related Problems ***
+<br>
+<br>
 
-* [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
-* [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 
+###99 Recover Binary Search Tree
+
+> Two elements of a binary search tree (BST) are swapped by mistake.
+
+> Recover the tree without changing its structure.
+
+> Note:
+
+> A solution using O(n) space is pretty straight forward. Could you devise a constant space solution?
+
+**Idea**: We can traverse the tree inorder to find the misplaced TreeNode. If we use recursion, we need O(n) space. If we use morris traversal, we can solve this problem in constant space. 
+
+
+**Solution 1: O(n) space.**
+
+```java
+    public void recoverTree(TreeNode root) {
+        if(root == null) return;
+        TreeNode[] arr = new TreeNode[3];
+        helper(root, arr);
+        int temp = arr[0].val;
+        arr[0].val = arr[1].val;
+        arr[1].val = temp;
+    }
+    
+    public void helper(TreeNode root, TreeNode[] arr){
+        if(root == null) return;
+        helper(root.left, arr);
+        if(arr[2] != null && arr[2].val > root.val){
+            if(arr[0] == null) arr[0] = arr[2];
+            arr[1] = root;
+        }
+        arr[2] = root;
+        helper(root.right, arr);
+    }
+
+```
+
+**Solution2 : morris**
+
+```java
+	/*Morris traversal O(1) */
+    public void recoverTree(TreeNode root) {
+    	/* arr[0] arr[1] stroe two swapped elements, arr[2] store pre.*/
+        TreeNode[] arr = new TreeNode[2];
+        morrisTraversal(root, arr);
+        int temp = arr[0].val;
+        arr[0].val = arr[1].val;
+        arr[1].val = temp;
+    }
+    
+    
+    public void morrisTraversal(TreeNode root, TreeNode[] arr){
+		if(root == null) return;
+		
+		TreeNode pre = null; /* predecessor*/
+		TreeNode previous = null;
+		while(root != null){
+			if(root.left == null){
+				if( previous != null && previous.val > root.val){
+		    		if(arr[0] == null) arr[0] = previous;
+		    		arr[1] = root;
+		    	}
+				previous = root;
+				root = root.right;
+			}else{
+				/* find predecessor */
+				pre = root.left;
+				while(pre.right != null && pre.right != root)
+					pre = pre.right;
+				
+				/* if predecessor's right == null, set current node as its right child */
+				if(pre.right == null){
+					pre.right = root;
+					root = root.left;
+				}else{
+					/* recover tree, when return to parent node the second time */
+					pre.right = null;
+					if( previous != null && previous.val > root.val){
+			    		if(arr[0] == null) arr[0] = previous;
+			    		arr[1] = root;
+			    	}	
+					previous = root;
+					root = root.right;
+				}
+			}
+		}
+	}
+
+
+```
+
+<br>
+<br>
 
 ###103 Binary Tree Zigzag Level Order Traversal
 
@@ -4136,7 +4350,8 @@ return its zigzag level order traversal as:
     
 ```
 
-
+<br>
+<br>
     
 ###108 Convert Sorted Array to Binary Search Tree  
 
