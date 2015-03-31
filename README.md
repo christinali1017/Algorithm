@@ -61,6 +61,7 @@
 * [96 Unique Binary Search Trees II](#96-unique-binary-search-trees)
 * [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
 * [99 Recover Binary Search Tree](#99-recover-binary-search-tree)
+* [100 Same Tree](#100-same-tree)
 * [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
@@ -93,6 +94,7 @@
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
 * [191 Number of 1 Bits](#191-number-of-1-bits)
+* [192 House Robber](#192-house-robber)
 
 
 
@@ -4298,6 +4300,33 @@ Both the left and right subtrees must also be binary search trees.
 <br>
 <br>
 
+
+###100 Same Tree
+
+> Given two binary trees, write a function to check if they are equal or not.
+
+>Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+
+
+**Idea**: We can choose any traverse method to visit each node and check if they are the same. We need to check the val, the left child and the right child.
+
+
+**Java code**:
+
+
+```java
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if(p == null && q == null) return true;
+        if((p == null || q == null) || p.val != q.val) return false;
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+```
+
+<br>
+
+<br>
+
+
 ###103 Binary Tree Zigzag Level Order Traversal
 
 > Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
@@ -6785,6 +6814,7 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 **Solution 3: c++ code**:
 
 ```c++
+
     int hammingWeight(uint32_t n) {
       int res = 0;
       unsigned int flag = 1;
@@ -6799,3 +6829,62 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 
 ```
 
+
+<br>
+<br>
+
+###192 House Robber
+
+
+>You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security system connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+
+>Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight without alerting the police.
+
+
+**Idea**: It's an one dimensional dp problem, like the **Best time to buy and sell stocks. We need to find the maximum nonadjacent sum. Thus, for each room our choice is either rob or not rob, based on the previous room, and we need to mantain the max money on the current. If we want to rob this room, the condition is that we don't rob the previous room. Thus robYes = robNo + room[i]. And if we don't rob this room, then we can choose the max from previous robYes and robNo. See details on the following code.
+
+ 
+
+**Solution 1 **:
+
+
+```java
+
+    public int rob(int[] num) {
+        if(num == null || num.length == 0) return 0;
+        int robYes = 0;
+        int robNo = 0;
+        for(int money : num){
+            int temp = robNo;
+            robNo = Math.max(robYes, robNo);
+            robYes = temp + money;
+        }
+        return Math.max(robYes, robNo);
+    }
+
+
+```
+
+
+
+**Solution 2**:
+
+```java
+
+    public int rob(int[] num) {
+        if(num == null || num.length == 0) return 0;
+        int even = 0;
+        int odd = 0;
+        for(int i = 0; i < num.length; i++){
+            if(i % 2 == 0){
+                even += num[i];
+                even = Math.max(even, odd);
+            }else{
+                odd += num[i];
+                odd = Math.max(even, odd);
+            }
+        }
+        return Math.max(odd, even);
+    }
+
+```
