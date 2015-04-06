@@ -6962,13 +6962,14 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 >Given a binary tree, imagine yourself standing on the right side of it, return the values of the nodes you can see ordered from top to bottom.
 
 <pre>
+
 For example:
 Given the following binary tree,
-   1            <---
+   1         
  /   \
-2     3         <---
+2     3         
  \     \
-  5     4       <---
+  5     4      
 You should return [1, 3, 4].
 
 </pre>
@@ -6980,7 +6981,6 @@ You should return [1, 3, 4].
 
 
 ```java
-
 
     public List<Integer> rightSideView(TreeNode root) {
         List<Integer> res = new ArrayList<Integer>();
@@ -7006,7 +7006,6 @@ You should return [1, 3, 4].
         }
         return res;
     }
-
 
 ```
 
