@@ -40,8 +40,9 @@
 * [36 Valid Sudoku](#36-valid-sudoku)
 * [37 Sudoku Solver](#37-sudoku-solver)
 * [38 Count and Say](#38-count-and-say)
-* [39 Combination Sum](#39-combination-Sum)
+* [39 Combination Sum](#39-combination-sum)
 * [40 Combination Sum II](#40-combination-sum-ii)
+* [41 First Missing Positive](#41-first-missing-positive)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [44 Wildcard Matching](#44-wildcard-matching)
 * [50 Pow(x,n)](#50-pow(x,n))
@@ -94,7 +95,8 @@
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
 * [191 Number of 1 Bits](#191-number-of-1-bits)
-* [192 House Robber](#192-house-robber)
+* [198 House Robber](#198-house-robber)
+* [199 Binary Tree Right Side View](#199-binary-tree-right-side-view)
 
 
 
@@ -2938,6 +2940,22 @@ A solution set is:
 <br>
 
 <br>
+
+
+###41 First Missing Positive
+
+>Given an unsorted integer array, find the first missing positive integer.
+
+>For example,
+
+>Given [1,2,0] return 3,
+
+>and [3,4,-1,1] return 2.
+
+>Your algorithm should run in O(n) time and uses constant space.
+
+
+
 
 
 ###42 Trapping Rain Water
@@ -6833,7 +6851,7 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 <br>
 <br>
 
-###192 House Robber
+###198 House Robber
 
 
 >You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security system connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
@@ -6888,3 +6906,66 @@ Try to come up as many solutions as you can, there are at least 3 different ways
     }
 
 ```
+
+
+<br>
+<br>
+
+
+
+###199 Binary Tree Right Side View
+
+
+>Given a binary tree, imagine yourself standing on the right side of it, return the values of the nodes you can see ordered from top to bottom.
+
+<pre>
+For example:
+Given the following binary tree,
+   1            <---
+ /   \
+2     3         <---
+ \     \
+  5     4       <---
+You should return [1, 3, 4].
+
+</pre>
+
+**Idea**: This problem is similar to the breadth first search of a binary search tree. If you can figure out this, the problem is easy. We use a queue, more precisely a deque to store element of each level. Then each time we store the rightmost element in each level to the result list. 
+
+
+**Java code **:
+
+
+```java
+
+
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        if(root == null){
+            return res;
+        }
+        Deque<TreeNode> deque = new LinkedList<TreeNode>();
+        deque.offer(root);
+        while(!deque.isEmpty()){
+            TreeNode cur = null;
+            for(int i = 0, size = deque.size(); i < size; i++){
+                cur = deque.pollLast();
+                if(cur.right != null){
+                    deque.addFirst(cur.right);
+                }
+                if(cur.left != null){
+                    deque.addFirst(cur.left);
+                }
+                if(i == 0){
+                    res.add(cur.val);
+                }
+            }
+        }
+        return res;
+    }
+
+
+```
+
+<br>
+<br>
