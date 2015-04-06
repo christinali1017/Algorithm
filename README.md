@@ -409,6 +409,49 @@ There is another solution use primitive string methods, such as indexOf, subStri
 
 ```
 
+Here is the python code for this problem. We defined two extra functions: `median()` will find the median from *one* given array. `shrink()` will get two shrinked arrays, while one is from the left side and the other is the right side from the given arrays. Because either array may contains the median with exactly the middle two items in the array. So the shrinking size of array will be slightly less.
+
+For example, for array [1,2,6,7] and [3,4,5,8]. The median of two arrays is 4.5 . `median(A)` is 4, `median(B)` is 4.5. So we will shrink the left side of A, and shrink the right side of B. So `shrink(A, B, true)` will be `[2,6,7], [3,4,5]`.
+
+``` python
+class Solution:
+    def median(self, array):
+        n = len(array)
+        if n == 1:
+            return array[0]
+        elif n % 2 == 0:
+            return float((array[n/2] + array[n/2 - 1])) / 2
+        else:
+            return array[n/2]
+            
+    def shrink(self, A, B, A_isleft):
+        a, b = len(A), len(B)
+        n = (b-1) / 2 if a > b else (a-1) / 2
+        if A_isleft:
+            return A[:a-n], B[n:]
+        else:
+            return A[n:], B[:b-n]
+    
+    # @return a float
+    def findMedianSortedArrays(self, A, B):
+        if not A and not B: raise ValueError(message="Two empty arrays")
+        
+        if not A:
+            return self.median(B)
+        
+        if not B:
+            return self.median(A)
+            
+        if len(A) <= 2 or len(B) <= 2:
+            return self.median(sorted(A+B))
+        
+        A_isleft = self.median(A) > self.median(B)
+        a, b = self.shrink(A, B, A_isleft)
+        return self.findMedianSortedArrays(a, b)
+```
+
+
+
 
 <br>
 <br>
