@@ -44,11 +44,12 @@
 * [40 Combination Sum II](#40-combination-sum-ii)
 * [41 First Missing Positive](#41-first-missing-positive)
 * [42 Trapping Rain Water](#42-trapping-rain-water)
+* [43 Multiply Strings](#43-multiply-strings)
 * [44 Wildcard Matching](#44-wildcard-matching)
-* [50 Pow(x,n)](#50-pow(x,n))
+* [50 Pow\(x,n\)](#50-pow\(x,n\))
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [61 Rotate List](#61-rotate-list)
-* [69 Sqrt(x)](#69-sqrt(x))
+* [69 Sqrt\(x\)](#69-sqrt\(x\))
 * [70 Climbing Stairs](#70-climbing-stairs)
 * [75 Sort Colors](#75-sort-colors)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
@@ -3027,6 +3028,9 @@ A solution set is:
 ```
 
 
+<br>
+<br>
+
 
 ###42 Trapping Rain Water
 
@@ -3102,6 +3106,27 @@ Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
 <br>
 <br>
+
+
+
+
+###43 Multiply Strings
+
+
+>Given two numbers represented as strings, return multiplication of the numbers as a string.
+
+>Note: The numbers can be arbitrarily large and are non-negative.
+
+<br>
+
+**Idea**:
+
+
+
+
+**Java code**:
+
+
 
 
 ###44 Wildcard Matching
@@ -3191,7 +3216,7 @@ isMatch("aab", "c*a*b") → false
 <br>
 
 
-###50 Pow(x,n)
+###50 Pow\(x,n\)
 
 >Implement pow(x, n).
 
