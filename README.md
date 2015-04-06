@@ -46,10 +46,10 @@
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [43 Multiply Strings](#43-multiply-strings)
 * [44 Wildcard Matching](#44-wildcard-matching)
-* [50 Pow\(x,n\)](#50-pow\(x,n\))
+* [50 Pow](#50-pow)
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [61 Rotate List](#61-rotate-list)
-* [69 Sqrt\(x\)](#69-sqrt\(x\))
+* [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
 * [75 Sort Colors](#75-sort-colors)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
@@ -609,8 +609,8 @@ index of middle element : size - i + j - i ; i is the row number, j is the start
 
 * [7 Reverse Integer](#7-reverse-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow(x,n)](#50-pow(x,n))
-* [69 Sqrt(x)](#69-sqrt(x))
+* [50 Pow](#50-pow)
+* [69 Sqrt](#69-sqrt)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
 
@@ -2228,8 +2228,8 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 
 * [7 Reverse Integer](#7-reverse-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow(x,n)](#50-pow(x,n))
-* [69 Sqrt(x)](#69-sqrt(x))
+* [50 Pow](#50-pow)
+* [69 Sqrt](#69-sqrt)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
 <br>
@@ -3119,15 +3119,39 @@ Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
 <br>
 
-**Idea**:
+**Idea**: If length is n and m, result's length is n+m or n+m-1, result of index i = 0 * i + 1 * i-1 ..... i * 0
 
+
+**Attention**: We should not add the leftmost zero.
 
 
 
 **Java code**:
 
+```java
+
+    public String multiply(String num1, String num2) {
+        if(num1 == null || num2 == null) return null;
+        if(num1.equals("0") || num2.equals("0")) return "0";
+        StringBuilder res = new StringBuilder();
+        int cur = 0;
+        for(int i= num1.length() + num2.length() -1;i >=0; i--){
+            for(int j = Math.min(i-1, num1.length()-1);j >= 0; j--){
+                if(j < num1.length() && ((i-j-1) < num2.length())) {
+                    cur += (int)(num1.charAt(j) - '0') * (int)(num2.charAt(i-j-1) - '0');
+                }
+            }
+            if(i != 0 || cur > 0) res.insert(0, cur % 10);
+            cur = cur / 10;
+        }
+        return res.toString();
+    }
 
 
+```
+
+<br>
+<br>
 
 ###44 Wildcard Matching
 
@@ -3216,7 +3240,7 @@ isMatch("aab", "c*a*b") → false
 <br>
 
 
-###50 Pow\(x,n\)
+###50 Pow
 
 >Implement pow(x, n).
 
@@ -3381,7 +3405,7 @@ code:
 <br>
 <br>
 
-###69 Sqrt(x)
+###69 Sqrt
 
 >Implement int sqrt(int x).
 
@@ -3426,8 +3450,8 @@ code:
 
 * [7 Reverse Integer](#7-reverse-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow(x,n)](#50-pow(x,n))
-* [69 Sqrt(x)](#69-sqrt(x))
+* [50 Pow](#50-pow)
+* [69 Sqrt](#69-sqrt)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
 <br>
@@ -6549,8 +6573,8 @@ In order to know when the recuisive begins, we need to record the remainder at e
 
 * [7 Reverse Integer](#7-reverse-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow(x,n)](#50-pow(x,n))
-* [69 Sqrt(x)](#69-sqrt(x))
+* [50 Pow](#50-pow)
+* [69 Sqrt](#69-sqrt)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
 <br>
