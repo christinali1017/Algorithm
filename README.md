@@ -2997,7 +2997,34 @@ A solution set is:
 
 >Your algorithm should run in O(n) time and uses constant space.
 
+<br>
 
+**Idea**: This problem has the same idea with the counting sort problem. If no element is missing, then A[A[i]-1] = A[i]. Thus, we just need to put the element to its original place and have another pass to check the miss element.
+ 
+
+
+**Java code**:
+
+
+```java
+
+    public int firstMissingPositive(int[] A) {
+        if(A == null || A.length == 0) return 1;
+        for(int i = 0; i < A.length; i++){
+            if(A[i] > 0 && A[i] - 1 < A.length && A[A[i]-1] != A[i]){
+                int temp = A[A[i]-1];
+                A[A[i]-1] = A[i];
+                A[i] = temp;
+                i--;
+            } 
+        }
+        for(int i = 0; i < A.length; i++){
+            if(A[i] != i+1) return i+1;
+        }
+        return A.length+1;
+    }
+
+```
 
 
 
@@ -6977,7 +7004,7 @@ You should return [1, 3, 4].
 **Idea**: This problem is similar to the breadth first search of a binary search tree. If you can figure out this, the problem is easy. We use a queue, more precisely a deque to store element of each level. Then each time we store the rightmost element in each level to the result list. 
 
 
-**Java code **:
+**Java code**:
 
 
 ```java
