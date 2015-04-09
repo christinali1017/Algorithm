@@ -98,6 +98,7 @@
 * [191 Number of 1 Bits](#191-number-of-1-bits)
 * [198 House Robber](#198-house-robber)
 * [199 Binary Tree Right Side View](#199-binary-tree-right-side-view)
+* [200 Number of Islands](#200-number-of-islands)
 
 
 
@@ -7084,6 +7085,72 @@ You should return [1, 3, 4].
     }
 
 ```
+
+<br>
+<br>
+
+
+###200 Number of Islands
+
+>Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+<pre>
+Example 1:
+
+11110
+11010
+11000
+00000
+Answer: 1
+
+Example 2:
+
+11000
+11000
+00100
+00011
+Answer: 3
+
+
+</pre>
+
+
+**Idea**: Basically, the idea is similar to flood fill or bfs/dfs of graph. Each time we visited a land, we marked it as visited, then go north/west/south/east. When dfs ends, that means we have visited every land of a certain island. In the same way, we can count the number of all islands.
+
+
+**Java code**:
+
+```java
+public int numIslands(char[][] grid) {
+        if(grid == null || grid.length == 0 || grid[0].length == 0) return 0;
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        int res = 0;
+        for(int i = 0; i < grid.length; i++){
+            for(int j = 0; j < grid[0].length; j++){
+                if(grid[i][j] == '1' && visited[i][j] == false){
+                    dfs(visited, grid, i, j);
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+    
+    public void dfs(boolean[][] visited, char[][] grid, int i, int j){
+        if(i < 0 || i >= grid.length || j < 0 || j >= grid[0].length)
+            return;
+        if(visited[i][j] == true || grid[i][j] == '0')
+            return;
+        visited[i][j] = true;
+        dfs(visited, grid, i-1, j);
+        dfs(visited, grid, i, j-1);
+        dfs(visited, grid, i+1, j);
+        dfs(visited, grid, i, j+1);
+    }
+
+```
+
+
 
 <br>
 <br>
