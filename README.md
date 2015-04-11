@@ -48,9 +48,12 @@
 * [44 Wildcard Matching](#44-wildcard-matching)
 * [50 Pow](#50-pow)
 * [53 Maximum Subarray](#53-maximum-subarray)
+* [54 Spiral Matrix](#54-spiral-matrix)
+* [59 Spiral Matrix II](#59-spiral-matrix-ii)
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
+* [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
 * [75 Sort Colors](#75-sort-colors)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
@@ -3336,6 +3339,122 @@ the contiguous subarray [4,−1,2,1] has the largest sum = 6.
 <br>
 
 
+###54 Spiral Matrix
+
+>Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order.
+
+<pre>
+For example,
+Given the following matrix:
+
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+
+</pre>
+
+**Idea**:Don't figure out any good solution yet. Just add the element in spiral order one by one.
+
+**Attention**: The row is not necessarily equal to column, thus make sure to check if they are equal. Also, in the following method, I loop Math.min(row, col) / 2 times. what will happen if  Math.min(row, col) is odd? 
+
+
+**Java code**:
+
+
+```java
+
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> res = new ArrayList<Integer>();
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) 
+            return res;
+        int row = matrix.length;
+        int col = matrix[0].length;
+        int loops = (Math.min(row, col)) /2;
+        for(int i = 0; i < loops; i++){
+            for(int j = i; j < col - i; j++){
+                res.add(matrix[i][j]);
+            }
+            for(int j = i+1; j < row -i; j++){
+                res.add(matrix[j][col-i-1]);
+            }
+            for(int j = col-i-2; j >= i; j--){
+                res.add(matrix[row-i-1][j]);
+            }
+            for(int j = row - (i+2); j >= i+1; j--){
+                res.add(matrix[j][i]);
+            }
+        }
+        if(row >= col && col % 2 == 1){
+            for(int i = col/2; i < row - col/2; i++){
+                res.add(matrix[i][col/2]);
+            }
+        }
+        if(row < col && row % 2 == 1){
+            for(int i = row/2; i < col - row/2; i++){
+                res.add(matrix[row/2][i]);
+            }
+        }
+         return res;
+    }
+
+```
+
+<br>
+<br>
+
+
+###59 Spiral Matrix II
+
+>Given an integer n, generate a square matrix filled with elements from 1 to n2 in spiral order.
+
+<pre>
+For example,
+Given n = 3,
+
+You should return the following matrix:
+[
+ [ 1, 2, 3 ],
+ [ 8, 9, 4 ],
+ [ 7, 6, 5 ]
+]
+</pre>
+
+**Idea**:
+
+
+
+
+**Java code**:
+
+
+```java
+
+    public int[][] generateMatrix(int n) {
+        int[][] matrix = new int[n][n];
+        int num = 1;
+        for(int i = 0; i < n/2+1; i++){
+            for(int j = i; j < n - i; j++){
+               matrix[i][j] = num++ ;
+            }
+            for(int j = i+1; j < n -i; j++){
+               matrix[j][n-i-1] = num++;
+            }
+            for(int j = n-i-2; j >= i; j--){
+               matrix[n-i-1][j] = num++;
+            }
+            for(int j = n - (i+2); j >= i+1; j--){
+               matrix[j][i] = num++;
+            }
+       }
+       return matrix;
+    }
+
+```
+
+
+
 ###61 Rotate List
 
 > Given a list, rotate the list to the right by k places, where k is non-negative.
@@ -3546,6 +3665,122 @@ We see that the value of Fibonacci increases exponentially. If we use int, then 
     
 
 ```
+
+<br>
+<br>
+
+###73 Set Matrix Zeroes
+
+>Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
+
+**Idea**: The easiest way to do this problem is record the rows of columns needed to be set to 0. We can use extra array to record the rows and columns. The space complexity would ba O(m+n). If we use one row and one column that are supposed to set to 0s to stroe the information, we can get O(1) space complexity.
+
+**Java code**:
+
+```java
+public void setZeroes(int[][] matrix) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) return;
+        int[] rzeros = new int[matrix.length];
+        int[] czeros = new int[matrix[0].length];
+        
+        for(int i = 0; i < matrix.length; i++){
+            for(int j = 0; j < matrix[0].length; j++){
+                if(matrix[i][j] == 0) {
+                    rzeros[i] = 1;
+                    czeros[j] = 1;
+                }
+            }
+        }
+        for(int i = 0; i < rzeros.length; i++){
+            if(rzeros[i] == 1){
+                for(int j = 0; j < matrix[0].length; j++){
+                    matrix[i][j] = 0;
+                }
+            } 
+        }
+        for(int i = 0; i < czeros.length; i++){
+            if(czeros[i] == 1){
+                for(int j = 0; j < matrix.length; j++){
+                    matrix[j][i] = 0;
+                }
+            }
+        }
+    }
+
+```
+
+###74 Search a 2D Matrix
+>Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+
+>Integers in each row are sorted from left to right.
+The first integer of each row is greater than the last integer of the previous row.
+For example,
+
+>Consider the following matrix:
+
+<pre>
+[
+  [1,   3,  5,  7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 50]
+]
+Given target = 3, return true.
+
+</pre>
+
+**Idea**:
+
+*Solution 1*: We can search from the top-right, if the target is larger than current, then we move to next row. If the target is smaller, then we move to left.
+
+Solution 2*: Use binary search to find the row, then in that row, use binary search to find the target.
+
+**Attention**: In binary search, when loop ends, if target is not found, then l points to the first element larger than the target and r points to the first element smaller than target. 
+
+**java code**:
+
+```java
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) return false;
+        for(int i = 0; i < matrix.length; i++){
+            for(int j = matrix[0].length-1; j >= 0; j--){
+                if(matrix[i][j] == target) return true;
+                else if(matrix[i][j] < target) break;
+            }
+        }
+        return false;
+    }
+
+```
+
+*solution 2*:
+```java
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) return false;
+        int l = 0; 
+        int r = matrix.length-1;
+        while(l <= r){
+            int mid = (l + r)/2;
+            if(matrix[mid][0] == target) return true;
+            else if(matrix[mid][0] < target) l = mid + 1;
+            else r = mid -1;
+        }
+        int row = r;
+        if(row < 0 || row >= matrix.length) return false;
+        l = 0;
+        r = matrix[0].length-1;
+        while(l <= r){
+            int mid = (l + r)/2;
+            if(matrix[row][mid] == target) return true;
+            else if(matrix[row][mid] < target) l = mid + 1;
+            else r = mid -1;
+        }
+        return false;
+    }
+
+```
+
+<br>
+<br>
 
 ###75 Sort Colors
 
