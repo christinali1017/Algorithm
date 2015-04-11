@@ -54,6 +54,7 @@
 * [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
+* [74 Search a 2D Matrix](#74-search-a-2d-matrix)
 * [75 Sort Colors](#75-sort-colors)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
