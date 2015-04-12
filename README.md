@@ -46,9 +46,11 @@
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [43 Multiply Strings](#43-multiply-strings)
 * [44 Wildcard Matching](#44-wildcard-matching)
+* [45 Jump Game II](45-jump-game-ii)
 * [50 Pow](#50-pow)
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [54 Spiral Matrix](#54-spiral-matrix)
+* [55 Jump Game](#55-jump-game)
 * [59 Spiral Matrix II](#59-spiral-matrix-ii)
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt](#69-sqrt)
@@ -103,6 +105,8 @@
 * [198 House Robber](#198-house-robber)
 * [199 Binary Tree Right Side View](#199-binary-tree-right-side-view)
 * [200 Number of Islands](#200-number-of-islands)
+
+
 
 
 
@@ -3244,6 +3248,48 @@ isMatch("aab", "c*a*b") → false
 <br>
 <br>
 
+###45 Jump Game II
+
+>Given an array of non-negative integers, you are initially positioned at the first index of the array.Each element in the array represents your maximum jump length at that position.
+
+Your goal is to reach the last index in the minimum number of jumps.
+
+<pre>
+
+For example:
+Given array A = [2,3,1,1,4]
+
+The minimum number of jumps to reach the last index is 2. (Jump 1 step from index 0 to 1, then 3 steps to the last index.)
+
+</pre>
+<br>
+
+**Idea**: The basic idea is same with Jump Game. Difference is that in this problem we need to calculate the optimal steps. How can We get the minimum steps? The idea is that we only increase steps when we found that the **current position i is greater than than the previous step max**, which means that if you want to reach further, you need to increase steps.  
+
+
+**Java code**:
+
+```java
+    public int jump(int[] A) {
+        if(A == null || A.length <= 1) return 0;
+        int max = 0;
+        int canReach = 0;
+        int res = 0;
+        for(int i = 0; i < A.length; i++){
+            if(i > max) return -1;  // check if you can reach to the end.
+            if(i > canReach){
+                res++;
+                canReach = max;
+            }
+            max = Math.max(max, i + A[i]);
+        }
+        return res;
+    }
+
+```
+
+<br>
+<br>
 
 ###50 Pow
 
@@ -3405,6 +3451,45 @@ Given the following matrix:
 <br>
 <br>
 
+
+###55 Jump Game
+
+> Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+>Each element in the array represents your maximum jump length at that position.
+
+>Determine if you are able to reach the last index.
+
+<pre>
+For example:
+A = [2,3,1,1,4], return true.
+
+A = [3,2,1,0,4], return false.
+</pre>
+
+**Idea**: We need to figure out the max-position we can reach. If max >= A.length-1, then we can reach to the end. Note that we need to check if at certain step if index i > max, then we can not reach to the end. Because in some cases the A[i] might be 0, thus we might not able to go to the next step.
+
+
+**Java code**:
+
+
+```java
+
+
+    public boolean canJump(int[] A) {
+        if(A == null || A.length <= 1) return true;
+        int max = A[0];
+        for(int i = 0; i < A.length && i <= max; i++){
+            max = Math.max(max, i+A[i]);
+            if(max >= A.length-1) return true;
+        }
+        return max >= A.length-1;
+    }
+
+```
+
+<br>
+<br>
 
 ###59 Spiral Matrix II
 
@@ -3709,6 +3794,11 @@ public void setZeroes(int[][] matrix) {
     }
 
 ```
+
+
+
+<br>
+<br>
 
 ###74 Search a 2D Matrix
 >Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
