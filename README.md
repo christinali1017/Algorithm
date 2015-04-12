@@ -46,7 +46,7 @@
 * [42 Trapping Rain Water](#42-trapping-rain-water)
 * [43 Multiply Strings](#43-multiply-strings)
 * [44 Wildcard Matching](#44-wildcard-matching)
-* [45 Jump Game II](45-jump-game-ii)
+* [45 Jump Game II](#45-jump-game-ii)
 * [50 Pow](#50-pow)
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [54 Spiral Matrix](#54-spiral-matrix)
