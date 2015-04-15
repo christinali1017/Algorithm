@@ -51,6 +51,7 @@
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [54 Spiral Matrix](#54-spiral-matrix)
 * [55 Jump Game](#55-jump-game)
+* [56 Merge Intervals](#56-merge-intervals)
 * [59 Spiral Matrix II](#59-spiral-matrix-ii)
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt](#69-sqrt)
@@ -3252,7 +3253,7 @@ isMatch("aab", "c*a*b") → false
 
 >Given an array of non-negative integers, you are initially positioned at the first index of the array.Each element in the array represents your maximum jump length at that position.
 
-Your goal is to reach the last index in the minimum number of jumps.
+>Your goal is to reach the last index in the minimum number of jumps.
 
 <pre>
 
@@ -3491,6 +3492,60 @@ A = [3,2,1,0,4], return false.
 <br>
 <br>
 
+
+###56 Merge Intervals
+
+> Given a collection of intervals, merge all overlapping intervals.
+
+<pre>
+For example,
+Given [1,3],[2,6],[8,10],[15,18],
+return [1,6],[8,10],[15,18].
+</pre>
+
+
+**Idea**: First sort then merge.
+
+- 1) For sort, we can use Collections.sort(list, comparator). And when interval1.start == interval2.start, we compare interval1.end and interval2.end.
+Otherwise, we compare interval1.start and interval2.start
+- 2) For merge, if current.start > last.end, just add interval.
+Otherwise, we need to compare the end of two intervals. If current.end > last.end, we need to update last.end. 
+
+
+**Java code**:
+
+```java
+
+    public List<Interval> merge(List<Interval> intervals) {
+        if(intervals == null || intervals.size() == 0) return intervals;
+        List<Interval> res = new ArrayList<Interval>();
+        Comparator<Interval> comp = new Comparator<Interval>(){
+          public int compare(Interval arg1, Interval arg2){
+              if(arg1.start == arg2.start) return arg1.end - arg2.end;
+              else return arg1.start - arg2.start;
+          }
+        };
+        Collections.sort(intervals, comp);
+        res.add(intervals.get(0));
+        for(int i = 1; i < intervals.size(); i++){
+            Interval cur = intervals.get(i);
+            if(cur.start > res.get(res.size() -1).end) 
+                res.add(cur);
+            else {
+                if(cur.end > res.get(res.size() -1).end)
+                    res.get(res.size() -1).end = cur.end;
+            }
+        }
+        return res;
+    }
+    
+```
+
+<br>
+
+<br>
+
+
 ###59 Spiral Matrix II
 
 >Given an integer n, generate a square matrix filled with elements from 1 to n2 in spiral order.
@@ -3507,9 +3562,7 @@ You should return the following matrix:
 ]
 </pre>
 
-**Idea**:
-
-
+**Idea**: The idea is similar with spiral matrix. Actually, it's easier then the spiral matrix. Because now we can make sure that the matrix is a square matrix, thus we don't need to consider some corner cases like we did in spiral matrix. 
 
 
 **Java code**:
