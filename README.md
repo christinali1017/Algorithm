@@ -52,6 +52,7 @@
 * [54 Spiral Matrix](#54-spiral-matrix)
 * [55 Jump Game](#55-jump-game)
 * [56 Merge Intervals](#56-merge-intervals)
+* [57 Insert Interval](#57-insert-interval)
 * [59 Spiral Matrix II](#59-spiral-matrix-ii)
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt](#69-sqrt)
@@ -3545,6 +3546,110 @@ Otherwise, we need to compare the end of two intervals. If current.end > last.en
 <br>
 
 <br>
+
+
+###57 Insert Interval
+
+>Given a set of non-overlapping intervals, insert a new interval into the intervals (merge if necessary).
+
+>You may assume that the intervals were initially sorted according to their start times.
+
+>Example 1:
+
+
+>Given intervals [1,3],[6,9], insert and merge [2,5] in as [1,5],[6,9].
+
+
+>Example 2:
+
+>Given [1,2],[3,5],[6,7],[8,10],[12,16], insert and merge [4,9] in as [1,2],[3,10],[12,16].
+
+>This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10].
+
+
+**Idea**:
+
+- solution 1 : There are three possible relations between two intervals. Consider interval i1 and interval i2,
+
+	first case: i1.end < i2.start
+	
+	second case: i1.start > i2.end
+	
+	third case: i1 includes i2, or i2 includes i1, or i1.start < i2.start and i1.end < i2.end, or i1.start > i2.start and i1.end > i2.end
+	
+	In case 1: we just need to add i1 to result,
+	In case 2: we add i2 to result, and change newInterval to i1,
+	In case 3: We might need to update the start or end of the newInterval.
+	
+	
+- solution 2: First find the place to insert the newInterval, then do merge intervals for the remain intervals. How to find the place to insert the newInterval? If we find a interval that its end is >= newInterval.start, then it is the place to insert the newInterval. After insert, we merge the intervals. 
+
+
+
+**java code**:
+
+
+*Solution 1*:
+
+```java
+
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        List<Interval> res = new ArrayList<Interval>();
+        for(Interval interval : intervals){
+            if(interval.end < newInterval.start){
+                res.add(interval);
+            }else if(interval.start > newInterval.end){
+                res.add(newInterval);
+                newInterval = interval;
+            }else if(newInterval.end >= interval.start || newInterval.start <= interval.end ){
+                newInterval.start = Math.min(interval.start, newInterval.start);
+                newInterval.end = Math.max(interval.end, newInterval.end);
+            }
+        }
+        res.add(newInterval);
+        return res;
+    }
+    
+
+```
+
+
+
+*Solution 2*: 
+
+```java
+
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        List<Interval> res = new ArrayList<Interval>();
+        int i = 0;
+        for(; i < intervals.size(); i++){
+            Interval cur = intervals.get(i);
+            if(cur.end >= newInterval.start){
+                break;
+            }
+            res.add(cur);
+        }
+        
+        res.add(newInterval);
+        
+        for(; i < intervals.size(); i++){
+            Interval cur = intervals.get(i);
+            Interval last = res.get(res.size()-1);
+            if(cur.start > last.end){
+                res.add(cur);
+            }else{
+                last.start = Math.min(last.start, cur.start);
+                last.end = Math.max(last.end, cur.end);
+            }
+        }
+        return res;
+    }
+
+```
+
+<br>
+<br>
+
 
 
 ###59 Spiral Matrix II
