@@ -47,6 +47,8 @@
 * [43 Multiply Strings](#43-multiply-strings)
 * [44 Wildcard Matching](#44-wildcard-matching)
 * [45 Jump Game II](#45-jump-game-ii)
+* [46 Permutations](#46-permutations)
+* [47 Permutations II](#47-permutations-ii)
 * [50 Pow](#50-pow)
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [54 Spiral Matrix](#54-spiral-matrix)
@@ -3294,6 +3296,194 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
 <br>
 <br>
 
+
+###46 Permutations
+
+>Given a collection of numbers, return all possible permutations.
+
+**No duplicate number in collection**
+
+<pre>
+For example,
+[1,2,3] have the following permutations:
+[1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], and [3,2,1].
+</pre>
+
+**Idea**:
+
+Since there is no duplicate, we can add element one by one. For example:
+
+1,
+
+1 2, 2 1
+
+3 1 2, 1 3 2, 1 2 3, 3 2 1, 2 3 1, 2 1 3
+
+
+**Jave code**:
+
+
+
+*Iterative*:
+
+
+```java
+
+    public List<List<Integer>> permute(int[] num) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if(num == null || num.length == 0) return res;
+        List<Integer> first = new ArrayList<Integer>();
+        first.add(num[0]);
+        res.add(first);
+        for(int i = 1; i < num.length; i++){
+            List<List<Integer>> cur = new ArrayList<List<Integer>>();
+            for(List<Integer> l : res){
+                for(int j = 0; j <= l.size(); j++){
+                    List<Integer> temp = new ArrayList<Integer>(l);
+                    temp.add(j, num[i]);
+                    cur.add(temp);
+                }
+            }
+            res = cur;
+        }
+        return res;
+    } 
+
+```
+
+*recursion*:
+
+```java
+
+    public List<List<Integer>> permute1(int[] num) {
+    	List<List<Integer>> list = new ArrayList<List<Integer>>();
+    	if(num == null || num.length == 0) return list;
+        return helper(list, num, 0);
+    }
+    
+    public List<List<Integer>> helper(List<List<Integer>> list, int[] num, int i){
+    	if(i == num.length){
+    		List<Integer> arr = new ArrayList<Integer>();
+    		list.add(arr);
+    		return list;
+    	}
+    	
+    	list = helper(list, num, i+1);
+    	List<List<Integer>> current = new ArrayList<List<Integer>>();
+    	for(List<Integer> l : list){
+    		if(l.size() == 0){
+    			List<Integer> arr = new ArrayList<Integer>();
+    			arr.add(num[i]);
+        		current.add(arr);
+    		}
+    		else {
+	    		for(int j = 0; j <= l.size(); j++){
+	    			List<Integer> arr = new ArrayList<Integer>(l);
+	    			arr.add(j, num[i]);
+	        		current.add(arr);
+	    		}
+    		}
+    	}
+    	list = new ArrayList<List<Integer>>(current);
+    	return list;
+    }
+
+```
+
+<br>
+<br>
+
+
+###47 Permutations II
+
+>Given a collection of numbers that might **contain duplicates**, return all possible unique permutations.
+
+For example,
+[1,1,2] have the following unique permutations:
+[1,1,2], [1,2,1], and [2,1,1].
+<br>
+
+**Idea**: Since the collection has duplicates, thus each time when we add permutation, we need to consider if it already exists. 
+
+In the following code, the first code snippit use list.contains to check the duplicates. The second code snippit use set to avoid add dupilcates.
+
+These two are accepted, the second one has better time complexity.
+
+
+**Java code**:
+
+```java
+
+    public List<List<Integer>> permuteUnique(int[] num) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if(num == null || num.length == 0) return res;
+        List<Integer> first = new ArrayList<Integer>();
+        first.add(num[0]);
+        res.add(first);
+        for(int i = 1; i < num.length; i++){
+            List<List<Integer>> cur = new ArrayList<List<Integer>>();
+            for(List<Integer> l : res){
+                for(int j = 0; j <= l.size(); j++){
+                    List<Integer> temp = new ArrayList<Integer>(l);
+                    temp.add(j, num[i]);
+                    if(!cur.contains(temp)) cur.add(temp);
+                }
+            }
+            res = cur;
+        }
+        return res;
+    }
+
+
+```
+
+
+Use set, recursion:
+
+
+```java
+
+  	public List<List<Integer>> permuteUnique(int[] num) {
+    	List<List<Integer>> list = new ArrayList<List<Integer>>();
+    	if(num == null || num.length == 0) return list;
+        return helper(list, num, 0);
+    }
+    
+    public List<List<Integer>> helper(List<List<Integer>> list, int[] num, int i){
+    	if(i == num.length){
+    		List<Integer> arr = new ArrayList<Integer>();
+    		list.add(arr);
+    		return list;
+    	}
+    	
+    	list = helper(list, num, i+1);
+    	Set<List<Integer>> current = new HashSet<List<Integer>>();
+    	for(List<Integer> l : list){
+    		if(l.size() == 0){
+    			List<Integer> arr = new ArrayList<Integer>();
+    			arr.add(num[i]);
+        		current.add(arr);
+    		}
+    		else {
+	    		for(int j = 0; j <= l.size(); j++){
+	    			List<Integer> arr = new ArrayList<Integer>(l);
+	    			arr.add(j, num[i]);
+	        		current.add(arr);
+	    		}
+    		}
+    	}
+    	list = new ArrayList<List<Integer>>(current);
+    	return list;
+    }
+
+```
+
+
+
+
+<br>
+<br>
+
 ###50 Pow
 
 >Implement pow(x, n).
@@ -3571,11 +3761,11 @@ Otherwise, we need to compare the end of two intervals. If current.end > last.en
 
 - solution 1 : There are three possible relations between two intervals. Consider interval i1 and interval i2,
 
-	first case: i1.end < i2.start
+	* case 1: i1.end < i2.start
 	
-	second case: i1.start > i2.end
+	* case 2:  i1.start > i2.end
 	
-	third case: i1 includes i2, or i2 includes i1, or i1.start < i2.start and i1.end < i2.end, or i1.start > i2.start and i1.end > i2.end
+	* case 3: i1 includes i2, or i2 includes i1, or i1.start < i2.start and i1.end < i2.end, or i1.start > i2.start and i1.end > i2.end
 	
 	In case 1: we just need to add i1 to result,
 	In case 2: we add i2 to result, and change newInterval to i1,
