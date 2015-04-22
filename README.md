@@ -53,6 +53,7 @@
 * [49 Anagrams](#49-anagrams)
 * [50 Pow](#50-pow)
 * [51 N Queens](#51-n-queens)
+* [52 N Queens II](#52-n-queens-ii)
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [54 Spiral Matrix](#54-spiral-matrix)
 * [55 Jump Game](#55-jump-game)
@@ -3698,6 +3699,52 @@ There exist two distinct solutions to the 4-queens puzzle:
 
 <br>
 
+
+###52 N Queens II
+
+>Follow up for N-Queens problem.
+
+>Now, instead outputting board configurations, return the total number of distinct solutions.
+
+**Idea**: Same with n queen, difference is that we don't need to output the result, we just need to calculate the total number of solutions.
+
+
+**Java code**:
+
+```java
+
+    public int totalNQueens(int n) {
+        if(n <= 0) return 0;
+        int[] res = new int[1];
+        solve(0,n,new int[n],res);
+        return res[0];
+    }
+    
+    public void solve(int r, int n, int[] cols, int[] res){
+        if(r == n){
+          res[0]++;
+        }
+        for(int i = 0; i < n; i++){
+            if(isValid(r, i, cols)){
+                cols[r] = i;
+                solve(r+1, n, cols, res);
+            }
+        }  
+        
+    }
+    
+	public boolean isValid(int r, int c, int[] cols){
+	    for(int i = 0; i < r; i++){
+	        if(c == cols[i] || r - i == Math.abs(cols[i] - c)) return false;
+	    }
+	    return true;
+	}
+
+```
+
+
+<br>
+<br>
 
 ###53 Maximum Subarray
 
