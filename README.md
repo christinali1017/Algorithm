@@ -52,6 +52,7 @@
 * [48 Rotate Image](#48-rotate-image)
 * [49 Anagrams](#49-anagrams)
 * [50 Pow](#50-pow)
+* [51 N Queens](#51-n-queens)
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [54 Spiral Matrix](#54-spiral-matrix)
 * [55 Jump Game](#55-jump-game)
@@ -3609,6 +3610,89 @@ Use set, recursion:
 * [50 Pow(x,n)](#50-pow(x,n))
 * [69 Sqrt(x)](#69-sqrt(x))
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
+
+<br>
+
+<br>
+
+###51 N Queens
+
+
+>The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+
+
+>Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+>Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+
+<pre>
+For example,
+There exist two distinct solutions to the 4-queens puzzle:
+
+[
+ [".Q..",  // Solution 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // Solution 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+
+</pre>
+
+**Requirement**: For n queen problem, we can not put queens in the same row or same column or diagonal.
+
+**Idea**: We can use the queen one by one, each one correspond to one row. To find all solutions, we need to try each column on a row. When we finish the last row, we find a solution. Use recursions inside the loops we can find all solutions.
+
+
+
+**Java code**:
+
+
+```java
+
+    public List<String[]> solveNQueens(int n) {
+        List<String[]> res = new ArrayList<String[]>();
+        if(n <= 0) return res;
+        solve(0,n,new int[n],res);
+        return res;
+    }
+    
+    public void solve(int r, int n, int[] cols, List<String[]> list){
+        if(r == n){
+            String[] strs = new String[n];
+            for(int i = 0; i < n; i++){
+                StringBuilder s = new StringBuilder();
+                for(int j = 0; j < n; j++){
+                    if(j == cols[i]) s.append("Q");
+                    else s.append(".");
+                }
+                strs[i] = s.toString();
+            }
+            list.add(strs);
+            return;
+        }
+        for(int i = 0; i < n; i++){
+            if(isValid(r, i, cols)){
+                cols[r] = i;
+                solve(r+1, n, cols, list);
+            }
+        }  
+        
+    }
+    
+    public boolean isValid(int r, int c, int[] cols){
+        for(int i = 0; i < r; i++){
+            if(c == cols[i] || r - i == Math.abs(cols[i] - c)) return false;
+        }
+        return true;
+    }
+
+```
+
 
 <br>
 
