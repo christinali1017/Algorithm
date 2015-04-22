@@ -50,6 +50,7 @@
 * [46 Permutations](#46-permutations)
 * [47 Permutations II](#47-permutations-ii)
 * [48 Rotate Image](#48-rotate-image)
+* [49 Anagrams](#49-anagrams)
 * [50 Pow](#50-pow)
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [54 Spiral Matrix](#54-spiral-matrix)
@@ -3528,6 +3529,61 @@ Use set, recursion:
 <br>
 <br>
 
+
+###49 Anagrams
+
+>Given an array of strings, return all groups of strings that are anagrams.
+
+>Note: All inputs will be in lower-case.
+
+
+**Ideas**: To solve this problem, we can divide it into two parts
+
+- 1) how to check if two strings are anagrams?
+
+	 we can sort them and check if they are equal
+
+- 2) for a certain string, how to decide if it has anagram in the strs?
+
+	 Use hashmap.
+
+
+
+
+
+**Java code**:
+
+```java
+
+    public List<String> anagrams(String[] strs) {
+        List<String> res = new ArrayList<String>();
+        if(strs == null || strs.length == 0) return res;
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for(String s : strs){
+            char[] arr = s.toCharArray();
+            Arrays.sort(arr);
+            String sorted = new String(arr);
+            if(map.containsKey(sorted)){
+                map.get(sorted).add(s);
+            }else{
+                List<String> list = new ArrayList<String>();
+                list.add(s);
+                map.put(sorted, list);
+            }
+        }
+        for(Map.Entry<String, List<String>> e : map.entrySet()){
+            if(e.getValue().size() > 1){
+                res.addAll(e.getValue());
+            }
+        }
+        return res;
+    }
+
+```
+
+
+<br>
+<br>
 
 ###50 Pow
 
