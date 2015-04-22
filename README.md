@@ -49,6 +49,7 @@
 * [45 Jump Game II](#45-jump-game-ii)
 * [46 Permutations](#46-permutations)
 * [47 Permutations II](#47-permutations-ii)
+* [48 Rotate Image](#48-rotate-image)
 * [50 Pow](#50-pow)
 * [53 Maximum Subarray](#53-maximum-subarray)
 * [54 Spiral Matrix](#54-spiral-matrix)
@@ -3483,6 +3484,50 @@ Use set, recursion:
 
 <br>
 <br>
+
+
+###48 Rotate Image
+
+
+>You are given an n x n 2D matrix representing an image.
+
+>Rotate the image by 90 degrees (clockwise).
+
+>Follow up:
+>Could you do this in-place?
+
+**Idea**:The easiest way to solve this problem is draw a matrix and rotate it by 90 degrees. Then you'll find the following pattarn.
+
+-   matrix[i][j] = matrix[n-j-1][i];
+-   matrix[n-j-1][i] = matrix[n-i-1][n-j-1]
+-   matrix[n-i-1][n-j-1] = matrix[j][n-i-1]; 
+-   matrix[j][n-i-1] = matrix[i][j]
+
+**Attention**: I made a mistake at the first time, matrix[i][j] should equal to matrix[n-j-1][i] other than matrix[n-j][i]. The other three should follow the same way.
+
+**Java code**:
+
+```java
+
+    public void rotate(int[][] matrix) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) return;
+        int n = matrix.length;
+        for(int i = 0; i < n/2; i++){
+            for(int j = i; j < n - i - 1; j++){
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[n-j-1][i];
+                matrix[n-j-1][i] = matrix[n-i-1][n-j-1];
+                matrix[n-i-1][n-j-1] = matrix[j][n-i-1];
+                matrix[j][n-i-1] = temp;
+            }
+        }
+    }
+
+```
+
+<br>
+<br>
+
 
 ###50 Pow
 
