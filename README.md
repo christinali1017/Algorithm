@@ -115,6 +115,7 @@
 * [200 Number of Islands](#200-number-of-islands)
 * [201 Bitwise AND of Numbers Range](#201-bitwise-and-of-numbers-range)
 * [202 Happy Number](#202-happy-number)
+* [203 Remove Linked List Elements](#203-remove-linked-list-elements)
 
 
 
@@ -8156,3 +8157,50 @@ class Solution:
 
 <br>
 <br>
+
+### 203 Remove Linked List Elements
+
+> Remove all elements from a linked list of integers that have value val.
+>
+> Example
+> Given: `1 --> 2 --> 6 --> 3 --> 4 --> 5 --> 6, val = 6`
+> Return: `1 --> 2 --> 3 --> 4 --> 5`
+
+The `head` of this problem contains value. If it doesn't contains the value,
+declaration of `p` and `q` to `p, q = head, head->next`.
+
+Becareful if:
+- The node is `head`
+- The node is `tail`, which means `.next = None`
+- How to move the pointers ahead.
+
+``` python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    # @param {ListNode} head
+    # @param {integer} val
+    # @return {ListNode}
+    def removeElements(self, head, val):
+        if not head:
+            return None
+            
+        p, q = None, head
+            
+        while q is not None:
+            if q.val == val:
+                if p is None:  # q is head  
+                    head = q.next
+                else:
+                    p.next = q.next
+                q = q.next
+            else:
+                p, q = q, q.next
+                
+        return head
+```
+
