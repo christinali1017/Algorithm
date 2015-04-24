@@ -8104,10 +8104,10 @@ public int numIslands(char[][] grid) {
 
 Example: 19 is a happy number
 
-12 + 92 = 82
-82 + 22 = 68
-62 + 82 = 100
-12 + 02 + 02 = 1
+1^2 + 9^2 = 82
+8^2 + 2^2 = 68
+6^2 + 8^2 = 100
+1^2 + 0^2 + 0^2 = 1
 
 </pre>
 
@@ -8135,6 +8135,23 @@ Example: 19 is a happy number
         return true;
     }
 
+```
+
+In python, we can use the string convertion for this problem:
+
+``` python
+class Solution:
+    # @param {integer} n
+    # @return {boolean}
+    def isHappy(self, n):
+        m = n
+        mem = set()
+        while m not in mem:
+            mem.add(m)
+            m = sum([int(x) ** 2 for x in str(m)])
+            if m == 1:
+                return True
+        return False
 ```
 
 <br>
