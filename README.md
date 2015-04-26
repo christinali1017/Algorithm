@@ -8176,6 +8176,30 @@ Becareful if:
 - The node is `tail`, which means `.next = None`
 - How to move the pointers ahead.
 
+**Java code**:
+
+```java
+
+    public ListNode removeElements(ListNode head, int val) {
+        if(head == null) return head;
+        ListNode fakeHead = new ListNode(-1);
+        fakeHead.next = head;
+        ListNode pre = fakeHead;
+        while(head != null){
+            if(head.val == val){
+                pre.next = head.next;
+                head = pre.next;
+            }else{
+                pre = head;
+                head = head.next;
+            }
+        }
+        return fakeHead.next;
+    }
+
+```
+**python**:
+
 ``` python
 # Definition for singly-linked list.
 # class ListNode:
