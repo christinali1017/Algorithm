@@ -4211,7 +4211,7 @@ We get the following sequence (ie, for n = 3):
 "312"
 "321"
 
-<pre>
+</pre>
 
 Given n and k, return the kth permutation sequence.
 
