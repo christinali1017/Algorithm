@@ -122,6 +122,7 @@
 
 
 
+
 <br>
 
 
@@ -8105,10 +8106,10 @@ public int numIslands(char[][] grid) {
 
 Example: 19 is a happy number
 
-12 + 92 = 82
-82 + 22 = 68
-62 + 82 = 100
-12 + 02 + 02 = 1
+1^2 + 9^2 = 82
+8^2 + 2^2 = 68
+6^2 + 8^2 = 100
+1^2 + 0^2 + 0^2 = 1
 
 </pre>
 
@@ -8138,7 +8139,71 @@ Example: 19 is a happy number
 
 ```
 
+In python, we can use the string convertion for this problem:
+
+``` python
+class Solution:
+    # @param {integer} n
+    # @return {boolean}
+    def isHappy(self, n):
+        m = n
+        mem = set()
+        while m not in mem:
+            mem.add(m)
+            m = sum([int(x) ** 2 for x in str(m)])
+            if m == 1:
+                return True
+        return False
+```
+
 <br>
 <br>
+
+
+### 203 Remove Linked List Elements
+
+> Remove all elements from a linked list of integers that have value val.
+>
+> Example
+> Given: `1 --> 2 --> 6 --> 3 --> 4 --> 5 --> 6, val = 6`
+> Return: `1 --> 2 --> 3 --> 4 --> 5`
+
+The `head` of this problem contains value. If it doesn't contains the value,
+declaration of `p` and `q` to `p, q = head, head->next`.
+
+Becareful if:
+- The node is `head`
+- The node is `tail`, which means `.next = None`
+- How to move the pointers ahead.
+
+``` python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    # @param {ListNode} head
+    # @param {integer} val
+    # @return {ListNode}
+    def removeElements(self, head, val):
+        if not head:
+            return None
+            
+        p, q = None, head
+            
+        while q is not None:
+            if q.val == val:
+                if p is None:  # q is head  
+                    head = q.next
+                else:
+                    p.next = q.next
+                q = q.next
+            else:
+                p, q = q, q.next
+                
+        return head
+```
 
 
