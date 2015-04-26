@@ -61,6 +61,7 @@
 * [57 Insert Interval](#57-insert-interval)
 * [58 Length of Last Word](#58-length-of-last-word)
 * [59 Spiral Matrix II](#59-spiral-matrix-ii)
+* [60 Permutation Sequence](#60-permutation-sequence)
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
@@ -4194,6 +4195,78 @@ You should return the following matrix:
 
 ```
 
+
+###60 Permutation Sequence
+
+>The set [1,2,3,…,n] contains a total of n! unique permutations.
+
+>By listing and labeling all of the permutations in order,
+We get the following sequence (ie, for n = 3):
+
+<pre>
+"123"
+"132"
+"213"
+"231"
+"312"
+"321"
+
+<pre>
+
+Given n and k, return the kth permutation sequence.
+
+Note: Given n will be between 1 and 9 inclusive.
+
+
+
+**Idea**: for each begin character, it has (n-1)! permutations, k/(n-1)! we know the begin character
+	 
+	 
+**Attention**: How to decide add which num to the permutation? We use k/(n-1)!. There are boundary between permutation (n-1)! when add num to permutation. For example, n = 3, k = 4, k /(2!) = 2, should we add 2 or 3 to the permutation? 
+Thus k-- can simplify the index.  
+
+**Java code**:
+
+
+```java
+
+      public String getPermutation(int n, int k) {
+            if(n <= 0) return "";
+            
+            /* create factorial,nums for permutation and ressult stringbuilder*/
+            List<Integer> nums = new ArrayList<Integer>();
+            int factorial = 1;
+            for(int i = 1; i <= n; i++){
+                nums.add(i);
+                factorial *= i;
+            }
+            factorial /= n;
+            StringBuilder res = new StringBuilder();
+            
+            /* to simplify the boundary, we can k--. Consider n = 4, k = 18, 18 / 6 = 3, then we need to add nums[i-1]*/ 
+            k--;
+            
+            /*create permutation one digit per time*/
+            while(n > 0){
+                int index = k / factorial;
+                res.append(nums.get(index));
+                nums.remove(index);
+                k %= factorial;
+                if(n > 1) {
+                    factorial = factorial / (n-1);
+                }
+                n--;
+            }
+            return res.toString();
+        }
+	
+
+```
+
+
+
+<br>
+<br>
 
 
 ###61 Rotate List
