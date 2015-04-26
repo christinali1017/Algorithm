@@ -59,6 +59,7 @@
 * [55 Jump Game](#55-jump-game)
 * [56 Merge Intervals](#56-merge-intervals)
 * [57 Insert Interval](#57-insert-interval)
+* [58 Length of Last Word](#58-length-of-last-word)
 * [59 Spiral Matrix II](#59-spiral-matrix-ii)
 * [61 Rotate List](#61-rotate-list)
 * [69 Sqrt](#69-sqrt)
@@ -4075,7 +4076,77 @@ Otherwise, we need to compare the end of two intervals. If current.end > last.en
 <br>
 <br>
 
+###58 Length of Last Word
 
+
+>Given a string s consists of upper/lower-case alphabets and empty space characters ' ', return the length of last word in the string.
+
+>If the last word does not exist, return 0.
+
+>Note: A word is defined as a character sequence consists of non-space characters only.
+
+>For example, 
+
+>Given s = "Hello World",
+
+>return 5.
+
+**Idea**:
+
+- solution1 : split the string by spaces, then return the length of the last word. Be careful, before you split, you should first trim the string to remove the front and back spaces in the string. Otherwise, you might get the wrong answer.
+
+- solution2 : trim the spaces, then find from the end of the string, until we find the first space, then we can return the length.
+
+
+
+
+**Java code**:
+
+
+*Method 1*:
+
+```java
+
+
+    public int lengthOfLastWord(String s) {
+        if(s == null || s.length() == 0) return 0;
+        s = s.trim();
+        String[] words = s.split("\\s+");
+        return words[words.length -1].length();
+    }
+
+
+```
+
+
+
+*Method 2*:
+
+
+```java
+
+    
+	public int lengthOfLastWord1(String s) {
+		if(s == null || s.length() == 0) return 0;
+    	s = s.trim();
+    	int len = 0;
+    	for(int i = s.length()-1; i>=0; i--){
+    		if(s.charAt(i) != ' '){
+    			len++;
+    		}else break;
+    	}
+    	return len;
+	}
+
+
+```
+
+
+
+
+
+<br>
+<br>
 
 ###59 Spiral Matrix II
 
