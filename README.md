@@ -118,6 +118,7 @@
 * [201 Bitwise AND of Numbers Range](#201-bitwise-and-of-numbers-range)
 * [202 Happy Number](#202-happy-number)
 * [203 Remove Linked List Elements](#203-remove-linked-list-elements)
+* [204 Count Primes](#204-count-primes)
 
 
 
@@ -4195,6 +4196,8 @@ You should return the following matrix:
 
 ```
 
+<br>
+<br>
 
 ###60 Permutation Sequence
 
@@ -8373,5 +8376,112 @@ class Solution:
                 
         return head
 ```
+
+
+###204 Count Primes
+
+>Description:Count the number of prime numbers less than a non-negative number, n
+
+**Idea**: The straight forward way is that we check each number, if it is prime, resut++.
+
+So at first try code like this:
+
+```java 
+
+ public int countPrimes1(int n) {
+        if(n <= 2) {
+            return 0;
+        }
+        boolean[] prime = new boolean[n];
+        for(int i = 2; i <= n/2; i++ ) {
+            // if i is prime
+            if(!prime[i]){
+                for(int j = i+i; j < n; j += i) {
+                    prime[j] = true;
+                }
+            }
+        }
+        int res = 1;
+        for(int i = 3; i < n; i++){
+            if(!prime[i]){
+                res++;
+            }
+        }
+        return res;
+    }
+
+
+```
+
+
+***There are a few places can be modified.***
+
+1) the outer loop, i can be changed to sqrt(n)
+
+2) when count the primes in the last loop, i can be changed to i+2
+
+3) the inside loop, i can be changed to i*i
+
+then the changed code is below:
+
+
+```java
+
+    public int countPrimes(int n) {
+        if(n <= 2) {
+            return 0;
+        }
+        boolean[] prime = new boolean[n];
+        for(int i = 2, sqr = (int)Math.sqrt(n); i <= sqr; i++ ) {
+            // if i is prime
+            if(!prime[i]){
+                for(int j = i*i; j < n; j += i) {
+                    prime[j] = true;
+                }
+            }
+        }
+        int res = 1;
+        for(int i = 3; i < n; i += 2){
+            if(!prime[i]){
+                res++;
+            }
+        }
+        return res;
+    }
+
+```
+
+From the suggestions of friends, I realized that I can use bitset to save space.  If you are not familiar with bitset like me, check this [link](https://docs.oracle.com/javase/7/docs/api/java/util/BitSet.html) The code is below:
+
+
+```java
+
+
+ public int countPrimes(int n) {
+        if(n <= 2) {
+            return 0;
+        }
+        BitSet set = new BitSet();
+        for(int i = 2, sqr = (int)Math.sqrt(n); i <= sqr; i++ ) {
+            // if i is prime
+            if(!set.get(i)){
+                for(int j = i*i; j < n; j += i) {
+                    set.set(j);
+                }
+            }
+        }
+        set.set(0);
+        set.set(1);
+        return n - set.cardinality();
+    }
+
+
+```
+<br>
+
+<br>
+
+
+
 
 
