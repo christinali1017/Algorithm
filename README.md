@@ -8502,7 +8502,7 @@ From the suggestions of friends, I realized that I can use bitset to save space.
 
 **Idea**:
 
-- method 1: Use one hashmap, check their map relation. Since we need to use the containsvalue, thus the worst case time complexity is O(n ^ 2)
+- method 1: Use one hashmap, check their map relation. Since **we need to use the containsvalue, it takes O(n)**, thus the worst case time complexity is O(n ^ 2)
 
 - method 2: Use two hashmap, store the map relation of two string. Time: O(n). We need more space. 
 
