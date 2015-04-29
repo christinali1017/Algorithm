@@ -119,9 +119,7 @@
 * [202 Happy Number](#202-happy-number)
 * [203 Remove Linked List Elements](#203-remove-linked-list-elements)
 * [204 Count Primes](#204-count-primes)
-
-
-
+* [205 Isomorphic Strings](#205-isomorphic-strings)
 
 
 
@@ -8482,6 +8480,108 @@ From the suggestions of friends, I realized that I can use bitset to save space.
 <br>
 
 
+###205 Isomorphic Strings
+
+>Given two strings s and t, determine if they are isomorphic.
+
+>Two strings are isomorphic if the characters in s can be replaced to get t.
+
+>All occurrences of a character must be replaced with another character while preserving the order of characters. No two characters may map to the same character but a character may map to itself.
+
+>For example,
+
+>Given "egg", "add", return true.
+
+>Given "foo", "bar", return false.
+
+>Given "paper", "title", return true.
+
+>Note:
+>You may assume both s and t have the same length.
+
+
+**Idea**:
+
+- method 1: Use one hashmap, check their map relation. Since we need to use the containsvalue, thus the worst case time complexity is O(n ^ 2)
+
+- method 2: Use two hashmap, store the map relation of two string. Time: O(n). We need more space. 
+
+- method 3: if we only consider Ascii, then we can use array to replace hashmap in method 2.
+
+
+
+**Java code**:
+
+*Method 1*:
+
+```java
+
+    public boolean isIsomorphic(String s, String t) {
+        Map<Character, Character> map = new HashMap<Character, Character>();
+        for(int i = 0; i < s.length(); i++) {
+           char cs = s.charAt(i);
+           char ct = t.charAt(i);
+           if(!map.containsKey(cs)) {
+               if(map.containsValue(ct)) {
+                   return false;
+               }
+               map.put(cs, ct);
+           } else {
+               if(map.get(cs) != ct) {
+                   return false;
+               }
+           }
+        }
+        return true;
+    }
+
+```
+
+*Method 2*:
+
+```java
+
+    public boolean isIsomorphic(String s, String t) {
+        Map<Character, Character> maps = new HashMap<Character, Character>();
+        Map<Character, Character> mapt =  new HashMap<Character, Character>();
+        for(int i = 0; i < s.length(); i++) {
+           char cs = s.charAt(i);
+           char ct = t.charAt(i);
+           maps.putIfAbsent(cs, ct);
+           mapt.putIfAbsent(ct, cs);
+           if(maps.get(cs) != ct || mapt.get(ct) != cs) {
+               return false;
+           }
+        }
+        return true;
+    }
+
+```
+
+
+*Method 3*:
+
+
+```java
+
+
+    public boolean isIsomorphic2(String s, String t) {
+        int[] sArr = new int[256];
+        int[] tArr = new int[256];
+        for(int i = 0; i < s.length(); i++) {
+            if(sArr[s.charAt(i)] != tArr[t.charAt(i)]) {
+                return false;
+            }
+            sArr[s.charAt(i)] = i+1;
+            tArr[t.charAt(i)] = i+1;
+        }
+        return true;
+    }
+
+```
+
+<br>
+<br>
 
 
 
