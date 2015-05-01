@@ -4360,13 +4360,18 @@ This problem is much similar to fibonacci number or the climb steps. We can easi
 ```java
 
     public int uniquePaths1(int m, int n) {
-    	if(n <= 0 || m <= 0) return 0;
+    	if (n <= 0 || m <= 0) {
+    		return 0;
+    	}
     	return helper(m-1, n-1);
     }
     
     public int helper(int m, int n){
-    	if(m == 0 && n == 0) return 1;
-    	else if( m < 0 || n < 0) return 0;
+    	if (m == 0 && n == 0) {
+    		return 1;
+    	} else if ( m < 0 || n < 0) {
+    		return 0;
+    	}
     	return helper(m-1, n)+helper(m, n-1);
     }
 
@@ -4450,7 +4455,7 @@ We can also use combination to solve this problem. We need to walk m+n-2 steps. 
 		 /* if use int, when m, n > 10, will overflow and get wrong answer*/
 		 double up = 1;
 		 double down = 1;
-		 for(int i = 1; i <= small; i++){
+		 for (int i = 1; i <= small; i++) {
 			 down *= i;
 			 up *= small + large + 1 -i;
 		 }
