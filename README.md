@@ -4470,7 +4470,7 @@ We can also use combination to solve this problem. We need to walk m+n-2 steps. 
 <br>
 
 
-###63 Unique Paths
+###63 Unique Paths II
 
 >Follow up for "Unique Paths":
 
@@ -4498,7 +4498,7 @@ Note: m and n will be at most 100.
 
 Similarly, we can use one dimensional array or two dimensional array to solve this problem. 
 
-**For the two dimensional array solution we need to take attention to the dp array initialization. Note that if one lattice if blocked, like grid[2][0] == 1, then all lattices after grid[2][0] such ad grid[3][0] ... should set dp[i][0] to 0.**
+*For the two dimensional array solution we need to take attention to the dp array initialization. Note that if one lattice if blocked, like grid[2][0] == 1, then all lattices after grid[2][0] such ad grid[3][0] ... should set dp[i][0] to 0.*
 
 
 **Java code**:
