@@ -66,6 +66,7 @@
 * [62 Unique Paths](#62-unique-paths)
 * [63 Unique Paths II](#63-unique-paths-ii)
 * [64 Minimum Path Sum](#64-minimum-path-sum)
+* [65 Valid Number](#65-valid-number)
 * [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
@@ -4452,6 +4453,194 @@ you will find that we can solve this problem in the same way. We can use recursi
 
 
 ```
+
+<br>
+<br>
+
+###65 Valid Number
+>Validate if a given string is numeric.
+
+>Some examples:
+
+>"0" => true
+
+>" 0.1 " => true
+
+>"abc" => false
+
+>"1 a" => false
+
+>"2e10" => true
+
+>Note: It is intended for the problem statement to be ambiguous. You should gather all requirements up front before implementing one.
+
+
+**Need to consider before start**:
+
+<pre>
+
+- In a number it could include 0, 1-9, ., e E, + - Thus if other character appears, then the number is invalid
+
+- The right place of the above characters: 
+
+	- 0-9:  0-9 is valid in any place. 
+	
+	- . 
+		* can not after e or E
+		* must has a number before it or after it 
+		
+	- - and + :
+		* must at the beginning or after e or E
+		* must has a number or . after it.
+
+	- e or E:
+		* must be the first time appear, that is, there should not be any e or E before it
+		* e should not at the beginning
+		* it must be a integer after e (we can have + or 1 after e)
+	
+</pre>
+
+
+**Some case**:
+
+<pre>
+
+"1 " true
+"  " false
+"-1." true
+"6e6.5" false
+" 005047e+6" true
+
+</pre>
+
+
+**Java code**
+
+```java
+
+
+
+    public boolean isNumber1(String s) {
+        if (s == null || s.trim().length() == 0) {
+            return false;
+        }
+        s = s.trim();
+        boolean eE = false;
+        boolean dot = false;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            //check if character valid, if e|E at the beginning , if -|+ at the end
+            if (!isValidCharacter(c) || (i == 0 && (c == 'e' || c == 'E')) || (i == s.length() -1  && (c == '-' || c == '+'))) {
+               return false;
+            }
+            //if e|E, e|E must hasn't existed before, must be a number of + - after it
+            if ((c == 'e' || c == 'E')) {
+                if (eE || (i == s.length() -1 || (!isNumber(s.charAt(i+1)) && s.charAt(i+1) != '-' && s.charAt(i+1) != '+'))) {
+                    return false;
+                }
+                eE = true;
+            }
+            //if -|+, must at the beginning or after e|E, must be a . or number after it
+            if ((c == '-' || c == '+')) {
+                if((!isNumber(s.charAt(i+1)) && s.charAt(i+1) != '.') || (i != 0 && s.charAt(i-1) != 'e' && s.charAt(i-1) != 'E')) {
+                    return false;
+                }
+            }
+            // if ., .|e|E must hasn't existed before, must has a number before it or after it. 
+           if (c == '.'){
+               if (dot || eE ||  s.length() == 1 || (i == 0 && !isNumber(s.charAt(i+1))) || ( i == s.length() - 1 && !isNumber(s.charAt(i-1))) || (i != 0 && i != s.length() -1 && !isNumber(s.charAt(i-1)) && !isNumber(s.charAt(i+1)))) {
+                   return false;
+               } 
+               dot = true;
+           }
+        }
+        return true;
+    }
+    
+    public boolean isNumber(char c) {
+        if (c >= '0' && c <= '9') {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isValidCharacter(char c) {
+        if (isNumber(c) || c == '-' || c == '+' || c == '.' || c == 'e' || c == 'E') {
+            return true;
+        }
+        return false;
+    }
+
+
+```
+
+
+If use switch
+
+
+```java
+
+ public boolean isNumber(String s) {
+        if (s == null || s.trim().length() == 0) {
+            return false;
+        }
+        s = s.trim();
+        boolean eE = false;
+        boolean dot = false;
+        for (int i = 0; i < s.length(); i++) {
+           switch(s.charAt(i)) {
+               case 'e':
+               case 'E':
+                    if (eE || i == s.length() -1 || i == 0) {
+                    return false;
+                }
+                    eE = true;
+                    break;
+                case '-':
+                case '+':
+                     if ((i == s.length() -1 || !((s.charAt(i+1) >= '0' && s.charAt(i+1) <= '9') || s.charAt(i+1) == '.') || (i != 0 && s.charAt(i-1) != 'e' && s.charAt(i-1) != 'E'))) {
+                    return false;
+                    }
+                    break;
+                case '.':
+                    if (dot || eE || s.length() == 1 || (i == 0 && !isNumber(s.charAt(i+1))) || ( i == s.length() - 1 && !isNumber(s.charAt(i-1))) || (i != 0 && i != s.length() -1 && !isNumber(s.charAt(i-1)) && !isNumber(s.charAt(i+1)))) {
+                   return false;
+                    } 
+                    dot = true;
+                    break;
+                case '0':
+        		case '1':
+        		case '2':
+        		case '3':
+        		case '4':
+        		case '5':
+        		case '6':
+        		case '7':
+        		case '8':
+        		case '9':
+        			break;
+            	default:
+            			return false;
+           }
+        }
+        return true;
+    }
+    
+    public boolean isNumber(char c) {
+        if (c >= '0' && c <= '9') {
+            return true;
+        }
+        return false;
+    }
+    
+
+
+
+
+
+```
+
+
 
 <br>
 <br>

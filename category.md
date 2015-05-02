@@ -1,13 +1,13 @@
 # Matrix:
 
 
-###1. Path
+####1. Path
 
 * [62 Unique Paths](#62-unique-paths)
 * [63 Unique Paths II](#63-unique-paths-ii)
 * [64 Minimum Path Sum](#64-minimum-path-sum)
 
-###2. Matrix Operation
+####2. Matrix Operation
 
 
 * [54 Spiral Matrix](#54-spiral-matrix)
@@ -36,6 +36,7 @@
 * [13 Roman to Integer](#13-roman-to-integer)
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow](#50-pow)
+* [65 Valid Number](#65-valid-number)
 * [69 Sqrt](#69-sqrt)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
@@ -66,7 +67,7 @@
 
 
 * [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
-
+* [65 Valid Number](#65-valid-number)
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
 
 
