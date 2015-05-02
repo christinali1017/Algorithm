@@ -65,6 +65,7 @@
 * [61 Rotate List](#61-rotate-list)
 * [62 Unique Paths](#62-unique-paths)
 * [63 Unique Paths II](#63-unique-paths-ii)
+* [64 Minimum Path Sum](#64-minimum-path-sum)
 * [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
@@ -193,14 +194,7 @@
     }
 
 ```
-Related problem: 
 
-* [1 Two Sum](#1-two-sum)
-* [15 3Sum](#15-3sum)
-* [16 3Sum Closest](#16-3sum-closest)
-* [18 4Sum](#18-4sum)
-* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
-* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 
 <br>
 <br>
@@ -382,11 +376,7 @@ There is another solution use primitive string methods, such as indexOf, subStri
 <br>
 
 
-***Related Problems***
 
-* [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
-
-* [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
 
 <br>
 
@@ -629,14 +619,6 @@ index of middle element : size - i + j - i ; i is the row number, j is the start
 ```
 
 
-***Related Questions:***
-
-* [7 Reverse Integer](#7-reverse-integer)
-* [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow](#50-pow)
-* [69 Sqrt](#69-sqrt)
-* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
-
 
 
 
@@ -816,10 +798,6 @@ isMatch("aab", "c*a*b") → true
 ```
 
 
-***Related Problem***:
-
-* [10 Regular Expression Matching](#10-regular-expression-matching)
-* [44 Wildcard Matching](#44-wildcard-matching)
  
 
 <br>
@@ -852,12 +830,6 @@ Note: You may not slant the container.
 ```
 
 
-
-***Related***:
-
-* [11 Container with Most Water](#11-container-with-most-water)
-* [42 Trapping Rain Water](#42-trapping-rain-water)
-* [135 Candy](#135-candy)
 
 <br>
 <br>
@@ -981,11 +953,6 @@ Note: You may not slant the container.
 
 
 
-***Related Problem***:
-
-* [12 Integer to Roman](#12-integer-to-roman)
-* [13 Roman to Integer](#13-roman-to-integer)
-
 <br>
 
 <br>
@@ -1090,10 +1057,7 @@ See detailed rules at [12 Integer to Roman](#12-integer-to-roman)
     }
 
 ```
-***Related Problem***:
 
-* [12 Integer to Roman](#12-integer-to-roman)
-* [13 Roman to Integer](#13-roman-to-integer)
 
 <br>
 
@@ -1211,14 +1175,6 @@ We first need to sort the array, then use two pointers to find the two sum numbe
    
 ```
 
-Related problem: 
-
-* [1 Two Sum](#1-two-sum)
-* [15 3Sum](#15-3sum)
-* [16 3Sum Closest](#16-3sum-closest)
-* [18 4Sum](#18-4sum)
-* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
-* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 
 <br>
 <br>
@@ -1492,26 +1448,7 @@ Try to do this in one pass.
     }
 
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -1592,26 +1529,6 @@ when encounter ), ], } pop corresponding parentheses.
     }  
 ```
 
-***Related problems***:
-
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -1834,26 +1751,7 @@ method2: each time merge two lists, until all lists are merged.
 
 ```
 
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -1890,26 +1788,7 @@ Your algorithm should use only constant space. You may not modify the values in 
 ```
 
 
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -2028,15 +1907,6 @@ Your algorithm should use only constant space. You may not modify the values in 
 ```
 
 
-***Related Problems***:
-
-* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
-* [27 Remove Element](#27-remove-element)
-* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-
-
 <br>
 
 <br>
@@ -2069,14 +1939,6 @@ Your algorithm should use only constant space. You may not modify the values in 
 ```
 
 
-
-***Related Problems***:
-
-* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
-* [27 Remove Element](#27-remove-element)
-* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 
 
 <br>
@@ -2248,13 +2110,6 @@ Thus, we can calculate (0 or 1) * 2 ^ i, i from n to 0, and combine them togethe
 
 ```
 
-***Related Questions:***
-
-* [7 Reverse Integer](#7-reverse-integer)
-* [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow](#50-pow)
-* [69 Sqrt](#69-sqrt)
-* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
 <br>
 
@@ -2746,10 +2601,6 @@ The second solution is similar to the first one, the differce is that we do twic
 
 ```
 
-***Related Problem***:
-
-* [36 Valid Sudoku](#36-valid-sudoku)
-* [37 Sudoku Solver](#37-sudoku-solver)
 
 
 
@@ -2811,10 +2662,6 @@ The second solution is similar to the first one, the differce is that we do twic
 	 
 ```
 
-***Related Problem***:
-
-* [36 Valid Sudoku](#36-valid-sudoku)
-* [37 Sudoku Solver](#37-sudoku-solver)
 
 
 
@@ -2938,10 +2785,6 @@ A solution set is:
 ```
 
 
-***Related Problems***:
-
-* [39 Combination Sum](#39-combination-Sum)
-* [40 Combination Sum II](#40-combination-sum-ii)
 <br>
 
 <br>
@@ -3001,10 +2844,6 @@ A solution set is:
 
 ```
 
-***Related Problems***:
-
-* [39 Combination Sum](#39-combination-Sum)
-* [40 Combination Sum II](#40-combination-sum-ii)
 <br>
 
 <br>
@@ -3122,11 +2961,6 @@ Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
 
 
-***Related***:
-
-* [11 Container with Most Water](#11-container-with-most-water)
-* [42 Trapping Rain Water](#42-trapping-rain-water)
-* [135 Candy](#135-candy)
 
 <br>
 <br>
@@ -3254,11 +3088,6 @@ isMatch("aab", "c*a*b") → false
 ```
 
 
-
-***Related Problem***:
-
-* [10 Regular Expression Matching](#10-regular-expression-matching)
-* [44 Wildcard Matching](#44-wildcard-matching)
 
 <br>
 <br>
@@ -3610,13 +3439,7 @@ Use set, recursion:
 
 ```
 
-***Related Questions:***
 
-* [7 Reverse Integer](#7-reverse-integer)
-* [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow(x,n)](#50-pow(x,n))
-* [69 Sqrt(x)](#69-sqrt(x))
-* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
 <br>
 
@@ -4318,26 +4141,7 @@ code:
     }
 
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -4498,7 +4302,7 @@ Note: m and n will be at most 100.
 
 Similarly, we can use one dimensional array or two dimensional array to solve this problem. 
 
-*For the two dimensional array solution we need to take attention to the dp array initialization. Note that if one lattice if blocked, like grid[2][0] == 1, then all lattices after grid[2][0] such ad grid[3][0] ... should set dp[i][0] to 0.*
+**Attention**: *For the two dimensional array solution we need to take attention to the dp array initialization. Note that if one lattice if blocked, like grid[2][0] == 1, then all lattices after grid[2][0] such ad grid[3][0] ... should set dp[i][0] to 0.*
 
 
 **Java code**:
@@ -4574,6 +4378,84 @@ public int uniquePathsWithObstacles(int[][] obstacleGrid) {
 <br>
 
 
+###64 Minimum Path Sum
+
+>Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+
+>Note: You can only move either down or right at any point in time.
+
+
+**Idea**: If you have figure out how to solve the unique path problem :
+
+* [62 Unique Paths](#62-unique-paths)
+* [63 Unique Paths II](#63-unique-paths-ii)
+
+you will find that we can solve this problem in the same way. We can use recursion, 2 dimensonal dp, 1 dimensional dp to solve this problem. 
+
+**Here is the 2 dimensional dp solution in java:**
+
+
+```java
+
+    public int minPathSum(int[][] grid) {
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
+        int m = grid.length; 
+        int n = grid[0].length;
+        int[][] dp = new int[m][n];
+        dp[0][0] = grid[0][0];
+        for (int i = 1; i < n; i++) {
+            dp[0][i] = dp[0][i-1] + grid[0][i];
+        }
+        for (int i = 1; i < m; i++) {
+            dp[i][0] = dp[i-1][0] + grid[i][0];
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = Math.min(dp[i-1][j] + grid[i][j], dp[i][j-1] + grid[i][j]);
+            }
+        }
+        return dp[m-1][n-1];
+    }
+
+```
+
+
+**Here is the 1 dimensional dp solution in java:**
+
+```java
+
+ public int minPathSum(int[][] grid) {
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
+        int m = grid.length; 
+        int n = grid[0].length;
+        int[] dp = new int[n];
+        dp[0] = grid[0][0];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (j == 0 && i == 0) {
+                    continue;
+                } else if (i == 0) {
+                    dp[j] = dp[j-1] + grid[i][j];
+                } else if (j == 0) {
+                    dp[j] = dp[j] + grid[i][j];
+                } else {
+                     dp[j] = Math.min(dp[j], dp[j-1]) + grid[i][j];
+                }
+            }
+        }
+        return dp[n-1];
+    }
+
+
+```
+
+<br>
+<br>
+
 ###69 Sqrt
 
 >Implement int sqrt(int x).
@@ -4615,13 +4497,6 @@ public int uniquePathsWithObstacles(int[][] obstacleGrid) {
 ```	
  
 
-***Related Questions:***
-
-* [7 Reverse Integer](#7-reverse-integer)
-* [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow](#50-pow)
-* [69 Sqrt](#69-sqrt)
-* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
 <br>
 
@@ -4949,13 +4824,7 @@ Use method1 need two pass. Method 2 only need one pass.
 
 ```
 
-***Related Problems***:
 
-* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
-* [27 Remove Element](#27-remove-element)
-* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 
 <br>
 <br>
@@ -4990,13 +4859,6 @@ Given 1->1->2->3->3, return 1->2->3.
     }
 
 ```    
-***Related Problems***:
-
-* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
-* [27 Remove Element](#27-remove-element)
-* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 
 <br>
 <br>
@@ -5046,13 +4908,7 @@ Given 1->1->1->2->3, return 2->3.
 ```
 
 
-***Related Problems***:
 
-* [26 Remove Duplicates from Sorted Array](#26-remove-duplicates-from-sorted-array)
-* [27 Remove Element](#27-remove-element)
-* [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 
 <br>
 <br>
@@ -5307,26 +5163,7 @@ Pretty much the save with the above, just change while to for:
      }
      
 ``` 
- ***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -5838,26 +5675,7 @@ root.right = mid of (mid + 1, end)
         return root;
     }
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -5989,26 +5807,7 @@ Store all the nodes in an array, then use the array to create the BST. just like
 	    }
 
 ```		 
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -6094,27 +5893,8 @@ The flattened tree should look like:
 
 
 ```
-<br>
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+
 
 <br>
 <br>
@@ -6161,11 +5941,7 @@ Return
 	    
 
 ```
-***Related Problems***:
 
-* [118 Pascal Triangle](#118-pascal-triangle)
-* [119 Pascal Triangle II](#119-pascal-triangle-ii)
-* [120 Triangle](#120-triangle)
 
 <br>
 <br>
@@ -6213,11 +5989,7 @@ If there is no other requirements, then we can just use the result in [118 Pasca
 	}
 
 ```
-***Related Problems***:
 
-* [118 Pascal Triangle](#118-pascal-triangle)
-* [119 Pascal Triangle II](#119-pascal-triangle-ii)
-* [120 Triangle](#120-triangle)
 
 <br>
 <br>
@@ -6313,11 +6085,7 @@ We can also calculate from the top layer, then go down. It's similar to the meth
 
 ```
 
-***Related Problems***:
 
-* [118 Pascal's Triangle](#118-pascal's-triangle)
-* [119 Pascal's Triangle II](#119-pascal's-triangle-ii)
-* [120 Triangle](#120-triangle)
 
 <br>
 <br>
@@ -6349,12 +6117,9 @@ We can also calculate from the top layer, then go down. It's similar to the meth
 		return max;
 	}
 ```
-Related problem: 
 
-* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
-* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
-* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
-* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
+
+
 	
 <br>
 <br>
@@ -6385,12 +6150,6 @@ Related problem:
 		return max;
 	}
 ```	
-Related problem: 
-
-* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
-* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
-* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
-* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 
 <br>
 <br>
@@ -6675,10 +6434,7 @@ All words contain only lowercase alphabetic characters.
  	
 ```
 
-***Related problems***:
 
-* [126 Word Ladder](#126-word-ladder)
-* [127 word Ladder II](#127-word-ladder-ii)
 
 <br>
 <br>
@@ -6847,12 +6603,6 @@ All words contain only lowercase alphabetic characters.
 
 
 
-***Related problems***:
-
-* [11 Container with Most Water](#11-container-with-most-water)
-* [42 Trapping Rain Water](#42-trapping-rain-water)
-* [135 Candy](#135-candy)
-
 <br>
 <br>
 
@@ -6924,26 +6674,7 @@ All words contain only lowercase alphabetic characters.
         return saveHead;
     }
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -6973,26 +6704,7 @@ Can you solve it without using extra space?
         return false;
     }
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>    
@@ -7031,26 +6743,7 @@ Can you solve it without using extra space?
         return null;
     }
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -7143,26 +6836,7 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
         }
     }
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -7238,26 +6912,7 @@ If we add a fakeHead pointer to avoid the null pointer cases, we can have more c
 	        return head;
 	    }
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -7308,26 +6963,7 @@ If we add a fakeHead pointer to avoid the null pointer cases, we can have more c
 		    return fakeHead.next;
 		}
 ```		
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -7465,10 +7101,7 @@ Structure of result tree:
 		}
 	}
 ```	
-Related problem:
 
-* [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
-* [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
 
 <br>
 <br>
@@ -7510,10 +7143,9 @@ Related problem:
 		}
 	}
 ```	
-Related problem:
 
-* [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
-* [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characers-given-read4-ii-call-multiple-times) 
+
+
 
 <br>
 <br>
@@ -7654,11 +7286,8 @@ Related problem:
 	}
 ```
 
-***Related Problems***
 
-* [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
 
-* [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
 
 <br>
 
@@ -7765,26 +7394,7 @@ Solution2:
 	      return tempA;
 	 }
 ```
-***Related problems***:
 
-* [19 Remove Nth Node From End of List](#19-remove-nth-node-from-end-of-list)
-* [21 Merge Two Sorted Lists](#21-merge-two-sorted-lists)
-* [23 Merge k Sorted Lists](#23-merge-k-sorted-lists)
-* [24 Swap Nodes in Pairs](#24-swap-nodes-in-pairs)
-* [61 Rotate List](#61-rotate-list)
-* [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
-* [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [92 Reverse Linked List II](#92-reverse-linked-list-ii)
-* [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
-* [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
-* [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
-* [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
-* [141 Linked List Cycle](#141-linked-list-cycle)
-* [142 Linked List Cycle II](#142-linked-list-cycle-ii)
-* [143 Reorder List](#143-reorder-list)
-* [147 Insertion Sort List](#147-insertion-sort-list)
-* [148 Sort List](#148-sort-list)
-* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 
 <br>
 <br>
@@ -7859,13 +7469,7 @@ In order to know when the recuisive begins, we need to record the remainder at e
 
 ```
 
-***Related Questions:***
 
-* [7 Reverse Integer](#7-reverse-integer)
-* [29 Divide Two Integers](#29-divide-two-integers)
-* [50 Pow](#50-pow)
-* [69 Sqrt](#69-sqrt)
-* [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 
 <br>
 
