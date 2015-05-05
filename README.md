@@ -72,11 +72,13 @@
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
 * [74 Search a 2D Matrix](#74-search-a-2d-matrix)
 * [75 Sort Colors](#75-sort-colors)
+* [78 Subsets](#78-subsets)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 * [86 Partition List](#86-partition-list)
 * [89 Gray Code](#89-gray-code)
+* [90 Subsets II](#79-subsets-ii)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
 * [94 Binary Tree Inorder Traversal](#94-binary-tree-inorder-traversal)
 * [95 Unique Binary Search Trees](#95-unique-binary-search-trees)
@@ -4969,7 +4971,110 @@ Use method1 need two pass. Method 2 only need one pass.
 <br>
 <br>
 
+###78 Subsets
 
+
+>Given a set of distinct integers, nums, return all possible subsets.
+
+>Note:
+>Elements in a subset must be in non-descending order.
+>The solution set must not contain duplicate subsets.
+
+<pre>
+For example,
+If nums = [1,2,3], a solution is:
+
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+
+</pre>
+
+
+
+**Idea**: 
+
+- Non-decsending order --sort the array first
+- step:
+	- []
+	- []     [1]
+	- [] [1]       [2] [1, 2]
+	- [] [1] [2] [1, 2]        [3] [1, 3] [2, 3] [1, 2, 3]
+
+From the subsets creation steps above, you must find a way to solve this problem.
+The Subset begin with [], after insert 1, it becomes [] [1], you need to combine the original [] and new created[1]. Then add [2] [3] by step. 
+
+**Attention** : What is the time complexity of this problem? Note that the number of subsets increase exponentially.
+
+
+**Iterative**:
+
+
+```java
+
+    public List<List<Integer>> subsets1(int[] nums) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        res.add(new ArrayList<Integer>());
+        if (nums == null || nums.length == 0) {
+            return res;
+        }
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length; i++) {
+            List<List<Integer>> cur = new ArrayList<List<Integer>>();
+            for (List<Integer> l : res) {
+                List<Integer> temp = new ArrayList<Integer>(l);
+                temp.add(nums[i]);
+                cur.add(temp);
+            }
+            res.addAll(cur);
+        }
+        return res;
+    }
+
+
+```
+
+
+**Recursive**:
+
+
+
+```java
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        res.add(new ArrayList<Integer>());
+        if (nums == null || nums.length == 0) {
+            return res;
+        }
+        Arrays.sort(nums);
+        helper(nums, 0, res);
+        return res;
+    }
+    
+    public void helper(int[] nums, int start, List<List<Integer>> res) {
+        if (start == nums.length) {
+            return;
+        }
+        List<List<Integer>> cur = new ArrayList<List<Integer>>();
+        for (List<Integer> l : res) {
+            List<Integer> temp = new ArrayList<Integer>(l);
+            temp.add(nums[start]);
+            cur.add(temp);
+        }
+        res.addAll(cur);
+        helper(nums, start + 1, res);
+    }
+```
+
+<br>
+<br>
 
 ###80 Remove Duplicates From Sorted Array II
 
@@ -5243,6 +5348,128 @@ If the numbers are unsigned numbers, we can first ^ then check if it is the powe
 	return (temp > 0) && ((temp & (temp -1)) == 0);
 	
 ```	
+<br>
+<br>
+
+
+###90 Subsets II
+
+>Given a collection of integers that might contain duplicates, nums, return all possible subsets.
+
+<pre>
+Note:
+Elements in a subset must be in non-descending order.
+The solution set must not contain duplicate subsets.
+For example,
+If nums = [1,2,2], a solution is:
+
+[
+  [2],
+  [1],
+  [1,2,2],
+  [2,2],
+  [1,2],
+  []
+]
+</pre>
+
+
+**Idea**: The different with * [78 Subsets](#78-subsets) is that in this problem the nums might contain duplicates.
+
+How to handle duplicates? 
+
+Consider the above case [1, 2, 2], then the steps are below:
+
+- []
+- []      [1]
+- [][1]   [2][1,2]
+- [][1][2][1,2]  [2,2][1, 2, 2]
+
+You might make a mistake that if duplicates occur, we just need to insert new element into the last half of the pre subsets. This seems true at first glance. 
+
+Consider the case [2, 2, 2, 2, 2]
+
+- [] 
+- []   [2]
+- [][2]   [2,2]
+- [][2][2,2]   [2,2,2]
+- [][2][2,2][2,2,2]    [2,2,2,2]
+- .......
+
+Actually, the start position we need to insert is the size of the prev subsets result. 
+
+Here are he solutions.
+
+
+**Iterative**:
+
+
+```java
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        res.add(new ArrayList<Integer>());
+        if (nums == null || nums.length == 0) {
+            return res;
+        }
+        Arrays.sort(nums);
+        int prevSize = 0;
+        for (int i = 0; i < nums.length; i++) {
+            List<List<Integer>> cur = new ArrayList<List<Integer>>();
+            int startPos = 0;
+            if (i > 0 && nums[i] == nums[i-1]) {
+                startPos = prevSize;
+            } 
+           for (;startPos< res.size(); startPos++) {
+                List<Integer> temp = new ArrayList<Integer>(res.get(startPos));
+                temp.add(nums[i]);
+                cur.add(temp);
+            }
+            prevSize = res.size();
+            res.addAll(cur);
+        }
+        return res;
+    }
+```
+
+
+**Resursion**:
+
+
+```java
+ public List<List<Integer>> subsetsWithDup(int[] nums) {
+	        List<List<Integer>> res = new ArrayList<List<Integer>>();
+	        res.add(new ArrayList<Integer>());
+	        if (nums == null || nums.length == 0) {
+	            return res;
+	        }
+	        Arrays.sort(nums);
+	        helper(nums, 0, res, 0);
+	        return res;
+	    }
+	    
+	    public void helper(int[] nums, int start, List<List<Integer>> res, int lastSize) {
+	        if (start == nums.length) {
+	            return;
+	        }
+	        List<List<Integer>> cur = new ArrayList<List<Integer>>();
+	        int insertPos = 0;
+	        if (start > 0 && nums[start] == nums[start-1]) {
+	            insertPos = lastSize;
+	        }
+	        for (; insertPos < res.size(); insertPos++) {
+	            List<Integer> temp = new ArrayList<Integer>(res.get(insertPos));
+	            temp.add(nums[start]);
+	            cur.add(temp);
+	        }
+	        lastSize = res.size();
+	        res.addAll(cur);
+	        helper(nums, start + 1, res, lastSize);
+	    }
+    
+
+```
+
+
 <br>
 <br>
 
