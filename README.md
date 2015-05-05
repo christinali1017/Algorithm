@@ -124,7 +124,7 @@
 * [203 Remove Linked List Elements](#203-remove-linked-list-elements)
 * [204 Count Primes](#204-count-primes)
 * [205 Isomorphic Strings](#205-isomorphic-strings)
-
+* [206 Reverse Linked List](#206-reverse-linked-list)
 
 
 
@@ -8605,5 +8605,30 @@ From the suggestions of friends, I realized that I can use bitset to save space.
 <br>
 <br>
 
+###206 Reverse Linked List
+
+> Reverse a singly linked list.
+
+
+**Idea**: Really straight forward. Let the next node pointer to the previous node until to the end of the list. Just need to take care of the null pointer. 
+
+```java
+
+    public ListNode reverseList(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode pre = null;
+        ListNode next = null;
+        while (head != null) {
+            next = head.next;
+            head.next = pre;
+            pre = head;
+            head = next;
+        }
+        return pre;
+    }
+
+```
 
 
