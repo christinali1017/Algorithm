@@ -37,6 +37,7 @@
 * [29 Divide Two Integers](#29-divide-two-integers)
 * [50 Pow](#50-pow)
 * [65 Valid Number](#65-valid-number)
+* [66 Plus One](#66-plus-one)
 * [69 Sqrt](#69-sqrt)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 

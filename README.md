@@ -67,6 +67,7 @@
 * [63 Unique Paths II](#63-unique-paths-ii)
 * [64 Minimum Path Sum](#64-minimum-path-sum)
 * [65 Valid Number](#65-valid-number)
+* [66 Plus One](#66-plus-one)
 * [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
@@ -4637,6 +4638,93 @@ If use switch
    
 ```
 
+
+
+<br>
+<br>
+
+###66 Plus One
+
+>Given a non-negative number represented as an array of digits, plus one to the number.
+
+>The digits are stored such that the most significant digit is at the head of the list.
+
+
+
+**Idea**: Since the most significant digit is at the head of the list, thus we need to add from the end. Thus problem is really similar to add two numbers, the other number in the two number is 1. We just need to take care of the carry. 
+
+There are two cases:
+
+- If carry is not 1 at the end, what should we  do? Definitely the original array is not big enough to store the result. Thus we need to enlarge the array by creating a new array. So the most straight forward thing to do is store the carry at index 0 and copy the original array, like the **First try solution** below.
+
+It seems that it's a pretty good solution. Well, actually, we just need to store carry in index 0. **Why? Because if there are carry at the end, then the other digits must be 0**.  See detail on the **better solution** below. 
+
+
+**Java code**:
+
+
+**First try**:
+
+```java
+
+ public int[] plusOne(int[] digits) {
+        if (digits == null || digits.length == 0) {
+            return digits;
+        }
+        int carry = 0;
+        for (int i = digits.length - 1; i >= 0; i--) {
+            int digit = digits[i];
+            if (i == digits.length -1) {
+                digit += 1;
+            }
+            digit += carry;
+            digits[i] = digit % 10;
+            carry = digit / 10;
+        }
+        if (carry == 0) {
+            return digits;
+        } else {
+            int[] res = new int[digits.length + 1];
+            res[0] = carry;
+            for (int i = 0; i < digits.length; i++){
+                res[i+1] = digits[i];
+            }
+            return res;
+        }
+        
+    }
+
+
+```
+
+
+**Better solution**:
+
+```java
+    public int[] plusOne(int[] digits) {
+        if (digits == null || digits.length == 0) {
+            return digits;
+        }
+        int carry = 0;
+        for (int i = digits.length - 1; i >= 0; i--) {
+            int digit = digits[i];
+            if (i == digits.length -1) {
+                digit += 1;
+            }
+            digit += carry;
+            digits[i] = digit % 10;
+            carry = digit / 10;
+        }
+        if (carry == 0) {
+            return digits;
+        } else {
+            int[] res = new int[digits.length + 1];
+            res[0] = carry;
+            return res;
+        }
+    }
+
+```
 
 
 <br>
