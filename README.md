@@ -68,6 +68,7 @@
 * [64 Minimum Path Sum](#64-minimum-path-sum)
 * [65 Valid Number](#65-valid-number)
 * [66 Plus One](#66-plus-one)
+* [67 Add Binary](#67-add-binary)
 * [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
@@ -4728,6 +4729,33 @@ It seems that it's a pretty good solution. Well, actually, we just need to store
 
 
 <br>
+<br>
+
+
+
+###67 Add Binary
+
+>Given two binary strings, return their sum (also a binary string).
+
+>For example,
+
+>a = "11"
+
+>b = "1"
+
+>Return "100".
+
+
+**Idea**:
+
+
+**Solution**:
+
+
+
+
+<br>
+
 <br>
 
 ###69 Sqrt
