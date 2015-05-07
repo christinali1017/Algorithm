@@ -112,7 +112,7 @@
 * [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characters-given-read4-ii-call-multiple-times) 
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
-* [160 Intersection of Two Linked Lists](160-intersection-of-two-linked-lists)
+* [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 * [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
 * [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
