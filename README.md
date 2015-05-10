@@ -132,6 +132,12 @@
 
 
 
+#Similar questions from other places.
+
+* [1 Search a 2D Matrix II](#1-search-a-2d-matrix-ii)]
+
+
+
 <br>
 
 
@@ -2432,41 +2438,43 @@ The second solution is similar to the first one, the differce is that we do twic
 
 
 ```java
-    public int[] searchRange(int[] A, int target) {
-        int[] res = {-1, -1};
-        if(A == null || A.length == 0) return res;
-        int l = 0;
-        int r = A.length -1;
-        while(l <= r){
-            int mid = (l + r)/2;
-            if(A[mid] < target) l = mid + 1;
-            else if (A[mid] > target) r = mid - 1;
-            else{
-                int l1 = l;
-                int r1 = mid;
-                while(l1 <= r1){
-                    int mid1 = (l1+r1)/2;
-                    if(A[mid1] < target) l1 = mid1 + 1;
-                    else r1 = mid1 -1;
-                }
-                res[0] = l1;
-                
-                int l2 = mid;
-                int r2 = r;
-                while(l2 <= r2){
-                    int mid2 = (l2+r2)/2;
-                    if(A[mid2] <= target) l2 = mid2 + 1;
-                    else r2 = mid2 -1;
-                }
-                res[1] = r2;
-                
-                return res;
-            }
-        }
-        return res;
-    }
-    
-
+     public int[] searchRange(int[] A, int target) {
+       int[] res = {-1, -1};
+       int l = 0;
+       int r = A.length - 1;
+       while ( l <= r) {
+           int mid = l + (r - l) / 2;
+           if (target > A[mid]) {
+               l = mid + 1;
+           } else if (target < A[mid]) {
+               r = mid - 1;
+           } else {
+               int lr = mid;
+               int rl = mid;
+               while (l <= lr) {
+                   int mid1 = l + (lr - l) / 2;
+                   if (target <= A[mid1]) {
+                       lr = mid1 - 1;
+                   } else {
+                       l = mid1 + 1;
+                   }
+               }
+               res[0] = l;
+               while (rl <= r) {
+                   int mid2 = rl + (r - rl) / 2;
+                   if (target >= A[mid2]) {
+                       rl = mid2 + 1;
+                   } else {
+                       r = mid2 - 1;
+                   }
+               }
+               res[1] = r;
+               return res;
+           }
+           
+       }
+       return res;
+    }    
 
 ```
 
@@ -2474,34 +2482,34 @@ The second solution is similar to the first one, the differce is that we do twic
 **Solution 2**:
 
 ```java
-    
-    public int[] searchRange1(int[] A, int target) {
-        int[] res = {-1, -1};
-        if(A == null || A.length == 0) return res;
-        int l1 = 0;
-        int r1 = A.length -1;
-        while(l1 <= r1){
-            int mid1 = (l1+r1)/2;
-            if(A[mid1] < target) l1 = mid1 + 1;
-            else r1 = mid1 -1;
-        }
-        int l2 = 0;
-        int r2 = A.length -1;
-        while(l2 <= r2){
-            int mid2 = (l2 + r2)/2;
-            if(A[mid2] <= target) l2 = mid2 + 1;
-            else r2 = mid2 -1;
-        }
-        if(l1 <= r2){
-            res[0] = l1;
-            res[1] = r2;
-        }
-        
-        return res;
+    public int[] searchRange(int[] A, int target) {
+       int[] res = {-1, -1};
+       int ll = 0;
+       int lr = A.length - 1;
+       int rl = 0;
+       int rr = A.length - 1;
+       while (ll <= lr) {
+           int mid1 = ll + (lr - ll) / 2;
+           if (A[mid1] >= target) {
+               lr = mid1 - 1;
+           } else {
+               ll = mid1 + 1;
+           }
+       }
+       while (rl <= rr) {
+           int mid2 = rl + (rr - rl) / 2;
+           if (A[mid2] <= target) {
+               rl = mid2 + 1;
+           } else {
+               rr = mid2 - 1;
+           }
+       }
+       if (ll <= rr) {
+           res[0] = ll;
+           res[1] = rr;
+       }
+       return res;
     }
-   
-
-
 ```
 
 
@@ -2529,19 +2537,24 @@ The second solution is similar to the first one, the differce is that we do twic
 <br>
 **Idea**: Just like the method used in search range, we use binary search, when l > r, l is the first element larger then the target. 
 
-
+**Time** : log(n)
 
 ```java 
-
     public int searchInsert(int[] A, int target) {
-        if(A == null || A.length == 0) return 0;
+        if (A == null || A.length == 0) {
+            return 0;
+        }
         int l = 0;
-        int r = A.length-1;
-        while(l <= r){
-            int mid = (l+r)/2;
-            if(A[mid] == target) return mid;
-            else if(A[mid] < target) l = mid+1;
-            else r = r=mid-1;
+        int r = A.length - 1;
+        while (l <= r) {
+            int mid = l + (r - l)/2;
+            if (A[mid] == target) {
+                return mid;
+            } else if (A[mid] < target) {
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
         }
         return l;
     }
@@ -4768,32 +4781,41 @@ It seems that it's a pretty good solution. Well, actually, we just need to store
 **Idea**: The result = x/result, so each time we can give a better guess result = (result + x/result)/2 until we get the correct answer.
 
 ```java
-	public int sqrt(int x){
-		if(x < 1) return 0;
-		double result = 1;
-		while(Math.abs(x/result-result) > 0.000000001){
-			result = (x/result + result)/2;
-		}
-		return (int)result;
-	}
+  public int mySqrt(int x) {
+        if (x < 1) {
+            return 0;
+        }
+        double res = 1;
+        while (true) {
+            if (Math.abs(res - x/res) < 0.00000001) {
+                return (int)res;
+            }
+            res = (res + x / res) / 2;
+        }
+    }
 ```	
 **Other Idea**: Dichotomy. l = smallest possible result, r the largest possible result. mid = (l + r)/2 , check the relationship between mid and result
 
 **Attention**: mid <= x/mid && (mid + 1) > x/(mid+1) can not change to mid * mid <= x && (mid+1) * (mid+1) > x. Because, when **mid * mid overflows**, the result might change, also, it might lead to Time limit exceeded.
 
 ```java
-    public int sqrt(int x){
-        if(x < 1) return 0;
-        if(x == 1) return 1;
-        int l = 1; 
+    public int mySqrt(int x) {
+        if (x < 1) {
+            return 0;
+        }
+        int l = 1;
         int r = x/2 + 1;
-    	while(l <= r ){
-    	    int mid = (l+r)/2;
-    	    if(mid <= x/mid && (mid + 1) > x/(mid+1)) return mid;
-    	    else if(mid > x/mid) r = mid - 1;
-    	    else l = mid + 1;
-    	}
-    	return 0;
+        while (l <= r) {
+           int mid = l + (r - l) / 2;
+           if (mid <= x / mid && (mid + 1) > x / (mid + 1)) {
+               return mid;
+           } else if (mid > x / mid) {
+               r = mid - 1;
+           } else {
+               l = mid + 1;
+           }
+        }
+        return 0;
     }
 
 ```	
@@ -4963,51 +4985,158 @@ Given target = 3, return true.
 
 *Solution 1*: We can search from the top-right, if the target is larger than current, then we move to next row. If the target is smaller, then we move to left.
 
-Solution 2*: Use binary search to find the row, then in that row, use binary search to find the target.
+*Solution 2*: We use the method in solution 1 to find the target row, then apply binary search on that row.
 
-**Attention**: In binary search, when loop ends, if target is not found, then l points to the first element larger than the target and r points to the first element smaller than target. 
+Solution 3*: Use binary search to find the row, then in that row, use binary search to find the target.
+
+**Attention: In binary search, when loop ends, if target is not found, then l points to the first element larger than the target and r points to the first element smaller than target.** 
 
 **java code**:
 
+**Solution 1**: Time: O(m + n)
+
 ```java
     public boolean searchMatrix(int[][] matrix, int target) {
-        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) return false;
-        for(int i = 0; i < matrix.length; i++){
-            for(int j = matrix[0].length-1; j >= 0; j--){
-                if(matrix[i][j] == target) return true;
-                else if(matrix[i][j] < target) break;
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return false;
+        }
+        for (int i = 0, row = matrix.length; i < row; i++) {
+            for (int j = matrix[0].length - 1; j >= 0; j--) {
+                if (matrix[i][j] == target) {
+                    return true;
+                } else if (matrix[i][j] < target) {
+                    break;
+                }
             }
         }
-        return false;
+      return false;
     }
-
 ```
 
-*solution 2*:
+**Solution 2**: Time: O(m) + O(lgn)
+
 ```java
     public boolean searchMatrix(int[][] matrix, int target) {
-        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) return false;
-        int l = 0; 
-        int r = matrix.length-1;
-        while(l <= r){
-            int mid = (l + r)/2;
-            if(matrix[mid][0] == target) return true;
-            else if(matrix[mid][0] < target) l = mid + 1;
-            else r = mid -1;
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return false;
         }
-        int row = r;
-        if(row < 0 || row >= matrix.length) return false;
-        l = 0;
-        r = matrix[0].length-1;
-        while(l <= r){
-            int mid = (l + r)/2;
-            if(matrix[row][mid] == target) return true;
-            else if(matrix[row][mid] < target) l = mid + 1;
-            else r = mid -1;
+        for (int i = 0, row = matrix.length; i < row; i++) {
+            for (int j = matrix[0].length - 1; j >= 0; j--) {
+                if (matrix[i][j] == target) {
+                    return true;
+                } else if (matrix[i][j] < target) {
+                    break;
+                } else {
+                    //do binary search 
+                    int l = 0;
+                    int r = j - 1;
+                    while (l <= r) {
+                        int mid = l + (r - l) / 2;
+                        if (matrix[i][mid] == target) {
+                            return true;
+                        } else if (matrix[i][mid] > target) {
+                            r = mid - 1;
+                        } else {
+                            l = mid + 1;
+                        }
+                    }
+                    return false;
+                }
+            }
         }
-        return false;
+      return false;
     }
+```
 
+**Solution 3**: Time complexity: O(lgm) + O(lgn)
+
+***There are two ways below, can you find out the big difference here? ***
+
+1) search from right. 
+
+```java
+   public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return false;
+        }
+        
+        int row = matrix.length;
+        int col = matrix[0].length;
+        int l = 0;
+        int r = row - 1;
+        //Find row
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (matrix[mid][col - 1] == target) {
+                return true;
+            } else if (matrix[mid][col - 1] > target) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        //find target in that row
+        if (l >= row || l < 0) {
+            return false;
+        }
+        int ll = 0;
+        int rr = col - 1;
+        while (ll <= rr) {
+            int midcol = ll + (rr -ll) / 2;
+            if (matrix[l][midcol] == target) {
+                return true;
+            } else if (matrix[l][midcol] < target) {
+                ll = midcol + 1;
+            } else {
+                rr = midcol - 1;
+            }
+        }
+      return false;
+    }
+```
+
+2) Search from left 
+
+
+```java
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return false;
+        }
+        
+        int row = matrix.length;
+        int col = matrix[0].length;
+        int l = 0;
+        int r = row - 1;
+        //Find row
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (matrix[mid][0] == target) {
+                return true;
+            } else if (matrix[mid][0] > target) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        //find target in that row
+        if (r >= row || r < 0) {
+            return false;
+        }
+        int ll = 0;
+        int rr = col - 1;
+        while (ll <= rr) {
+            int midcol = ll + (rr -ll) / 2;
+            if (matrix[r][midcol] == target) {
+                return true;
+            } else if (matrix[r][midcol] < target) {
+                ll = midcol + 1;
+            } else {
+                rr = midcol - 1;
+            }
+        }
+      return false;
+    }
 ```
 
 <br>
@@ -8973,5 +9102,120 @@ From the suggestions of friends, I realized that I can use bitset to save space.
     }
 
 ```
+
+
+
+<br>
+<br>
+<br>
+
+#Other similar questions
+
+###1 Search a 2D Matrix II
+
+> Write an efficient algorithm that searches for a value in an n x m table (two-dimensional array). This table is sorted along the rows and columns — that is,
+
+> Integers in each row are sorted from left to right.
+
+> Integers in each column are sorted from up to bottom.
+
+<pre>
+eg:
+
+
+1 4 7
+2 5 8
+3 6 9
+
+</pre>
+
+
+**Idea**:
+
+**Solution 1**: We can use the idea in solution 1 of * [74 Search a 2D Matrix](https://github.com/wishyouhappy/leetcode#74-search-a-2d-matrix). We search from the upright, each time we can ignore one row or one column. Thus the overall time complexity if O(m+n)
+
+**Solution 2**: Use divide and conquer to solve this problem. For each element in the matrix,if we treat it as a center element, we can divide the matrix into 4 submatrix. There are three ways to apply partition, row-based, column-based and diagonal. 
+
+Considering the three cases int he following picture:
+
+![matrix](https://wishyouhappy.github.io/pictures/matrix.png)
+
+- 1) column-based: we search from the middle column,  if we need to find 10, then we first search on the hightlighted column, we find that 10 is between 6-11, then we search from the upright and bottomleft sub-matrix
+
+- 2) row-based: we search from the middle row, if we need to find 8, then we first search on the hightlighted row, we find that 8 is between 6-10, then we search from the upright and bottomleft sub-matrix
+
+- 3) diagonal: **note that if you wahnt to use diagonal method, the matrix need to ht a square matrix**. if we need to find 10, then we first search on the hightlighted column, we find that 10 is between 7-13, then we search from the upright and bottomleft sub-matrix
+
+
+**Solution 3**: Improve the method in solution 2. We can apply binary search to three ways described above. 
+
+** Java Solution**:
+
+**Solution 1**: Time complexity: O(m + n)
+
+```java 
+	 public boolean searchMatrix(int[][] matrix, int target) {
+		 if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+			 return false;
+		 }
+		 int i = 0;
+		 int j = matrix[0].length - 1;
+		 int row = matrix.length;
+		 while(i < row && j >= 0) {
+			 if (matrix[i][j] == target) {
+				 return true;
+			 } else if (matrix[i][j] > target) {
+				 j--;
+			 } else {
+				 i++;
+			 }
+		 }
+		 return false;
+	 }
+```
+
+
+**Solution 2**: Time complexity O(nlgn)
+
+1) In the code below, we apply search on the diagonal direction.**matrix must be square**
+
+```java
+
+	 public boolean searchMatrix1(int[][] matrix, int target) {
+		 return helper(matrix, target, 0, matrix[0].length - 1, 0, matrix.length - 1);
+	 }
+	 
+	 /* l r u b stands for left, right, top, bottom.*/ 
+	 public boolean helper(int[][] matrix, int target, int l, int r, int t, int b) {
+		 if (l > r || t > b) {
+			 return false;
+		 }
+		 int currentRow = t;
+		 int currentCol = l;
+		 while(currentRow <= b && currentCol <= r && matrix[currentRow][currentCol] <= target) {
+			 if (matrix[currentRow][currentCol] == target) {
+				 return true;
+			 }
+			 currentRow++;
+			 currentCol++;
+		 }
+		 return helper(matrix, target, l, currentCol - 1, currentRow, b) || helper(matrix, target,currentCol, r, t, currentRow - 1);
+		 
+	 }
+
+```
+
+
+2) row-based
+
+```java
+
+
+```
+
+
+**Solution 3**: Time complexity: 
+
+
 
 
