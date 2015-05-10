@@ -3,9 +3,9 @@
 
 ####Path
 
-* [62 Unique Paths](https://github.com/wishyouhappy/leetcode62-unique-paths)
-* [63 Unique Paths II](https://github.com/wishyouhappy/leetcode63-unique-paths-ii)
-* [64 Minimum Path Sum](https://github.com/wishyouhappy/leetcode64-minimum-path-sum)
+* [62 Unique Paths](https://github.com/wishyouhappy/leetcode#62-unique-paths)
+* [63 Unique Paths II](https://github.com/wishyouhappy/leetcode#63-unique-paths-ii)
+* [64 Minimum Path Sum](https://github.com/wishyouhappy/leetcode#64-minimum-path-sum)
 
 ####Matrix Operation
 
