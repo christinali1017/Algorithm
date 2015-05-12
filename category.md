@@ -17,16 +17,17 @@
 
 #Binary Search
 
+* [33 Search in Rotated Sorted Array](https://github.com/wishyouhappy/leetcode#33-search-in-rotated-sorted-array)
 * [35 Search Insert Position](https://github.com/wishyouhappy/leetcode#35-search-insert-position)
 * [34 Search for a Range](https://github.com/wishyouhappy/leetcode#34-search-for-a-range)
 * [69 Sqrt](https://github.com/wishyouhappy/leetcode#69-sqrt)
 * [74 Search a 2D Matrix](https://github.com/wishyouhappy/leetcode#74-search-a-2d-matrix)
+* [81 Search in Rotated Sorted Array II](https://github.com/wishyouhappy/leetcode#81-search-in-rotated-sorted-array-ii)
 * [1 Search a 2D Matrix II](https://github.com/wishyouhappy/leetcode#1-search-a-2d-matrix-ii)]
-Find Minimum in Rotated Sort Array
-Search in Rotated Sorted Array
-Search in Rotated Sorted Array II
-Find bad Version
-First Peek Element
+* * [153 Find Minimum in Rotated Sorted Array](https://github.com/wishyouhappy/leetcode#153-find-minimum-in-rotated-sorted-array)
+* [154 Find Minimum in Rotated Sorted Array II](https://github.com/wishyouhappy/leetcode#154-find-minimum-in-rotated-sorted-array-ii)* 
+* [2 First Bad Version](https://github.com/wishyouhappy/leetcode#2-first-bad-version)
+* [162 Find Peak Element](https://github.com/wishyouhappy/leetcode#162-find-peak-element)
 
 
 
@@ -91,7 +92,15 @@ First Peek Element
 * [65 Valid Number](https://github.com/wishyouhappy/leetcode#65-valid-number)
 * [159 Longest String with At Most Two Distinct Characters](https://github.com/wishyouhappy/leetcode#159-longest-string-with-at-most-two-distinct-characters)
 
+//TODO
 
+strStr
+compare strings
+strStr
+Anagrams
+Longest common substring
+Longest common Prefix
+String to Integer(atoi)
 
 
 #Duplicates

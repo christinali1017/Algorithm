@@ -76,6 +76,7 @@
 * [75 Sort Colors](#75-sort-colors)
 * [78 Subsets](#78-subsets)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
+* [81 Search in Rotated Sorted Array II](#81-search-in-rotated-sorted-array-ii)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
 * [86 Partition List](#86-partition-list)
@@ -107,12 +108,15 @@
 * [143 Reorder List](#143-reorder-list)
 * [147 Insertion Sort List](#147-insertion-sort-list)
 * [148 Sort List](#148-sort-list)
+* [153 Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
+* [154 Find Minimum in Rotated Sorted Array II](#154-find-minimum-in-rotated-sorted-array-ii)
 * [155 Min Stack](#155-min-stack)
 * [156 Binary Tree Upside Down](#156-binary-tree-upside-down)
 * [157 Read N Characters Given Read4](#157-read-n-characters-given-read4)
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characters-given-read4-ii-call-multiple-times) 
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
 * [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+* [162 Find Peak Element](https://github.com/wishyouhappy/leetcode#162-find-peak-element)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 * [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
 * [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
@@ -135,6 +139,7 @@
 ##Similar questions from other sources.
 
 * [1 Search a 2D Matrix II](#1-search-a-2d-matrix-ii)]
+* [2 First Bad Version](#2-first-bad-version)
 
 
 
@@ -2356,57 +2361,69 @@ Then how to calculate the longest valid parentheses? Like the valid parentheses 
 **Idea**: There is no duplicate, so after rotation, the array can be look as two parts, and these two parts are all in ascending order. Thus we can use the binary search method, and update the l and r pointer based on the comparison. See details of comparison on the code.
 
 
-**Java code**:
+**Java code**: 
 
+
+**Time**: O(lgn)
 
 ```java
-    public int search(int[] A, int target) {
-        if(A == null || A.length == 0) return -1;
+
+	    public int search(int[] A, int target) {
+        if(A == null || A.length == 0) {
+        	return -1;
+        }
         int l = 0;
         int r = A.length-1;
         while(l <= r){
-            int mid = (l+r)/2;
-            if(A[mid] == target) return mid;
-            if(A[mid] > target && A[mid] < A[r]) r = mid-1;
-            else if(A[mid] < target && A[mid] > A[l]) l = mid + 1;
-            else if(A[l] != target) l++;
-            else return l;
+           int mid = l + (r - l) / 2;
+           if (A[mid] == target) {
+               return mid;
+           } else if (A[mid] >= A[l]) {
+               if (A[l] <= target && A[mid] > target) {
+                   r = mid - 1;
+               } else {
+                   l = mid + 1;
+               }
+           } else {
+               if (A[mid] < target && A[r] >= target) {
+                   l = mid + 1;
+               } else {
+                   r = mid - 1;
+               }
+           }
         }
         return -1;
     }
 
-
 ```
 
+**Another way**: It can handle duplicates, but this is not lg(n) at worst case. 
 
-**Another way**: 
 
 ```java
-
-	 public int search2(int[] A, int target){
-			if(A == null || A.length == 0) return -1;
-			int l = 0;
-			int r = A.length -1;
-			while( l <= r){
-				int mid = (l + r)/2;
-				if(A[mid] == target) return mid;
-				if(A[mid] >= A[l]){
-					if(A[l] <= target && A[mid] > target) r = mid -1;
-					else l = mid + 1;
-				}else {
-					if(A[mid] < target && A[r] >= target) l = mid + 1;
-					else r = mid -1;
-				}
-			}
-			return -1;
-		
-		}
-
-
+       public int search(int[] A, int target) {
+        if(A == null || A.length == 0) {
+            return -1;
+        }
+        int l = 0;
+        int r = A.length-1;
+        while(l <= r){
+            int mid = (l+r)/2;
+            if(A[mid] == target) {
+                return mid;
+            } else if(A[mid] > target && A[mid] < A[r]) {
+                r = mid-1;
+            } else if(A[mid] < target && A[mid] > A[l]) {
+                l = mid + 1;
+            } else if (A[l] != target) {
+                l++;
+            } else {
+                return l;
+            }
+        }
+        return -1;
+    }
 ```
-
-
-
 
 <br>
 <br>
@@ -5363,6 +5380,93 @@ The Subset begin with [], after insert 1, it becomes [] [1], you need to combine
 <br>
 <br>
 
+###81 Search in Rotated Sorted Array II
+
+>Follow up for "Search in Rotated Sorted Array":
+**What if duplicates are allowed?**
+
+>Would this affect the run-time complexity? How and why?
+
+>Write a function to determine if a given target is in the array.
+
+
+**Idea**: In * [33 Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array), we can make sure that each time we cut half of the array, thus the totla time complexity is O(lgn). In this problem, since the existence of dulicates, thus the A[mid] might equals to A[l] and A[r]. From this information, we don't know which half we should go. Thus the worst case would be **O(n)** 
+
+How to solve this problem? We can use the second method in * [33 Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array). If we can not find an increasing  interval of A[l]-A[mid] and A[mid]-A[r], we can just move one step right or one step left by l++ or r--
+
+
+
+**Solution 1 
+**:
+
+
+```java
+ public boolean search(int[] A, int target) {
+        if(A == null || A.length == 0) {
+            return false;
+        }
+        int l = 0;
+        int r = A.length-1;
+        while(l <= r){
+           int mid = l + (r - l) / 2;
+           if (A[mid] == target) {
+               return true;
+           } else if (A[mid] > A[l]) {
+               if (A[l] <= target && A[mid] > target) {
+                   r = mid - 1;
+               } else {
+                   l = mid + 1;
+               }
+           } else if (A[mid] < A[l]){
+               if (A[mid] < target && A[r] >= target) {
+                   l = mid + 1;
+               } else {
+                   r = mid - 1;
+               }
+           } else {
+            l++;
+           }
+        } 
+        return false;
+    }
+
+```
+
+
+**Solution 2**:  Even though in worst cast this solution is same with solution 1, in saome cases solution 1 has better time complexity
+
+```java
+
+  public boolean search(int[] A, int target) {
+        if(A == null || A.length == 0) {
+            return false;
+        }
+        int l = 0;
+        int r = A.length-1;
+        while(l <= r){
+            int mid = (l+r)/2;
+            if(A[mid] == target) {
+                return true;
+            } else if(A[mid] > target && A[mid] < A[r]) {
+                r = mid-1;
+            } else if(A[mid] < target && A[mid] > A[l]) {
+                l = mid + 1;
+            } else if (A[l] != target) {
+                l++;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+```
+
+
+<br>
+<br>
+
 
 
 ###82 Remove Duplicates from Sorted List
@@ -7624,6 +7728,119 @@ If we add a fakeHead pointer to avoid the null pointer cases, we can have more c
 <br>
 <br>
 
+
+153 Find Minimum in Rotated Sorted Array
+
+>Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+
+>(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+>Find the minimum element.
+
+>You may assume ***no duplicate*** exists in the array.
+
+**Idea**: The idea is same to * [33 Search in Rotated Sorted Array](#33-search-in-rotated-sorted-array). 
+
+Each time we find the increasing interval. For example, if A[mid] > A[l], then the left part must in order. Thus we update the minimum if needed, then jump to the right part. 
+
+Time complexity: O(lgn)
+
+
+**Java code**:
+
+```java
+    public int findMin(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return Integer.MIN_VALUE;
+        }
+        int l = 0;
+        int r = nums.length - 1;
+        int result = Integer.MAX_VALUE;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            //the left half is in order
+            if (nums[mid] >= nums[l]) {
+                result = Math.min(result, nums[l]);
+                l = mid + 1;
+            } else if (nums[mid] < nums[r]) {
+            	//can also use  else if (nums[mid] < numd[r])
+                result = Math.min(result, nums[mid]);
+                r = mid - 1;
+            }
+        }
+        return result;
+    }
+```
+
+
+
+<br>
+<br>
+
+154 Find Minimum in Rotated Sorted Array
+
+
+>Follow up for "Find Minimum in Rotated Sorted Array":
+***What if duplicates are allowed?***
+
+>Would this affect the run-time complexity? How and why?
+Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+
+>(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+>Find the minimum element.
+
+>The array may contain duplicates.
+
+
+**Idea**: Same way to handle duplicates with *[81 Search in Rotated Sorted Array II](#81-search-in-rotated-sorted-array-ii). 
+
+To find the minimum, use the method in 153. 
+
+Each time we find the increasing interval. For example, if A[mid] > A[l], then the left part must in order. Thus we update the minimum if needed, then jump to the right part. 
+
+
+**Attention**: When nums[mid] = nums[l], we need to check if we have to update minimum with A[l] before l++
+
+
+**Java Solution**:
+
+
+```java
+    public int findMin(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return Integer.MIN_VALUE;
+        }
+        int l = 0;
+        int r = nums.length - 1;
+        int result = Integer.MAX_VALUE;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            //the left half is in order
+            if (nums[mid] > nums[l]) {
+                result = Math.min(result, nums[l]);
+                l = mid + 1;
+            } else if (nums[mid] < nums[l]) {
+                result = Math.min(result, nums[mid]);
+                r = mid - 1;
+            } else {
+                result = Math.min(result, nums[l]);
+                l++;
+            }
+        }
+        return result;
+    }
+
+
+```
+
+
+
+
+
+<br>
+<br>
+
 ###155 Min Stack
 >Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
 <pre>
@@ -8054,6 +8271,93 @@ Solution2:
 
 <br>
 <br>
+
+
+
+###162 First Peak Element
+
+
+>A peak element is an element that is greater than its neighbors.
+
+>Given an input array where num[i] ≠ num[i+1], find a peak element and return its index.
+
+>The array may contain multiple peaks, in that case return the index to any one of the peaks is fine.
+
+>You may imagine that num[-1] = num[n] = -∞.
+
+>For example, in array [1, 2, 3, 1], 3 is a peak element and your function should return the index number 2.
+
+
+**Idea**: Since there is no duplicate, and num[-1] = num[n] = -inf, thus the peak must exist. We can eaisly solve this problem in brute force in O(n) time. Can we improve it? 
+
+Sure, use **binary search!.**
+
+Since we only need to return one of the peaks, thus if we encounter an element which satisfies that num[i-1] < num[i], num[i] > num[i+1], then we can return. 
+
+Then how to change window in binary search?
+We move to the side that has has peeks. We can check if num[i-1] > num[i], if it is true, then we move to the left, otherwise, we move to the right.
+
+Look at the following picture:
+
+![peak](https://wishyouhappy.github.io/pictures/peakelement.png)
+
+Suppose in the above three cases, 5 is the mid.
+
+- case 1: return 5, because 5 is a peak
+- case 2: num[mid -1] > num[mid], thus there must exist a peak on the left side. Why? If 7 is larger than the element on the left side of it, then 7 is a peak, otherwise, the element on the left side of 7 might be a peak. Because we know that there is a -inf on the leftmost.
+- case 3: num[mid - 1] < num[mid], then we move to the right part. Because the element on the right side of 5 must be larger than 5. Otherwise, 5 is a peak.
+
+**Java code **: 
+
+
+**Binary search**: TIME : O(lgn)
+
+
+```java
+    public int findPeakElement(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
+        int l = 0;
+        int r = nums.length - 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if ((mid == 0 || nums[mid] > nums[mid - 1]) && (mid == nums.length -1 || nums[mid] > nums[mid + 1])) {
+                return mid;
+            } else if (mid > 0 && nums[mid] < nums[mid - 1]) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
+    }
+
+```
+
+**Brute force**: Time complexity: O(n)
+```java
+    public int findPeakElement1(int[] num) {
+        if(num == null || num.length == 0) return -1;
+        if(num.length == 1) return 0;
+        for(int i = 0; i < num.length-1; i++){
+        	if(i == 0){
+        		if(num[i] > num[i+1]) return i;
+        	}else{
+        		if(num[i] > num[i+1] && num[i] > num[i-1]) return i;
+        	}
+        }
+        if(num[num.length-1] > num[num.length-2]) return num.length -1;
+        return -1;
+    }
+
+```
+
+
+
+<br>
+<br>
+
 
 
 ###166 Fraction to Recurring Decimal
@@ -9144,7 +9448,7 @@ Considering the three cases int he following picture:
 
 - 2) row-based: we search from the middle row, if we need to find 8, then we first search on the hightlighted row, we find that 8 is between 6-10, then we search from the upright and bottomleft sub-matrix
 
-- 3) diagonal: **note that if you wahnt to use diagonal method, the matrix need to ht a square matrix**. if we need to find 10, then we first search on the hightlighted column, we find that 10 is between 7-13, then we search from the upright and bottomleft sub-matrix
+- 3) diagonal: **note that if you want to use diagonal method, the matrix need to have a square matrix**. if we need to find 10, then we first search on the hightlighted column, we find that 10 is between 7-13, then we search from the upright and bottomleft sub-matrix
 
 
 **Solution 3**: Improve the method in solution 2. We can apply binary search to three ways described above. 
@@ -9266,6 +9570,85 @@ Take row-based as an example
 	 }
 
 ```
+
+
+
+###2 First Bad Version
+
+>*From lintcode*
+
+> The code base version is an integer start from 1 to n. One day, someone committed a bad version in the code case, so it caused this version and the following versions are all failed in the unit tests. Find the first bad version.
+
+>You can call isBadVersion to help you determine which version is the first bad one. The details interface can be found in the code's annotation part.
+
+>Example
+Given n=5:
+
+>Call isBadVersion(3), get false;
+
+>Call isBadVersion(5), get true;
+
+>Call isBadVersion(4), get true;
+
+>Here we are 100% sure that the 4th version is the first bad version.
+
+>Note
+Please read the annotation in code area to get the correct way to call isBadVersion in different language. For example, Java is VersionControl.isBadVersion(v)
+
+>Challenge
+You should call isBadVersion as few as possible.
+
+
+**Idea**: Since the bad version causes it's later version fail to the test, thus if version i is ok, then versions after i must be ok. Thus, we can use binary search to search the first bad version. 
+
+**Code**:
+
+```java
+
+/**
+ * public class VersionControl {
+ *     public static boolean isBadVersion(int k);
+ * }
+ * you can use VersionControl.isBadVersion(k) to judge wether 
+ * the kth code version is bad or not.
+*/
+class Solution {
+    /**
+     * @param n: An integers.
+     * @return: An integer which is the first bad version.
+     */
+    public int findFirstBadVersion(int n) {
+        // write your code here
+        if (n <= 0) {
+            return -1;
+        }
+        
+        int l = 1;
+        int r = n;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (VersionControl.isBadVersion(mid)) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
+    }
+
+
+```
+
+<br>
+<br>
+
+
+
+
+
+
+
+
 
 
 
