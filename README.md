@@ -133,6 +133,7 @@
 * [204 Count Primes](#204-count-primes)
 * [205 Isomorphic Strings](#205-isomorphic-strings)
 * [206 Reverse Linked List](#206-reverse-linked-list)
+* [207 Course Schedule](#207-course-schedule)
 
 
 
@@ -9407,11 +9408,86 @@ From the suggestions of friends, I realized that I can use bitset to save space.
 
 ```
 
+<br>
+<br>
+
+###207 Course Schedule
+
+>There are a total of n courses you have to take, labeled from 0 to n - 1.
+
+>Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+>Given the total number of courses and a list of prerequisite pairs, is it possible for you to finish all courses?
+
+>For example:
+
+>2, [[1,0]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0. So it is possible.
+
+>2, [[1,0],[0,1]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+
+>Note:
+The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented.
+
+**Idea**: 
+
+- 1) solution 1: This problem is a typical example of topological sort. We can firt create the adjcent matrix, then do topological sort to check if all courses are finished. 
+
+- 2) solution 2: For each edge we can use a stack to check if there is a cycle. If cycle exist, then we can not finish all the courses. 
 
 
+**Java Solution**:
+
+```java
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        if (prerequisites == null || prerequisites.length == 0 || numCourses <= 0) {
+            return true;
+        }
+        int[][] adj = new int[numCourses][numCourses];
+        int[] inDegree = new int[numCourses];
+        for (int i = 0; i < prerequisites.length; i++) {
+            int in = prerequisites[i][1];
+            int out = prerequisites[i][0];
+            if (adj[in][out] == 0) {
+                inDegree[out]++;
+            }
+            adj[in][out] = 1;
+        }
+        
+        Queue<Integer> zeroDegrees = new LinkedList<Integer>();
+        for (int i = 0; i < numCourses; i++) {
+            if (inDegree[i] == 0) {
+                zeroDegrees.offer(i);
+            }
+        }
+        
+        int count = 0;
+        while (!zeroDegrees.isEmpty()) {
+            int temp = zeroDegrees.poll();
+            count++;
+            for (int i = 0; i < numCourses; i++) {
+                if (adj[temp][i] == 1) {
+                    inDegree[i]--;
+                    if (inDegree[i] == 0) {
+                        zeroDegrees.offer(i);
+                    }
+                }
+            }
+
+        }
+        
+        return count == numCourses;
+    }
+
+```
+
 <br>
 <br>
 <br>
+
+
+
 
 ##Similar questions from other sources.
 

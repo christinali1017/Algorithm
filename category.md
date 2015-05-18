@@ -23,8 +23,8 @@
 * [69 Sqrt](https://github.com/wishyouhappy/leetcode#69-sqrt)
 * [74 Search a 2D Matrix](https://github.com/wishyouhappy/leetcode#74-search-a-2d-matrix)
 * [81 Search in Rotated Sorted Array II](https://github.com/wishyouhappy/leetcode#81-search-in-rotated-sorted-array-ii)
-* [1 Search a 2D Matrix II](https://github.com/wishyouhappy/leetcode#1-search-a-2d-matrix-ii)]
-* * [153 Find Minimum in Rotated Sorted Array](https://github.com/wishyouhappy/leetcode#153-find-minimum-in-rotated-sorted-array)
+* [1 Search a 2D Matrix II](https://github.com/wishyouhappy/leetcode#1-search-a-2d-matrix-ii)
+* [153 Find Minimum in Rotated Sorted Array](https://github.com/wishyouhappy/leetcode#153-find-minimum-in-rotated-sorted-array)
 * [154 Find Minimum in Rotated Sorted Array II](https://github.com/wishyouhappy/leetcode#154-find-minimum-in-rotated-sorted-array-ii)* 
 * [2 First Bad Version](https://github.com/wishyouhappy/leetcode#2-first-bad-version)
 * [162 Find Peak Element](https://github.com/wishyouhappy/leetcode#162-find-peak-element)
