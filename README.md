@@ -139,8 +139,9 @@
 
 ##Similar questions from other sources.
 
-* [1 Search a 2D Matrix II](#1-search-a-2d-matrix-ii)]
+* [1 Search a 2D Matrix II](#1-search-a-2d-matrix-ii)
 * [2 First Bad Version](#2-first-bad-version)
+* [3 Compare Strings](#3-first-bad-version)
 
 
 
@@ -1979,69 +1980,97 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 
 ```java
-  public int strStr1(String haystack, String needle) {
-        if(haystack == null || needle == null) return -1;
-        if(needle.equals("")) return 0;
+	public int strStr(String haystack, String needle) {
+        if (haystack == null || needle == null) {
+            return -1;
+        }
         boolean contain = true;
-        for(int i = 0; i <= haystack.length() - needle.length();i++){
-            for(int j = i; j < i + needle.length(); j++){
-                if(haystack.charAt(j) != needle.charAt(j-i)){
+        for (int i = 0; i <= haystack.length() - needle.length(); i++){
+            for (int j = i; j < i + needle.length(); j++){
+                if (haystack.charAt(j) != needle.charAt(j-i)){
                     contain = false;
                     break;
                 } 
             }
-            if(contain) return i;
+            if (contain) {
+                return i;
+            }
             contain = true;
         }
         return -1;
     }
 
 ```
+**Code of solution2**: O(n^2), use the library substring method
 
-**Code of solution2**: O(n)
+```java
+
+    public int strStr(String haystack, String needle) {
+       if (haystack == null || needle == null) {
+           return -1;
+       }
+       for (int i = 0; i <= haystack.length() - needle.length(); i++) {
+           String temp = haystack.substring(i, needle.length() + i);
+           if (temp.equals(needle)) {
+               return i;
+           }
+       }
+       return -1;
+    }
+
+```
+
+**Code of solution3**: O(n)
  
 ```java
 
 	public int strStr(String haystack, String needle){
-		if(haystack == null || needle == null || (haystack.length() < needle.length())) return -1;
-        if(needle.equals("")) return 0;
+		if (haystack == null || needle == null || (haystack.length() < needle.length())) { 
+		    return -1;
+		}
+		if (needle.equals("")) {
+		    return 0;
+		}
 		int[] helper = getHelperArray(needle);
-		int i = 0,
-			j = 0,
-			textLen = haystack.length(),
-			patternLen = needle.length();
-		while(i < textLen && j < patternLen){
+		int i = 0;
+		int j = 0;
+		int textLen = haystack.length();
+		int patternLen = needle.length();
+		while (i < textLen && j < patternLen){
 			if(haystack.charAt(i) == needle.charAt(j)){
 				j++;
 				i++;
 			}
-			
 			if(j == patternLen){
 				return i - patternLen;
 				//j = helper[j-1]; //if we want find all matches. 
-			}else if((i < textLen && j < patternLen) &&haystack.charAt(i) != needle.charAt(j)){
-				if(j != 0) j = helper[j-1];
-				else i++;
+			} else if ((i < textLen && j < patternLen) &&haystack.charAt(i) != needle.charAt(j)){
+				if(j != 0) {
+				    j = helper[j-1];
+				} else {
+				    i++;
+				}
 			}
 		}
 		return -1;
 	}
 	
 	public int[] getHelperArray(String pattern){
-		int i = 1, //suffix
-			j = 0, //prefix
-			len = pattern.length();
+		int i = 1; //suffix
+		int	j = 0; //prefix
+		int len = pattern.length();
 		int[] helper = new int[len];
 		helper[0] = 0;
 		
-		while(i < len){
-			if(pattern.charAt(i) == pattern.charAt(j)){
+		while (i < len){
+			if (pattern.charAt(i) == pattern.charAt(j)) {
 				j++;
 				helper[i] = j;
 				i++;
-			}else{
-				if(j != 0) j = helper[j-1];
-				else{
+			} else {
+				if (j != 0) {
+				    j = helper[j-1];
+				} else{
 					helper[i] = 0;
 					i++;
 				}
@@ -3420,9 +3449,11 @@ Use set, recursion:
 
 	 Use hashmap.
 
+**Time complexity**:
 
+For the first solution use sort + hashmap, suppose string[] length is N, maximum string length is M, then the overall time complexity is O(N * MlgM)
 
-
+For the second solution, the time complexity is O(N * M), but too many multiplications. 
 
 **Java code**:
 
@@ -3430,26 +3461,58 @@ Use set, recursion:
 
     public List<String> anagrams(String[] strs) {
         List<String> res = new ArrayList<String>();
-        if(strs == null || strs.length == 0) return res;
+        if(strs == null || strs.length == 0) {
+            return res;
+        }
         Map<String, List<String>> map = new HashMap<String, List<String>>();
-        for(String s : strs){
+        for (String s : strs){
             char[] arr = s.toCharArray();
             Arrays.sort(arr);
             String sorted = new String(arr);
-            if(map.containsKey(sorted)){
+            if (map.containsKey(sorted)) {
                 map.get(sorted).add(s);
-            }else{
+            } else {
                 List<String> list = new ArrayList<String>();
                 list.add(s);
                 map.put(sorted, list);
             }
         }
-        for(Map.Entry<String, List<String>> e : map.entrySet()){
-            if(e.getValue().size() > 1){
+        for (Map.Entry<String, List<String>> e : map.entrySet()) {
+            if (e.getValue().size() > 1) {
                 res.addAll(e.getValue());
             }
         }
         return res;
+    }
+
+```
+
+Here is another similar solution using hashmap, the difference is that it does not use Arrays.sort to sort the strings. It uses some primes numbers to calculate the hash value. This solution is from leetcode discussion. Even though it does not improve the time complexity too much, it's a pretty good idea. 
+
+```java
+    public List<String> anagrams(String[] strs) {
+        int[] PRIMES = new int[]{2, 3, 5, 7, 11 ,13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 107};
+        List<String> list = new LinkedList<>();
+        Map<Integer, List<String>> mapString = new HashMap<>();
+        int result = -1;
+        for (int i = 0; i < strs.length; i++) {
+            int mapping = 1;
+            for (int j = 0, max = strs[i].length(); j < max; j++) {
+                mapping *= PRIMES[strs[i].charAt(j) - 'a'];
+            }
+            List<String> strings = mapString.get(mapping);
+            if (strings == null) {
+                strings = new LinkedList<>();
+                mapString.put(mapping, strings);
+            }
+            strings.add(strs[i]);
+        }
+        for (List<String> mapList : mapString.values()) {
+            if (mapList.size() > 1) {
+                list.addAll(mapList);
+            }
+        }
+        return list;
     }
 
 ```
@@ -9719,9 +9782,75 @@ class Solution {
 <br>
 
 
+###3 Compare Strings
+
+> Compare two strings A and B, determine whether A contains all of the characters in B.
+
+> The characters in string A and B are all Upper Case letters.
+
+<pre>
+Example
+For A = "ABCD", B = "ACD", return true.
+
+For A = "ABCD", B = "AABC", return false.
+
+**"ABCDE", "DB" return true**
+
+</pre>
+
+Note
+**The characters of B in A are not necessary continuous or ordered.**
 
 
+**Idea**: 
+- The question does not require that the appear sequence in A and B sould be the same, thus we need fisrt sort tehe string before we compare. 
+- When compare, since it does not require the characters should be continuous in A, thus for each begin index in A, we need to walk through the end to check if B exists. Here is a example solution below in O(n^2) time. 
 
+
+**Solution**:
+
+```java
+public class Solution {
+    /**
+     * @param A : A string includes Upper Case letters
+     * @param B : A string includes Upper Case letter
+     * @return :  if string A contains all of the characters in B return true else return false
+     */
+    public boolean compareStrings(String A, String B) {
+        // write your code here
+        if (A == null || B == null) {
+            return false;
+        }
+        if (B.length() == 0) {
+            return true;
+        }
+        char[] arrA = A.toCharArray();
+        char[] arrB = B.toCharArray();
+        Arrays.sort(arrA);
+        Arrays.sort(arrB);
+        
+        for (int i = 0; i <= A.length() - B.length(); i++) {
+            int temp = 0;
+            int j = 0;
+            while (j < B.length() && i + temp < A.length()) {
+                if (arrA[i + temp] == arrB[j]) {
+                    temp++;
+                    j++;
+                } else {
+                    temp++;
+                }
+            }
+            if (j > B.length() - 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+
+<br>
+<br>
 
 
 

@@ -25,7 +25,7 @@
 * [81 Search in Rotated Sorted Array II](https://github.com/wishyouhappy/leetcode#81-search-in-rotated-sorted-array-ii)
 * [1 Search a 2D Matrix II](https://github.com/wishyouhappy/leetcode#1-search-a-2d-matrix-ii)
 * [153 Find Minimum in Rotated Sorted Array](https://github.com/wishyouhappy/leetcode#153-find-minimum-in-rotated-sorted-array)
-* [154 Find Minimum in Rotated Sorted Array II](https://github.com/wishyouhappy/leetcode#154-find-minimum-in-rotated-sorted-array-ii)* 
+* [154 Find Minimum in Rotated Sorted Array II](https://github.com/wishyouhappy/leetcode#154-find-minimum-in-rotated-sorted-array-ii)
 * [2 First Bad Version](https://github.com/wishyouhappy/leetcode#2-first-bad-version)
 * [162 Find Peak Element](https://github.com/wishyouhappy/leetcode#162-find-peak-element)
 
@@ -89,15 +89,11 @@
 #String
 
 * [3 Longest Substring without Repeating Characters](https://github.com/wishyouhappy/leetcode#3-longest-substring-without-repeating-characters))
+* [28 Implement strStr](https://github.com/wishyouhappy/leetcode#28-implement-strstr)
 * [65 Valid Number](https://github.com/wishyouhappy/leetcode#65-valid-number)
 * [159 Longest String with At Most Two Distinct Characters](https://github.com/wishyouhappy/leetcode#159-longest-string-with-at-most-two-distinct-characters)
-
-//TODO
-
-strStr
-compare strings
-strStr
-Anagrams
+* [3 Compare Strings](https://github.com/wishyouhappy/leetcode#3-first-bad-version)
+* [49 Anagrams](https://github.com/wishyouhappy/leetcode#49-anagrams)
 Longest common substring
 Longest common Prefix
 String to Integer(atoi)
