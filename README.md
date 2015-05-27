@@ -661,28 +661,35 @@ index of middle element : size - i + j - i ; i is the row number, j is the start
 4) takes as many characters as possible to form a valid character until encounter an unvalid
 
 ```java
-
-	public int atoi(String str){
-		if(str == null || str.length() == 0) return 0;
-		str = str.trim();
-		boolean positive = true;
-		int result = 0;
-		for(int i = 0; i < str.length(); i++){
-			if(i == 0 && (str.charAt(i) == '-' || str.charAt(i) == '+')) {
-				if(str.charAt(i) == '-') positive = false;
-				continue;
-			}
-			if(!isNum(str.charAt(i))) break;
-			if(result > (Integer.MAX_VALUE - ((int)str.charAt(i) - 48))/10) return positive ? Integer.MAX_VALUE: Integer.MIN_VALUE;
-			result = result * 10 + ((int)str.charAt(i) - 48);
-		}
-		return positive ? result : -result;
-	}
-	
-	public boolean isNum(char c){
-		if(c < '0' || c > '9') return false;
-		return true;
-	}
+    public int myAtoi(String str) {
+        if (str == null) {
+            return 0;
+        }
+        str = str.trim();
+        int res = 0;
+        boolean isPositive = true; 
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (i == 0 && (c == '-' || c == '+')) {
+                if (c == '-') {
+                    isPositive = false;
+                }
+                continue;
+            }
+            if (!isNum(c)) {
+                break;
+            } else if (res > (Integer.MAX_VALUE - (c - '0')) / 10) {
+                return isPositive ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            } else {
+                res = res * 10 + (c - '0');
+            }
+        }
+        return isPositive ? res : -res;
+    }
+    
+    public boolean isNum(char c) {
+        return c >= '0' && c <= '9';
+    }
 
 ```
 
@@ -9872,7 +9879,7 @@ Generally, there are two ways to solve the longest common substring problem.
 
 - Dynamic programming
 
-- suffix tree
+- **suffix tree**
 
 Using dynamix programming we can get the result in O(m * n) time, m, n is the length of the two strings.
 
