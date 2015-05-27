@@ -93,8 +93,8 @@
 * [49 Anagrams](https://github.com/wishyouhappy/leetcode#49-anagrams)
 * [65 Valid Number](https://github.com/wishyouhappy/leetcode#65-valid-number)
 * [159 Longest String with At Most Two Distinct Characters](https://github.com/wishyouhappy/leetcode#159-longest-string-with-at-most-two-distinct-characters)
-* [3 Compare Strings](https://github.com/wishyouhappy/leetcode#3-first-bad-version)
-* [4 Longest Common Substring](https://github.com/wishyouhappy/leetcode#4-Longest-Common-Substring)
+* [3 Compare Strings](https://github.com/wishyouhappy/leetcode#3-compare-strings)
+* [4 Longest Common Substring](https://github.com/wishyouhappy/leetcode#4-longest-common-substring)
 Longest common Prefix
 String to Integer(atoi)
 

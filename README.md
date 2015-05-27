@@ -141,8 +141,8 @@
 
 * [1 Search a 2D Matrix II](#1-search-a-2d-matrix-ii)
 * [2 First Bad Version](#2-first-bad-version)
-* [3 Compare Strings](#3-first-bad-version)
-* [4 Longest Common Substring](#4-Longest-Common-Substring)
+* [3 Compare Strings](#3-compare-strings)
+* [4 Longest Common Substring](#4-longest-common-substring)
 
 
 
@@ -9913,6 +9913,7 @@ public class Solution {
 }
 ```
 
-
+<br>
+<br>
 
 
