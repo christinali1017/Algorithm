@@ -142,6 +142,7 @@
 * [1 Search a 2D Matrix II](#1-search-a-2d-matrix-ii)
 * [2 First Bad Version](#2-first-bad-version)
 * [3 Compare Strings](#3-first-bad-version)
+* [4 Longest Common Substring](#4-Longest-Common-Substring)
 
 
 
@@ -9854,7 +9855,63 @@ public class Solution {
 
 
 
+###4 Longest Common Substring
 
+>Given two strings, find the longest common substring. Return the length of it. From lintcode
+
+>Example, Given A = "ABCD", B = "CBCE", return 2.
+
+Note: The characters in substring should occur continuously in original string. This is different with subsequence.
+
+Challenge O(n x m) time and memory.
+
+**Idea**: 
+The most straight forward way to solve this problem takes O(n^3) time, we compare from the begining of two string, when not equal, update the max, move the pointer of the second string to the next character. The time complexity is bad. 
+
+Generally, there are two ways to solve the longest common substring problem. 
+
+- Dynamic programming
+
+- suffix tree
+
+Using dynamix programming we can get the result in O(m * n) time, m, n is the length of the two strings.
+
+Using suffix tree we can reduce the time complexity to O(m + n). 
+
+Below is the solution of dynamic programming.
+
+Want to know more about the solution of suffix tree, click on this two links: [longest common substring](http://algs4.cs.princeton.edu/63suffix/LongestCommonSubstring.java.html) , [suffix array](http://algs4.cs.princeton.edu/63suffix/SuffixArray.java.html)
+
+**Solution**:
+
+```java
+public class Solution {
+    /**
+     * @param A, B: Two string.
+     * @return: the length of the longest common substring.
+     */
+    public int longestCommonSubstring(String A, String B) {
+        // write your code here
+        if (A == null || B == null || A.length() == 0 || B.length() == 0) {
+            return 0;
+        }
+        int maxLen = Math.max(A.length(), B.length());
+        int[][] dp = new int[maxLen+1][maxLen+1];
+        int res = 0;
+        for (int i = 0; i < A.length(); i++) {
+            for (int j = 0; j < B.length(); j++) {
+                if (A.charAt(i) == B.charAt(j)) {
+                    dp[i+1][j+1] = dp[i][j] + 1;
+                    res = Math.max(res, dp[i+1][j+1]);
+                } else {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+        return res;
+    }
+}
+```
 
 
 
