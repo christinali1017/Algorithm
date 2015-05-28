@@ -134,6 +134,7 @@
 * [205 Isomorphic Strings](#205-isomorphic-strings)
 * [206 Reverse Linked List](#206-reverse-linked-list)
 * [207 Course Schedule](#207-course-schedule)
+* [208 Implement Trie Prefix Tree](#208-implement-trie-prefix-tree)
 
 
 
@@ -9559,6 +9560,160 @@ The input prerequisites is a graph represented by a list of edges, not adjacency
 
 
 
+###208 Implement Trie Prefix Tree
+
+>Implement a trie with insert, search, and startsWith methods.
+
+>Note:You may assume that all inputs are consist of lowercase letters a-z.
+
+**Idea**: If you not familiar with Trie, look at my blog [Trie](http://wishyouhappy.github.io/2015/05/27/Trie/)
+
+**Solution1**: the most original and simple method
+
+```java
+class TrieNode {
+    // Initialize your data structure here.
+    public TrieNode[] edges;
+    public boolean isLeaf; //check if a trienode is a leaf node
+    public TrieNode() {
+        // all possible sons
+        edges = new TrieNode[26];
+    }
+}
+
+public class Trie {
+    private TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    // Inserts a word into the trie.
+    public void insert(String word) {
+        if (word == null || word.length() == 0) {
+            return;
+        }
+        root = insert(root, word, 0);
+    }
+    
+    public TrieNode insert(TrieNode node, String word, int len) {
+        if (node == null) {
+            node = new TrieNode();
+        }
+        if (len == word.length()) {
+            node.isLeaf = true;
+            return node;
+        }
+        int pos = word.charAt(len) - 'a';
+        node.edges[pos] = insert(node.edges[pos], word, len + 1);
+        return node;
+    }
+
+    // Returns if the word is in the trie.
+    public boolean search(String word) {
+       TrieNode temp = searchHelper(root, word, 0);
+       return temp == null ? false : temp.isLeaf;    
+    }
+
+    // Returns if there is any word in the trie
+    // that starts with the given prefix.
+    public boolean startsWith(String prefix) {
+        TrieNode temp = searchHelper(root, prefix, 0);
+        return temp == null ? false : true;
+    }
+    
+    public TrieNode searchHelper(TrieNode node, String word, int len) {
+        if (node == null) {
+            return null;
+        }
+        if (len == word.length()) {
+            return node;
+        }
+        int pos = word.charAt(len) - 'a';
+        return searchHelper(node.edges[pos], word, len + 1);
+    }
+}
+```
+
+
+**Solution2**: using hashmap
+
+```java
+class TrieNode {
+    // Initialize your data structure here.
+    public Map<Character, TrieNode> edges;
+    public boolean isLeaf; //check if a trienode is a leaf node
+    public TrieNode() {
+        edges = new HashMap<Character, TrieNode>(); // all possible sons
+    }
+}
+
+public class Trie {
+    private TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    // Inserts a word into the trie.
+   public void insert(String word) {
+        Map<Character, TrieNode> edges = root.edges;
+        for(int i=0; i<word.length(); i++){
+            char c = word.charAt(i);
+            TrieNode current = null;
+            if(edges.containsKey(c)){
+                current = edges.get(c);
+            }else{
+                current = new TrieNode();
+                edges.put(c, current);
+            }
+            edges = current.edges;
+            if (i == word.length() - 1) {
+                current.isLeaf = true;
+            }
+        }
+    }
+
+    // Returns if the word is in the trie.
+    public boolean search(String word) {
+        TrieNode res = searchHelper(word);
+        return res == null ? false : res.isLeaf;
+    }
+
+
+    // Returns if there is any word in the trie
+    // that starts with the given prefix.
+    public boolean startsWith(String prefix) {
+       TrieNode res = searchHelper(prefix);
+       return res == null ? false : true;
+    }
+    
+    private TrieNode searchHelper(String word) {
+        Map<Character, TrieNode> edges = root.edges;
+        TrieNode res = null;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (edges.containsKey(c)) {
+                res = edges.get(c);
+                edges = res.edges;
+            } else {
+                return null;
+            }
+        }
+        return res;
+    }
+    
+}
+```
+
+
+
+
+
+<br>
+<br>
+
+
 
 ##Similar questions from other sources.
 
@@ -9922,5 +10077,8 @@ public class Solution {
 
 <br>
 <br>
+
+
+
 
 
