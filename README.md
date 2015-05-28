@@ -9566,7 +9566,7 @@ The input prerequisites is a graph represented by a list of edges, not adjacency
 
 >Note:You may assume that all inputs are consist of lowercase letters a-z.
 
-**Idea**: If you not familiar with Trie, look at my blog [Trie](http://wishyouhappy.github.io/2015/05/27/Trie/)
+**Idea**: If you are not familiar with Trie, look at my blog [Trie](http://wishyouhappy.github.io/2015/05/27/Trie/)
 
 **Solution1**: the most original and simple method
 
