@@ -135,6 +135,7 @@
 * [206 Reverse Linked List](#206-reverse-linked-list)
 * [207 Course Schedule](#207-course-schedule)
 * [208 Implement Trie Prefix Tree](#208-implement-trie-prefix-tree)
+* [209 Minimum Size Subarray Sum](#209-minimum-size-subarray-sum)
 
 
 
@@ -9713,6 +9714,90 @@ public class Trie {
 
 
 
+
+
+<br>
+<br>
+
+###209 Minimum Size Subarray Sum
+
+> Given an array of n positive integers and a positive integer s, find the minimal length of a subarray of which the sum ≥ s. If there isn't one, return 0 instead.
+
+>For example, given the array [2,3,1,2,4,3] and s = 7,
+>the subarray [4,3] has the minimal length under the problem constraint.**Subarray should be contiguous**.
+
+**More practice: If you have figured out the O(n) solution, try coding another solution of which the time complexity is O(n log n).**
+
+**Idea**:  
+
+- solution 1 : Sliding window. Use two pointers to record the beginning and the end of the subarray. If current sum >= s then update the min length of subarray and move the left pointer of the sliding window one step right. Otherwise, move the right pointer one step right and update the current sum. Time complexity is O(n)
+
+- solution 2: nlgn solution. We can use binary search obtain lgn but the array should be sorted. Since the subarray should be contiguous,
+thus we shouldn't sort the array. Then how could we implement the nlgn solution? 
+
+**We need to get the minimum size subarray sum, we can sum the elements before i, then we can get a sorted array and apply binary search**
+See details in the code below. 
+
+
+**Solution 1**: O(n) time complexity
+
+```java
+    public int minSubArrayLen(int s, int[] nums) {
+        if (nums == null || nums.length == 0 || s == 0) {
+            return 0;
+        }
+        int start = 0;
+        int end = 0;
+        int res = Integer.MAX_VALUE;
+        int sum = nums[0];
+        while (end < nums.length  && start <= end) {
+            if (sum < s) {
+                end++;
+                if (end < nums.length) {
+                    sum += nums[end];
+                }
+            }
+            if (sum >= s) {
+                res = Math.min(end - start + 1, res);
+                sum -= nums[start++];
+            }
+        }
+        return res == Integer.MAX_VALUE ? 0 : res;
+    }
+```
+
+**Solution 2**: O(nlgn) time complexity
+
+```java
+    public int minSubArrayLen(int s, int[] nums) {
+        if (nums == null || nums.length == 0 || s == 0) {
+            return 0;
+        }
+        int[] sums = new int[nums.length];
+        sums[0] = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            sums[i] = sums[i-1] + nums[i];
+        }
+        if (sums[sums.length - 1] < s) {
+            return 0;
+        }
+        int res = Integer.MAX_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            int l = i;
+            int r = nums.length - 1;
+            while (l <= r) {
+                int mid = l + (r - l) / 2;
+                if (sums[mid] - sums[i] + nums[i] >= s) {
+                    res = Math.min(res, mid - i + 1);
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            }
+        }
+        return res == Integer.MAX_VALUE ? 0 : res;
+    }
+```
 
 
 <br>
