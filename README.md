@@ -2594,6 +2594,28 @@ public int firstOccur(int[] array, int target) {
 ```
 
 
+**Related: last occurrence **:
+
+```java
+public int lastOccur(int[] array, int target) {
+    // Write your solution here
+    if (array == null || array.length == 0) {
+      return -1;
+    }
+    int l = 0;
+    int r = array.length - 1;
+    while (l <= r) {
+      int mid = l + (r - l) / 2;
+      if (array[mid] <= target) {
+        l = mid + 1;
+      } else {
+        r = mid - 1;
+      }
+    }
+    return (r >= 0 && array[r] == target) ? r : -1;
+}
+```
+
 
 
 <br>
