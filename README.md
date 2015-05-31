@@ -8108,7 +8108,7 @@ public class Solution {
     minStack = new Stack<Integer>();
   }
   
-  public Integer pop() {
+  public int pop() {
     if (stack.isEmpty()) {
       return -1;
     }
@@ -8125,11 +8125,11 @@ public class Solution {
     stack.push(element);
   }
   
-  public Integer top() {
+  public int top() {
     return stack.isEmpty() ? -1 : stack.peek();
   }
   
-  public Integer min() {
+  public int getMin() {
     return stack.isEmpty() ? -1 : minStack.peek();
   }
 }
