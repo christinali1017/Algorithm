@@ -145,6 +145,7 @@
 * [2 First Bad Version](#2-first-bad-version)
 * [3 Compare Strings](#3-compare-strings)
 * [4 Longest Common Substring](#4-longest-common-substring)
+* [5 Insert in Sorted Linked List](#5-insert-in-sorted-linked-list)
 
 
 
@@ -2594,7 +2595,7 @@ public int firstOccur(int[] array, int target) {
 ```
 
 
-**Related: last occurrence **:
+**Related: last occurrence**:
 
 ```java
 public int lastOccur(int[] array, int target) {
@@ -2616,7 +2617,120 @@ public int lastOccur(int[] array, int target) {
 }
 ```
 
+**Related: find k closest**:
+```java
+public int[] kClosest(int[] array, int target, int k) {
+    // Write your solution here
+    if (array == null || array.length == 0) {
+      return array;
+    }
+    int[] res = new int[k];
+    int l = 0;
+    int r = array.length - 1;
+    while (l <= r) {
+      int mid = l + (r - l) / 2;
+      if (array[mid] == target) {
+        l = mid;
+        break;
+      } else if (array[mid] > target) {
+        r = mid - 1;
+      } else {
+        l = mid + 1;
+      }
+    }
+    int indexL = l - 1;
+    int indexR = l;
+    
+    for (int i = 0; i < k; i++) {
+      if (indexL >= 0 && indexR < array.length) {
+        res[i] = Math.abs(array[indexL] - target) - Math.abs(array[indexR] - target) > 0 ? array[indexR++] : array[indexL--];
+      } else if (indexL >= 0) {
+        res[i] = array[indexL--];
+      } else {
+        res[i] = array[indexR++];
+      }
+    }
+    
+    return res;
+  }
+```
 
+**Related: search in unknown size sorted array**:
+```java
+class Dictionary{
+    int[] array = {1, 2, 4, 5, 6, 7, 8, 9, 10};
+    public Integer get(int index){
+        if (index >= array.length) {
+            return null;
+        }
+        return array[index];
+    }
+}
+
+public int search(Dictionary dict, int target) {
+    // Write your solution here
+    int bounds = findBound(dict, target);
+    int l = 0;
+    int r = bounds;
+    while (l <= r) {
+      int mid = l + (r - l) / 2;
+      if (dict.get(mid) == null || dict.get(mid) > target) {
+        r = mid - 1;
+      } else if (dict.get(mid) == target) {
+        return mid;
+      } else{
+        l = mid + 1;
+      }
+    }
+    return -1;
+  }
+  
+  public int findBound(Dictionary dict, int target) {
+    int i = 1;
+    while(true) {
+      if (dict.get(i) == null || dict.get(i) > target) {
+        return i;
+      } else {
+        i *= 2;
+      }
+    }
+  }
+```
+
+**Related: total occurrence**:
+
+```java
+  public int totalOccurrence(int[] array, int target) {
+    // Write your solution here
+    if (array == null || array.length == 0) {
+      return 0;
+    }
+    int l = 0;
+    int r = array.length - 1;
+    while (l <= r) {
+      int mid = l + (r - l) / 2;
+      if (array[mid] >= target) {
+        r = mid - 1;
+      } else {
+        l = mid + 1;
+      }
+    }
+    int l1 = 0;
+    int r1 = array.length - 1;
+    while (l1 <= r1) {
+      int mid = l1 + (r1 - l1) / 2;
+      if (array[mid] <= target) {
+        l1 = mid + 1;
+      } else {
+        r1 = mid - 1;
+      }
+    }
+    if (l <= r1) {
+      return r1 - l + 1;
+    }
+    return 0;
+  }
+```
 
 <br>
 <br>
@@ -10217,6 +10331,45 @@ public class Solution {
 <br>
 
 
+
+###5 Insert in Sorted Linked List
+
+**Idea**: We need to find insert position, then add the element into the linkedlist
+
+- 1) if  head is null, return new ListNode as head
+- 2) if insert value <= head.value, add element at the beginning, return new added list element
+- 3) find insert position, insert element 
+
+
+
+```java
+  public ListNode insert(ListNode head, int value) {
+    // write your solution here
+    ListNode newNode = new ListNode(value);
+    if (head == null) {
+      head = newNode;
+      return head;
+    }
+    //find insert position
+    ListNode temp = head;
+    ListNode pre = null;
+    while(temp != null && temp.value < value) {
+      pre = temp;
+      temp = temp.next;
+    }
+    if (head.value >= value) {
+      newNode.next = head;
+      return newNode;
+    }
+    pre.next = newNode;
+    newNode.next = temp;
+    return head;
+}
+```
+
+
+<br>
+<br>
 
 
 

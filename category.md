@@ -79,6 +79,7 @@
 * [148 Sort List](https://github.com/wishyouhappy/leetcode#148-sort-list)
 * [160 Intersection of Two Linked Lists](https://github.com/wishyouhappy/leetcode#160-intersection-of-two-linked-lists)
 * [206 Reverse Linked List](https://github.com/wishyouhappy/leetcode#206-reverse-linked-list)
+* [5 Insert in Sorted Linked List](https://github.com/wishyouhappy/leetcode#5-insert-in-sorted-linked-list)
 
 
 #Comnination
