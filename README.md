@@ -8099,36 +8099,101 @@ getMin() -- Retrieve the minimum element in the stack.
 
 ```java
 
-public class MinStack {
-	 Stack<Integer> stack; 
-	   Stack<Integer> minstack;
-	   public MinStack(){
-	       stack = new Stack<Integer>();
-	       minstack = new Stack<Integer>();
-	   }
-	    public void push(int x){
-	        stack.push(x);
-	        if(minstack.isEmpty() || minstack.peek() >= x)
-	            minstack.push(x);
-	    }
-	    
-	    public void pop(){
-	        if(stack.isEmpty()) return;
-	        int val = stack.pop();
-	        if(val == minstack.peek()) minstack.pop();
-	    }
-	    
-	    public int top(){
-	        if(stack.isEmpty()) return -1;
-	        return stack.peek();
-	    }
-	    
-	    public int getMin(){
-	    	if(stack.isEmpty()) return -1;
-	    	return minstack.peek();
-	    }
-	}
+public class Solution {
+  private Stack<Integer> stack;
+  private Stack<Integer> minStack;
+  public Solution() {
+    // write your solution here
+    stack = new Stack<Integer>();
+    minStack = new Stack<Integer>();
+  }
+  
+  public Integer pop() {
+    if (stack.isEmpty()) {
+      return -1;
+    }
+    if (stack.peek() <= minStack.peek()) {
+      minStack.pop();
+    }
+    return stack.pop();
+  }
+  
+  public void push(int element) {
+    if (minStack.isEmpty() || minStack.peek() >= element) {
+      minStack.push(element);
+    } 
+    stack.push(element);
+  }
+  
+  public Integer top() {
+    return stack.isEmpty() ? -1 : stack.peek();
+  }
+  
+  public Integer min() {
+    return stack.isEmpty() ? -1 : minStack.peek();
+  }
+}
 
+```
+
+**Related**: Implement queue with two stacks
+
+```java
+class Solution
+{
+  private Stack<Integer> stackOne;
+  private Stack<Integer> stackTwo;
+  private int size;
+  public Solution() {
+    // Write your solution here.
+    stackOne = new Stack<Integer>();
+    stackTwo = new Stack<Integer>();
+    size = 0;
+  }
+  
+  public Integer poll() {
+    if (!stackTwo.isEmpty()) {
+      size--;
+      return stackTwo.pop();
+    }
+    while (!stackOne.isEmpty()) {
+      stackTwo.push(stackOne.pop());
+    }
+    if (!stackTwo.isEmpty()) {
+      size--;
+      return stackTwo.pop();
+    } else {
+      return null;
+    }
+  }
+  
+  public void offer(int element) {
+    stackOne.push(element);
+    size++;
+  }
+  
+  public Integer peek() {
+    if (!stackTwo.isEmpty()) {
+      return stackTwo.peek();
+    }
+    while (!stackOne.isEmpty()) {
+      stackTwo.push(stackOne.pop());
+    }
+    if (!stackTwo.isEmpty()) {
+      return stackTwo.peek();
+    } else {
+      return null;
+    }
+  }
+  
+  public int size() {
+    return size;
+  }
+  
+  public boolean isEmpty() {
+    return size == 0;
+  }
+}
 ```
  		
     
