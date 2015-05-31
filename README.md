@@ -5809,30 +5809,68 @@ return 1->2->2->4->3->5.
 **Attention**: We need to 
 ```java
     public ListNode partition(ListNode head, int x) {
-        if(head == null) return null;
+        if (head == null) {
+            return null;
+        }
         ListNode feakHead = new ListNode(-1);
         ListNode h = feakHead;
         ListNode tail = feakHead;
-        while(head != null){
-            if(head.val >= x){
+        while (head != null){
+            if (head.val >= x) {
                 tail.next = head;
                 head = head.next;
                 tail = tail.next;
                 tail.next = null;
-            }else{
+            } else{
                  ListNode saveH = h;
                  ListNode temp = h.next;
                  h.next = head;
                  head = head.next;
                  h = h.next;
                  h.next = temp;
-                if(tail.equals(saveH)) tail = h;
+                 if (tail.equals(saveH)) {
+                    tail = h;
+                 }
             }
         }
         return feakHead.next;
     }
 
 ```
+
+**Another solution**: much similar to the first one
+
+```java
+  public ListNode partition(ListNode head, int target) {
+    // write your solution here
+    if (head == null || head.next == null) {
+      return head;
+    }
+    ListNode fakeHead1 = new ListNode(-1);
+    ListNode fakeHead2 = new ListNode(-1);
+    ListNode smaller = fakeHead1; // position to insert elements smaller than target
+    ListNode larger = fakeHead2; // position to insert elements larger than target
+    ListNode temp = head;
+    while (temp != null) {
+      ListNode next = temp.next;
+      temp.next = null;
+      if (temp.value < target) {
+        smaller.next = temp;
+        smaller = smaller.next;
+      } else {
+        larger.next = temp;
+        larger = larger.next;
+      }
+      temp = next;
+    }
+    smaller.next = fakeHead2.next;
+    return fakeHead1.next;
+  }
+```
+
+<br>
+<br>
+
 ###89 Gray Code
 >The gray code is a binary numeral system where two successive values differ in only one bit.
 
@@ -7770,20 +7808,26 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
 
 ```java
     public void reorderList(ListNode head) {
-        if(head == null) return;
+        if (head == null) {
+            return;
+        }
         ListNode copy = new ListNode(-1);
         int count = 0;
         ListNode temp = head;
-        while(temp != null){
+        while (temp != null) {
             ListNode current = new ListNode(temp.val);
             current.next = copy;
             copy = current;
             temp = temp.next;
             count++;
         }
-        if(count <= 2) return;
+        if(count <= 2) {
+            return;
+        }
         temp = head;
-        ListNode next = null, copyNext = null, pre = null;
+        ListNode next = null;
+        ListNode copyNext = null;
+        ListNode pre = null;
         for(int i = 0; i < count/2; i++){
             next = temp.next;
             copyNext = copy.next;
@@ -7793,49 +7837,62 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
             temp = next;
             copy = copyNext;
         }
-        if(count % 2 != 0) temp.next = null;
-        else pre.next = null;
+        if (count % 2 != 0) {
+            temp.next = null;
+        } else {
+            pre.next = null;
+        }
     }
 
 ```    
 ***Solution2 code ***:
 ```java    
-      public void reorderList1(ListNode head) {
-        if(head == null || head.next == null || head.next.next == null) return;
-        ListNode f = head;
-        ListNode s = head;
-        ListNode pre = null;
-        while(f != null){
-            f = f.next;
-            if(f != null) f = f.next;
-            pre = s;
-            s = s.next;
-        }
-        pre.next = null;
-        ListNode lastHalf = null;
-        ListNode next = null;
-        while(s != null){
-        	next = s.next;
-            if(lastHalf == null) {
-            	lastHalf = s;
-            	lastHalf.next = null;
-            }else{
-                s.next = lastHalf;
-                lastHalf = s;
-            }
-            s = next;
-        }
-        ListNode temp = head;
-        ListNode lastHalfNext = null;
-        while(temp != null && lastHalf != null){
-            next = temp.next;
-            lastHalfNext = lastHalf.next;
-            temp.next = lastHalf;
-            lastHalf.next = next;
-            temp = next;
-            lastHalf = lastHalfNext;
-        }
+  public void reorderList(ListNode head) {
+    // write your solution here
+    if (head == null || head.next == null || head.next.next == null) {
+      return;
     }
+    //find the mid node
+    ListNode slower = head; //move one step each time
+    ListNode faster = head; // move two steps each time
+    ListNode pre = null;
+    while (faster != null) {
+      pre = slower;
+      slower = slower.next;
+      faster = faster.next;
+      if (faster != null) {
+        faster = faster.next;
+      }
+    }
+    pre.next = null;
+    
+    //reverse last half
+    slower = reverseList(slower);
+    ListNode temp = head;
+    while(temp != null && slower != null) {
+      ListNode insert = slower;
+      ListNode next = temp.next;
+      slower = slower.next;
+      temp.next = insert;
+      insert.next = next;
+      temp = temp.next.next;
+    }
+  }
+  
+  public ListNode reverseList(ListNode head) {
+    if (head == null || head.next == null) {
+        return head;
+    }
+    ListNode pre = null;
+    ListNode next = null;
+    while (head != null) {
+        next = head.next;
+        head.next = pre;
+        pre = head;
+        head = next;
+    }
+    return pre;
+  }
 ```
 
 
