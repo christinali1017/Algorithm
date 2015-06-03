@@ -8007,7 +8007,47 @@ Note: Recursive solution is trivial, could you do it iteratively?
 ```
 
 <br>
+
+**Related**: Insert in binary search tree
+
+**Idea**:
+
+- if root is null, insert new element as root
+- Otherwise search insert position. If insert key greater than parent, insert as right child otherwise, insert as left child
+
+
+```java
+  public TreeNode insert(TreeNode root, int key) {
+    // Write your solution here.
+    if (root == null) {
+      root = new TreeNode(key);
+      return root;
+    }
+    TreeNode temp = root;
+    TreeNode pre = null;
+    while (temp != null) {
+      pre = temp;
+      if (temp.key == key) {
+        return root;
+      } else if (temp.key < key) {
+        temp = temp.right;
+      } else {
+        temp = temp.left;
+      }
+    }
+    if (pre.key > key) {
+      pre.left = new TreeNode(key);
+    } else {
+      pre.right = new TreeNode(key);
+    }
+    return root;
+  }
+```
+
 <br>
+<br>
+
+
 
 ###147 Insertion Sort List	
 > Sort a linked list using insertion sort.
