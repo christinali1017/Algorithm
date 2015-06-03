@@ -6240,20 +6240,22 @@ return [1,3,2].
 
 
 ```java
-
-	    public List<Integer> inorderTraversal(TreeNode root) {
-	        List<Integer> res = new ArrayList<Integer>();
-	        helper(root, res);
-	        return res;
-	    }
-	    public void helper(TreeNode root, List<Integer> res){
-	        if(root == null) return;
-	        helper(root.left, res);
-	        res.add(root.val);
-	        helper(root.right, res);
-	    }
-
-
+public List<Integer> inorderTraversal(TreeNode root) {
+    List<Integer> res = new ArrayList<Integer>();
+    if (root == null) {
+        return res;
+    }
+    inorderTraversal(root, res);
+    return res;
+}
+public void inorderTraversal(TreeNode root, List<Integer> res) {
+    if (root == null) {
+        return;
+    }
+    inorderTraversal(root.left, res);
+    res.add(root.val);
+    inorderTraversal(root.right, res);
+}
 ```
 
 
@@ -6261,24 +6263,24 @@ return [1,3,2].
 **Solution 2, Iterative**:
 
 ```java
-    public static List<Integer> inorderTraversal(TreeNode root) {
-        List<Integer> res = new ArrayList<Integer>();
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        while(!stack.isEmpty() || root != null){
-            if(root != null){
-                stack.push(root);
-                root = root.left;
-            }else{
-                root = stack.pop();
-                res.add(root.val);
-                root = root.right;
-            }
-        }
+public List<Integer> inorderTraversal(TreeNode root) {
+    List<Integer> res = new ArrayList<Integer>();
+    if (root == null) {
         return res;
     }
-    
-
-
+    Stack<TreeNode> stack = new Stack<TreeNode>();
+    while (root != null || !stack.isEmpty()) {
+        if (root != null) {
+            stack.push(root);
+            root = root.left;
+        } else {
+            root = stack.pop();
+            res.add(root.val);
+            root = root.right;
+        }
+    }
+    return res;
+}
 ```
 
 
@@ -8004,6 +8006,30 @@ Note: Recursive solution is trivial, could you do it iteratively?
         }
         return res;
     }
+```
+
+<br>
+
+**Related**: Search in binary search tree
+
+```java
+public TreeNode search(TreeNode root, int key) {
+    // Write your solution here.
+    if (root == null) {
+      return null;
+    }
+    while (root != null) {
+      if (root.key == key) {
+        return root;
+      } else if (root.key > key) {
+        root = root.left;
+      } else {
+        root = root.right;
+      }
+    }
+    return null;
+}
+
 ```
 
 <br>

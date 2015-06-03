@@ -82,6 +82,11 @@
 * [5 Insert in Sorted Linked List](https://github.com/wishyouhappy/leetcode#5-insert-in-sorted-linked-list)
 
 
+#Binary Tree
+* [94 Binary Tree Inorder Traversal](https://github.com/wishyouhappy/leetcode#94-binary-tree-inorder-traversal)
+* [144 Binary Tree Preorder Traversal](https://github.com/wishyouhappy/leetcode#144-binary-tree-preorder-traversal)
+
+
 #Comnination
 * [78 Subsets](https://github.com/wishyouhappy/leetcode#78-subsets)
 * [90 Subsets II](https://github.com/wishyouhappy/leetcode#79-subsets-ii)
