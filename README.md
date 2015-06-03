@@ -106,6 +106,7 @@
 * [141 Linked List Cycle](#141-linked-list-cycle)
 * [142 Linked List Cycle II](#142-linked-list-cycle-ii)
 * [143 Reorder List](#143-reorder-list)
+* [144 Binary Tree Preorder Traversal](#144-binary-tree-preorder-traversal)
 * [147 Insertion Sort List](#147-insertion-sort-list)
 * [148 Sort List](#148-sort-list)
 * [153 Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
@@ -7895,6 +7896,115 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
   }
 ```
 
+
+<br>
+<br>
+
+
+###144 Binary Tree Preorder Traversal
+
+
+>Given a binary tree, return the preorder traversal of its nodes' values.
+
+<pre>
+For example:
+Given binary tree {1,#,2,3},
+   1
+    \
+     2
+    /
+   3
+return [1,2,3].
+
+</pre>
+
+Note: Recursive solution is trivial, could you do it iteratively?
+
+
+**Idea**:
+
+- Solution 1: recursive. list.add(root.val), then recursive to left and right
+
+- Soltuion 2: Iterative. Use stack. If root != null,store root.val in result list and push root to stack, keep go left. Otherwise, pop root, go right
+
+- Solution 3: Morris, without stack. Create links to the successor(use leaf node's left or right null pointer), in the solution below, we use the right pointer. See details on blog [Morris traversal](http://wishyouhappy.github.io/2014/12/17/morris%20traversal-traverse%20a%20binary%20tree%20without%20stack/)
+
+
+**Solution 1**: Recursive
+
+```java
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (root == null) {
+            return res;
+        }
+        preorderTraversal(root, res);
+        return res;
+    }
+    public void preorderTraversal(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+        res.add(root.val);
+        preorderTraversal(root.left, res);
+        preorderTraversal(root.right, res);
+    }
+```
+
+**Solution 2**: iterative with stack
+
+```java
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (root == null) {
+            return res;
+        }
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        while (root != null || !stack.isEmpty()) {
+            if (root != null) {
+                res.add(root.val);
+                stack.push(root);
+                root = root.left;
+            } else {
+                root = stack.pop();
+                root = root.right;
+            }
+        }
+        return res;
+    }
+```
+
+**Solution 3**: Morris traversal
+
+```java
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (root == null) {
+            return res;
+        }
+        TreeNode pre = null;
+        while (root != null) {
+            if (root.left == null) {
+                res.add(root.val);
+                root = root.right;
+            } else {
+                pre = root.left;
+                while (pre.right != null && pre.right != root) {
+                    pre = pre.right;
+                }
+                if (pre.right == null) {
+                    pre.right = root;
+                    res.add(root.val);
+                    root = root.left;
+                } else {
+                    pre.right = null;
+                    root = root.right;
+                }
+            }
+        }
+        return res;
+    }
+```
 
 <br>
 <br>
