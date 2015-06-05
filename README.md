@@ -6535,10 +6535,18 @@ Wrong answer: The following code just check if each node maintains node.val > no
 
 ```java
   public boolean isValidBST1(TreeNode root) {
-        if(root == null) return true;
-        if(root.left == null && root.right == null) return true;
-        if(root.left != null && root.left.val >= root.val) return false;
-        if(root.right != null && root.right.val <= root.val) return false;
+        if (root == null) {
+            return true;
+        }
+        if (root.left == null && root.right == null) {
+            return true;
+        }
+        if (root.left != null && root.left.val >= root.val) {
+            return false;
+        }
+        if (root.right != null && root.right.val <= root.val) {
+            return false;
+        }
         return isValidBST(root.left) && isValidBST(root.right);
    }
 
@@ -6670,6 +6678,30 @@ Wrong answer: The following code just check if each node maintains node.val > no
 
 <br>
 
+<br>
+
+**Related**: Tweaked Identical Binary Trees
+
+> Determine whether two given binary trees are identical assuming any number of ‘tweak’s are allowed. A tweak is defined as a swap of the children of one node in the tree
+
+**Idea**: basically, it's the same idea with same tree or symmetric tree. If it's same or tweaked, we return true
+
+**solution**:
+
+```java
+  public boolean isTweakedIdentical(TreeNode one, TreeNode two) {
+    if (one == null && two == null) {
+      return true;
+    }
+    if (one == null || two == null || one.key != two.key) {
+      return false;
+    }
+    return (isTweakedIdentical(one.left, two.left) && isTweakedIdentical(one.right, two.right)) || (isTweakedIdentical(one.right, two.left) && isTweakedIdentical(one.left, two.right));
+  }
+
+```
+
+<br>
 <br>
 
 
