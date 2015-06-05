@@ -1,32 +1,26 @@
 package leetcode;
 public class ValidateBinarySearchTree {
-	   public boolean isValidBST(TreeNode root) {
-	       if(root == null) return true;
-	       boolean[] result = new boolean[1];
-	       result[0] = true;
-	       helper(root, new TreeNode[1], result);
-	       return result[0];
-	   }
-	   
-	   public void helper(TreeNode root, TreeNode[] pre, boolean[] result){
-	       if(root == null) return;
-	       helper(root.left, pre, result);
-	       if(pre[0] != null && pre[0].val >= root.val) result[0] = false;
-	       pre[0] = root;
-	       helper(root.right, pre, result);
-	   }
-    
-    public boolean isValidBST1(TreeNode root) {  
-        return helper1(root, Integer.MIN_VALUE, Integer.MAX_VALUE);   
-    }  
-    boolean helper1(TreeNode root, int min, int max)     
-    {    
-        if(root == null)    
-           return true;    
-        if(root.val <= min || root.val >= max)  
-             return false;    
-         return helper1(root.left, min, root.val) && helper1(root.right, root.val, max);  
-    }  
+  public boolean isValidBST(TreeNode root) {
+    if (root == null) {
+      return true;
+    }
+    boolean[] res = new boolean[1];
+    res[0] = true;
+    isBST(root, res, new TreeNode[1]);
+    return res[0];
+  }
+  
+  public void isBST(TreeNode root, boolean[] res, TreeNode[] pre) {
+    if (root == null) {
+      return;
+    }
+    isBST(root.left, res, pre);
+    if (pre[0] != null && pre[0].val >= root.val) {
+      res[0] = false;
+    }
+    pre[0] = root;
+    isBST(root.right, res, pre);
+  }
     
     public static void main(String[] args) {
 		TreeNode root = new TreeNode(10);

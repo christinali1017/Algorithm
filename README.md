@@ -6486,21 +6486,28 @@ Both the left and right subtrees must also be binary search trees.
 **Time**: O(n) **Space**: O(lgn)
 
 ```java
-   public boolean isValidBST(TreeNode root) {
-       if(root == null) return true;
-       boolean[] result = new boolean[1];
-       result[0] = true;
-       helper(root, new TreeNode[1], result);
-       return result[0];
-   }
-   
-   public void helper(TreeNode root, TreeNode[] pre, boolean[] result){
-       if(root == null) return;
-       helper(root.left, pre, result);
-       if(pre[0] != null && pre[0].val >= root.val) result[0] = false;
-       pre[0] = root;
-       helper(root.right, pre, result);
-   }
+  public boolean isValidBST(TreeNode root) {
+    // Write your solution here.
+    if (root == null) {
+      return true;
+    }
+    boolean[] res = new boolean[1];
+    res[0] = true;
+    isBST(root, res, new TreeNode[1]);
+    return res[0];
+  }
+  
+  public void isBST(TreeNode root, boolean[] res, TreeNode[] pre) {
+    if (root == null) {
+      return;
+    }
+    isBST(root.left, res, pre);
+    if (pre[0] != null && pre[0].val >= root.val) {
+      res[0] = false;
+    }
+    pre[0] = root;
+    isBST(root.right, res, pre);
+  }
 ```
 
 
@@ -6524,20 +6531,16 @@ Both the left and right subtrees must also be binary search trees.
 
 ```
 
-**Wrong answer**: The following code just check if each node maintains node.val > node.left.val and node.val < node.right.val. However, even though each node satisfies this condition, it might not be a binary search tree. ***Eg: 10,5,15,#,#,6,20***
-
-```java
+Wrong answer: The following code just check if each node maintains node.val > node.left.val and node.val < node.right.val. However, even though each node satisfies this condition, it might not be a binary search tree. Eg: 10,5,15,#,#,6,20
 
   public boolean isValidBST1(TreeNode root) {
-    	if(root == null) return true;
-    	if(root.left == null && root.right == null) return true;
-    	if(root.left != null && root.left.val >= root.val) return false;
-    	if(root.right != null && root.right.val <= root.val) return false;
+        if(root == null) return true;
+        if(root.left == null && root.right == null) return true;
+        if(root.left != null && root.left.val >= root.val) return false;
+        if(root.right != null && root.right.val <= root.val) return false;
         return isValidBST(root.left) && isValidBST(root.right);
    }
-   
 
-```
 
 <br>
 <br>
@@ -7006,7 +7009,7 @@ Store all the nodes in an array, then use the array to create the BST. just like
 
 **Idea**: Check the height diffrence of  subtrees. If difference greater than 1, return false
 
-**Solution 1**
+**Solution 1** : time O(nlgn)
 
 ```java
   public boolean isBalanced(TreeNode root) {
@@ -7028,7 +7031,9 @@ Store all the nodes in an array, then use the array to create the BST. just like
   }
 ```
 <br>
-**Solution 2**: In this method, we omit repeated getheight part. Thus the time is better than the fist solution
+**Solution 2**: time : O(n)
+
+In this method, we omit repeated getheight part. Thus the time is better than the fist solution
 
 ```java
     public boolean isBalanced(TreeNode root){
@@ -8283,7 +8288,7 @@ Given binary tree {1,#,2,3},
    3
 return [3,2,1].
 
-<pre>
+</pre>
 
 Note: Recursive solution is trivial, could you do it iteratively?
 
