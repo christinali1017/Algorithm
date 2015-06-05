@@ -84,11 +84,13 @@
 
 #Binary Tree
 * [94 Binary Tree Inorder Traversal](https://github.com/wishyouhappy/leetcode#94-binary-tree-inorder-traversal)
+* [98 Validate Binary Search Tree](https://github.com/wishyouhappy/leetcode#98-validate-binary-search-tree)
+* [100 Same Tree](https://github.com/wishyouhappy/leetcode#100-same-tree)
+* [101 Symmetric Tree](https://github.com/wishyouhappy/leetcode#101-symmetric-tree)
+* [110 Balanced Binary Tree](https://github.com/wishyouhappy/leetcode#110-balanced-binary-tree)
 * [144 Binary Tree Preorder Traversal](https://github.com/wishyouhappy/leetcode#144-binary-tree-preorder-traversal)
 * [145 Binary Tree Postorder Traversal](https://github.com/wishyouhappy/leetcode#145-binary-tree-postorder-traversal)
 
-//TODO
-Symmetric tree
 
 #Comnination
 * [78 Subsets](https://github.com/wishyouhappy/leetcode#78-subsets)

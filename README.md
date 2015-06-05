@@ -93,6 +93,7 @@
 * [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
+* [110 Balanced Binary Tree](#110-balanced-binary-tree)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
 * [118 Pascal Triangle](#118-pascal-triangle)
 * [119 Pascal Triangle II](#119-pascal-triangle-ii)
@@ -6322,7 +6323,37 @@ public List<Integer> inorderTraversal(TreeNode root) {
 <br>
 <br>
 
+**Related**: Get Keys In Binary Search Tree In Given Range
 
+>Get the list of keys in a given binary search tree in a given range[min, max] in ascending order, both min and max are inclusive.
+
+```java
+  public List<Integer> getRange(TreeNode root, int min, int max) {
+    List<Integer> res = new ArrayList<Integer>();
+    if (root == null) {
+      return res;
+    }
+    getRange(root, min, max, res);
+    return res;
+  }
+  public void getRange(TreeNode root, int min, int max, List<Integer> res) {
+    if (root == null) {
+      return;
+    }
+    if (root.key >= min) {
+      getRange(root.left, min, max, res);
+    }
+    if (root.key >= min && root.key <= max) {
+      res.add(root.key);
+    }
+    if (root.key <= max) {
+      getRange(root.right, min, max, res);
+    }
+  }
+```
+
+<br>
+<br>
 
 ###95 Unique Binary Search Trees
 
@@ -6622,11 +6653,15 @@ Both the left and right subtrees must also be binary search trees.
 
 
 ```java
-    public boolean isSameTree(TreeNode p, TreeNode q) {
-        if(p == null && q == null) return true;
-        if((p == null || q == null) || p.val != q.val) return false;
-        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+ public boolean isSameTree(TreeNode one, TreeNode two) {
+    if (one == null && two == null) {
+      return true;
     }
+    if (one == null || two == null || one.val != two.val) {
+      return false;
+    }
+    return isSameTree(one.left, two.left) && isSameTree(one.right, two.right);
+  }
 ```
 
 <br>
@@ -6789,6 +6824,12 @@ Bonus points if you could solve it both recursively and iteratively.
     } 
     return true;
   }
+```
+
+**Solution 3**: concise version
+
+```java
+
 ```
     
 ###108 Convert Sorted Array to Binary Search Tree  
@@ -6954,6 +6995,58 @@ Store all the nodes in an array, then use the array to create the BST. just like
 ```		 
 
 
+<br>
+<br>
+
+###110 Balanced Binary Tree
+
+>Given a binary tree, determine if it is height-balanced.
+
+>For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node never differ by more than 1.
+
+**Idea**: Check the height diffrence of  subtrees. If difference greater than 1, return false
+
+**Solution 1**
+
+```java
+  public boolean isBalanced(TreeNode root) {
+    // Write your solution here.
+    if (root == null) {
+      return true;
+    }
+    if (Math.abs(getHeight(root.left) - getHeight(root.right)) > 1) {
+      return false;
+    }
+    return isBalanced(root.left) && isBalanced(root.right);
+  }
+  
+  public int getHeight(TreeNode root) {
+    if (root == null) {
+      return 0;
+    }
+    return Math.max(getHeight(root.left), getHeight(root.right)) + 1;
+  }
+```
+<br>
+**Solution 2**: In this method, we omit repeated getheight part. Thus the time is better than the fist solution
+
+```java
+    public boolean isBalanced(TreeNode root){
+        return helper(root) >= 0;
+    }
+
+    public int helper(TreeNode root){
+        if (root == null) {
+            return 0;
+        }
+        int left = helper(root.left);
+        int right = helper(root.right);
+        if (left < 0 || right < 0 || Math.abs(left - right) > 1) {
+            return -1;
+        }
+        return Math.max(left, right) + 1;
+    }
+```
 <br>
 <br>
 
