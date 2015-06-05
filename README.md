@@ -89,6 +89,7 @@
 * [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
 * [99 Recover Binary Search Tree](#99-recover-binary-search-tree)
 * [100 Same Tree](#100-same-tree)
+* [101 Symmetric Tree](#101-symmetric-tree)
 * [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
@@ -107,6 +108,7 @@
 * [142 Linked List Cycle II](#142-linked-list-cycle-ii)
 * [143 Reorder List](#143-reorder-list)
 * [144 Binary Tree Preorder Traversal](#144-binary-tree-preorder-traversal)
+* [145 Binary Tree Postorder Traversal](#145-binary-tree-postorder-traversal)
 * [147 Insertion Sort List](#147-insertion-sort-list)
 * [148 Sort List](#148-sort-list)
 * [153 Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
@@ -6289,31 +6291,30 @@ public List<Integer> inorderTraversal(TreeNode root) {
 
 ```java
 
-    public List<Integer> inorderTraversal(TreeNode root) {
-        List<Integer> res = new ArrayList<Integer>();
-        TreeNode pre = null;
-        while(root != null){
-            if(root.left == null){
+public List<Integer> inorderTraversal(TreeNode root) {
+    List<Integer> res = new ArrayList<Integer>();
+    TreeNode pre = null;
+    while (root != null) {
+        if (root.left == null) {
+            res.add(root.val);
+            root = root.right;
+        } else {
+            pre = root.left;
+            while (pre.right != null && pre.right != root) {
+                pre = pre.right;
+            }
+            if (pre.right == null) {
+                pre.right = root;
+                root = root.left;
+            } else {
+                pre.right = null;
                 res.add(root.val);
                 root = root.right;
-            }else{
-                pre = root.left;
-                while(pre.right != null && pre.right != root){
-                    pre = pre.right;
-                }
-                if(pre.right == null){
-                    pre.right = root;
-                    root = root.left;
-                }else{
-                    pre.right = null;
-                    res.add(root.val);
-                    root = root.right;
-                }
             }
         }
-        return res;
-        
     }
+    return res;
+}
 
 ```
 
@@ -6687,6 +6688,108 @@ return its zigzag level order traversal as:
 
 <br>
 <br>
+
+
+###101 Symmetric Tree
+
+> Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+
+<pre>
+For example, this binary tree is symmetric:
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+But the following is not:
+    1
+   / \
+  2   2
+   \   \
+   3    3
+
+</pre>
+Note:
+Bonus points if you could solve it both recursively and iteratively.
+
+**Idea**: 
+
+- 1) root is null, then return true
+- 2) left and right child are both null return true;
+- 3) left and right only one is null, return false
+- 4) left and right both exist, check if their value equals
+- 5) go to next level, check the relatin of left.left and right.right , left.right and right.left
+
+**Solution 1**: Recursive
+
+```java
+  public boolean isSymmetric(TreeNode root) {
+    if (root == null || (root.left == null && root.right == null)) {
+      return true;
+    }
+    return isSymmetric(root.left, root.right);
+  }
+  
+  public boolean isSymmetric(TreeNode l, TreeNode r) {
+    if (l == null && r == null) {
+      return true;
+    }
+    if (l == null || r == null || l.val != r.val) {
+      return false;
+    }
+    return isSymmetric(l.left, r.right) && isSymmetric(l.right, r.left);
+    
+  }
+
+```
+
+**Solution 2**: Iterative
+
+```java
+  public boolean isSymmetric(TreeNode root) {
+    if (root == null || (root.left == null && root.right == null)) {
+      return true;
+    }
+    if (root.left == null || root.right == null) {
+        return false;
+    }
+    Queue<TreeNode> queueL = new LinkedList<TreeNode>();
+    Queue<TreeNode> queueR = new LinkedList<TreeNode>();
+    queueL.offer(root.left);
+    queueR.offer(root.right);
+    while (!queueL.isEmpty() && !queueR.isEmpty()) {
+        TreeNode l = queueL.poll();
+        TreeNode r = queueR.poll();
+        if (l.val != r.val) {
+            return false;
+        }
+        if (l.left != null) {
+            if (r.right == null) {
+                return false;
+            }
+            queueL.offer(l.left);
+            queueR.offer(r.right);
+        } else {
+            if (r.right != null) {
+                return false;
+            }
+        }
+        if (l.right != null) {
+            if (r.left == null) {
+                return false;
+            }
+            queueL.offer(l.right);
+            queueR.offer(r.left);
+        } else {
+            if (r.left != null) {
+                return false;
+            }
+        }
+    } 
+    return true;
+  }
+```
     
 ###108 Convert Sorted Array to Binary Search Tree  
 
@@ -8073,6 +8176,120 @@ public TreeNode search(TreeNode root, int key) {
 <br>
 <br>
 
+###145 Binary Tree Postorder Traversal
+
+>Given a binary tree, return the postorder traversal of its nodes' values.
+
+<pre>
+For example:
+Given binary tree {1,#,2,3},
+   1
+    \
+     2
+    /
+   3
+return [3,2,1].
+
+<pre>
+
+Note: Recursive solution is trivial, could you do it iteratively?
+
+
+**Idea**:
+
+- Solution 1: recursive. recursive to left and right, then list.add(root.val)
+
+- Soltuion 2: Iterative. Use stack. If root != null,push root to stack, keep go left. Otherwise, pop root, go right then add root.val
+
+- Solution 3: Morris, without stack. Create links to the successor(use leaf node's left or right null pointer), in the solution below, we use the right pointer. See details on blog [Morris traversal](http://wishyouhappy.github.io/2014/12/17/morris%20traversal-traverse%20a%20binary%20tree%20without%20stack/)
+
+**Solution 1**: recursive
+
+```java
+public List<Integer> postorderTraversal(TreeNode root) {
+    List<Integer> res = new ArrayList<Integer>();
+    if (root == null) {
+        return res;
+    }
+    postorderTraversal(root, res);
+    return res;
+}
+public void postorderTraversal(TreeNode root, List<Integer> res) {
+    if (root == null) {
+        return;
+    }
+    postorderTraversal(root.left, res);
+    postorderTraversal(root.right, res);
+    res.add(root.val);
+}
+```
+
+**Solution 2**: iterative use stack
+
+```java
+    public static List<Integer> postorderTraversal(TreeNode root){
+        List<Integer> list = new ArrayList<Integer>();
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        Stack<Integer> statusStack = new Stack<Integer>();
+        int status = 0;
+        statusStack.push(0);
+        while (root != null || !stack.isEmpty()) {
+            if (status == 0) {
+                if(root == null) {
+                    status = statusStack.pop();
+                    continue;
+                }
+                stack.push(root);
+                statusStack.push(1);
+                root = root.left;
+            } else if(status == 1) {
+                root = stack.peek();
+                root = root.right;
+                statusStack.push(2);
+                status = 0;
+            } else {
+                list.add(stack.pop().val);
+                status = statusStack.pop();
+            }
+        }
+        return list;
+    }
+```
+
+*Another similar method with less space from wiki
+
+```java
+public static List<Integer> postorderTraversal(TreeNode root){
+    List<Integer> list = new ArrayList<Integer>();
+    Stack<TreeNode> stack = new Stack<TreeNode>();
+    TreeNode preVisited = null;
+    while (root != null || !stack.isEmpty()) {
+        if (root != null) {
+            stack.push(root);
+            root = root.left;
+        } else {
+            TreeNode top = stack.peek();
+            if (top.right != null && top.right != preVisited) {
+                root = top.right;
+            } else {
+                top = stack.pop();
+                list.add(top.val);
+                preVisited = top;
+            }
+        }
+    }
+    return list;
+}
+
+```
+
+**Solution 3**: Morris
+
+ See details on blog [Morris traversal](http://wishyouhappy.github.io/2014/12/17/morris%20traversal-traverse%20a%20binary%20tree%20without%20stack/)
+
+
+<br>
+<br>
 
 
 ###147 Insertion Sort List	
