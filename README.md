@@ -6660,7 +6660,6 @@ Wrong answer: The following code just check if each node maintains node.val > no
 
 **Idea**: We can choose any traverse method to visit each node and check if they are the same. We need to check the val, the left child and the right child.
 
-
 **Java code**:
 
 
@@ -6675,6 +6674,11 @@ Wrong answer: The following code just check if each node maintains node.val > no
     return isSameTree(one.left, two.left) && isSameTree(one.right, two.right);
   }
 ```
+
+**Time complexity analysis**:
+
+- 1) way 1 : T(n) = 2 T(n/2) + 1. Use master theory, we got T = O(n)
+- 2) way 2 : recursion tree. T(n) = 2 ^ log2(n) = O(n)
 
 <br>
 
@@ -6700,6 +6704,11 @@ Wrong answer: The following code just check if each node maintains node.val > no
   }
 
 ```
+
+**Time complexity analysis**:
+
+- 1) way 1 : T(n) = 4 T(n/2) + 1. Use master theory, we got T = O(n^2)
+- 2) way 2 : recursion tree. T(n) = 4 ^ log2(n) = 2 ^ (2 log2(n)) = 2 ^ log2(n^2) = O(n^2)
 
 <br>
 <br>
@@ -7044,6 +7053,11 @@ Store all the nodes in an array, then use the array to create the BST. just like
 
 **Solution 1** : time O(nlgn)
 
+**Time analysis**: 
+
+- 1) master theory: getHeight complexity is O(n), thus T(n) = 2T(n/2) + n. Solve it we get T = O(nlgn)
+- 2) recursion tree: O(n) + O(n) ......., lgn layers. Thus the total time is nlgn
+
 ```java
   public boolean isBalanced(TreeNode root) {
     // Write your solution here.
@@ -7067,6 +7081,12 @@ Store all the nodes in an array, then use the array to create the BST. just like
 **Solution 2**: time : O(n)
 
 In this method, we omit repeated getheight part. Thus the time is better than the fist solution
+
+**Time analysis**: 
+
+- 1) master theory: thus T(n) = 2T(n/2) + 1. Solve it we get T = O(n)
+- 2) recursion tree: 2 ^ lgn  = O(n)
+
 
 ```java
     public boolean isBalanced(TreeNode root){
