@@ -6533,6 +6533,7 @@ Both the left and right subtrees must also be binary search trees.
 
 Wrong answer: The following code just check if each node maintains node.val > node.left.val and node.val < node.right.val. However, even though each node satisfies this condition, it might not be a binary search tree. Eg: 10,5,15,#,#,6,20
 
+```java
   public boolean isValidBST1(TreeNode root) {
         if(root == null) return true;
         if(root.left == null && root.right == null) return true;
@@ -6541,7 +6542,7 @@ Wrong answer: The following code just check if each node maintains node.val > no
         return isValidBST(root.left) && isValidBST(root.right);
    }
 
-
+```
 <br>
 <br>
 
