@@ -6381,24 +6381,22 @@ public List<Integer> inorderTraversal(TreeNode root) {
 
 This is similar to the [catalan numbers](http://en.wikipedia.org/wiki/Catalan_number). In this problem, we could use dynamic programming to store middle results.  
 
+Cn+1 = Sum (ci * c[n-i]), i = 0, 1, 2,....nwq   
+  
 
 **Java code**:
 
 ```java
     public int numTrees(int n) {
-        if(n <= 0) return 0;
-    
-        int result[] = new int[n+1];
-        result[0] = 1;
-        result[1] = 1;
-        
-        for(int i = 2; i <= n; i++){
-        	for(int j = 0; j < i; j++){
-        		result[i] += result[j] * result[i-j-1];
-        	}
-        }
-        
-        return result[n];
+       int[] res = new int[n+1];
+       res[0] = 1;
+       res[1] = 1;
+       for (int i = 2; i <= n; i++) {
+           for (int j = 0; j < i; j++) {
+               res[i] += res[j] * res[i - j - 1];
+           }
+       }
+       return res[n];
     }
 
 ```
