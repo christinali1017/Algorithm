@@ -1,45 +1,49 @@
 package leetcode;
 import java.util.Stack;
 public class FlattenBinaryTreeToLinkedList {
+
+	//Iterative
 	public void flatten(TreeNode root){
-		   if(root == null) return;
-		   TreeNode pre = new TreeNode(-1);
-		   Stack<TreeNode> stack = new Stack<TreeNode>();
-		   int status = 0;
-		   while(!stack.isEmpty() || root != null){
-		       if(status == 0){
-		           if(root == null){
-		               status = 1;
-		               continue;
-		           }
-		           pre.right = root;
-		           pre.left = null;
-		           pre = root;
-		           stack.push(root.right);
-		           root = root.left;
-		       }else{
-		           root = stack.pop();
-		           status = 0;
-		       }
-		   }
-		}
+	   if (root == null) {
+	       return;
+	   }
+	   TreeNode pre = new TreeNode(-1);
+	   Stack<TreeNode> stack = new Stack<TreeNode>();
+	   while (!stack.isEmpty() || root != null) {
+	       if (root != null) {
+               pre.right = root;
+               pre.left = null;
+               pre = root;
+               stack.push(root.right);
+               root = root.left;
+	       } else {
+	           root = stack.pop();
+	       }
+	   }
+	}
+
+	//recursion
     
-	public void flatten1(TreeNode root){
-		   if(root == null) return;
-		   TreeNode[] pre  = new TreeNode[1];
-		   pre[0] = new TreeNode(-1);
-		   helper(root, pre);
-		}
-		
-		public void helper(TreeNode root, TreeNode[] pre){
-		    if(root == null) return;
-		    TreeNode right = root.right;
-		    pre[0].left = null;
-		    pre[0].right = root;
-		    pre[0] = root;
-		    helper(root.left, pre);
-		    helper(right, pre);
-		}
+	public void flatten(TreeNode root){
+        if (root == null) {
+            return;
+        }
+        TreeNode[] pre = new TreeNode[1];
+        pre[0] = new TreeNode(-1);
+        flatten(root, pre);
+    }
+    
+    public void flatten(TreeNode root, TreeNode[] pre) {
+        if (root == null) {
+            return;
+        }
+        TreeNode right = root.right;
+        pre[0].left = null;
+        pre[0].right = root;
+        pre[0] = root;
+        flatten(root.left, pre);
+        flatten(right, pre);
+    }
     
     public static void main(String[] args) {
     	TreeNode root = new TreeNode(1);

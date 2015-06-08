@@ -99,6 +99,7 @@
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
 * [110 Balanced Binary Tree](#110-balanced-binary-tree)
+* [111 Minimum Depth of Binary Tree](#111-minimum-depth-of-binary-tree)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
 * [118 Pascal Triangle](#118-pascal-triangle)
 * [119 Pascal Triangle II](#119-pascal-triangle-ii)
@@ -106,6 +107,7 @@
 * [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
+* [124 Binary Tree Maximum Path Sum](#124-binary-tree-maximum-path-sum)
 * [126 Word Ladder](#126-word-ladder)
 * [127 Word Ladder II](#127-word-ladder-ii)
 * [135 Candy](#135-candy)
@@ -129,6 +131,7 @@
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 * [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
 * [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
+* [173 Binary Search Tree Iterator](#173-binary-search-tree-iterator)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
@@ -145,6 +148,7 @@
 * [207 Course Schedule](#207-course-schedule)
 * [208 Implement Trie Prefix Tree](#208-implement-trie-prefix-tree)
 * [209 Minimum Size Subarray Sum](#209-minimum-size-subarray-sum)
+* [222 Count Complete Tree Nodes](#222-count-complete-tree-nodes)
 
 
 
@@ -1269,12 +1273,7 @@ We first need to sort the array, then use two pointers to find the two sum numbe
 	}
 	
 ```
-* [1 Two Sum](#1-two-sum)
-* [15 3Sum](#15-3sum)
-* [16 3Sum Closest](#16-3sum-closest)
-* [18 4Sum](#18-4sum)
-* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
-* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
+
 
 <br>
 <br>
@@ -1431,13 +1430,6 @@ Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
  
 
     
-
-* [1 Two Sum](#1-two-sum)
-* [15 3Sum](#15-3sum)
-* [16 3Sum Closest](#16-3sum-closest)
-* [18 4Sum](#18-4sum)
-* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
-* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 
 <br>
 <br>
@@ -7137,12 +7129,36 @@ You may assume that duplicates do not exist in the tree.
 
 
 
-**Idea**:
+**Idea**: Here is the O(n) solution use hashmap, if you want a O(nlgn) solution, you can refer to 105 Construct Binary Tree from Preorder and Inorder Traversal.
+
+For inorder: left subtree | root | right subtree
+For postorder: left subtree | right subtree | root
+
+Thus we can use the index relation to recursively build the tree. s
 
 **Solution**:
 
 ```java
-
+public TreeNode buildTree(int[] inorder, int[] postorder) {
+    if (inorder.length == 0) {
+        return null;
+    }
+    Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+    for (int i = 0; i < inorder.length; i++) {
+        map.put(inorder[i], i);
+    }
+    return buildTree(inorder, 0, inorder.length - 1, postorder, 0, postorder.length - 1, map);
+}
+public TreeNode buildTree(int[] inorder, int iStart, int iEnd, int[] postorder, int pStart, int pEnd, Map<Integer, Integer> map) {
+    if (iStart > iEnd) {
+        return null;
+    }
+    TreeNode root = new TreeNode(postorder[pEnd]);
+    int rootIndex = map.get(postorder[pEnd]);
+    root.left = buildTree(inorder, iStart, rootIndex - 1, postorder, pStart, pStart + (rootIndex - 1 - iStart), map);
+    root.right = buildTree(inorder, rootIndex + 1, iEnd, postorder, pStart + (rootIndex - iStart), pEnd - 1, map);
+    return root;
+}
 ```
 
 <br>
@@ -7195,8 +7211,11 @@ public List<List<Integer>> levelOrderBottom(TreeNode root) {
 **Idea**: 
 
 Just find the mid of the list each time and create the tree from root.
+
 root = mid
+
 root.left = mid of (0, mid -1)
+
 root.right = mid of (mid + 1, end)
 
 **Time: O(n)**, because we need to traverse all the nodes. 
@@ -7204,16 +7223,21 @@ root.right = mid of (mid + 1, end)
 **Space** O(lg(n)) for recursion. 
 ```java
 
-    public TreeNode sortedArrayToBST(int[] num) {
-        if(num == null || num.length == 0) return null;
-        return helper(num, 0, num.length-1);
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return null;
+        }
+        return sortedArrayToBST(nums, 0, nums.length - 1);
     }
-    public TreeNode helper(int[] num, int start, int end){
-        if(start > end) return null;
-        int mid = (start + end)/2;
-        TreeNode root = new TreeNode(num[mid]);
-        root.left = helper(num, start, mid-1);
-        root.right = helper(num, mid + 1, end);
+    
+    public TreeNode sortedArrayToBST(int[] nums, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        int mid = start + (end - start) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = sortedArrayToBST(nums, start, mid - 1);
+        root.right = sortedArrayToBST(nums, mid + 1, end);
         return root;
     }
 ```
@@ -7243,7 +7267,7 @@ root = mid
 root.left = mid of (0, mid -1)
 root.right = mid of (mid + 1, end)
 
-**Time: O(nlgn)**
+**Time: O(nlgn)**  T(n) = 2 * T(n/2) + O(n). Solve it we get T(n) = O(nlgn)
 
 **Space**: O(n) + O(lgn) = O(n)
 
@@ -7259,96 +7283,69 @@ Store all the nodes in an array, then use the array to create the BST. just like
 
 <br>
 ```java
-		public TreeNode sortedListToBST(ListNode head) {
-		    if(head == null) return null;
-		    int len = 0;
-		    ListNode temp = head;
-		    while(temp != null){
-		        temp = temp.next;
-		        len++;
-		    }
-		    ListNode[] saveHead = new ListNode[1];
-		    saveHead[0] = head;
-		    return helper(saveHead, 0, len-1);
-		 }
-		 public TreeNode helper(ListNode[] saveHead, int start, int end){
-		    if(start > end) return null;
-		    int mid = (start + end)/2;
-		    TreeNode left = helper(saveHead, start, mid-1);
-		    TreeNode root = new TreeNode(saveHead[0].val);
-		    root.left = left;
-		    saveHead[0] = saveHead[0].next;
-		    root.right = helper(saveHead, mid + 1, end);
-		    return root;
-		 }
-		 
+public TreeNode sortedListToBST(ListNode head) {
+    if (head == null) {
+        return null;
+    }
+    int len = 0;
+    ListNode temp = head;
+    while (temp != null) {
+        temp = temp.next;
+        len++;
+    }
+    ListNode[] h = new ListNode[1];
+    h[0] = head;
+    return sortedListToBST(h, 0, len - 1);
+}
+
+public TreeNode sortedListToBST(ListNode[] h, int start, int end) {
+    if (start > end) {
+        return null;
+    }
+    int mid = start + (end - start) / 2;
+    TreeNode left = sortedListToBST(h, start, mid - 1);
+    TreeNode root = new TreeNode(h[0].val);
+    h[0] = h[0].next;
+    root.left = left;
+    root.right = sortedListToBST(h, mid + 1, end);
+    return root;
+}
+	 
 ```		 
 *solution 2 code*
 
 ```java
- 		public TreeNode sortedListToBST1(ListNode head) {
-			    if(head == null) return null;
-			    if(head.next == null) return new TreeNode(head.val);
-			    ListNode pre = getMidPre(head);
-			    ListNode mid = pre.next;
-			    pre.next = null;
-			    TreeNode root= new TreeNode(mid.val);
-			    root.left = sortedListToBST(head);
-			    root.right = sortedListToBST(mid.next);
-			    return root;
-			 }
-			 
-			 public ListNode getMidPre(ListNode head){
-		        ListNode fast = head;  
-		        ListNode pre = head;  
-		        while(fast!=null) {  
-		            fast = fast.next;  
-		            if(fast != null){
-		                fast = fast.next;  
-		                pre = head;  
-		                head = head.next;  
-		            } 
-		        }  
-		        return pre;  
-			 }
+public TreeNode sortedListToBST(ListNode head) {
+    if(head == null) {
+        return null;
+    }
+    if(head.next == null) {
+        return new TreeNode(head.val);
+    }
+    ListNode pre = getMidPre(head);
+    ListNode mid = pre.next;
+    pre.next = null;
+    TreeNode root= new TreeNode(mid.val);
+    root.left = sortedListToBST(head);
+    root.right = sortedListToBST(mid.next);
+    return root;
+ }
+ 
+ public ListNode getMidPre(ListNode head) {
+    ListNode fast = head;  
+    ListNode pre = head;  
+    while (fast!=null) {  
+        fast = fast.next;  
+        if (fast != null) {
+            fast = fast.next;  
+            pre = head;  
+            head = head.next;  
+        } 
+    }  
+    return pre;  
+ }
 
-```			 
-*solution3 code*
-
-```java
-	 public TreeNode sortedListToBST2(ListNode head) {
-		    if(head == null) return null;
-		    if(head.next == null) return new TreeNode(head.val);
-	        int count = 0;
-	        ListNode temp = head;
-	        while(temp != null){
-	            count++;
-	            temp = temp.next;
-	        }
-	        int[] num = new int[count];
-	        temp = head;
-	        count = 0;
-	        while(temp != null){
-	            num[count++] = temp.val;
-	            temp = temp.next;
-	        }
-	        return sortedArrayToBST(num);
-		 }
-		 
-	    public TreeNode sortedArrayToBST(int[] num) {
-	        if(num == null || num.length == 0) return null;
-	        return helper(num, 0, num.length-1);
-	    }
-	    public TreeNode helper(int[] num, int start, int end){
-	        if(start > end) return null;
-	        int mid = (start + end)/2;
-	        TreeNode root = new TreeNode(num[mid]);
-	        root.left = helper(num, start, mid-1);
-	        root.right = helper(num, mid + 1, end);
-	        return root;
-	    }
-
-```		 
+```			 	 
 
 
 <br>
@@ -7419,6 +7416,46 @@ In this method, we omit repeated getheight part. Thus the time is better than th
 <br>
 <br>
 
+###111 Minimum Depth of Binary Tree
+
+>Given a binary tree, find its minimum depth. The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+
+**Idea**: The * [104 Maximum Depth of Binary Tree](#104-maximum-depth-of-binary-tree) let us to calculate the max depth of the binary tree. 
+
+Thus max depth = Math.max(maxDepth(root.left), maxDepth(root.left)) + 1
+
+In this problem, we need to calculate the minumum depth. Is the minimum depth = Math.min(minDepth(root.left), minDepth(root.left)) + 1.
+
+This is partly true. When the left child and right child all exist, this is true. What if only left child or right child exist? 
+
+In these two cases:
+
+min depth = minDepth(root.left) + 1 when right child does not exist
+
+min depth = minDepth(root.right) + 1 when left child does not exist
+
+
+**Solution**:
+
+
+```java
+public int minDepth(TreeNode root) {
+    if (root == null) {
+      return 0;
+    }
+    if (root.left == null) {
+        return minDepth(root.right) + 1;
+    }
+    if (root.right == null) {
+        return minDepth(root.left) + 1;
+    }
+    return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
+}
+```
+
+<br>
+<br>
+
 ###114 Flatten Binary Tree to Linked List
 >Given a binary tree, flatten it to a linked list **in-place**.
 
@@ -7449,54 +7486,58 @@ The flattened tree should look like:
 
 **Idea**: From the structure of the original tree and result tree, we know that we need to traverse the tree preorder. We can solve it recursively or use a stack to record the right child. 
 
-**Attention**: we can use a fake node pre so that each time we can add the current node to the right of pre, set pre.left = null and recursively solve this problem. Also, we need to save the right child, because the right child has changed when we visit the left child. 
+**Attention**: 
+
+- 1) we can use a fake node pre so that each time we can add the current node to the right of pre, set pre.left = null and recursively solve this problem. 
+
+- 2) We need to save the right child, because the right child has changed when we visit the left child. 
 
 *Reversion code* : 
 
 ```java
-		public void flatten(TreeNode root){
-		   if(root == null) return;
-		   TreeNode[] pre  = new TreeNode[1];
-		   pre[0] = new TreeNode(-1);
-		   helper(root, pre);
-		}
-		
-		public void helper(TreeNode root, TreeNode[] pre){
-		    if(root == null) return;
-		    TreeNode right = root.right;
-		    pre[0].left = null;
-		    pre[0].right = root;
-		    pre[0] = root;
-		    helper(root.left, pre);
-		    helper(right, pre);
-		}
+public void flatten(TreeNode root){
+    if (root == null) {
+        return;
+    }
+    TreeNode[] pre = new TreeNode[1];
+    pre[0] = new TreeNode(-1);
+    flatten(root, pre);
+}
+
+public void flatten(TreeNode root, TreeNode[] pre) {
+    if (root == null) {
+        return;
+    }
+    TreeNode right = root.right;
+    pre[0].left = null;
+    pre[0].right = root;
+    pre[0] = root;
+    flatten(root.left, pre);
+    flatten(right, pre);
+}
 ```
 
 *Stack*:
 
 ```java
-	public void flatten(TreeNode root){
-		   if(root == null) return;
-		   TreeNode pre = new TreeNode(-1);
-		   Stack<TreeNode> stack = new Stack<TreeNode>();
-		   int status = 0;
-		   while(!stack.isEmpty() || root != null){
-		       if(status == 0){
-		           if(root == null){
-		               status = 1;
-		               continue;
-		           }
-		           pre.right = root;
-		           pre.left = null;
-		           pre = root;
-		           stack.push(root.right);
-		           root = root.left;
-		       }else{
-		           root = stack.pop();
-		           status = 0;
-		       }
-		   }
-		}
+public void flatten(TreeNode root){
+   if (root == null) {
+       return;
+   }
+   TreeNode pre = new TreeNode(-1);
+   Stack<TreeNode> stack = new Stack<TreeNode>();
+   while (!stack.isEmpty() || root != null) {
+       if (root != null) {
+           pre.right = root;
+           pre.left = null;
+           pre = root;
+           stack.push(root.right);
+           root = root.left;
+       } else {
+           root = stack.pop();
+       }
+   }
+}
 
 
 ```
@@ -7834,11 +7875,61 @@ From above, we know that we can change the two dimensional array to one dimensio
 		return global[k];
 	}
 ```
-* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
-* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
-* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
-* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 
+
+<br>
+<br>
+
+###124 Binary Tree Maximum Path Sum
+
+>Given a binary tree, find the maximum path sum.
+
+>The path may start and end at any node in the tree.
+
+<pre>
+For example:
+Given the below binary tree,
+
+       1
+      / \
+     2   3
+Return 6.
+
+</pre>
+
+
+**Idea**: In this problem, the path can start and end at any node. Thus we can divide the path into 3 parts: left path, root, right path
+
+In the solution below, we maintain a maxSum, this is same with the general max path problem. And in the recursion part, we calculate the max left path root at a certain node and the max right path at a node, update the maxSum and return the max path of left path part or right path part. 
+
+**Time**:
+
+T(n) = 2T(n/2) + 1. Solve it we get T(n) = O(n)
+
+**Solution**:
+
+
+```java
+public int maxPathSum(TreeNode root) {
+    if (root == null) {
+        return 0;
+    }
+    int[] maxSum = new int[1];
+    maxSum[0] = root.val;
+    maxPathSum(root, maxSum);
+    return maxSum[0];
+}
+
+public int maxPathSum(TreeNode root, int[] maxSum) {
+    if (root == null) {
+        return 0;
+    }
+    int left = Math.max(maxPathSum(root.left, maxSum), 0);
+    int right = Math.max(maxPathSum(root.right, maxSum), 0);
+    maxSum[0] = Math.max(root.val + left + right, maxSum[0]);
+    return root.val + Math.max(left, right);
+}
+```
 <br>
 <br>
 
@@ -8686,7 +8777,35 @@ public void postorderTraversal(TreeNode root, List<Integer> res) {
 }
 ```
 
-**Solution 2**: iterative use stack
+*Solution 2**: Iterative, from wiki
+
+```java
+public static List<Integer> postorderTraversal(TreeNode root){
+    List<Integer> res = new ArrayList<Integer>();
+    Stack<TreeNode> stack = new Stack<TreeNode>();
+    TreeNode preVisited = null;
+    while (root != null || !stack.isEmpty()) {
+        if (root != null) {
+            stack.push(root);
+            root = root.left;
+        } else {
+            TreeNode top = stack.peek();
+            if (top.right != null && preVisited != top.right) {
+                root = top.right;
+            } else {
+                top = stack.pop();
+                res.add(top.val);
+                preVisited = top;
+            }
+        }
+    }
+    return res;
+}
+
+```
+
+
+**Another iterative solution**, store the return status in statck
 
 ```java
     public static List<Integer> postorderTraversal(TreeNode root){
@@ -8718,32 +8837,6 @@ public void postorderTraversal(TreeNode root, List<Integer> res) {
     }
 ```
 
-*Another similar method with less space from wiki
-
-```java
-public static List<Integer> postorderTraversal(TreeNode root){
-    List<Integer> list = new ArrayList<Integer>();
-    Stack<TreeNode> stack = new Stack<TreeNode>();
-    TreeNode preVisited = null;
-    while (root != null || !stack.isEmpty()) {
-        if (root != null) {
-            stack.push(root);
-            root = root.left;
-        } else {
-            TreeNode top = stack.peek();
-            if (top.right != null && top.right != preVisited) {
-                root = top.right;
-            } else {
-                top = stack.pop();
-                list.add(top.val);
-                preVisited = top;
-            }
-        }
-    }
-    return list;
-}
-
-```
 
 **Solution 3**: Morris
 
@@ -9111,7 +9204,7 @@ class Solution
     
 ### 156 Binary Tree Upside Down
 
-> Given a binary tree where all the right nodes are either leaf nodes with a sibling (a left node that shares th> e same parent node) or empty, flip it upside down and turn it into a tree where the original right nodes turned into left leaf nodes. Return the new root.
+> Given a binary tree where all the right nodes are either leaf nodes with a sibling (a left node that shares a same parent node) or empty, flip it upside down and turn it into a tree where the original right nodes turned into left leaf nodes. Return the new root.
 
 <pre>
 For example:
@@ -9131,7 +9224,9 @@ return the root of the binary tree [4,5,2,#,#,3,1].
    
 </pre>
 
-**Idea:** The structure of the tree: 
+**Idea:** 
+
+The structure of the original tree: 
 
 * 1) right child doesn't have children
 * 2) If right child exist, left child must exist. 
@@ -9140,21 +9235,53 @@ Structure of result tree:
 
 * 1) Right child turn to left child: p.left = parent.right
 
-2) Parant becomes right child: p.right = parent 
+* 2) Parant becomes right child: p.right = parent 
+
 * 3) Left child becomes root. 
+
+**Solution**: Iterative
+
 ```java
-		public TreeNode upsideDownBinaryTree(TreeNode root){
-			TreeNode parent = null, rightChild = null, leftChild = null;
-			while(root != null){
-				leftChild = root.left;
-				root.left = rightChild; //  Right child turn to left child
-				rightChild = root.right;
-				root.right = parent;   //Parant becomes right child
-				parent = root;
-				root = leftChild;  //Left child becomes root
-			}
-			return parent;	
-		}	
+public TreeNode upsideDownBinaryTree(TreeNode root){
+	TreeNode parent = null;
+    TreeNode rightChild = null;
+    TreeNode leftChild = null;
+	while (root != null) {
+		leftChild = root.left;
+		root.left = rightChild; //  Right child turn to left child
+		rightChild = root.right;
+		root.right = parent;   //Parant becomes right child
+		parent = root;
+		root = leftChild;  //Left child becomes root
+	}
+	return parent;	
+}	
+
+```
+
+**Solution**: recursive
+
+**Note**: In this method, after change the tree, we need to set root.left = null and root.right = null. Otherwise, there will be a cycle.
+
+```java
+public TreeNode UpsideDownBinaryTree(TreeNode root) {  
+    if (root == null) {
+        return null;
+    }  
+    TreeNode parent = root;
+    TreeNode left = root.left;
+    TreeNode right = root.right;  
+    if (left != null) {  
+        TreeNode ret = upsideDownBinaryTree(left);  
+        left.left = right;  
+        left.right = parent;  
+        root.left = null;
+        root.right = null;
+        return ret;  
+    } 
+ 
+    return root;  
+}   
 
 ```
 <br>
@@ -9686,12 +9813,7 @@ You may assume that each input would have exactly one solution.
 	}
 
 ```
-* [1 Two Sum](#1-two-sum)
-* [15 3Sum](#15-3sum)
-* [16 3Sum Closest](#16-3sum-closest)
-* [18 4Sum](#18-4sum)
-* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
-* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
+
 
 <br>
 
@@ -9746,15 +9868,6 @@ We need to record the all possible sum when add new numbers. Then the time compl
 
 
 
-
-
-* [1 Two Sum](#1-two-sum)
-* [15 3Sum](#15-3sum)
-* [16 3Sum Closest](#16-3sum-closest)
-* [18 4Sum](#18-4sum)
-* [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
-* [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
-
 <br>
 
 <br>
@@ -9803,6 +9916,104 @@ int titleToNumber(char *s) {
     return val;
 }
 ```
+
+<br>
+<br>
+
+###173 Binary Search Tree Iterator
+
+>Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.
+
+>Calling next() will return the next smallest number in the BST.
+
+>Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.
+
+**Idea**:
+
+- 1) Here we maintain a stack, from top to bottom is the smallest to largest. Because we use the stack data structure, thus we visit the tree in the following order: right -> root -> left. In this way, the top element in the stack would be the smallest element. 
+
+However, the space would be O(n). So how could we solve it in O(h) space? 
+
+- 2) O(h) is the height of the tree, thus we can store an path of root to leaf element in stack. Because we need to return the next smallest element each time, thus we need to traverse the tree inorder. And each time we return the next successor
+
+In this method, we fist store the left path of the tree in stack. When right child is not empty, we need to store the left path of its right child in stack until stack is empty. 
+
+
+**Solution 1**: O(n) space, unqualified
+
+```java
+public class BinarySearchTreeIterator {
+    Stack<Integer> stack; 
+    public BSTIterator(TreeNode root) {
+        stack = new Stack<Integer>();
+        inorderReverse(stack, root);
+    }
+
+    /** @return whether we have a next smallest number */
+    public boolean hasNext() {
+        return !stack.isEmpty();
+    }
+
+    /** @return the next smallest number */
+    public int next() {
+        if (hasNext()) {
+            return stack.pop();
+        }
+        return -1;
+    }
+    
+    private void inorderReverse(Stack<Integer> stack, TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        inorderReverse(stack, root.right);
+        stack.push(root.val);
+        inorderReverse(stack, root.left);
+    }
+}
+```
+
+<br>
+
+**Solution 2**:
+
+```java
+public class BSTIterator {
+    Stack<TreeNode> stack; 
+    public BSTIterator(TreeNode root) {
+        stack = new Stack<TreeNode>();
+        while(root != null) {
+            stack.push(root);
+            root = root.left;
+        }
+    }
+
+    /** @return whether we have a next smallest number */
+    public boolean hasNext() {
+        return !stack.isEmpty();
+    }
+
+    /** @return the next smallest number */
+    public int next() {
+        if (stack.isEmpty()) {
+            return -1;
+        }
+        TreeNode cur = stack.pop();
+        int res = cur.val;
+        if (cur.right != null) {
+            cur = cur.right;
+            while(cur != null) {
+                stack.push(cur);
+                cur = cur.left;
+            }
+        }
+        return res;
+    }
+}
+
+```
+<br>
+<br>
 	
 ### 188 Best Time to Buy and Sell Stock IV
 
@@ -9847,10 +10058,6 @@ Looks good, right? But we'll get out of memory error. Because in one test case, 
 **Solution:**
 
 
-* [121 Best Time to Buy and Sell Stock](#121-best-time-to-buy-and-sell-stock)
-* [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
-* [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
-* [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 
 <br>
 <br>
@@ -10122,7 +10329,7 @@ You should return [1, 3, 4].
 
 </pre>
 
-**Idea**: This problem is similar to the breadth first search of a binary search tree. If you can figure out this, the problem is easy. We use a queue, more precisely a deque to store element of each level. Then each time we store the rightmost element in each level to the result list. 
+**Idea**: This problem is similar to the **breadth first search** of a binary search tree. If you can figure out this, the problem is easy. We use a queue, more precisely a deque to store element of each level. Then each time we store the rightmost element in each level to the result list. 
 
 
 **Java code**:
@@ -10130,30 +10337,30 @@ You should return [1, 3, 4].
 
 ```java
 
-    public List<Integer> rightSideView(TreeNode root) {
-        List<Integer> res = new ArrayList<Integer>();
-        if(root == null){
-            return res;
-        }
-        Deque<TreeNode> deque = new LinkedList<TreeNode>();
-        deque.offer(root);
-        while(!deque.isEmpty()){
-            TreeNode cur = null;
-            for(int i = 0, size = deque.size(); i < size; i++){
-                cur = deque.pollLast();
-                if(cur.right != null){
-                    deque.addFirst(cur.right);
-                }
-                if(cur.left != null){
-                    deque.addFirst(cur.left);
-                }
-                if(i == 0){
-                    res.add(cur.val);
-                }
-            }
-        }
+public List<Integer> rightSideView(TreeNode root) {
+    List<Integer> res = new ArrayList<Integer>();
+    if (root == null) {
         return res;
     }
+    Deque<TreeNode> deque = new LinkedList<TreeNode>();
+    deque.offer(root);
+    while (!deque.isEmpty()) {
+        TreeNode cur = null;
+        for (int i = 0, size = deque.size(); i < size; i++) {
+            cur = deque.pollLast();
+            if (cur.right != null) {
+                deque.addFirst(cur.right);
+            }
+            if (cur.left != null) {
+                deque.addFirst(cur.left);
+            }
+            if(i == 0){
+                res.add(cur.val);
+            } 
+        }
+    }
+    return res;
+}
 
 ```
 
@@ -10936,6 +11143,78 @@ See details in the code below.
         }
         return res == Integer.MAX_VALUE ? 0 : res;
     }
+```
+
+
+<br>
+<br>
+
+
+###222 Count Complete Tree Nodes
+
+>Given a complete binary tree, count the number of nodes.
+
+>Definition of a complete binary tree from Wikipedia:
+
+>In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+**Idea**: 
+
+A O(n) solution is pretty straight forward. Here we discuss a O(logn * logn) solution
+
+Look at the following picture: 
+
+![completetree](https://wishyouhappy.github.io/pictures/completetree.png)
+
+For a complete tree, it's easier to find the height of a tree or subtree. We can divide the count work into two parts. COunt the nodes in the left subtree and count the node in the right subtree, then sum them. 
+
+How can we determine how many nodes to add?
+
+In the figure above, we can first check if height of subtree root at 2 is equal tp height of subtree rooted at 3. There are two cases:
+
+- 1) If it doesn't equal, then we know that right subtree's last level is empty. So we add 2 ^ (height of right subtree) - 1 + 1(parent). And go to the left subtree. **Note that in this case, the right subtree is full, but its height is 1 smaller than the height of the left subtree. 
+
+- 2) What if they equal, then we know that left subtree is full. So we add 2 ^ (height of left subtree) - 1 + 1(parent). And go to the right subtree. 
+
+Let's go over the above figure. 
+
+- 1) count = 0; root = 1; height(2) = 3, height(3) = 2. Thus height(2) != height(3). It's case 1, so count += 2 ^ 2 - 1 + 1 = 4. root = root.left = 2;
+
+- 2) count = 4; root = 2, height(4) = height(5) = 2. Thus it's case 2. So count += 2 ^ 2 - 1 + 1 = 8. root = root.right = 5
+
+- 3) count = 8; root = 5, height(1) = height(2) = 1. Thus it's case 2. So count += 2 ^ 1 - 1 + 1 = 10. root = root.right = 2
+
+- 4) count = 10; root = 2, height(left) = height(right) = 0. It's case 2. so count += 2 ^ 0 - 1 + 1 = 11. root = root.right = null.
+
+- 5) count = 11; root = null. Stop, return 11. 
+
+**Solution**:
+
+```java
+public int countNodes(TreeNode root) {
+    if (root == null) {
+        return 0;
+    }
+    int res = 0;
+    int h = getHeight(root);
+    while (root != null) {
+        //if left subtree is full
+        if (getHeight(root.right) == h - 1) {
+            res += 1 << (h - 1);
+            root = root.right;
+        } else {
+            //if missing nodes begins at left subtree.
+            res += 1 << (h - 2);
+            root = root.left;
+        }
+        h--;
+    }
+    return res;
+}
+public int getHeight(TreeNode root) {
+    return root == null ? 0 : 1 + getHeight(root.left);
+}
+
 ```
 
 
