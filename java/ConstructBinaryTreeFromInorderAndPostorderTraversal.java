@@ -1,12 +1,5 @@
 package leetcode;
-/**
-	Given inorder and postorder traversal of a tree, construct the binary tree.
-	
-	Note:
-	You may assume that duplicates do not exist in the tree.
- * @author wish
- *
- */
+
 public class BinaryTree_ConstructBinaryTreeFromInorderAndPostorderTraversal {
 	public TreeNode buildTree(int[] inorder, int[] postorder) {
     	if(postorder == null || inorder == null) return null;

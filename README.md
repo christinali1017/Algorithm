@@ -90,7 +90,12 @@
 * [99 Recover Binary Search Tree](#99-recover-binary-search-tree)
 * [100 Same Tree](#100-same-tree)
 * [101 Symmetric Tree](#101-symmetric-tree)
+* [102 Binary Tree Level Order Traversal](#102-binary-tree-level-order-traversal)
 * [103 Binary Tree Zigzag Level Order Traversal](#103-binary-tree-zigzag-level-order-traversal)
+* [104 Maximum Depth of Binary Tree](#104-maximum-depth-of-binary-tree)
+* [105 Construct Binary Tree from Preorder and Inorder Traversal](#105-construct-binary-tree-from-preorder-and-inorder-traversal)
+* [106 Construct Binary Tree from Inorder and Postorder Traversal](#106-construct-binary-tree-from-inorder-and-postorder-traversal)
+* [107 Binary Tree Level Order Traversal II](#107-binary-tree-level-order-traversal-ii)
 * [108 Convert Sorted Array to Binary Search Tree](#108-convert-sorted-array-to-binary-search-tree)
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
 * [110 Balanced Binary Tree](#110-balanced-binary-tree)
@@ -6430,34 +6435,33 @@ This is a bottom up approach, we create the trees from leaves. The time complexi
 **Attention**: In order to create all the combinations in the for loop. So when left subtree is null, we still need to add null to list. 
 
 ```java
-	  public List<TreeNode> generateTrees(int n) {
-	        List<TreeNode> res = new ArrayList<TreeNode>();
-	        if(n < 0) return res;
-	        return helper(1, n);
-	    }
-	    
-	    public List<TreeNode> helper(int l, int r){
-	        List<TreeNode> res = new ArrayList<TreeNode>();
-	        if(l > r){
-	            res.add(null);
-	            return res;
-	        }
-	        
-	        for(int i = l; i <= r; i++){
-	            List<TreeNode> llist = helper(l, i-1);
-	            List<TreeNode> rlist = helper(i+1, r);
-	            for(int j = 0; j < llist.size(); j++){
-	                for(int k = 0; k < rlist.size(); k++){
-	                    TreeNode root = new TreeNode(i);
-	                    root.left = llist.get(j);
-	                    root.right = rlist.get(k);
-	                    res.add(root);
-	                }
-	            }
-	        }
-	        return res;
-	    }
-
+	public List<TreeNode> generateTrees(int n) {
+        List<TreeNode> res = new ArrayList<TreeNode>();
+        if (n < 0) {
+           return res;
+        }  
+        return generateTrees(1, n);
+    }
+    public List<TreeNode> generateTrees(int l,  int r) {
+        List<TreeNode> res = new ArrayList<TreeNode>();
+        if (l > r) {
+            res.add(null);
+            return res;
+        }
+        for (int i = l; i <= r; i++) {
+            List<TreeNode> lList = generateTrees(l, i-1);
+            List<TreeNode> rList = generateTrees(i+1, r);
+            for (int j = 0; j < lList.size(); j++) {
+                for (int k = 0; k < rList.size(); k++) {
+                    TreeNode root = new TreeNode(i);
+                    root.left = lList.get(j);
+                    root.right = rList.get(k);
+                    res.add(root);
+                }
+            }
+        }
+        return res;
+    }
 ```
 
 
@@ -6482,6 +6486,9 @@ Both the left and right subtrees must also be binary search trees.
 **Idea**: We know that if a tree is a binary search tree, then it's inorder traversal is sequential. Thus we can traverse the tree inorder to check if everynode's predecessor is less than the node. We can also traverse the tree inorder and save the sequence, then check if there is out of order nodes. But it will require addtional space. 
 
 **Time**: O(n) **Space**: O(lgn)
+
+
+**Note**: Remember to check if pre is null before compare pre.val and root.val
 
 ```java
   public boolean isValidBST(TreeNode root) {
@@ -6513,36 +6520,30 @@ Both the left and right subtrees must also be binary search trees.
 
 ```java
 
-    public boolean isValidBST1(TreeNode root) {  
-        return helper1(root, Integer.MIN_VALUE, Integer.MAX_VALUE);   
-    }  
-    
-    public boolean helper1(TreeNode root, int min, int max)     
-    {    
-        if(root == null)    
-           return true;    
-        if(root.val <= min || root.val >= max)  
-             return false;    
-         return helper1(root.left, min, root.val) && helper1(root.right, root.val, max);  
+    public boolean isValidBST(TreeNode root) {
+        return isValidBST(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+    public boolean isValidBST(TreeNode root, int min, int max) {
+        if (root == null) {
+            return true;
+        }
+        if (root.val <= min || root.val >= max) {
+            return false;
+        }
+        return isValidBST(root.left, min, root.val) && isValidBST(root.right, root.val, max);
     }
 	
 
 ```
 
-Wrong answer: The following code just check if each node maintains node.val > node.left.val and node.val < node.right.val. However, even though each node satisfies this condition, it might not be a binary search tree. Eg: 10,5,15,#,#,6,20
+**Wrong answer**: The following code just check if each node maintains node.val > node.left.val and node.val < node.right.val. However, even though each node satisfies this condition, it might not be a binary search tree. Eg: 10,5,15,#,#,6,20
 
 ```java
   public boolean isValidBST1(TreeNode root) {
-        if (root == null) {
+        if (root == null || (root.left == null && root.right == null)) {
             return true;
         }
-        if (root.left == null && root.right == null) {
-            return true;
-        }
-        if (root.left != null && root.left.val >= root.val) {
-            return false;
-        }
-        if (root.right != null && root.right.val <= root.val) {
+        if ((root.left != null && root.left.val >= root.val) || (root.right != null && root.right.val <= root.val)) {
             return false;
         }
         return isValidBST(root.left) && isValidBST(root.right);
@@ -6570,23 +6571,29 @@ Wrong answer: The following code just check if each node maintains node.val > no
 
 ```java
     public void recoverTree(TreeNode root) {
-        if(root == null) return;
+        if (root == null) {
+            return;
+        }
         TreeNode[] arr = new TreeNode[3];
-        helper(root, arr);
+        recoverTree(root, arr);
         int temp = arr[0].val;
         arr[0].val = arr[1].val;
         arr[1].val = temp;
     }
     
-    public void helper(TreeNode root, TreeNode[] arr){
-        if(root == null) return;
-        helper(root.left, arr);
-        if(arr[2] != null && arr[2].val > root.val){
-            if(arr[0] == null) arr[0] = arr[2];
+    public void recoverTree(TreeNode root, TreeNode[] arr) {
+        if(root == null) {
+            return;
+        }
+        recoverTree(root.left, arr);
+        if (arr[2] != null && arr[2].val > root.val) {
+            if(arr[0] == null) {
+                arr[0] = arr[2];
+            }
             arr[1] = root;
         }
         arr[2] = root;
-        helper(root.right, arr);
+        recoverTree(root.right, arr);
     }
 
 ```
@@ -6595,54 +6602,60 @@ Wrong answer: The following code just check if each node maintains node.val > no
 
 ```java
 	/*Morris traversal O(1) */
-    public void recoverTree(TreeNode root) {
-    	/* arr[0] arr[1] stroe two swapped elements, arr[2] store pre.*/
-        TreeNode[] arr = new TreeNode[2];
-        morrisTraversal(root, arr);
+       public void recoverTree(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        TreeNode[] arr = new TreeNode[3];
+        recoverTree(root, arr);
         int temp = arr[0].val;
         arr[0].val = arr[1].val;
         arr[1].val = temp;
     }
     
-    
-    public void morrisTraversal(TreeNode root, TreeNode[] arr){
-		if(root == null) return;
-		
-		TreeNode pre = null; /* predecessor*/
-		TreeNode previous = null;
-		while(root != null){
-			if(root.left == null){
-				if( previous != null && previous.val > root.val){
-		    		if(arr[0] == null) arr[0] = previous;
-		    		arr[1] = root;
-		    	}
-				previous = root;
-				root = root.right;
-			}else{
-				/* find predecessor */
-				pre = root.left;
-				while(pre.right != null && pre.right != root)
-					pre = pre.right;
-				
-				/* if predecessor's right == null, set current node as its right child */
-				if(pre.right == null){
-					pre.right = root;
-					root = root.left;
-				}else{
-					/* recover tree, when return to parent node the second time */
-					pre.right = null;
-					if( previous != null && previous.val > root.val){
-			    		if(arr[0] == null) arr[0] = previous;
-			    		arr[1] = root;
-			    	}	
-					previous = root;
-					root = root.right;
-				}
-			}
-		}
-	}
+    public void recoverTree(TreeNode root, TreeNode[] arr){
+        if(root == null) {
+            return;
+        }
 
+        TreeNode pre = null; /* predecessor*/
+        TreeNode previous = null;
+        while (root != null) {
+            if (root.left == null) {
+                if (previous != null && previous.val > root.val) {
+                    if(arr[0] == null) {
+                        arr[0] = previous;
+                    }
+                    arr[1] = root;
+                }
+                previous = root;
+                root = root.right;
+            }else{
+                /* find predecessor */
+                pre = root.left;
+                while (pre.right != null && pre.right != root) {
+                    pre = pre.right;
+                }
 
+                /* if predecessor's right == null, set current node as its right child */
+                if (pre.right == null) {
+                    pre.right = root;
+                    root = root.left;
+                } else {
+                    /* recover tree, when return to parent node the second time */
+                    pre.right = null;
+                    if (previous != null && previous.val > root.val) {
+                        if(arr[0] == null) {
+                            arr[0] = previous;
+                        }
+                        arr[1] = root;
+                    }   
+                    previous = root;
+                    root = root.right;
+                }
+            }
+        }
+    }
 ```
 
 <br>
@@ -6711,61 +6724,6 @@ Wrong answer: The following code just check if each node maintains node.val > no
 <br>
 <br>
 
-
-###103 Binary Tree Zigzag Level Order Traversal
-
-> Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
-
-<pre>
-For example:
-Given binary tree {3,9,20,#,#,15,7},
-    3
-   / \
-  9  20
-    /  \
-   15   7
-return its zigzag level order traversal as:
-[
-  [3],
-  [20,9],
-  [15,7]
-]
-</pre>
-
-**Idea** we can solve this problem by changing a little bit about BFS. We need tp print zigzag, thus we print one row then reversely print next row. 
-
-```java
-	
-	  public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
-        List<List<Integer>> list = new ArrayList<List<Integer>>();
-    	if(root == null) return list;
-    	Queue<TreeNode> queue = new LinkedList<TreeNode>();
-    	queue.offer(root);
-    	boolean inorder = true;
-    	while(!queue.isEmpty()){
-    	    List<Integer> cur = new ArrayList<Integer>();
-    	    for(int i = 0, size = queue.size(); i < size; i++){
-    	        TreeNode temp = queue.poll();
-    	        cur.add(temp.val);
-    	        if(temp.left != null) queue.offer(temp.left);
-    	        if(temp.right != null) queue.offer(temp.right);
-    	    }
-    	    if(inorder == true){
-    	        list.add(cur);
-    	        inorder = false;
-    	    }else{
-    	        Collections.reverse(cur);
-    	        list.add(cur);
-    	        inorder = true;
-    	    }
-    	}
-    	return list;
-    }
-    
-```
-
-<br>
-<br>
 
 
 ###101 Symmetric Tree
@@ -6872,8 +6830,363 @@ Bonus points if you could solve it both recursively and iteratively.
 **Solution 3**: concise version
 
 ```java
+public boolean isSymmetric(TreeNode root) {
+    if (root == null || (root.left == null && root.right == null)) {
+      return true;
+    }
+    Queue<TreeNode> queueL = new LinkedList<TreeNode>();
+    Queue<TreeNode> queueR = new LinkedList<TreeNode>();
+    queueL.offer(root.left);
+    queueR.offer(root.right);
+    while (!queueL.isEmpty() && !queueR.isEmpty()) {
+        TreeNode l = queueL.poll();
+        TreeNode r = queueR.poll();
+        if (l == null && r == null) {
+            continue;
+        }
+        if ((l == null && r != null) || (l != null && r == null) || l.val != r.val) {
+            return false;
+        }
+        queueL.offer(l.left);
+        queueR.offer(r.right);
+        queueL.offer(l.right);
+        queueR.offer(r.left);
+    } 
+    return true;
+  }
+```
+
+<br>
+<br>
+###102 Binary Tree Level Order Traversal
+
+>Given a binary tree, return the level order traversal of its nodes' values. (ie, from left to right, level by level).
+
+<pre>
+For example:
+Given binary tree {3,9,20,#,#,15,7},
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its level order traversal as:
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+</pre>
+
+**Idea**: 
+
+-1) Breadth first search -> Queue
+
+-2) each time not just poll one node from queue, but poll a level of nodes from queue
+
+
+**Solution**:
+
+```java
+public List<List<Integer>> levelOrder(TreeNode root) {
+    List<List<Integer>> res = new ArrayList<List<Integer>>();
+    if (root == null) {
+        return res;
+    }
+    Queue<TreeNode> queue = new LinkedList<TreeNode>();
+    queue.offer(root);
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        List<Integer> cur = new ArrayList<Integer>();
+        for (int i = 0; i < size; i++) {
+            TreeNode temp = queue.poll();
+            if (temp.left != null) {
+                queue.offer(temp.left);
+            }
+            if (temp.right != null) {
+                queue.offer(temp.right);
+            }
+            cur.add(temp.val);
+        }
+        res.add(cur);
+    }
+    return res;
+}
 
 ```
+
+
+<br>
+<br>
+
+###103 Binary Tree Zigzag Level Order Traversal
+
+>Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
+
+
+<pre>
+For example:
+Given binary tree {3,9,20,#,#,15,7},
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its zigzag level order traversal as:
+[
+  [3],
+  [20,9],
+  [15,7]
+]
+
+</pre>
+
+
+**Idea**: Maintain a boolean variable to help indicate the add direction of the zigzag. Two cases based on this boolean variable, add at the end or add at index 0;
+
+
+**Solution**:
+
+
+```java
+public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+    List<List<Integer>> res = new ArrayList<List<Integer>>();
+    if (root == null) {
+        return res;
+    }
+    Queue<TreeNode> queue = new LinkedList<TreeNode>();
+    queue.offer(root);
+    boolean zig = true;
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        List<Integer> cur = new ArrayList<Integer>();
+        for (int i = 0; i < size; i++) {
+            TreeNode temp = queue.poll();
+            if (temp.left != null) {
+                queue.offer(temp.left);
+            }
+            if (temp.right != null) {
+                queue.offer(temp.right);
+            }
+            if (zig) {
+                cur.add(temp.val);
+            } else {
+                cur.add(0, temp.val);
+            }
+        }
+        res.add(cur);
+        zig = !zig;
+    }
+    return res;
+}
+```
+<br>
+<br>
+
+###104 Maximum Depth of Binary Tree
+
+
+**Idea**:
+
+- 1) solution 1: recursive, max depth of root = max(max depth of left child, max depth of right child) + 1
+
+- 2) the levels of the binary search tree is its max depth
+
+**Solution 1**: recursive
+
+```java
+public int maxDepth(TreeNode root) {
+    if (root == null) {
+        return 0;
+    }
+    return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
+}
+```
+
+**Solution 2**: iterative
+
+```java
+public int maxDepth(TreeNode root){
+    if(root == null) {
+        return 0;
+    }
+    int level = 0;
+    Queue<TreeNode> queue = new LinkedList<TreeNode>();
+    queue.offer(root);
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        for (int i = 0; i < size; i++) {
+            TreeNode temp = queue.poll();
+            if (temp.left != null) {
+                queue.offer(temp.left);
+            }
+            if (temp.right != null) {
+                queue.offer(temp.right);
+            }
+        }
+        level++;
+    }
+    return level;
+    }
+```
+<br>
+<br>
+
+###105 Construct Binary Tree from Preorder and Inorder Traversal
+
+>Given preorder and inorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+
+
+**Idea**: 
+
+**Solution 1**:
+
+- 1) in preorder, the first element is root, then left subtree, right subtree
+
+- 2) in inorder, left subtree, root, right subtree. 
+
+Thus we can use this index to recursively build the binary search tree. 
+
+**Time complexity**:
+
+T(n) = 2 T(n/2) + O(n). Solve it we get T(n) = O(nlgn)
+
+**Solution 2**:
+
+If we use a map to store the value and index relation of inorder array, we can get a better time complexity:
+
+**Time** :
+
+T(n) = 2 T(n/2) + 1. Solve it we get T(n) = O(n)
+
+
+**Solution 1 code **:
+
+```java
+public TreeNode buildTree(int[] preorder, int[] inorder) {
+    if (preorder == null || preorder.length == 0) {
+        return null;
+    }
+    return buildTree(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
+}
+
+public TreeNode buildTree(int[] preorder, int pStart, int pEnd, int[] inorder, int iStart, int iEnd) {
+    if (pStart > pEnd) {
+        return null;
+    }
+    TreeNode root = new TreeNode(preorder[pStart]);
+    int rootIndex = 0;
+    for (int i = iStart; i <= iEnd; i++) {
+        if (preorder[pStart] == inorder[i]) {
+            rootIndex = i;
+            break;
+        }
+    }
+    int leftLen = rootIndex - iStart;
+    root.left  = buildTree(preorder, pStart + 1, pStart + leftLen, inorder, iStart, rootIndex - 1);
+    root.right = buildTree(preorder, pStart + leftLen + 1, pEnd, inorder, rootIndex + 1, iEnd);
+    return root;
+}
+```
+
+<br>
+
+
+**Solution 2 code**:
+
+```java
+public TreeNode buildTree(int[] preorder, int[] inorder) {
+    if (preorder == null || preorder.length == 0) {
+        return null;
+    }
+    Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+    for (int i = 0; i < inorder.length; i++) {
+        map.put(inorder[i], i);
+    }
+    return buildTree(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1, map);
+}
+
+public TreeNode buildTree(int[] preorder, int pStart, int pEnd, int[] inorder, int iStart, int iEnd, Map<Integer, Integer> map) {
+    if (pStart > pEnd) {
+        return null;
+    }
+    TreeNode root = new TreeNode(preorder[pStart]);
+    int rootIndex = map.get(preorder[pStart]);
+    int leftLen = rootIndex - iStart;
+    root.left  = buildTree(preorder, pStart + 1, pStart + leftLen, inorder, iStart, rootIndex - 1, map);
+    root.right = buildTree(preorder, pStart + leftLen + 1, pEnd, inorder, rootIndex + 1, iEnd, map);
+    return root;
+}
+```
+
+
+
+<br>
+<br>
+
+###106 Construct Binary Tree from Inorder and Postorder Traversal
+
+>Given inorder and postorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+
+
+**Idea**:
+
+**Solution**:
+
+```java
+
+```
+
+<br>
+<br>
+
+###107 Binary Tree Level Order Traversal II
+
+**Idea**: The solution below is same with 102  Binary Tree Level Order Traversal. The only difference is that when insert into list of list, we insert at index 0. Is there any other better solution other than the this method and recursion version of level order traverse? 
+
+
+**Solution**:
+
+```java
+public List<List<Integer>> levelOrderBottom(TreeNode root) {
+    List<List<Integer>> res = new ArrayList<List<Integer>>();
+    if (root == null) {
+        return res;
+    }
+    Queue<TreeNode> queue = new LinkedList<TreeNode>();
+    queue.offer(root);
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        List<Integer> cur = new ArrayList<Integer>();
+        for (int i = 0; i < size; i++) {
+            TreeNode temp = queue.poll();
+            if (temp.left != null) {
+                queue.offer(temp.left);
+            }
+            if (temp.right != null) {
+                queue.offer(temp.right);
+            }
+            cur.add(temp.val);
+        }
+        res.add(0, cur);
+    }
+    return res;
+}
+```
+
+
+<br>
+<br>
+
+
     
 ###108 Convert Sorted Array to Binary Search Tree  
 

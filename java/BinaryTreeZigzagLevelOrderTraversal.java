@@ -7,29 +7,34 @@ import java.util.List;
 import java.util.Queue;
 public class BinaryTreeZigzagLevelOrderTraversal {
     public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
-        List<List<Integer>> list = new ArrayList<List<Integer>>();
-    	if(root == null) return list;
-    	Queue<TreeNode> queue = new LinkedList<TreeNode>();
-    	queue.offer(root);
-    	boolean inorder = true;
-    	while(!queue.isEmpty()){
-    	    List<Integer> cur = new ArrayList<Integer>();
-    	    for(int i = 0, size = queue.size(); i < size; i++){
-    	        TreeNode temp = queue.poll();
-    	        cur.add(temp.val);
-    	        if(temp.left != null) queue.offer(temp.left);
-    	        if(temp.right != null) queue.offer(temp.right);
-    	    }
-    	    if(inorder == true){
-    	        list.add(cur);
-    	        inorder = false;
-    	    }else{
-    	        Collections.reverse(cur);
-    	        list.add(cur);
-    	        inorder = true;
-    	    }
-    	}
-    	return list;
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return res;
+        }
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.offer(root);
+        boolean zig = true;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            List<Integer> cur = new ArrayList<Integer>();
+            for (int i = 0; i < size; i++) {
+                TreeNode temp = queue.poll();
+                if (temp.left != null) {
+                    queue.offer(temp.left);
+                }
+                if (temp.right != null) {
+                    queue.offer(temp.right);
+                }
+                if (zig) {
+                    cur.add(temp.val);
+                } else {
+                    cur.add(0, temp.val);
+                }
+            }
+            res.add(cur);
+            zig = !zig;
+        }
+        return res;
     }
     
     public static void main(String[] args) {
