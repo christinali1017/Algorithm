@@ -1,13 +1,13 @@
 #Matrix:
 
 
-####Path
+1) Path
 
 * [62 Unique Paths](https://github.com/wishyouhappy/leetcode#62-unique-paths)
 * [63 Unique Paths II](https://github.com/wishyouhappy/leetcode#63-unique-paths-ii)
 * [64 Minimum Path Sum](https://github.com/wishyouhappy/leetcode#64-minimum-path-sum)
 
-####Matrix Operation
+2) Matrix Operation
 
 
 * [54 Spiral Matrix](https://github.com/wishyouhappy/leetcode#54-spiral-matrix)
@@ -109,9 +109,15 @@
 
 
 
-#Comnination
+#Combination
+* [17 Number Combinations of a Phone Number](https://github.com/wishyouhappy/leetcode#17-number-combinations-of-a-phone-number)
+* [31 Next Permutation](https://github.com/wishyouhappy/leetcode#31-next-permutation)
+* [39 Combination Sum](https://github.com/wishyouhappy/leetcode#39-combination-sum)
+* [40 Combination Sum II](https://github.com/wishyouhappy/leetcode#40-combination-sum-ii)
+* [77 Combinations](https://github.com/wishyouhappy/leetcode#77-combinations)
 * [78 Subsets](https://github.com/wishyouhappy/leetcode#78-subsets)
 * [90 Subsets II](https://github.com/wishyouhappy/leetcode#79-subsets-ii)
+* [216 Combination Sum III](https://github.com/wishyouhappy/leetcode#216-combination-sum-iii)
 
 
 #String

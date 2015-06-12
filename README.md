@@ -74,6 +74,7 @@
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
 * [74 Search a 2D Matrix](#74-search-a-2d-matrix)
 * [75 Sort Colors](#75-sort-colors)
+* [77 Combinations](#77-combinations)
 * [78 Subsets](#78-subsets)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [81 Search in Rotated Sorted Array II](#81-search-in-rotated-sorted-array-ii)
@@ -148,6 +149,7 @@
 * [207 Course Schedule](#207-course-schedule)
 * [208 Implement Trie Prefix Tree](#208-implement-trie-prefix-tree)
 * [209 Minimum Size Subarray Sum](#209-minimum-size-subarray-sum)
+* [216 Combination Sum III](#216-combination-sum-iii)
 * [222 Count Complete Tree Nodes](#222-count-complete-tree-nodes)
 
 
@@ -159,6 +161,7 @@
 * [3 Compare Strings](#3-compare-strings)
 * [4 Longest Common Substring](#4-longest-common-substring)
 * [5 Insert in Sorted Linked List](#5-insert-in-sorted-linked-list)
+* [6 Is Bipartite](#6-is-bipartite)
 
 
 
@@ -2259,11 +2262,11 @@ You should return the indices: [0,9].
 
 **Idea**: The next permutation is the permutation that larger than the original permutation and the immediate larger one. We can also think this as a successor. We can find the next permutation by the following steps:
 
-- 1) from the end, find the first non-increasing element, eg 1 2 3 5 4. Then we need to find is 3. Record this index. If it's -1, say 5, 4, 3, 2, 1. Then we can reverse the array to 1, 2, 3, 4, 5 and end the function.
+- 1) from the end, find the first non-increasing element, eg 1 2 3 5 4. Then we need to find is 3. Record this index. If it's -1, say 5, 4, 3, 2, 1., in this case we can reverse the array to 1, 2, 3, 4, 5 and end the function.
 
 - 2) from the index1 we record in step 1, we find the smallest element larger than num[index1]. Record this index2.
 
-- 3) swap element and index1 and index2, then reverse element after index1. 
+- 3) swap element at index1 and index2, then reverse element after index1. 
 
 For example. a permutation of 1 2 3 4 5 would be:
 
@@ -2293,46 +2296,42 @@ For example. a permutation of 1 2 3 4 5 would be:
 **Attention**
 
 - 1) for step 1, when find the non-inceasing element we allow the equal element. eg: 1 2 5 4 4 3. We should find 2, the index1. Consider test case "[1 1]"
-- 2) for step 2, we should find element larger then num[index1]. If change to >=, then it doesn't work. Consider test case "[1, 5, 1]"
+- 2) for step 2, we should find element larger than num[index1]. If change to >=, then it doesn't work. Consider test case "[1, 5, 1]"
 
 **Java code**:
 
 ```java
+public void nextPermutation(int[] num) {
+    if(num == null || num.length == 0) {
+        return;
+    }
+    int i = num.length - 2;
+    while (i >= 0 && num[i] >= num[i+1]) {
+        i--;
+    }
+    int index1 = i;
+    if (i == -1) {
+        reverse(num, 0);
+        return;
+    }
+    i = num.length - 1;
+    while (i >= 0 && num[i] <= num[index1]) {
+        i--;
+    }
+    swap(num, index1, i);
+    reverse(num, index1 + 1);
+}
 
-
-    public void nextPermutation(int[] num) {
-    	if(num == null || num.length == 0) return;
-    	
-    	int i = num.length - 2;
-    	while(i >= 0 && num[i] >= num[i+1]) i--;
-    	if(i == -1) {
-    		reverse(num, 0);
-    		return;
-    	}
-    	
-    	int j = i+1;
-    	while(j < num.length && num[j] > num[i]) j++;
-    	swap(num, i, j-1);
-    	
-    	reverse(num, i+1);
+public void reverse(int[] num, int i) {
+    for (int j = i; j < (num.length - i) / 2 + i; j++) {
+        swap(num, j, num.length + i - j - 1);
     }
-    
-    public void reverse(int[] num, int start){
-    	int end = num.length-1;
-    	while(start < end){
-    		int temp = num[start];
-    		num[start] = num[end];
-    		num[end] = temp;
-    		start++;
-    		end--;
-    	}
-    }
-    
-    public void swap(int[] num, int i, int j){
-    	int temp = num[i];
-    	num[i] = num[j];
-    	num[j] = temp;
-    }
+}
+public void swap(int[] num, int i, int j) {
+    int temp = num[i];
+    num[i] = num[j];
+    num[j] = temp;
+}
 
 ```
 
@@ -3000,25 +2999,29 @@ A solution set is:
 
 ```java
 
-    public List<List<Integer>> combinationSum(int[] candidates, int target) {
-        List<List<Integer>> res = new ArrayList<List<Integer>>();
-        if(candidates == null || candidates.length == 0) return res;
-        Arrays.sort(candidates);
-        helper(candidates, target, res, new ArrayList<Integer>(), 0);
+public List<List<Integer>> combinationSum(int[] candidates, int target) {
+    List<List<Integer>> res = new ArrayList<List<Integer>>();
+    if(candidates == null || candidates.length == 0) {
         return res;
     }
-    public void helper(int[] candidates, int target, List<List<Integer>> res, List<Integer> cur, int start){
-        if(target < 0) return;
-        if(target == 0){
-            res.add(new ArrayList<Integer>(cur));
-            return;
-        }
-        for(int i = start; i < candidates.length; i++){
-            cur.add(candidates[i]);
-            helper(candidates, target-candidates[i], res, cur, i);
-            cur.remove(cur.size()-1);
-        }
+    Arrays.sort(candidates);
+    combinationSum(candidates, target, res, new ArrayList<Integer>(), 0);
+    return res;
+}
+public void combinationSum(int[] candidates, int target, List<List<Integer>> res, List<Integer> cur, int start){
+    if (target < 0) {
+        return;
     }
+    if (target == 0) {
+        res.add(new ArrayList<Integer>(cur));
+        return;
+    }
+    for (int i = start; i < candidates.length; i++) {
+        cur.add(candidates[i]);
+        combinationSum(candidates, target-candidates[i], res, cur, i);
+        cur.remove(cur.size()-1);
+    }
+}
 
 ```
 
@@ -3059,23 +3062,29 @@ A solution set is:
 **Java code**:
 
 ```java
-    public List<List<Integer>> combinationSum2(int[] num, int target) {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
         List<List<Integer>> res = new ArrayList<List<Integer>>();
-        if(num == null || num.length == 0) return res;
-        Arrays.sort(num);
-        helper(num, target, res, new ArrayList<Integer>(), 0);
+        if(candidates == null || candidates.length == 0) {
+            return res;
+        }
+        Arrays.sort(candidates);
+        combinationSum(candidates, target, res, new ArrayList<Integer>(), 0);
         return res;
     }
-    public void helper(int[] candidates, int target, List<List<Integer>> res, List<Integer> cur, int start){
-        if(target < 0) return;
-        if(target == 0){
+    public void combinationSum(int[] candidates, int target, List<List<Integer>> res, List<Integer> cur, int start){
+        if (target < 0) {
+            return;
+        }
+        if (target == 0) {
             res.add(new ArrayList<Integer>(cur));
             return;
         }
-        for(int i = start; i < candidates.length; i++){
-            if(i > start && candidates[i] == candidates[i-1]) continue;
+        for (int i = start; i < candidates.length; i++) {
+            if (i > start && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
             cur.add(candidates[i]);
-            helper(candidates, target-candidates[i], res, cur, i+1);
+            combinationSum(candidates, target-candidates[i], res, cur, i + 1);
             cur.remove(cur.size()-1);
         }
     }
@@ -3405,17 +3414,18 @@ Since there is no duplicate, we can add element one by one. For example:
 
 
 ```java
-
     public List<List<Integer>> permute(int[] num) {
         List<List<Integer>> res = new ArrayList<List<Integer>>();
-        if(num == null || num.length == 0) return res;
+        if (num == null || num.length == 0) {
+            return res;
+        }
         List<Integer> first = new ArrayList<Integer>();
         first.add(num[0]);
         res.add(first);
-        for(int i = 1; i < num.length; i++){
+        for (int i = 1; i < num.length; i++) {
             List<List<Integer>> cur = new ArrayList<List<Integer>>();
-            for(List<Integer> l : res){
-                for(int j = 0; j <= l.size(); j++){
+            for (List<Integer> l : res) {
+                for (int j = 0; j <= l.size(); j++) {
                     List<Integer> temp = new ArrayList<Integer>(l);
                     temp.add(j, num[i]);
                     cur.add(temp);
@@ -3431,40 +3441,78 @@ Since there is no duplicate, we can add element one by one. For example:
 *recursion*:
 
 ```java
-
-    public List<List<Integer>> permute1(int[] num) {
-    	List<List<Integer>> list = new ArrayList<List<Integer>>();
-    	if(num == null || num.length == 0) return list;
-        return helper(list, num, 0);
+    public List<List<Integer>> permute(int[] num) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        if (num == null || num.length == 0) {
+            return list;
+        }
+        return permute(list, num, 0);
     }
     
-    public List<List<Integer>> helper(List<List<Integer>> list, int[] num, int i){
-    	if(i == num.length){
-    		List<Integer> arr = new ArrayList<Integer>();
-    		list.add(arr);
-    		return list;
-    	}
-    	
-    	list = helper(list, num, i+1);
-    	List<List<Integer>> current = new ArrayList<List<Integer>>();
-    	for(List<Integer> l : list){
-    		if(l.size() == 0){
-    			List<Integer> arr = new ArrayList<Integer>();
-    			arr.add(num[i]);
-        		current.add(arr);
-    		}
-    		else {
-	    		for(int j = 0; j <= l.size(); j++){
-	    			List<Integer> arr = new ArrayList<Integer>(l);
-	    			arr.add(j, num[i]);
-	        		current.add(arr);
-	    		}
-    		}
-    	}
-    	list = new ArrayList<List<Integer>>(current);
-    	return list;
+    public List<List<Integer>> permute(List<List<Integer>> list, int[] num, int i){
+        if (i == num.length) {
+            List<Integer> arr = new ArrayList<Integer>();
+            list.add(arr);
+            return list;
+        }
+        
+        list = permute(list, num, i+1);
+        List<List<Integer>> current = new ArrayList<List<Integer>>();
+        for (List<Integer> l : list) {
+            if (l.size() == 0) {
+                List<Integer> arr = new ArrayList<Integer>();
+                arr.add(num[i]);
+                current.add(arr);
+            } else {
+                for (int j = 0; j <= l.size(); j++) {
+                    List<Integer> arr = new ArrayList<Integer>(l);
+                    arr.add(j, num[i]);
+                    current.add(arr);
+                }
+            }
+        }
+        list = new ArrayList<List<Integer>>(current);
+        return list;
     }
 
+```
+
+<br>
+
+**Related**: *what if input is string*?
+
+For example : Set = “abc” : “abc”, output “acb”, “bac”, “bca”, “cab”, “cba”
+
+```java
+  public List<String> permutations(String set) {
+    List<String> res = new ArrayList<String>();
+    if (set == null) {
+      return res;
+    }
+    if (set.length() == 0) {
+      res.add("");
+      return res;
+    }
+    res.add(set.charAt(0) + "");
+    for (int i = 1; i < set.length(); i++) {
+      List<String> cur = new ArrayList<String>();
+      char c = set.charAt(i);
+      for (String s : res) {
+        for (int j = 0; j <= s.length(); j++) {
+          cur.add(concatenate(s, j, c));
+        }
+      }
+      res = cur;
+    }
+    return res;
+  }
+  
+  private String concatenate(String s, int i, char c) {
+    if (s == null || s.length() < i || i < 0) {
+      return null;
+    }
+    return s.substring(0, i) + c + s.substring(i, s.length());
+  }
 ```
 
 <br>
@@ -3493,24 +3541,28 @@ These two are accepted, the second one has better time complexity.
 
     public List<List<Integer>> permuteUnique(int[] num) {
         List<List<Integer>> res = new ArrayList<List<Integer>>();
-        if(num == null || num.length == 0) return res;
+        if (num == null || num.length == 0) {
+            return res;
+        }
         List<Integer> first = new ArrayList<Integer>();
         first.add(num[0]);
         res.add(first);
-        for(int i = 1; i < num.length; i++){
+        Set<String> set = new HashSet<String>();
+        for (int i = 1; i < num.length; i++) {
             List<List<Integer>> cur = new ArrayList<List<Integer>>();
-            for(List<Integer> l : res){
-                for(int j = 0; j <= l.size(); j++){
+            for (List<Integer> l : res) {
+                for(int j = 0; j <= l.size(); j++) {
                     List<Integer> temp = new ArrayList<Integer>(l);
                     temp.add(j, num[i]);
-                    if(!cur.contains(temp)) cur.add(temp);
+                    if(set.add(temp.toString())) {
+                        cur.add(temp);
+                    }
                 }
             }
             res = cur;
         }
         return res;
     }
-
 
 ```
 
@@ -3520,37 +3572,38 @@ Use set, recursion:
 
 ```java
 
-  	public List<List<Integer>> permuteUnique(int[] num) {
-    	List<List<Integer>> list = new ArrayList<List<Integer>>();
-    	if(num == null || num.length == 0) return list;
-        return helper(list, num, 0);
+    public List<List<Integer>> permuteUnique(int[] num) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        if (num == null || num.length == 0) {
+            return list;
+        }
+        return permuteUnique(list, num, 0);
     }
     
-    public List<List<Integer>> helper(List<List<Integer>> list, int[] num, int i){
-    	if(i == num.length){
-    		List<Integer> arr = new ArrayList<Integer>();
-    		list.add(arr);
-    		return list;
-    	}
-    	
-    	list = helper(list, num, i+1);
-    	Set<List<Integer>> current = new HashSet<List<Integer>>();
-    	for(List<Integer> l : list){
-    		if(l.size() == 0){
-    			List<Integer> arr = new ArrayList<Integer>();
-    			arr.add(num[i]);
-        		current.add(arr);
-    		}
-    		else {
-	    		for(int j = 0; j <= l.size(); j++){
-	    			List<Integer> arr = new ArrayList<Integer>(l);
-	    			arr.add(j, num[i]);
-	        		current.add(arr);
-	    		}
-    		}
-    	}
-    	list = new ArrayList<List<Integer>>(current);
-    	return list;
+    public List<List<Integer>> permuteUnique(List<List<Integer>> list, int[] num, int i){
+        if (i == num.length) {
+            List<Integer> arr = new ArrayList<Integer>();
+            list.add(arr);
+            return list;
+        }
+        
+        list = permuteUnique(list, num, i+1);
+        Set<List<Integer>> current = new HashSet<List<Integer>>();
+        for (List<Integer> l : list) {
+            if(l.size() == 0){
+                List<Integer> arr = new ArrayList<Integer>();
+                arr.add(num[i]);
+                current.add(arr);
+            } else {
+                for (int j = 0; j <= l.size(); j++) {
+                    List<Integer> arr = new ArrayList<Integer>(l);
+                    arr.add(j, num[i]);
+                    current.add(arr);
+                }
+            }
+        }
+        list = new ArrayList<List<Integer>>(current);
+        return list;
     }
 
 ```
@@ -5475,6 +5528,56 @@ Use method1 need two pass. Method 2 only need one pass.
 <br>
 <br>
 
+###77 Combinations
+
+>Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+
+<pre>
+For example,
+If n = 4 and k = 2, a solution is:
+
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+</pre>
+
+
+
+**Idea**: Same idea with combination sum, difference is that here we use k to determine the recursion termination condition
+
+**Solution**: Recursion
+
+```java
+    public List<List<Integer>> combine(int n, int k) {  
+        List<List<Integer>> res = new ArrayList<List<Integer>>();  
+        if (n <= 0 || n < k) {
+            return res;
+        }
+        combine(n, k, 1, new ArrayList<Integer>(), res);  
+        return res;  
+    }  
+    private void combine(int n, int k, int start, List<Integer> item, List<List<Integer>> res)  {  
+        if (item.size() == k) {  
+            res.add(new ArrayList<Integer>(item));  
+            return;  
+        }  
+        for (int i = start; i <= n; i++) {  
+            item.add(i);  
+            combine(n, k, i + 1, item, res);  
+            item.remove(item.size() - 1);  
+        }  
+    } 
+
+```
+
+<br>
+<br>
+
 ###78 Subsets
 
 
@@ -5576,6 +5679,89 @@ The Subset begin with [], after insert 1, it becomes [] [1], you need to combine
         helper(nums, start + 1, res);
     }
 ```
+
+<br>
+
+**Related**: **subsets of string**
+
+> eg: Set = "abc":  [“”, “a”, “ab”, “abc”, “ac”, “b”, “bc”, “c”]
+
+> Set = "":  [""]
+
+> Set = null: []
+
+**Idea**: Same with List. 
+
+**Solution**:
+
+```java
+  public List<String> subSets(String set) {
+    List<String> res = new ArrayList<String>();
+    if (set == null) {
+      return res;
+    }
+    res.add("");
+    for (int i = 0; i < set.length(); i++) {
+      List<String> current = new ArrayList<String>();
+      char c = set.charAt(i);
+      for (int j = 0; j < res.size(); j++) {
+         String s = res.get(j);
+         String newS = concatenate(s, s.length(), c);
+         current.add(newS);
+      }
+      res.addAll(current);
+    }
+    return res;
+  }
+  
+  public String concatenate(String s, int i, char c) {
+    if (s == null || s.length() < i || i < 0) {
+      return null;
+    }
+    return s.substring(0, i) + c + s.substring(i, s.length());
+  }
+```
+
+<br>
+
+**What if we treat "ac" and "ca"  different?**
+
+**Idea**: Add one more loop, insert each character to each possible index of the all existed strings.
+
+**Solution**:
+
+```java
+  public List<String> subSets(String set) {
+    List<String> res = new ArrayList<String>();
+    if (set == null) {
+      return res;
+    }
+    res.add("");
+    for (int i = 0; i < set.length(); i++) {
+      List<String> current = new ArrayList<String>();
+      char c = set.charAt(i);
+      for (int j = 0; j < res.size(); j++) {
+         String s = res.get(j);
+         for (int k = 0; k <= s.length(); k++) {
+           String newS = concatenate(s, k, c);
+           current.add(newS);
+         }
+      }
+      res.addAll(current);
+    }
+    return res;
+  }
+  
+  public String concatenate(String s, int i, char c) {
+    if (s == null || s.length() < i || i < 0) {
+      return null;
+    }
+    return s.substring(0, i) + c + s.substring(i, s.length());
+  }
+
+```  
+
+
 
 <br>
 <br>
@@ -11219,8 +11405,111 @@ public int getHeight(TreeNode root) {
 
 
 <br>
+
+**Related**: Check if a binary tree is complete?
+
+**Idea**: Use level order traversal, once we find a node does not have both left chil and right child, then the remian nodes in the queue must be leaf node. 
+
+
+
+**Solution**:
+
+
+```java
+  public boolean isCompleted(TreeNode root) {
+    if (root == null) {
+      return true;
+    }
+    Queue<TreeNode> queue = new LinkedList<TreeNode>();
+    queue.offer(root);
+    boolean isFull = true;
+    while (!queue.isEmpty()) {
+      TreeNode cur = queue.poll();
+      if (cur.left != null) {
+        if (!isFull) {
+          return false;
+        }
+        queue.offer(cur.left);
+      } else {
+        isFull = false;
+      }
+      if (cur.right != null) {
+        if (!isFull) {
+          return false;
+        }
+        queue.offer(cur.right);
+      } else {
+        isFull = false;
+      }
+    }
+    return true;
+  }
+```
+
+<br>
 <br>
 
+###216 Combination Sum III
+
+> Find all possible combinations of k numbers that add up to a number n, given that only numbers from **1 to 9** can be used and each combination should be a **unique set of numbers**.
+
+>Ensure that numbers within the set are **sorted in ascending order**.
+
+<pre>
+
+Example 1:
+
+Input: k = 3, n = 7
+
+Output:
+
+[[1,2,4]]
+
+Example 2:
+
+Input: k = 3, n = 9
+
+Output:
+
+[[1,2,6], [1,3,5], [2,3,4]]
+
+</pre>
+
+
+**Idea**: This problem is the combination of [40 Combination Sum II](https://github.com/wishyouhappy/leetcode#40-combination-sum-ii) and [77 Combinations](https://github.com/wishyouhappy/leetcode#77-combinations). In the recursion termination condition, we need to take care of bothe the sum and number of elements. 
+
+
+**Solution**:
+
+
+```java
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if (k * 9 < n) {
+            return res;
+        }
+        combinationSum3(k, n, 1, res, new ArrayList<Integer>(), 0);
+        return res;
+    }
+    
+    public void combinationSum3(int k, int n, int start, List<List<Integer>> res, List<Integer> item, int sum) {
+        if (item.size() == k && sum == n) {
+            res.add(new ArrayList<Integer>(item));
+            return;
+        } 
+        if (sum >= n || item.size()>= k) {
+            return;
+        }
+        for (int i = start; i <= 9; i++) {
+            item.add(i);
+            combinationSum3(k, n, i + 1, res, item, sum + i);
+            item.remove(item.size() - 1);
+        }
+       
+    }
+```
+<br>
+<br>
 
 
 ##Similar questions from other sources.
@@ -11626,6 +11915,69 @@ public class Solution {
 
 <br>
 <br>
+
+
+###6 Is Bipartite
+
+>Suppose a graph is repensented as list, check if this graph is bipartite. If you are not familiar with bipartite, click on this link: [bipartite](http://en.wikipedia.org/wiki/Bipartite_graph).
+
+**Idea**: In bipartite graph, we can divide the graph into two groups and inside each group, there is no edge between nodes in that group. 
+
+Let's give an example, suppose group red and blue, if node 1 is in group green, if node 2 is neighbor of node 1, then node 2 must in group red. Thus we can traverse the graph to check if this condition is always true.
+
+**Some notes**:
+
+- 1) In graph traversal, unlike tree traversal, we need to record if a node is visited or not
+
+- 2) In this problem, we also need to record the group information of each node. Let's use the above example: if node 1 is in group green, if node 2 is neighbor of node 1, then node 2 must in group red. And if node 2 has neighbor node 3, and node3 is red, then the graph is not a bipartite. 
+
+
+**Solution**:
+
+```java
+/**
+ * public class GraphNode {
+ *   public int key;
+ *   public List<GraphNode> neighbors;
+ *   public GraphNode(int key) {
+ *     this.key = key;
+ *     this.neighbors = new ArrayList<GraphNode>();
+ *   }
+ * }
+ */
+public class Solution {
+  public boolean isBipartite(List<GraphNode> graph) {
+    if (graph == null) {
+      return true;
+    }
+    Map<GraphNode, Integer> map = new HashMap<GraphNode, Integer>();
+    for (GraphNode n : graph) {
+      if (map.containsKey(n)) {
+        continue;
+      }
+      Queue<GraphNode> queue = new LinkedList<GraphNode>();
+      queue.offer(n);
+      map.put(n, 0);
+      while (!queue.isEmpty()) {
+        GraphNode cur = queue.poll();
+        List<GraphNode> neighbors = cur.neighbors;
+        int reverseColor = map.get(cur) == 0 ? 1 : 0;
+        for (int i = 0; i < neighbors.size(); i++){
+          GraphNode neighbor = neighbors.get(i);
+          if (!map.containsKey(neighbor)) {
+            map.put(neighbor, reverseColor);
+            queue.offer(neighbor);
+          } else if (map.get(neighbor) != reverseColor) {
+              return false;
+          }
+        }
+      }
+    }
+   
+    return true;
+  }
+}
+```
 
 
 
