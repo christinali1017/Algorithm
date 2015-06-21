@@ -3639,7 +3639,7 @@ For example,
 
 **Idea**: Since the collection has duplicates, thus each time when we add permutation, we need to consider if it already exists. 
 
-In the following code, the first code snippit use list.contains to check the duplicates. The second code snippit use set to avoid add dupilcates.
+In the following code, the first code snippet use list.contains to check the duplicates. The second code snippet use set to avoid add dupilcates.
 
 These two are accepted, the second one has better time complexity.
 
@@ -3719,6 +3719,41 @@ Use set, recursion:
 
 
 
+**Another way**:
+
+```java
+  public List<String> permutations(String set) {
+    List<String> res = new ArrayList<String>();
+    if (set == null) {
+      return res;
+    }
+    Set<String> myset = new HashSet<String>();
+    permutations(res, 0, set.toCharArray(), myset);
+    return res;
+  }
+  
+  public void permutations(List<String> res, int index, char[] arr, Set<String> set) {
+    if (index == arr.length) {
+      String s = new String(arr);
+      if (!set.contains(s)) {
+        res.add(s);
+        set.add(s);
+      }
+      return;
+    }
+    for (int i = index; i < arr.length; i++) {
+      swap(arr, i, index);
+      permutations(res, index + 1, arr, set);
+      swap(arr, i, index);
+    }
+  }
+  
+  public void swap(char[] arr, int i, int j) {
+    char temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+```
 
 <br>
 <br>
@@ -8849,6 +8884,31 @@ Given {1,2,3,4}, reorder it to {1,4,2,3}.
   }
 ```
 
+
+<br>
+
+**Related**: Reorder array in place 
+
+> eg : { 1, 2, 3, 4, 5, 6, 7, 8 } → { 1, 5, 2, 6, 3, 7, 4, 8 }
+
+> { 1, 2, 3, 4, 5, 6, 7 } → { 1, 4, 2, 5, 3, 6, 7 }
+
+```java
+  public int[] reorder(int[] array) {
+    if (array == null || array.length == 0) {
+      return array;
+    }
+    int len = array.length % 2 == 0 ? array.length : array.length - 1;
+    for (int i = len / 2; i < len / 2 * 2; i++) {
+      int temp = array[i];
+      for (int j = i - 1; j > 2 * i - len; j--) {
+        array[j + 1] = array[j];
+      }
+      array[2 * i - len + 1] = temp;
+    }
+    return array;
+  }
+```
 
 <br>
 <br>
