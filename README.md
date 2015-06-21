@@ -1970,7 +1970,117 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 ```
 
+<br>
 
+**Related**: Remove Adjacent Repeated Characters
+
+> eg: “aaaabbbc” : “abc”
+
+**Idea**: Left and right pointer
+
+```java
+  public String deDup(String input) {
+    if (input == null || input.length() == 0) {
+      return input;
+    }
+    char[] arr = input.toCharArray();
+    int l = 0;
+    int r = 1;
+    while (r < input.length()) {
+      if (arr[r] == arr[l]) {
+        r++;
+      } else {
+        arr[l + 1] = arr[r++];
+        l++;
+      }
+    } 
+    return new String(arr, 0, l+1);
+  } 
+
+```
+
+<br>
+
+**Related**: Remove spaces
+
+> eg: “   I     love MTV ” --> “I love MTV”
+
+```java
+  public String removeSpaces(String input) {
+    if (input == null || input.length() == 0) {
+      return input;
+    }
+    char[] arr = input.toCharArray();
+    int r = 0;
+    for (int i = 0; i < arr.length; i++) {
+      if ((i == 0 || arr[i-1] == ' ') && arr[i] == ' ') {
+        continue;
+      }
+      arr[r++] = arr[i];
+    }
+    // check if last character is " "
+    if (r != 0 && arr[r - 1] == ' ') {
+      return new String(arr, 0, r - 1);
+    }
+    return new String(arr, 0, r);
+  }
+
+```
+<br>
+
+**Related**: remove certain characters:
+
+>eg: input = "abcd", t = "ab" ===> "cd".
+
+```java
+  public String remove(String input, String t) {
+    if (input == null || t == null || t.length() == 0) {
+      return input;
+    }
+    char[] arr = input.toCharArray();
+    int r = 0;
+    for (int i = 0; i < input.length(); i++) {
+      boolean found = false;
+      for (int j = 0; j < t.length(); j++) {
+        if (arr[i] == t.charAt(j)) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        arr[r++] = arr[i];
+      }
+    }
+    return new String(arr, 0, r);
+  }
+
+```
+
+<br>
+**Related**: Remove Adjacent Repeated Characters
+
+> eg: "abbbaaccz" → "aaaccz" → "ccz" → "z"
+
+```java
+  public String deDup(String input) {
+    if (input == null || input.length() <= 1) {
+      return input;
+    }
+    char[] arr = input.toCharArray();
+    int r = 0;
+    for (int i = 1; i < input.length(); i++) {
+      if (r == -1 || arr[i] != arr[r]) {
+        arr[++r] = arr[i];
+      } else {
+        --r;
+        while (i < input.length() - 1 && arr[i] == arr[i+1]) {
+          i++;
+        } 
+      }
+    }
+    return new String(arr, 0, r + 1);
+  }
+```
 
 
 <br>
