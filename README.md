@@ -3,7 +3,7 @@
 ### Overview
 * [1 Two Sum](#1-two-sum)
 * [2 Add Two Numbers](#2-add-two-numbers)
-* [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters))
+* [3 Longest Substring without Repeating Characters](#3-longest-substring-without-repeating-characters)
 * [4 Median of Two Sorted Arrays](#4-median-of-two-sorted-arrays)
 * [5 Longest Palindromic Substring](#5-longest-palindromic-substring)
 * [6 Zigzag Conversion](#6-zigzag-conversion)
@@ -119,6 +119,7 @@
 * [145 Binary Tree Postorder Traversal](#145-binary-tree-postorder-traversal)
 * [147 Insertion Sort List](#147-insertion-sort-list)
 * [148 Sort List](#148-sort-list)
+* [151 Reverse Words in a String](#151-reverse-words-in-a-string)
 * [153 Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
 * [154 Find Minimum in Rotated Sorted Array II](#154-find-minimum-in-rotated-sorted-array-ii)
 * [155 Min Stack](#155-min-stack)
@@ -4476,6 +4477,28 @@ Otherwise, we need to compare the end of two intervals. If current.end > last.en
 
 ```
 
+
+<br>
+
+**Related**: reverse words in a sentence
+
+
+```java
+  public String reverseWords(String input) {
+    if (input == null || input.length() == 0) {
+      return input;
+    }
+    input = input.trim();
+    String[] arr = input.split("\\s+");
+    StringBuilder res = new StringBuilder();
+    for (int i = arr.length - 1; i >= 0; i--) {
+      res.append(arr[i]);
+      res.append(" ");
+    }
+    return res.toString().trim();
+  }
+
+```
 
 
 
@@ -9505,6 +9528,35 @@ Each time we find the increasing interval. For example, if A[mid] > A[l], then t
 <br>
 <br>
 
+
+###151-reverse-words-in-a-string
+
+**Idea**:
+
+- 1) First remove spaces at beginning and at end
+- 2) use regular expression split words.
+- 3) recreate result string
+
+**Solution**:
+
+```java
+public String reverseWords(String input) {
+    if (input == null || input.length() == 0) {
+      return input;
+    }
+    input = input.trim();
+    String[] arr = input.split("\\s+");
+    StringBuilder res = new StringBuilder();
+    for (int i = arr.length - 1; i >= 0; i--) {
+      res.append(arr[i] + " ");
+    }
+    return res.toString().trim();
+}
+
+```
+<br>
+<br>
+
 ###155 Min Stack
 >Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
 <pre>
@@ -9925,6 +9977,40 @@ public TreeNode UpsideDownBinaryTree(TreeNode root) {
 
 
 
+<br>
+**Related**: longest substring without repeating characters.
+
+**Time complexity**: O(2 * n) = O(n)
+
+```java
+  public int lengthOfLongestSubstring(String s) {
+    if (s == null || s.length() == 0) {
+      return 0;
+    }
+    int res = 0;
+    int start = 0;
+    int current = 0;
+    Set<Character> set = new HashSet<Character>();
+    while (current < s.length()) {
+      char c = s.charAt(current);
+      if (!set.contains(c)) {
+        set.add(c);
+      } else {
+        res = Math.max(res, current - start);
+        while (s.charAt(start) != c) {
+          set.remove(s.charAt(start++));
+        }
+        start++;
+      }
+      current++;
+    }
+    res = Math.max(res, current - start);
+    return res;
+  }
+
+```
+
+<br>
 <br>
 
 
@@ -11647,7 +11733,7 @@ The input prerequisites is a graph represented by a list of edges, not adjacency
     }
 ```
 
-**Here is un memory limit exceeded solution**:
+**Here is an memory limit exceeded solution**:
 
 ```java
     public int[] findOrder(int numCourses, int[][] prerequisites) {
