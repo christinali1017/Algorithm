@@ -170,6 +170,8 @@
 
 * [126 Word Ladder](https://github.com/wishyouhappy/leetcode#126-word-ladder)
 * [127 word Ladder II](https://github.com/wishyouhappy/leetcode#127-word-ladder-ii)
+* [207 Course Schedule](#207-course-schedule)
+* [210 Course Schedule II](#210-course-schedule-ii)
 
 
 #Trap Water

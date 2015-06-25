@@ -148,6 +148,7 @@
 * [207 Course Schedule](#207-course-schedule)
 * [208 Implement Trie Prefix Tree](#208-implement-trie-prefix-tree)
 * [209 Minimum Size Subarray Sum](#209-minimum-size-subarray-sum)
+* [210 Course Schedule II](#210-course-schedule-ii)
 * [216 Combination Sum III](#216-combination-sum-iii)
 * [222 Count Complete Tree Nodes](#222-count-complete-tree-nodes)
 
@@ -3624,6 +3625,41 @@ For example : Set = “abc” : “abc”, output “acb”, “bac”, “bca�
   }
 ```
 
+
+<br>
+
+
+**Another way**:
+
+```java
+  public List<String> permutations(String set) {
+    List<String> res = new ArrayList<String>();
+    if (set == null) {
+      return res;
+    }
+    permutations(res, 0, set.toCharArray());
+    return res;
+  }
+  
+  public void permutations(List<String> res, int index, char[] arr) {
+    if (index == arr.length) {
+      String s = new String(arr);
+      res.add(s);
+      return;
+    }
+    for (int i = index; i < arr.length; i++) {
+      swap(arr, i, index);
+      permutations(res, index + 1, arr);
+      swap(arr, i, index);
+    }
+  }
+  
+  public void swap(char[] arr, int i, int j) {
+    char temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+```
 <br>
 <br>
 
@@ -5822,6 +5858,33 @@ The Subset begin with [], after insert 1, it becomes [] [1], you need to combine
         res.addAll(cur);
         helper(nums, start + 1, res);
     }
+```
+
+
+<br>
+
+**Similar DFS solution for string**:
+
+```java
+  public List<String> subSets(String set) {
+    List<String> res = new ArrayList<String>();
+    if (set == null) {
+      return res;
+    }
+    char[] arr = set.toCharArray();
+    subSets(arr, 0, res, new StringBuilder());
+    return res;
+  }
+  
+  public void subSets(char[] arr, int index, List<String> res, StringBuilder sb) {
+    if (index == arr.length) {
+      res.add(sb.toString());
+      return;
+    }
+    subSets(arr, index + 1, res, sb);
+    subSets(arr, index + 1, res, sb.append(arr[index]));
+    sb.deleteCharAt(sb.length() - 1);
+  }
 ```
 
 <br>
@@ -11211,7 +11274,7 @@ The input prerequisites is a graph represented by a list of edges, not adjacency
 
 **Idea**: 
 
-- 1) solution 1: This problem is a typical example of topological sort. We can firt create the adjcent matrix, then do topological sort to check if all courses are finished. 
+- 1) solution 1: This problem is a typical example of topological sort. We can firt create the adjacent matrix, then do topological sort to check if all courses are finished. 
 
 - 2) solution 2: For each edge we can use a stack to check if there is a cycle. If cycle exist, then we can not finish all the courses. 
 
@@ -11503,6 +11566,143 @@ See details in the code below.
 
 <br>
 <br>
+
+###210 Course Schedule II 
+
+>There are a total of n courses you have to take, labeled from 0 to n - 1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, return the ordering of courses you should take to finish all courses.
+
+There may be multiple correct orders, you just need to return one of them. If it is impossible to finish all courses, return an empty array.
+
+For example:
+
+2, [[1,0]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0. So the correct course order is [0,1]
+
+4, [[1,0],[2,0],[3,1],[3,2]]
+There are a total of 4 courses to take. To take course 3 you should have finished both courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0. So one correct course order is [0,1,2,3]. Another correct ordering is[0,2,1,3].
+
+Note:
+The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented.
+
+
+<br>
+
+**Idea**: same method with Course Schedule I. Use topological sort
+
+**Accept solution**: Time complexity: O(V + E)
+
+```java
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        if (numCourses <= 0) {
+            return null;
+        }
+        int[] res = new int[numCourses];
+        if (prerequisites == null || prerequisites.length == 0) {
+            for (int i = 0; i < numCourses; i++) {
+                res[i] = i;
+            }
+            return res;
+        }
+        int[] inDegree = new int[numCourses];
+        Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
+        for (int i = 0; i < prerequisites.length; i++) {
+            int key = prerequisites[i][1];
+            int val = prerequisites[i][0];
+            if (!map.containsKey(key)) {
+               map.put(key, new ArrayList<Integer>());
+            }
+            map.get(key).add(val);
+            inDegree[val]++;
+        }
+        
+       
+        Queue<Integer> zeroDegrees = new LinkedList<Integer>();
+        for (int i = 0; i < numCourses; i++) {
+            if (inDegree[i] == 0) {
+                zeroDegrees.offer(i);
+            }
+        }
+        
+        int count = 0;
+        while (!zeroDegrees.isEmpty()) {
+            int temp = zeroDegrees.poll();
+            res[count++] = temp;
+            if (map.get(temp) != null) {
+                for (Integer i: map.get(temp)) {
+                    if (inDegree[i] >= 1) {
+                        inDegree[i]--;
+                        if (inDegree[i] == 0) {
+                            zeroDegrees.offer(i);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return count == numCourses ? res : new int[0];
+    }
+```
+
+**Here is un memory limit exceeded solution**:
+
+```java
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        if (numCourses <= 0) {
+            return null;
+        }
+        int[] res = new int[numCourses];
+        if (prerequisites == null || prerequisites.length == 0) {
+            for (int i = 0; i < numCourses; i++) {
+                res[i] = i;
+            }
+            return res;
+        }
+        int[][] adj = new int[numCourses][numCourses];
+        int[] inDegree = new int[numCourses];
+        for (int i = 0; i < prerequisites.length; i++) {
+            int in = prerequisites[i][1];
+            int out = prerequisites[i][0];
+            if (adj[in][out] == 0) {
+                inDegree[out]++;
+            }
+            adj[in][out] = 1;
+        }
+        
+       
+        Queue<Integer> zeroDegrees = new LinkedList<Integer>();
+        for (int i = 0; i < numCourses; i++) {
+            if (inDegree[i] == 0) {
+                zeroDegrees.offer(i);
+            }
+        }
+        
+        int count = 0;
+        while (!zeroDegrees.isEmpty()) {
+            int temp = zeroDegrees.poll();
+            res[count++] = temp;
+            
+            for (int i = 0; i < numCourses; i++) {
+                if (adj[temp][i] == 1) {
+                    inDegree[i]--;
+                    if (inDegree[i] == 0) {
+                        zeroDegrees.offer(i);
+                    }
+                }
+            }
+
+        }
+        
+        return count == numCourses ? res : new int[0];
+    }
+```
+
+
+
+
 
 
 ###222 Count Complete Tree Nodes
