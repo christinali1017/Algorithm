@@ -3590,47 +3590,11 @@ Since there is no duplicate, we can add element one by one. For example:
 
 <br>
 
-**Related**: *what if input is string*?
-
-For example : Set = “abc” : “abc”, output “acb”, “bac”, “bca”, “cab”, “cba”
-
-```java
-  public List<String> permutations(String set) {
-    List<String> res = new ArrayList<String>();
-    if (set == null) {
-      return res;
-    }
-    if (set.length() == 0) {
-      res.add("");
-      return res;
-    }
-    res.add(set.charAt(0) + "");
-    for (int i = 1; i < set.length(); i++) {
-      List<String> cur = new ArrayList<String>();
-      char c = set.charAt(i);
-      for (String s : res) {
-        for (int j = 0; j <= s.length(); j++) {
-          cur.add(concatenate(s, j, c));
-        }
-      }
-      res = cur;
-    }
-    return res;
-  }
-  
-  private String concatenate(String s, int i, char c) {
-    if (s == null || s.length() < i || i < 0) {
-      return null;
-    }
-    return s.substring(0, i) + c + s.substring(i, s.length());
-  }
-```
-
 
 <br>
 
 
-**Another way**:
+**Another way**: use swap
 
 ```java
   public List<String> permutations(String set) {
@@ -3683,6 +3647,8 @@ These two are accepted, the second one has better time complexity.
 
 **Java code**:
 
+**M1**:
+
 ```java
 
     public List<List<Integer>> permuteUnique(int[] num) {
@@ -3711,9 +3677,9 @@ These two are accepted, the second one has better time complexity.
     }
 
 ```
+<br>
 
-
-Use set, recursion:
+**M2: Use set, recursion**:
 
 
 ```java
@@ -3754,9 +3720,9 @@ Use set, recursion:
 
 ```
 
+<br>
 
-
-**Another way**:
+**M3**: use swap, tle on leetcode
 
 ```java
   public List<String> permutations(String set) {
@@ -3764,24 +3730,24 @@ Use set, recursion:
     if (set == null) {
       return res;
     }
-    Set<String> myset = new HashSet<String>();
-    permutations(res, 0, set.toCharArray(), myset);
+    permutations(res, 0, set.toCharArray());
     return res;
   }
   
-  public void permutations(List<String> res, int index, char[] arr, Set<String> set) {
+  public void permutations(List<String> res, int index, char[] arr) {
     if (index == arr.length) {
       String s = new String(arr);
-      if (!set.contains(s)) {
-        res.add(s);
-        set.add(s);
-      }
+      res.add(s);
       return;
     }
+    Set<Character> myset = new HashSet<Character>();
     for (int i = index; i < arr.length; i++) {
-      swap(arr, i, index);
-      permutations(res, index + 1, arr, set);
-      swap(arr, i, index);
+      if (!myset.contains(arr[i])) {
+        myset.add(arr[i]);
+        swap(arr, i, index);
+        permutations(res, index + 1, arr);
+        swap(arr, i, index);
+      }
     }
   }
   
@@ -3791,6 +3757,60 @@ Use set, recursion:
     arr[j] = temp;
   }
 ```
+
+<br>
+
+**M4: use next permutation**: tle on leetcode
+
+```java
+    public List<List<Integer>> permuteUnique(int[] num) {
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        if (num == null || num.length == 0) {
+            return list;
+        }
+        Arrays.sort(num);
+        list.add(IntStream.of(num).boxed().collect(Collectors.toList()));
+        while (nextPermutation(num)) {
+            list.add(IntStream.of(num).boxed().collect(Collectors.toList()));
+        }
+        return list;
+    }
+    
+    private boolean nextPermutation(int[] num) {
+        if(num == null || num.length <= 1) {
+            return false;
+        }
+        int i = num.length - 2;
+        while (i >= 0 && num[i] >= num[i+1]) {
+            i--;
+        }
+        int index1 = i;
+        if (i == -1) {
+            return false;
+        }
+        i = num.length - 1;
+        while (i >= 0 && num[i] <= num[index1]) {
+            i--;
+        }
+        swap(num, index1, i);
+        reverse(num, index1 + 1);
+        return true;
+    }
+    
+    private void reverse(int[] num, int i) {
+        for (int j = i; j < (num.length - i) / 2 + i; j++) {
+            swap(num, j, num.length + i - j - 1);
+        }
+    }
+    
+    private void swap(int[] num, int i, int j) {
+        int temp = num[i];
+        num[i] = num[j];
+        num[j] = temp;
+    }
+
+```
+
 
 <br>
 <br>
@@ -4211,6 +4231,41 @@ Given the following matrix:
          return res;
     }
 
+```
+
+<br>
+
+**Recursive solution**:
+
+```java
+  public int[] spiral(int[][] matrix) {
+    int[] res = new int[matrix.length * matrix.length];
+    spiral(res, matrix, 0, matrix.length, 0);
+    return res;
+  }
+  
+  public void spiral(int[] res, int[][] matrix, int offset, int size, int count) {
+    if (size == 0) {
+      return;
+    }
+    if (size <= 1) {
+      res[count++] = matrix[offset][offset];
+      return;
+    }
+    for (int i = 0; i < size - 1; i++) {
+      res[count++] = matrix[offset][i + offset];
+    }
+    for (int i = 0; i < size - 1; i++) {
+      res[count++] = matrix[offset + i][offset + size - 1];
+    }
+    for (int i = size - 1; i >= 1; i--) {
+      res[count++] = matrix[offset + size - 1][offset + i];
+    }
+    for (int i = size - 1; i >= 1; i--) {
+      res[count++] = matrix[offset + i][offset];
+    }
+    spiral(res, matrix, offset + 1, size - 2, count);
+  }
 ```
 
 <br>
@@ -9554,8 +9609,14 @@ public String reverseWords(String input) {
 }
 
 ```
+
+<br>
+
+**Related**: 
 <br>
 <br>
+
+
 
 ###155 Min Stack
 >Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
