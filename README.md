@@ -163,6 +163,7 @@
 * [4 Longest Common Substring](#4-longest-common-substring)
 * [5 Insert in Sorted Linked List](#5-insert-in-sorted-linked-list)
 * [6 Is Bipartite](#6-is-bipartite)
+* [7 Lowest Common Ancestor](#7-lowest-common-ancestor)
 
 
 
@@ -12538,6 +12539,42 @@ public class Solution {
   }
 }
 ```
+
+<br>
+<br>
+###7 Lowest Common Ancestor
+
+>Given two nodes in a binary tree, find their lowest common ancestor.
+
+**Idea**: Use recursion
+
+1) base case : root == null, root == one or root == two
+2) expect from left child : left child returns one or two
+   expect from right child : right child returns one or two.
+3) In current level: 
+    a. if left child returns one or two and right child returns one or two, indicates that we have found the lowest common ancester, returns root.
+    b. if one side returns one or two, return the not null one.
+ 
+
+
+```java
+  public TreeNode lowestCommonAncestor(TreeNode root,
+      TreeNode one, TreeNode two) {
+    if (root == null) {
+      return null;
+    }
+    if (root == one || root == two) {
+      return root;
+    }
+    TreeNode left = lowestCommonAncestor(root.left, one, two);
+    TreeNode right = lowestCommonAncestor(root.right, one, two);
+    if (left != null && right != null) {
+      return root;
+    }
+    return left == null ? right : left;
+  }
+```
+
 
 
 
