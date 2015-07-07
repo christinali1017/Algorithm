@@ -4235,7 +4235,51 @@ Given the following matrix:
 
 <br>
 
-**Recursive solution**:
+**Another more straightforward way**: M * N iterarive
+
+```java
+  public List<Integer> spiral(int[][] matrix) {
+    List<Integer> res = new ArrayList<Integer>();
+    if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+      return res;
+    }
+    int left = 0;
+    int right = matrix[0].length - 1;
+    int top = 0;
+    int bottom = matrix.length - 1;
+    while (left < right && top < bottom) {
+      for (int i = left; i <= right; i++) {
+        res.add(matrix[top][i]);
+      }
+      for (int i = top + 1; i <= bottom; i++) {
+        res.add(matrix[i][right]);
+      }
+      for (int i = right - 1; i >= left; i--) {
+        res.add(matrix[bottom][i]);
+      }
+      for (int i = bottom - 1; i >= top + 1; i--) {
+        res.add(matrix[i][left]);
+      }
+      left++;
+      right--;
+      top++;
+      bottom--;
+    }
+    if (left == right && top <= bottom) {
+      for (int i = top; i <= bottom; i++) {
+        res.add(matrix[i][left]);
+      }
+    } else if (top == bottom && left <= right) {
+      for (int i = left; i <= right; i++) {
+        res.add(matrix[top][i]);
+      }
+    }
+    return res;
+  }
+```
+<br>
+
+**Recursive solution**: handle N* N 
 
 ```java
   public int[] spiral(int[][] matrix) {
