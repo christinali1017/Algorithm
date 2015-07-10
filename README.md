@@ -3490,8 +3490,54 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
     }
 
 ```
-
 <br>
+
+**Similar solution**:
+```java
+
+  public int minJump(int[] array) {
+    // write your solution here
+    int res = 0;
+    int currentMax = 0;
+    int max = 0;
+    for (int i = 0; i < array.length && i <= max; i++) {
+      if (currentMax < i) {
+        res++;
+        currentMax = max;
+      }
+      max = Math.max(max, array[i] + i);
+    } 
+    return max < array.length - 1 ? -1 : res;
+  }
+```
+<br>
+**Related: min steps to jump out of the array**
+**Idea**: Bsed on the solution in jump game two, we need to check if the ma
+
+
+
+```java
+public int minJump(int[] array) {
+    int res = 0;
+    int currentMax = 0;
+    int max = 0;
+    for (int i = 0; i < array.length && i <= max; i++) {
+      if (currentMax < i) {
+        res++;
+        currentMax = max;
+      }
+      if (currentMax > array.length) {
+    	  return res;
+      }
+      max = Math.max(max, array[i] + i);
+    } 
+    return max <= array.length - 1 ? -1 : (currentMax >= array.length ? res : res + 1);
+  }
+
+
+```
+
+
 <br>
 
 
