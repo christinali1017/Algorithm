@@ -3467,7 +3467,7 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
 </pre>
 <br>
 
-**Idea**: The basic idea is same with Jump Game. Difference is that in this problem we need to calculate the optimal steps. How can We get the minimum steps? The idea is that we only increase steps when we found that the **current position i is greater than than the previous step max**, which means that if you want to reach further, you need to increase steps.  
+**Idea**: The basic idea is same with Jump Game. Difference is that in this problem we need to calculate the optimal steps. How can We get the minimum steps? The idea is that we only increase steps when we found that the **current position i is greater than the previous step max**, which means that if you want to reach further, you need to increase steps.  
 
 
 **Java code**:
