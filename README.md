@@ -3512,7 +3512,9 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
 ```
 <br>
 **Related: min steps to jump out of the array**
-**Idea**: Bsed on the solution in jump game two, we need to check if the ma
+**Idea**: Bsed on the solution in jump game two, we need to check if the max can reach to the end of array. But this time we need to compare if max <= array.length - 1, because we need to jump out of array.
+
+Also, we need to return the min steps to jump out the array, thus we need to check if based on the min steps, if we can reach out to the end of the array. 
 
 
 
