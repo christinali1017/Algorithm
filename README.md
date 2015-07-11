@@ -128,6 +128,7 @@
 * [158 Read N Characters Given Read4 II - Call multiple times](#158-read-n-characters-given-read4-ii-call-multiple-times) 
 * [159 Longest String with At Most Two Distinct Characters](#159-longest-string-with-at-most-two-distinct-characters)
 * [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
+* [161 One edit distance](#161-one-edit-distance)
 * [162 Find Peak Element](#162-find-peak-element)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 * [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
@@ -3496,7 +3497,6 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
 ```java
 
   public int minJump(int[] array) {
-    // write your solution here
     int res = 0;
     int currentMax = 0;
     int max = 0;
@@ -3512,7 +3512,7 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
 ```
 <br>
 **Related: min steps to jump out of the array**
-**Idea**: Bsed on the solution in jump game two, we need to check if the max can reach to the end of array. But this time we need to compare if max <= array.length - 1, because we need to jump out of array.
+**Idea**: Based on the solution in jump game two, we need to check if the max can reach to the end of array. But this time we need to compare if max <= array.length - 1, because we need to jump out of array.
 
 Also, we need to return the min steps to jump out the array, thus we need to check if based on the min steps, if we can reach out to the end of the array. 
 
@@ -10276,6 +10276,93 @@ Solution2:
 <br>
 
 
+###161 One edit distance
+
+>Given two string, after one edit, if they equals, return true, otherwise return false. 
+
+**Idea**:
+
+- One edit contains: one delete, one add or one change.
+
+- if abs (word1.length() - word2.length()) > 1, return false
+
+- if length equals, then they should have one different character
+
+- if length1 < length2, then after find the first different character, the remain should be the same.
+
+```java
+
+    public boolean isOneEditDistance(String word1, String word2){
+        //After swap, word1.length() <= word2.length
+        String temp = word1.length() < word2.length() ? word1 : word2;
+        word2 = temp.equals(word1) ? word2 : word1;
+        word1 = temp.equals(word1) ? word1 : temp;
+        
+        int len1 = word1.length();
+        int len2 = word2.length();
+        
+        if (len2 > len1+1) {
+            return false;
+        }
+        int i = 0;
+        while (i < len1 && word1.charAt(i) == word2.charAt(i)) {
+            i++;
+        }
+        if (i == len1) {
+            return (len2-len1) == 1;
+        }
+        if(len1 == len2) {
+            i++;
+        }
+        
+        /* if two len equals, two of them start from i+1, if not equals, word2 start from i+1*/
+        while(i < len1 && word1.charAt(i) == word2.charAt(i+len2-len1)) {
+            i++;
+        }
+        return i == len1;
+    }
+
+```
+
+
+<br>
+
+**Related**: Edit distance
+
+> Given two strings, return the minimum edits to make them equal.
+
+**Idea**:
+
+- Base case: i = 0 , arr[i][j] = j
+             j = 0, arr[i][j] = i
+
+- induction: arr[i][j] = arr[i-1][j-1] if one[i-1] = two[j-1] otherwise, arr[i][j] = min(arr[i-1][j-1], arr[i-1][j], arr[i][j-1]) + 1
+
+```java
+  public int editDistance(String one, String two) {
+    int[][] arr = new int[one.length() + 1][two.length() + 1];
+    for (int i = 0; i <= one.length(); i++) {
+      for (int j = 0; j <= two.length(); j++) {
+        //base case
+        if (i == 0) {
+          arr[i][j] = j;
+        } else if (j == 0) {
+          arr[i][j] = i;
+        } else if (one.charAt(i - 1) == two.charAt(j - 1)) {
+          arr[i][j] = arr[i - 1][j - 1];
+        } else {
+          int min = Math.min(arr[i - 1][j], arr[i][j - 1]);
+          arr[i][j] = Math.min(min, arr[i - 1][j - 1]) + 1;
+        }
+      }
+    }
+    return arr[one.length()][two.length()];
+  }
+
+```
+
+<br>
+<br>
 
 ###162 Find Peak Element
 
