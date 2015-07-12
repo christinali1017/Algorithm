@@ -11174,7 +11174,107 @@ public int numIslands(char[][] grid) {
 ```
 
 
+<br>
 
+
+**Related**: Longest 1s
+
+>Given an array containing only 0s and 1s, find the length of the longest subarray of consecutive 1s.
+
+**Idea**: One-d dp. 
+
+
+```java
+  public int longest(int[] array) {
+    int[] arr = new int[array.length + 1];
+    int res = 0;
+    for (int i = 1; i <= array.length; i++) {
+      if (array[i - 1] == 0) {
+        arr[i] = 0;
+      } else {
+        arr[i] = arr[i - 1] + 1;
+        res = Math.max(res, arr[i]);
+      }
+    }
+    return res;
+  }
+
+```
+
+<br>
+
+**Related**: Longest cross of 1s
+
+>Given a 2d grid map of '1's and 0s, find the largest cross which contains only 1s, with the same arm lengths and the four arms joining at the central point.
+
+
+**Idea**: For each row and columns, calcualte the longest 1s, then we take the minimum of left/right/up/down.
+
+
+
+```java
+  public int largest(int[][] matrix) {
+    int m = matrix.length;
+    int n = m > 0 ? matrix[0].length : 0;
+    //calculate left
+    int[][] left = new int[m][n + 1];
+    for (int i = 0; i < m; i++) {
+      for (int j = 1; j <= n; j++) {
+        if (matrix[i][j - 1] == 0) {
+          left[i][j] = 0;
+        } else {
+          left[i][j] = left[i][j - 1] + 1;
+        }
+      }
+    }
+    //calculate right
+    int[][] right = new int[m][n + 1];
+    for (int i = 0; i < m; i++) {
+      for (int j = n - 1; j >= 0; j--) {
+        if (matrix[i][j] == 0) {
+          right[i][j] = 0;
+        } else {
+          right[i][j] = right[i][j + 1] + 1;
+        }
+      }
+    }
+    
+    //calculate up
+    int[][] up = new int[m + 1][n];
+    for (int i = 0; i < n; i++) {
+      for (int j = 1; j <= m; j++) {
+        if (matrix[j - 1][i] == 0) {
+          up[j][i] = 0;
+        } else {
+          up[j][i] = up[j - 1][i] + 1;
+        }
+      }
+    }
+    
+    //calculate down
+    int[][] down = new int[m + 1][n];
+    for (int i = 0; i < n; i++) {
+      for (int j = m - 1; j >= 0; j--) {
+        if (matrix[j][i] == 0) {
+          down[j][i] = 0;
+        } else {
+          down[j][i] = down[j + 1][i] + 1;
+        }
+      }
+    }
+    
+    int res = 0;
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        int minRow = Math.min(left[i][j + 1], right[i][j]);
+        int minCol = Math.min(up[i + 1][j], down[i][j]);
+        res = Math.max(res, Math.min(minRow, minCol));
+      }
+    }
+    return res;
+  }
+
+```
 <br>
 <br>
 
