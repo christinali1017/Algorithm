@@ -4217,6 +4217,42 @@ the contiguous subarray [4,−1,2,1] has the largest sum = 6.
 
 
 <br>
+
+**Related**: maxinum submatrix sum:
+
+
+**Idea**: 
+
+For each row, we calculate the sum of the rows below the current row. Then apply the maximum subarray to the compressed rows.
+
+**Time** : O(n ^ 3)
+
+```java
+  public int largest(int[][] matrix) {
+    int res = Integer.MIN_VALUE;
+    for (int i = 0; i < matrix.length; i++) {
+      int[] compressedRow = new int[matrix[0].length];
+      for (int j = i; j < matrix.length; j++) {
+        for(int k = 0; k < compressedRow.length; k++) {
+          compressedRow[k] += matrix[j][k];
+        }
+        res = Math.max(res, largestSum(compressedRow));
+      }
+    }
+    return res;
+  }
+  
+  private int largestSum(int[] array) {
+    int local = array[0];
+    int res = array[0];
+    for (int i = 1; i < array.length; i++) {
+      local = Math.max(array[i], local + array[i]);
+      res = Math.max(res, local);
+    }
+    return res;
+  }
+```
+<br>
 <br>
 
 
