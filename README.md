@@ -11275,6 +11275,53 @@ public int numIslands(char[][] grid) {
   }
 
 ```
+
+<br>
+
+**Related**: Largest X Of 1s
+
+```java
+  public int largest(int[][] matrix) {
+    int m = matrix.length;
+    int n = m > 0 ? matrix[0].length : 0;
+    //calculate left
+    int[][] left = new int[m][n];
+    int[][] up = new int[m][n];
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        if (matrix[i][j] == 1) {
+          left[i][j] = getNum(left, i - 1, j - 1, m, n) + 1;
+          up[i][j] = getNum(up, i - 1, j + 1, m, n) + 1;
+        }
+      }
+    }
+    //calculate down
+    int[][] right = new int[m][n];
+    int[][] down = new int[m][n];
+    for (int i = m - 1; i >= 0; i--) {
+      for (int j = n - 1; j >= 0; j--) {
+        if (matrix[i][j] == 1) {
+          right[i][j] = getNum(right, i + 1, j + 1, m, n) + 1;
+          down[i][j] = getNum(down, i + 1, j - 1, m, n) + 1;
+        }
+      }
+    }
+    
+    int res = 0;
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        int minRow = Math.min(left[i][j], right[i][j]);
+        int minCol = Math.min(up[i][j], down[i][j]);
+        res = Math.max(res, Math.min(minRow, minCol));
+      }
+    }
+    return res;
+  }
+  
+  private int getNum(int[][] arr, int i, int j, int m, int n) {
+    return i < 0 || j < 0 || i >= m || j >= n ? 0 : arr[i][j];
+  }
+```
 <br>
 <br>
 
