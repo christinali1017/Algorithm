@@ -165,6 +165,7 @@
 * [5 Insert in Sorted Linked List](#5-insert-in-sorted-linked-list)
 * [6 Is Bipartite](#6-is-bipartite)
 * [7 Lowest Common Ancestor](#7-lowest-common-ancestor)
+* [8 Median tracker](#8-median-tracker)
 
 
 
@@ -12896,3 +12897,53 @@ public class Solution {
 
 
 
+<br>
+<br>
+
+###8 Median Tracker
+> Unlimited flow of numbers, return median sofar.
+
+**Idea**: minHeap and maxHeap
+
+minHeap stores the larger half
+
+MaxHeap stores the smaller half
+
+size difference of minHeap and maxHeap should <= 1.
+
+**Solution**:
+
+```java
+  private PriorityQueue<Integer> minQue;
+  private PriorityQueue<Integer> maxQue;
+  public Solution() {
+    minQue = new PriorityQueue<Integer>(); // for larger half
+    maxQue = new PriorityQueue<Integer>(10, Collections.reverseOrder()); // for smaller half
+  }
+  
+  public void read(int value) {
+    // minQue.size >= maxQue.size, minQue.size - maxQue.size <= 1
+    if (minQue.isEmpty() || value >= minQue.peek()) {
+      minQue.offer(value);
+    } else {
+      maxQue.offer(value);
+    }
+    //if maxQue.size > minQue.size, poll one from maxQue to minQue
+    if (maxQue.size() > minQue.size()) {
+      minQue.offer(maxQue.poll());
+    } else if (minQue.size() - maxQue.size() > 1) {
+      maxQue.offer(minQue.poll());
+    }
+  }
+  
+  public Double median() {
+    int size = minQue.size() + maxQue.size();
+    if (size == 0) {
+      return null;
+    } else if (size % 2 == 0) {
+      return (minQue.peek() + maxQue.peek())/(double)2;
+    } else {
+      return (double)minQue.peek();
+    }
+  }
+```
