@@ -153,6 +153,8 @@
 * [210 Course Schedule II](#210-course-schedule-ii)
 * [216 Combination Sum III](#216-combination-sum-iii)
 * [222 Count Complete Tree Nodes](#222-count-complete-tree-nodes)
+* [237 Delete Node in a Linked List](#237-delete-node-in-a-linked-list)
+* [238 Product of Array Except Self](#238-product-of-array-except-self)
 
 
 
@@ -166,6 +168,9 @@
 * [6 Is Bipartite](#6-is-bipartite)
 * [7 Lowest Common Ancestor](#7-lowest-common-ancestor)
 * [8 Median tracker](#8-median-tracker)
+* [9 95 Percentile](#9-95-percentile)
+* [10 Perfect shuffle](#10-perfect-shuffle)
+* [11 Reservoir sample](#11-reservoir-sample)
 
 
 
@@ -12212,7 +12217,67 @@ The input prerequisites is a graph represented by a list of edges, not adjacency
 ```
 
 
+###216 Combination Sum III
 
+> Find all possible combinations of k numbers that add up to a number n, given that only numbers from **1 to 9** can be used and each combination should be a **unique set of numbers**.
+
+>Ensure that numbers within the set are **sorted in ascending order**.
+
+<pre>
+
+Example 1:
+
+Input: k = 3, n = 7
+
+Output:
+
+[[1,2,4]]
+
+Example 2:
+
+Input: k = 3, n = 9
+
+Output:
+
+[[1,2,6], [1,3,5], [2,3,4]]
+
+</pre>
+
+
+**Idea**: This problem is the combination of [40 Combination Sum II](https://github.com/wishyouhappy/leetcode#40-combination-sum-ii) and [77 Combinations](https://github.com/wishyouhappy/leetcode#77-combinations). In the recursion termination condition, we need to take care of bothe the sum and number of elements. 
+
+
+**Solution**:
+
+
+```java
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if (k * 9 < n) {
+            return res;
+        }
+        combinationSum3(k, n, 1, res, new ArrayList<Integer>(), 0);
+        return res;
+    }
+    
+    public void combinationSum3(int k, int n, int start, List<List<Integer>> res, List<Integer> item, int sum) {
+        if (item.size() == k && sum == n) {
+            res.add(new ArrayList<Integer>(item));
+            return;
+        } 
+        if (sum >= n || item.size()>= k) {
+            return;
+        }
+        for (int i = start; i <= 9; i++) {
+            item.add(i);
+            combinationSum3(k, n, i + 1, res, item, sum + i);
+            item.remove(item.size() - 1);
+        }
+       
+    }
+```
+<br>
+<br>
 
 
 
@@ -12329,65 +12394,78 @@ public int getHeight(TreeNode root) {
 <br>
 <br>
 
-###216 Combination Sum III
+###237 Delete Node in a Linked List
 
-> Find all possible combinations of k numbers that add up to a number n, given that only numbers from **1 to 9** can be used and each combination should be a **unique set of numbers**.
+>Write a function to delete a node (except the tail) in a singly linked list, given only access to that node.
 
->Ensure that numbers within the set are **sorted in ascending order**.
+>Supposed the linked list is 1 -> 2 -> 3 -> 4 and you are given the third node with value 3, the linked list should become 1 -> 2 -> 4 after calling your function.
 
-<pre>
+**Idea**: Copy the next.val to the deleteNode.val, then point deleteNode.next = deleteNode.next.next.
 
-Example 1:
-
-Input: k = 3, n = 7
-
-Output:
-
-[[1,2,4]]
-
-Example 2:
-
-Input: k = 3, n = 9
-
-Output:
-
-[[1,2,6], [1,3,5], [2,3,4]]
-
-</pre>
-
-
-**Idea**: This problem is the combination of [40 Combination Sum II](https://github.com/wishyouhappy/leetcode#40-combination-sum-ii) and [77 Combinations](https://github.com/wishyouhappy/leetcode#77-combinations). In the recursion termination condition, we need to take care of bothe the sum and number of elements. 
 
 
 **Solution**:
 
-
 ```java
-    public List<List<Integer>> combinationSum3(int k, int n) {
-        List<List<Integer>> res = new ArrayList<List<Integer>>();
-        if (k * 9 < n) {
-            return res;
-        }
-        combinationSum3(k, n, 1, res, new ArrayList<Integer>(), 0);
-        return res;
-    }
-    
-    public void combinationSum3(int k, int n, int start, List<List<Integer>> res, List<Integer> item, int sum) {
-        if (item.size() == k && sum == n) {
-            res.add(new ArrayList<Integer>(item));
-            return;
-        } 
-        if (sum >= n || item.size()>= k) {
-            return;
-        }
-        for (int i = start; i <= 9; i++) {
-            item.add(i);
-            combinationSum3(k, n, i + 1, res, item, sum + i);
-            item.remove(item.size() - 1);
-        }
-       
+    public void deleteNode(ListNode node) {
+       if (node == null) {
+           return;
+       }
+       ListNode next = node.next;
+       if (next == null) {
+           node = null;
+       }
+       ListNode nextNext = next.next;
+       node.val = next.val;
+       node.next = nextNext;
     }
 ```
+
+<br>
+<br>
+
+
+###238 Product of Array Except Self
+
+> Given an array of n integers where n > 1, nums, return an array output such that output[i] is equal to the product of all the elements of nums except nums[i].
+
+>Solve it without division and in O(n).
+
+>For example, given [1,2,3,4], return [24,12,8,6].
+
+>Follow up:
+>Could you solve it with constant space complexity? (Note: The output array does not count as extra space for the purpose of space complexity analysis.)
+
+**idea**: O(n) space solution is pretty straightforward. 
+
+We first calculate the product left of A[i] except A[i], then calculate the product right of A[i] except A[i]. Then we make product of them, we can get the product of array except self.
+
+What about O(1) space solution?
+
+We can use a variable to record the product left of A[i] or the product right of A[i] use a variable.
+
+Here is the O(1) space solution below.
+
+
+**Solution**: O(1) space
+
+```java
+    public int[] productExceptSelf(int[] nums) {
+        int[] res = new int[nums.length];
+        res[0] = 1;
+        for (int i = 1; i < nums.length; i++) {
+            res[i] = res[i -1] * nums[i - 1];
+        }
+        int pre = 1;
+        for (int i = nums.length - 2; i >= 0; i--) {
+            pre *= nums[i + 1];
+            res[i] = res[i] * pre;
+        }
+        return res;
+    }
+```
+
+
 <br>
 <br>
 
@@ -12947,3 +13025,100 @@ size difference of minHeap and maxHeap should <= 1.
     }
   }
 ```
+
+
+<br>
+
+<br>
+###9 95 Percentile
+
+>Find 95 percentile. Suppose the maximum length  is 4096 and lengths is not null and not empty.
+
+**Idea**:
+
+Count sort, then find 95% or 5%.
+
+**Solution**:
+
+```java
+  public int percentile95(List<Integer> lengths) {
+    int[] arr = new int[4097];
+    for (Integer i: lengths) {
+      arr[i]++;
+    }
+    int percentile = (int)(0.05 * lengths.size());
+    int count = 0;
+    int res = 4097;
+    while (count <= percentile) {
+      count += arr[--res];
+    }
+    return res;
+  }
+```
+
+
+<br>
+<br>
+
+###10 Perfect shuffle
+
+> shuffle the array such that all permutations are equally likely to be generated.
+
+**Idea**: Random chooce a index, swap it with the current element. So the probability will be the same.
+
+**Solution**:
+
+
+```java
+
+  public void shuffle(int[] array) {
+    for (int i = array.length - 1; i >= 0; i--) {
+      int random = (int) (Math.random() * (i + 1));
+      swap(array, i, random);
+    }
+  }
+  
+  private void swap(int[] array, int i, int j) {
+    int temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+
+```
+
+<br>
+<br>
+
+
+###11 Reservoir sample
+>Unlimited flow, return a random number read so far.
+
+**Idea**: Save it at probability 1/n.
+
+**Solution**:
+
+```java
+public class Solution {
+  private Integer res;
+  private int count;
+  public Solution() {
+    res = null;
+    count = 0;
+  }
+  
+  public void read(int value) {
+    count++;
+    int temp = (int) (Math.random() * count);
+    if (temp == 0) {
+      res = value;
+    }
+  }
+  
+  
+  public Integer sample() {
+    return res;
+  }
+}
+```
+<br>
+<br>
