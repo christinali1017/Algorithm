@@ -3,30 +3,6 @@ package leetcode;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-/*
- * Clone an undirected graph. Each node in the graph contains a label and a list of its neighbors.
-
-
-	OJ's undirected graph serialization:
-	Nodes are labeled uniquely.
-	
-	We use # as a separator for each node, and , as a separator for node label and each neighbor of the node.
-	As an example, consider the serialized graph {0,1,2#1,2#2,2}.
-	
-	The graph has a total of three nodes, and therefore contains three parts as separated by #.
-	
-	First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
-	Second node is labeled as 1. Connect node 1 to node 2.
-	Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
-	Visually, the graph looks like the following:
-
-       1
-      / \
-     /   \
-    0 --- 2
-         / \
-         \_/
- */
 import java.util.Set;
 
 /*
@@ -42,59 +18,61 @@ public class CloneGraph {
 	/*
 	 * BFS
 	 */
-	  public static UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
-		  if(node == null) return null;
-		  UndirectedGraphNode copyNode = new UndirectedGraphNode(node.label);
-	      LinkedList<UndirectedGraphNode> queue = new LinkedList<UndirectedGraphNode>();
-	      HashMap<UndirectedGraphNode,UndirectedGraphNode> visited = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
-	      
-	      queue.add(node);
-	      visited.put(node, copyNode);
-	      UndirectedGraphNode temp = null;
-	      UndirectedGraphNode copyTemp = null;
-	      while(!queue.isEmpty()){
-	    	  temp = queue.pop();
-	    	  for(UndirectedGraphNode n : temp.neighbors){
-	    		  if(!visited.containsKey(n)){
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if (node == null) {
+            return node;
+        }
+		 UndirectedGraphNode copy = new UndirectedGraphNode(node.label);
+	     Queue<UndirectedGraphNode> queue = new LinkedList<UndirectedGraphNode>();
+	     Map<UndirectedGraphNode,UndirectedGraphNode> map = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
+	     queue.add(node);
+	     map.put(node, copy);
+	     UndirectedGraphNode temp = null;
+	     UndirectedGraphNode copyTemp = null;
+	     while (!queue.isEmpty()) {
+	    	  temp = queue.poll();
+	    	  for (UndirectedGraphNode n : temp.neighbors) {
+	    		  if (!map.containsKey(n)) {
 	    			  copyTemp = new UndirectedGraphNode(n.label);
-	    			  visited.put(n, copyTemp);
-	    			  visited.get(temp).neighbors.add(copyTemp);
+	    			  map.put(n, copyTemp);
+	    			  map.get(temp).neighbors.add(copyTemp);
 	    			  queue.add(n);
-	    		  }else
-	    			  visited.get(temp).neighbors.add(visited.get(n));
-
+	    		  } else { 
+	    			  map.get(temp).neighbors.add(map.get(n));
+	    		  }
 	    	  }
-	      }
-		  return copyNode;
-	  }
+	    }
+		return copy;
+    }
 	
 	/*
 	 * Recursive, DFS
 	 */
-	  public static UndirectedGraphNode cloneGraph1(UndirectedGraphNode node) {
-		  if(node == null) return null;
-		  UndirectedGraphNode copyNode = new UndirectedGraphNode(node.label);
-	      HashMap<UndirectedGraphNode,UndirectedGraphNode> visited = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
-		  graphDFS(node, copyNode , visited);
-		  return copyNode;
-	    }
-	  
-	  public static void graphDFS(UndirectedGraphNode node, UndirectedGraphNode copyNode,HashMap<UndirectedGraphNode,UndirectedGraphNode> visited){
-		  if(node == null) return;
-		  if(!visited.containsKey(node)) visited.put(node, copyNode);
-	        for(UndirectedGraphNode n : node.neighbors){
-        		if(visited.containsKey(n)){
-        			 visited.get(node).neighbors.add(visited.get(n));
-        		}else{
-	        		UndirectedGraphNode copyTemp = new UndirectedGraphNode(n.label);
-	    			visited.put(n, copyTemp);
-	    			visited.get(node).neighbors.add(copyTemp);
-	        		graphDFS(n, copyTemp,visited);	
-        		}
-	        	
-	        }
-	  }
-	  
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if (node == null) {
+            return node;
+        }
+        UndirectedGraphNode copy = new UndirectedGraphNode(node.label);
+        Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
+        map.put(node, copy);
+        cloneGraph(node, copy, map);
+        return copy;
+    }
+    private void cloneGraph(UndirectedGraphNode node, UndirectedGraphNode copy, Map<UndirectedGraphNode, UndirectedGraphNode> map) {
+        if (node == null) {
+            return;
+        }
+        for (UndirectedGraphNode cur : node.neighbors) {
+            if (!map.containsKey(cur)) {
+                UndirectedGraphNode curCopy = new UndirectedGraphNode(cur.label);
+                map.put(cur, curCopy);
+                copy.neighbors.add(curCopy);
+                cloneGraph(cur, curCopy, map);
+            } else {
+                 copy.neighbors.add(map.get(cur));
+            }
+        }
+    }
 	  
 	  /*
 	   * DFS print

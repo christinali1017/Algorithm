@@ -111,7 +111,8 @@
 * [126 Word Ladder](#126-word-ladder)
 * [127 Word Ladder II](#127-word-ladder-ii)
 * [131 Parlindrome partitioning](#131-parlindrome-partitioning)
-* [132 Parlindrome partitioning](#132-parlindrome-partitioning-ii)
+* [132 Parlindrome partitioning II](#132-parlindrome-partitioning-ii)
+* [133 Clone Graph](#133-clone-graph)
 * [135 Candy](#135-candy)
 * [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
 * [141 Linked List Cycle](#141-linked-list-cycle)
@@ -179,6 +180,7 @@
 * [15 Move 0s to the end](#15-move-0s-to-the-end)
 * [16 Largest and Samllest](#16-largest-and-smallest)
 * [17 Sort in specific order](#17-sort-in-specific-order)
+* [18 Closest number in binary search tree](#18-closest-number-in-binary-search-tree)
 
 
 
@@ -1801,6 +1803,64 @@ method2: each time merge two lists, until all lists are merged.
 	}
 
 ```
+
+<br>
+
+
+**Related**: Merge k sorted array.
+
+**Idea**: for array, there is a difference with linkedlist, since linkedlist has the next pointer, which let us easily find the next element. For array, we need to record the index.
+
+**Solution**:
+
+
+```java
+public class Solution {
+  class Element {
+    int row;
+    int col;
+    int val;
+    Element(int row, int col, int val) {
+      this.row = row;
+      this.col = col;
+      this.val = val;
+    }
+  }
+  public int[] merge(int[][] arrayOfArrays) {
+    if (arrayOfArrays == null) {
+      return null;
+    }
+    if (arrayOfArrays.length == 0) {
+      return new int[0];
+    }
+    PriorityQueue<Element> queue = new PriorityQueue<Element>(arrayOfArrays.length, new Comparator<Element>() {
+      public int compare(Element e1, Element e2) {
+        return e1.val - e2.val;
+      }
+    });
+    int len = 0;
+    for (int i = 0; i < arrayOfArrays.length; i++) {
+      if (arrayOfArrays[i] != null && arrayOfArrays[i].length != 0) {
+        len += arrayOfArrays[i].length;
+        queue.offer(new Element(i, 0, arrayOfArrays[i][0]));
+      }
+    }
+    int[] res = new int[len];
+    int i = 0;
+    while(!queue.isEmpty()) {
+      Element e = queue.poll();
+      res[i++] = e.val;
+      if (e.col + 1 < arrayOfArrays[e.row].length) {
+        queue.offer(new Element(e.row, e.col + 1, arrayOfArrays[e.row][e.col + 1]));
+      }
+    }
+    return res;
+  }
+}
+
+```
+
+
 
 
 
@@ -8545,6 +8605,41 @@ public int maxPathSum(TreeNode root, int[] maxSum) {
     return root.val + Math.max(left, right);
 }
 ```
+
+<br>
+
+**Related**: max path sum from leaf to leaf
+
+
+```java
+  public int maxPathSum(TreeNode root) {
+    if (root == null) {
+      return Integer.MIN_VALUE;
+    }
+    int[] max = new int[1];
+    max[0] = Integer.MIN_VALUE;
+    maxPathSum(root, max);
+    return max[0];
+  }
+  private int maxPathSum(TreeNode root, int[] max) {
+    if (root == null) {
+      return 0;
+    }
+    int left = maxPathSum(root.left, max);
+    int right = maxPathSum(root.right, max);
+    int temp = left + right + root.key;
+    if (temp > max[0] && root.left != null && root.right != null) {
+      max[0] = temp;
+    }
+    if (root.left == null) {
+      return right + root.key;
+    } else if (root.right == null) {
+      return left + root.key;
+    } else {
+      return Math.max(left, right) + root.key;
+    }
+  }
+```
 <br>
 <br>
 
@@ -8955,10 +9050,101 @@ public int minCut(String s) {
 }
 
 ```
+<br>
+<br>
+
+###133 Clone Graph
+
+>Clone an undirected graph. Each node in the graph contains a label and a list of its neighbors.
 
 
+>OJ's undirected graph serialization:
+Nodes are labeled uniquely.
+
+>We use # as a separator for each node, and , as a separator for node label and each neighbor of the node.
+As an example, consider the serialized graph {0,1,2#1,2#2,2}.
+
+>The graph has a total of three nodes, and therefore contains three parts as separated by #.
+
+>First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
+Second node is labeled as 1. Connect node 1 to node 2.
+Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
+Visually, the graph looks like the following:
+
+<pre>
+       1
+      / \
+     /   \
+    0 --- 2
+         / \
+         \_/
+
+</pre>
+
+**Idea**: We need a map to record if the node has already been copyed, if it is, then we just need to record the neighbors relationship for it.
+
+**Solution 1**: DFS
 
 
+```java
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if (node == null) {
+            return node;
+        }
+        UndirectedGraphNode copy = new UndirectedGraphNode(node.label);
+        Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
+        map.put(node, copy);
+        cloneGraph(node, copy, map);
+        return copy;
+    }
+    private void cloneGraph(UndirectedGraphNode node, UndirectedGraphNode copy, Map<UndirectedGraphNode, UndirectedGraphNode> map) {
+        if (node == null) {
+            return;
+        }
+        for (UndirectedGraphNode cur : node.neighbors) {
+            if (!map.containsKey(cur)) {
+                UndirectedGraphNode curCopy = new UndirectedGraphNode(cur.label);
+                map.put(cur, curCopy);
+                copy.neighbors.add(curCopy);
+                cloneGraph(cur, curCopy, map);
+            } else {
+                 copy.neighbors.add(map.get(cur));
+            }
+        }
+    }
+```
+
+**Solution 2**: BFS
+
+```java
+public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+    if (node == null) {
+        return node;
+    }
+     UndirectedGraphNode copy = new UndirectedGraphNode(node.label);
+     Queue<UndirectedGraphNode> queue = new LinkedList<UndirectedGraphNode>();
+     Map<UndirectedGraphNode,UndirectedGraphNode> map = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
+     queue.add(node);
+     map.put(node, copy);
+     UndirectedGraphNode temp = null;
+     UndirectedGraphNode copyTemp = null;
+     while (!queue.isEmpty()) {
+          temp = queue.poll();
+          for (UndirectedGraphNode n : temp.neighbors) {
+              if (!map.containsKey(n)) {
+                  copyTemp = new UndirectedGraphNode(n.label);
+                  map.put(n, copyTemp);
+                  map.get(temp).neighbors.add(copyTemp);
+                  queue.add(n);
+              } else { 
+                  map.get(temp).neighbors.add(map.get(n));
+              }
+          }
+    }
+    return copy;
+}
+
+```
 
 <br>
 <br>
@@ -13804,3 +13990,63 @@ Preprocess: We need a hashmap t record the index of each element in A2.
 ```
 <br>
 <br>
+
+
+###18 Closest number in binary search tree
+> Given a binary search tree and a target value, return the number that is closest to target.
+
+
+**Solution**:
+
+
+```java
+  public int closest(TreeNode root, int target) {
+    if (root == null) {
+      return -1;
+    }
+    int res = root.key;
+    while (root != null) {
+      if (Math.abs(target - root.key) < Math.abs(target - res)) {
+        res = root.key;
+      }
+      if (target > root.key) {
+        root = root.right;
+      } else if (target == root.key) {
+        return root.key;
+      } else {
+        root = root.left;
+      }
+    }
+    return res;
+  }
+
+```
+
+<br>
+
+**Related**: Largest Number Smaller In Binary Search Tree
+
+**Idea**: Update result only when go to the right subtree.
+
+**Solution**:
+
+
+```java
+  public int largestSmaller(TreeNode root, int target) {
+    if (root == null) {
+      return Integer.MIN_VALUE;
+    }
+    int res = Integer.MIN_VALUE;
+    while (root != null) {
+      if (target > root.key) {
+        res = root.key;
+        root = root.right;
+      } else {
+        root = root.left;
+      }
+    }
+    return res;
+  }
+
+```
+
