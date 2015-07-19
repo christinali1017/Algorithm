@@ -110,6 +110,8 @@
 * [124 Binary Tree Maximum Path Sum](#124-binary-tree-maximum-path-sum)
 * [126 Word Ladder](#126-word-ladder)
 * [127 Word Ladder II](#127-word-ladder-ii)
+* [131 Parlindrome partitioning](#131-parlindrome-partitioning)
+* [132 Parlindrome partitioning](#132-parlindrome-partitioning-ii)
 * [135 Candy](#135-candy)
 * [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
 * [141 Linked List Cycle](#141-linked-list-cycle)
@@ -158,7 +160,7 @@
 
 
 
-##Similar questions from other sources.
+###Others
 
 * [1 Search a 2D Matrix II](#1-search-a-2d-matrix-ii)
 * [2 First Bad Version](#2-first-bad-version)
@@ -8749,6 +8751,217 @@ All words contain only lowercase alphabetic characters.
 
 <br>
 <br>
+###131 Parlindrome partitioning
+
+>Given a string s, partition s such that every substring of the partition is a palindrome.
+
+>Return all possible palindrome partitioning of s.
+
+<pre>
+For example, given s = "aab",
+Return
+
+  [
+    ["aa","b"],
+    ["a","a","b"]
+  ]
+
+</pre>
+
+**Idea**:
+
+- Solution 1: Use recursion, each time, add one character, if is palindrome, go to the next recursive level.
+
+- Solution 2: Use dp to pre calculate isPalindrome for each substring i to j, then use the same recursive rule in method 1.
+
+**Time complexity**:
+
+- Solution 1:  worst case. T(n) = (n - 1)T(n - 1) + n * (n - 1), thus time is O(n!)
+
+- Solution 2: T(n) = (n - 1)T(n - 1), time complexity is O(n!) 
+
+**Solution 1**: recursion.
+
+```java
+    public List<List<String>> partition(String s) {
+        List<List<String>> res = new ArrayList<List<String>>();
+        if (s == null || s.length() == 0) {
+            return res;
+        }
+        partition(s, 0, new ArrayList<String>(), res);
+        return res;
+    }
+    
+    private void partition(String s, int start, List<String> cur, List<List<String>> res) {
+        if (start == s.length()) {
+            res.add(new ArrayList<String>(cur));
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = start; i < s.length(); i++) {
+            sb.append(s.charAt(i));
+            if (isPalindrome(sb.toString())) {
+                cur.add(sb.toString());
+                partition(s, i + 1, cur, res);
+                cur.remove(cur.size() - 1);
+            }
+        }
+    }
+    
+    private boolean isPalindrome(String s) {
+        if (s.length() == 0 || s.length() == 1) {
+            return true;
+        }
+        for (int i = 0, halfLen = s.length() / 2; i < halfLen; i++) {
+            if (s.charAt(i) != s.charAt(s.length() - i - 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+```
+
+**Solution 2**: dp:
+
+```java
+    public List<List<String>> partition(String s) {
+        List<List<String>> res = new ArrayList<List<String>>();
+        if (s == null || s.length() == 0) {
+            return res;
+        }
+        partition(s, 0, new ArrayList<String>(), res, getParlindromeArray(s));
+        return res;
+    }
+    
+    private void partition(String s, int start, List<String> cur, List<List<String>> res, boolean[][] isP) {
+        if (start == s.length()) {
+            res.add(new ArrayList<String>(cur));
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = start; i < s.length(); i++) {
+            sb.append(s.charAt(i));
+            if (isP[start][i]) {
+                cur.add(sb.toString());
+                partition(s, i + 1, cur, res, isP);
+                cur.remove(cur.size() - 1);
+            }
+        }
+    }
+    
+    private boolean[][] getParlindromeArray(String s) {
+        boolean[][] res = new boolean[s.length()][s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j <= i; j++) {
+                if (s.charAt(i) == s.charAt(j) && (i - j <= 2 || res[j + 1][i - 1])) {
+                    res[j][i] = true;
+                }
+            }
+        }
+        return res;
+    }
+
+```
+
+
+<br>
+<br>
+
+
+###132 Parlindrome partitioning II
+
+>Given a string s, partition s such that every substring of the partition is a palindrome.
+
+>Return the minimum cuts needed for a palindrome partitioning of s.
+
+>For example, given s = "aab",
+>Return 1 since the palindrome partitioning ["aa","b"] could be produced using 1 cut.
+
+**Idea**: From Parlindrome partitioning we know how to calcaulate all the possible solutions. If we just need to know the minimum cut numbers, we can use dp to solve the problem.
+
+- *Solution 1*, calculate the isPalindrome[i][j] use dp, which represents if substring(i, j) is parlindrome. Then use dp to calculate the minimum cut.
+
+cut[i] represents the number of cuts to cut the substring(0, i+1) to parlindrome. 
+
+Base case: cut[i] = i, every single character must be parlindrome.
+
+Induction rule: cut[i] = min(cut[i], cut[j - 1] + 1), if substring(j, i + 1) is parlindrome. 
+
+Note is j = 0, and isParlindrome[j][i] = true, then cut[i] = 0
+
+
+- *Solution 2*: combine the cut[] isParlindrome[][] together, then we only need n ^ 2, other then 2 * (n ^ 2) 
+
+**Solution 1**:
+
+```java
+public int minCut(String s) {
+    if (s == null || s.length() == 0) {
+        return 0;
+    }
+    boolean[][] isP = getParlindromeArray(s);
+    int[] cut = new int[s.length()];
+    for (int i = 0; i < s.length(); i++) {
+        cut[i] = i;
+        for (int j = 0; j <= i; j++) {
+            if (isP[j][i]) {
+                if (j > 0) {
+                    cut[i] = Math.min(cut[i], cut[j - 1] + 1);
+                } else {
+                    cut[i] = 0;
+                }
+            }
+        }
+    }
+    return cut[s.length() - 1];
+}
+private boolean[][] getParlindromeArray(String s) {
+    boolean[][] res = new boolean[s.length()][s.length()];
+    for (int i = 0; i < s.length(); i++) {
+        for (int j = 0; j <= i; j++) {
+            if (s.charAt(i) == s.charAt(j) && (i - j <= 2 || res[j + 1][i - 1])) {
+                res[j][i] = true;
+            }
+        }
+    }
+    return res;
+}
+
+```
+<br>
+**Solution 2**:
+
+```java
+public int minCut(String s) {
+    if (s == null || s.length() == 0) {
+        return 0;
+    }
+    boolean[][] isP = new boolean[s.length()][s.length()];
+    int[] cut = new int[s.length()];
+    for (int i = 0; i < s.length(); i++) {
+        cut[i] = i;
+        for (int j = 0; j <= i; j++) {
+            if (s.charAt(i) == s.charAt(j) && (i - j <= 2 || isP[j + 1][i - 1])) {
+                isP[j][i] = true;
+                if (j > 0) {
+                    cut[i] = Math.min(cut[i], cut[j - 1] + 1);
+                } else {
+                    cut[i] = 0;
+                }
+            }
+        }
+    }
+    return cut[s.length() - 1];
+}
+
+```
+
+
+
+
+
+<br>
+<br>
 
 
 ###135 Candy
@@ -13011,6 +13224,30 @@ public class Solution {
       node = node.parent;
     }
     return res;
+  }
+
+```
+
+<br>
+
+**Related**: Lowest common ancestor of k nodes.
+
+```java
+  public TreeNode lowestCommonAncestor(TreeNode root, List<TreeNode> nodes) {
+    if (root == null) {
+      return null;
+    }
+    for (TreeNode node : nodes) {
+      if (root == node) {
+        return root;
+      }
+    }
+    TreeNode left = lowestCommonAncestor(root.left, nodes);
+    TreeNode right = lowestCommonAncestor(root.right, nodes);
+    if (left != null && right != null) {
+      return root;
+    }
+    return left != null ? left : right;
   }
 
 ```
