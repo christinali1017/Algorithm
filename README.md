@@ -171,6 +171,13 @@
 * [9 95 Percentile](#9-95-percentile)
 * [10 Perfect shuffle](#10-perfect-shuffle)
 * [11 Reservoir sample](#11-reservoir-sample)
+* [12 Random7 Using Random5](#12-random7-using-random5)
+* [13 Random1000 using random5](#13-random1000-using-random5)
+* [14 Array deduplication](#14-array-deduplication)
+* [15 Move 0s to the end](#15-move-0s-to-the-end)
+* [16 Largest and Samllest](#16-largest-and-smallest)
+* [17 Sort in specific order](#17-sort-in-specific-order)
+
 
 
 
@@ -12972,9 +12979,41 @@ public class Solution {
   }
 ```
 
+<br>
 
+**Related**: What if the TreeNode has parant pointer?
 
+**Idea**: Calculate the height from root to two nodes, find the difference, then use these height to find their common ancestor.
 
+```java
+  public TreeNodeP lowestCommonAncestor(TreeNodeP one, TreeNodeP two) {
+    int heightOne = getHeight(one);
+    int heightTwo = getHeight(two);
+    int diff = heightOne - heightTwo;
+    return diff < 0 ? getAncestor(one, two, -diff) : getAncestor(two, one, diff);
+  }
+  
+  private TreeNodeP getAncestor(TreeNodeP one, TreeNodeP two, int diff) {
+    while (diff > 0) {
+      two = two.parent;
+      diff--;
+    }
+    while (one != two) {
+      one = one.parent;
+      two = two.parent;
+    }
+    return one;
+  }
+  private int getHeight(TreeNodeP node) {
+    int res = 0;
+    while (node != null) {
+      res++;
+      node = node.parent;
+    }
+    return res;
+  }
+
+```
 <br>
 <br>
 
@@ -13119,6 +13158,321 @@ public class Solution {
     return res;
   }
 }
+```
+<br>
+<br>
+
+###12 Random7 Using Random5
+
+>Given random5() which generates[0, 4], implement random7().
+
+**Idea**:
+
+RandomFive.random5() * 5 + RandomFive.random5() generates[0, 24] in equal probability.
+
+Then match to [0, 6]. We can use %, but the probability is not equal, thus we could only includes [0, 20]
+
+**Solution**:
+
+```java
+  public int random7() {
+    int res = 0;
+    while (true) {
+      res = RandomFive.random5() * 5 + RandomFive.random5() ;
+      if (res <= 20) {
+        break;
+      } 
+    }
+    return res % 7;
+  }
+```
+<br>
+<br>
+
+
+###13 Random1000 using random5
+
+
+> Given random5() which generates[0, 4], implement random1000().
+
+
+**Idea**:
+
+Create random10() to generate [0, 9] equally, then use random10() to generate three digits of Random1000.
+
+**Solution**:
+
+
+```java
+  public int random1000() {
+    return random10() * 100 + random10() * 10 + random10();
+  }
+  
+  private int random10() {
+    return  random2() * 5 + RandomFive.random5();
+  }
+  
+  private int random2() {
+    return (int) (Math.random() * 2);
+  }
+```
+
+<br>
+
+<br>
+
+###14 Array deduplication
+
+> Deduplication in place, for each group keep only one of them.
+
+**Solution**:
+
+```java
+
+  public int[] dedup(int[] array) {
+    if (array == null || array.length <= 1) {
+      return array;
+    }
+    int l = 0;
+    int r = 1;
+    while (r < array.length) {
+      if (array[l] != array[r]) {
+        array[++l] = array[r];
+      }
+      r++;
+    }
+    return Arrays.copyOfRange(array, 0, l + 1);
+  }
+```
+<br>
+
+**Related**: Keep two duplicates.
+
+```java
+  public int[] dedup(int[] array) {
+    if (array == null || array.length <= 2) {
+      return array;
+    }
+    int l = 1;
+    int r = 2;
+    while (r < array.length) {
+      if (array[r] != array[l - 1]) {
+        array[++l] = array[r];
+      }
+      r++;
+    }
+    return Arrays.copyOfRange(array, 0, l + 1);
+  }
+
+```
+
+<br>
+
+**Related**: Keep zero.
+
+```java
+  public int[] dedup(int[] array) {
+    if (array == null || array.length == 0) {
+      return array;
+    }
+    int l = 0;
+    boolean isDup = false;
+    for (int i = 1; i < array.length; i++) {
+      if (array[i] == array[l]) {
+        isDup = true;
+      } else if (isDup == true) {
+        array[l] = array[i];
+        isDup = false;
+      } else {
+        array[++l] = array[i];
+      }
+    }
+    return isDup ? Arrays.copyOfRange(array, 0, l) : Arrays.copyOfRange(array, 0, l + 1);
+  }
+
+```
+
+<br>
+<br>
+
+
+###15 Move 0s to the end
+
+>Move all the 0s to the right end of the array.
+
+> No need to keep relative order
+
+
+**Solution**:
+
+```java
+  public int[] moveZero(int[] array) {
+    int start = 0;
+    int end = array.length - 1;
+    while (start <= end) {
+      if (array[start] == 0) {
+        while (end >= 0 && array[end] == 0) {
+          end--;
+        }
+        if (end < start) {
+            break;
+        }
+        array[start] = array[end];
+        array[end] = 0;
+        end--;
+      }
+      start++;
+    }
+    return array;
+  } 
+```
+
+<br>
+
+**Related**:
+
+
+> Need to keep the relative order
+
+
+**Idea**: Traverse from left, keep the relative order of non-zero element, then fill the rest to 0s.
+
+**Solution**:
+
+```java
+  public int[] moveZero(int[] array) {
+    if (array == null || array.length == 0) {
+      return array;
+    }
+    int l = 0;
+    int r = 0;
+    while (r < array.length) {
+      if (array[r] != 0) {
+        array[l++] = array[r];
+      }
+      r++;
+    }
+    while(l < array.length) {
+      array[l++] = 0;
+    }
+    return array;
+  }
+```
+
+<br>
+<br>
+
+###16 Largest and Samllest
+
+>Return the largest number and the smallest number using the smallest comparison.
+
+**Idea**:
+
+The most straightforward way is 2n comparing times.
+
+Compare in pair, so the compare time is 3/2 * n
+
+**Solution**:
+
+```java
+  public int[] largestAndSmallest(int[] array) {
+    int[] res = new int[2];
+    res[0] = Integer.MIN_VALUE;
+    res[1] = Integer.MAX_VALUE;
+    int l = 0;
+    int r = array.length - 1;
+    while (l <= r) {
+      boolean isSmaller = array[l] < array[r];
+      if (isSmaller) {
+        res[0] = Math.max(array[r], res[0]);
+        res[1] = Math.min(array[l], res[1]);
+      } else {
+        res[0] = Math.max(array[l], res[0]);
+        res[1] = Math.min(array[r], res[1]);
+      }
+      l++;
+      r--;
+    }
+    return res;
+  }
+```
+<br>
+<br>
+
+
+###17 Sort in specific order
+
+> Given two arrays, A1 and A2, sort A1 in such a way that the relative order among the elements will be same as those are in A2.
+
+**Idea**:
+
+Create an comparator, sort according the rules in comparator.
+
+- If e1, e2 both exist in A2, then we sort them according to their indexs in A2
+
+- If only e1 in A2, then e1 < e2
+
+- If only e2 in A2, then e2 < e1
+
+- Otherwise, compare them in the natural order.
+
+Preprocess: We need a hashmap t record the index of each element in A2. 
+
+**Note**: 
+
+- this hashmap should be **final**, because it needs to be used into the comparator
+
+- we needs to convert int[] to Integer[], because we used the Arrays.sort(), it needs a T[].
+
+**Time complexity: O(nlgn)
+
+**Solution**:
+
+```java
+  public int[] sortSpecial(int[] A1, int[] A2) {
+    if (A1 == null || A1.length == 0) {
+      return A1;
+    }
+    final Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+    for (int i = 0; i < A2.length; i++) {
+      if (!map.containsKey(A2[i])) {
+        map.put(A2[i], i);
+      }
+    }
+    Comparator<Integer> comp = new Comparator<Integer>() {
+      public int compare(Integer arg1, Integer arg2) {
+        if (map.containsKey(arg1) && map.containsKey(arg2)) {
+          return map.get(arg1) - map.get(arg2);
+        } else if (map.containsKey(arg1)) {
+          return -1;
+        } else if (map.containsKey(arg2)) {
+          return 1;
+        } else {
+          return arg1 - arg2;
+        }
+      }
+    };
+    Integer[] arr = convertToIntegerArray(A1);
+    Arrays.sort(arr, comp);
+    return convertBackToIntArray(arr);
+  }
+  
+  private Integer[] convertToIntegerArray(int[] arr) {
+    Integer[] res = new Integer[arr.length];
+    for (int i = 0; i < arr.length; i++) {
+      res[i] = Integer.valueOf(arr[i]);
+    }
+    return res;
+  }
+  
+  private int[] convertBackToIntArray(Integer[] arr) {
+    int[] res = new int[arr.length];
+    for (int i = 0; i < arr.length; i++) {
+      res[i] = arr[i];
+    }
+    return res;
+  }
+
 ```
 <br>
 <br>
