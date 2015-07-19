@@ -13292,6 +13292,33 @@ Create random10() to generate [0, 9] equally, then use random10() to generate th
 
 ```
 
+**Related**: deduplication recursive.
+
+> For example: [1, 2, 3, 3, 3, 2, 2, 1, 2, 2] , result should be []
+
+**Solution**:
+
+```java
+  public int[] dedup(int[] array) {
+    if (array == null || array.length == 0) {
+      return array;
+    }
+    int l = -1;
+   for (int r = 0; r < array.length; r++) {
+      if (l == -1 || array[r] != array[l]) {
+        array[++l] = array[r];
+      } else {
+        while (r + 1 < array.length && array[r + 1] == array[l]) {
+          r++;
+        }
+        l--;
+      }
+    }
+    return Arrays.copyOfRange(array, 0, l + 1);
+  }
+
+```
+
 <br>
 <br>
 
@@ -13396,6 +13423,70 @@ Compare in pair, so the compare time is 3/2 * n
     return res;
   }
 ```
+
+<br>
+
+**Related**: Largest and second largest.
+
+> Find the largest and second largest element in least comparison.
+
+**Idea**: Compare two and two, record the element that smaller then that element when compare. 
+
+After the first round of comparison, we get a binary tree, and the root is the largest, then we find the second largest in the list we record. 
+
+
+**Time complexity : n + log(n). 
+
+where n is the time complexity for two two compare, log(n) is the time complexity for find the second largest. Since the height of the tree is log(n), thus the time is log(n) to find the second largest.
+
+
+
+**Solution**:
+
+```java
+  public int[] largestAndSecond(int[] array) {
+    int[] res = new int[2];
+    if (array == null || array.length < 2) {
+      return res;
+    }
+    List<Pair> list = new ArrayList<Pair>();
+    for (int i = 0; i < array.length; i++) {
+      list.add(new Pair(i, array[i]));
+    }
+    Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
+    while (list.size() > 1) {
+      List<Pair> next = new ArrayList<Pair>();
+      for (int i = 0; i < list.size(); i += 2) {
+        if (i == list.size() - 1) {
+          next.add(list.get(i));
+        } else {
+          Pair e1 = list.get(i);
+          Pair e2 = list.get(i + 1);
+          if (e1.value <= e2.value) {
+            next.add(e2);
+            if (!map.containsKey(e2.index)) {
+              map.put(e2.index, new ArrayList<Integer>());
+            } 
+            map.get(e2.index).add(e1.value);
+          } else {
+            next.add(e1);
+            if (!map.containsKey(e1.index)) {
+              map.put(e1.index, new ArrayList<Integer>());
+            }
+            map.get(e1.index).add(e2.value);
+          }
+        }
+      }
+      list = next;
+    }
+    res[0] = list.get(0).value;
+    res[1] = getSecondLargest(map.get(list.get(0).index));
+    return res;
+  }
+
+```
+
+
 <br>
 <br>
 
