@@ -181,6 +181,9 @@
 * [16 Largest and Samllest](#16-largest-and-smallest)
 * [17 Sort in specific order](#17-sort-in-specific-order)
 * [18 Closest number in binary search tree](#18-closest-number-in-binary-search-tree)
+* [19 Delete In Binary Search Tree](＃19-delete-in-binary-search-tree)
+* [20 Cutting wood](#20-cutting-wood)
+
 
 
 
@@ -14032,7 +14035,7 @@ Preprocess: We need a hashmap t record the index of each element in A2.
 
 
 ```java
-  public int largestSmaller(TreeNode root, int target) {
+public int largestSmaller(TreeNode root, int target) {
     if (root == null) {
       return Integer.MIN_VALUE;
     }
@@ -14046,7 +14049,144 @@ Preprocess: We need a hashmap t record the index of each element in A2.
       }
     }
     return res;
-  }
+}
 
 ```
 
+###19 Delete In Binary Search Tree
+
+> Delete a node in binary search tree.
+
+```java
+
+```
+
+
+<br>
+<br>
+
+###19 Delete In Binary Search Tree
+
+
+> Given a binary search tree, delete a node, the structure of BST should be maintianed. Suppose there is no duplicates in the BST.
+
+**Idea**: First we need to find the node we need to delete. Then there are three cases:
+
+- Target does not has child, just delete it.
+
+- Target has only one child, set target.parent.left/right = child.left/right
+
+- Target has two children, if target.right.left == null, just set target.right.left = target.left. Otherwise, find the smallest element as the new root in target's right subtree.
+
+**Solution**:
+
+
+
+```java
+/**
+ * public class TreeNode {
+ *   public int key;
+ *   public TreeNode left;
+ *   public TreeNode right;
+ *   public TreeNode(int key) {
+ *     this.key = key;
+ *   }
+ * }
+ */
+public class Solution {
+  public TreeNode delete(TreeNode root, int key) {
+    if(root == null) {
+      return null;
+    } else if (key < root.key) {
+      root.left = delete(root.left, key);
+      return root;
+    } else if (key > root.key) {
+      root.right = delete(root.right, key);
+      return root;
+    } else {
+      return deleteNode(root, key);
+    }
+  }
+  
+  private TreeNode deleteNode(TreeNode root, int key) {
+    if (root.left == null) {
+      return root.right;
+    } else if (root.right == null) {
+      return root.left;
+    } else if (root.right.left == null) {
+      root.right.left = root.left;
+      return root.right;
+    } else {
+      TreeNode newRoot = getNewRoot(root.right);
+      newRoot.left = root.left;
+      newRoot.right = root.right;
+      return newRoot;
+    }
+  }
+  
+  private TreeNode getNewRoot(TreeNode root) {
+    TreeNode pre = null;
+    while (root.left != null) {
+      pre = root;
+      root = root.left;
+    }
+    TreeNode res = pre;
+    pre.left = pre.left.right;
+    return res;
+  }
+  
+  
+}
+
+```
+
+
+<br>
+<br>
+
+###20 Cutting wood
+
+
+> Cutting wood into pieces, where the cutting positions are defined in an int array A and the cost of each cut is the length of the stick segment being cut. Determine the minimum total cost to cut.
+
+
+**Idea**:
+
+Fill cuts array with start and end. For example wood length 5, cuts[] = {1, 3}, we fill it to {0, 1, 3, 5}
+
+then cost[i][j] = cut[j] - cut[i] + min(cut[i][k] + cut[k][j])
+
+**Fill it from bottom to top, left to right**
+
+Time: o(N ^ 3)
+
+
+**Solution**:
+
+
+```java
+  public int minCost(int[] cuts, int length) {
+    int[] arr = new int[cuts.length + 2];
+    int[][] cost = new int[arr.length][arr.length];
+    arr[0] = 0;
+    for (int i = 0; i < cuts.length; i++) {
+      arr[i + 1] = cuts[i];
+    }
+    arr[arr.length - 1] = length;
+    for (int i = 1; i < arr.length; i++) {
+      for (int j = i - 1; j >= 0; j--) {
+        if (j == i - 1) {
+          cost[j][i] = 0;
+        } else {
+          cost[j][i] = Integer.MAX_VALUE;
+          for (int k = j + 1; k < i; k++) {
+            cost[j][i] = Math.min(cost[j][i], cost[j][k] + cost[k][i]);
+          }
+          cost[j][i] += arr[i] - arr[j];
+        }
+      }
+    }
+    return cost[0][arr.length - 1];
+  }
+
+```
