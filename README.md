@@ -184,6 +184,7 @@
 * [19 Delete In Binary Search Tree](＃19-delete-in-binary-search-tree)
 * [20 Cutting wood](#20-cutting-wood)
 * [21 Merge stone](#21-merge-stone)
+* [22 Binary Tree Path Sum To Target](#22-binary-tree-path-sum-to-target)
 
 
 
@@ -8643,6 +8644,49 @@ public int maxPathSum(TreeNode root, int[] maxSum) {
     }
   }
 ```
+
+<br>
+
+**Related**:max path sum from node to node on root to leaf path. Allowed to contain only one node.
+
+
+```java
+  class Sum {
+    int val;
+    public Sum(int val) {
+      this.val = val;
+    }
+  }
+  public int maxPathSum(TreeNode root) {
+    if (root == null) {
+      return 0;
+    }
+    Sum sum = new Sum(Integer.MIN_VALUE);
+    maxPathSum(root, new ArrayList<Integer>(), sum);
+    return sum.val;
+  }
+  
+  private void maxPathSum(TreeNode root, List<Integer> prefixList, Sum sum) {
+    if (root == null) {
+      return;
+    }
+    prefixList.add(root.key);
+    updateSum(prefixList, sum);
+    maxPathSum(root.left, prefixList, sum);
+    prefixList.remove(prefixList.size() - 1);
+    prefixList.add(root.key);
+    maxPathSum(root.right, prefixList, sum);
+    prefixList.remove(prefixList.size() - 1);
+  }
+  
+  private void updateSum(List<Integer> prefixList, Sum sum) {
+    int num = 0;
+    for (int i = prefixList.size() - 1; i >= 0; i--) {
+      num += prefixList.get(i);
+      sum.val = Math.max(sum.val, num);
+    }
+  }
+```
 <br>
 <br>
 
@@ -14234,3 +14278,57 @@ public int minCost(int[] stones) {
 
 ```
 
+<br>
+<br>
+
+###22 Binary Tree Path Sum To Target
+
+> Binary tree, the two nodes can be the same node and they can only be on the path from root to one of the leaf nodes, from any node to any node, check if sum to target exists.
+
+**Idea**: Record the prefix nodes from root of each node, each time visit a node, check if there is a path sum to target sum.
+
+**Time complexity**: if tree is balanced, O(nlogn), Worst case, O(n ^ 2).
+
+
+**Solution**:
+
+```java
+  public boolean exist(TreeNode root, int target) {
+    return exist(root, new ArrayList<Integer>(), target);
+  }
+  
+  private boolean exist(TreeNode root, List<Integer> prefixList, int target) {
+    if (root == null) {
+      return false;
+    }
+    prefixList.add(root.key);
+    if (checkSum(prefixList, target)) {
+      return true;
+    }
+    if (exist(root.left, prefixList, target)) {
+      return true;
+    }
+    prefixList.remove(prefixList.size() - 1);
+    prefixList.add(root.key);
+    if (exist(root.right, prefixList, target)) {
+      return true;
+    }
+    prefixList.remove(prefixList.size() - 1);
+    return false;
+  }
+  
+  private boolean checkSum(List<Integer> prefixList, int target) {
+    int sum = 0;
+    for (int i = prefixList.size() - 1; i >= 0; i--) {
+      sum += prefixList.get(i);
+      if (sum == target) {
+        return true;
+      }
+    }
+    return false;
+  }
+```
+
+
+<br>
+<br>
