@@ -183,7 +183,7 @@
 * [18 Closest number in binary search tree](#18-closest-number-in-binary-search-tree)
 * [19 Delete In Binary Search Tree](＃19-delete-in-binary-search-tree)
 * [20 Cutting wood](#20-cutting-wood)
-
+* [21 Merge stone](#21-merge-stone)
 
 
 
@@ -14130,7 +14130,7 @@ public class Solution {
       pre = root;
       root = root.left;
     }
-    TreeNode res = pre;
+    TreeNode res = root;
     pre.left = pre.left.right;
     return res;
   }
@@ -14190,3 +14190,47 @@ Time: o(N ^ 3)
   }
 
 ```
+
+<br>
+<br>
+
+###21 Merge stone
+
+> Give a list of piles of stones, each pile of stones has a certain weight represent as an integer array. Each time we can merge two adjacent piles into one larger pile, the cost is the sum of the weights of the two piles. Determine the minimum total cost to merge the piles of stones until we have only one pile left. 
+
+eg : {4, 3, 3, 4}, the minimum cost is 28.
+
+**Idea**:
+
+Pretty like the cutting wood. 
+
+induction rule:  min[j][i] = Math.min(min[j][k] + min[k + 1][i] + sum[j][i], min[j][i]);
+
+**Solution**:
+
+```java
+public int minCost(int[] stones) {
+  if (stones == null || stones.length == 0) {
+      return 0;
+  }
+  int[][] min = new int[stones.length][stones.length];
+  int[][] sum = new int[stones.length][stones.length];
+  for (int i = 0; i < stones.length; i++) {
+      for (int j = i; j >= 0; j--) {
+          if (j == i) {
+              sum[j][i] = stones[j];
+              min[j][i] = 0; 
+          } else {
+              sum[j][i] = sum[j][i - 1] + stones[i];
+              min[j][i] = Integer.MAX_VALUE;
+              for (int k = j; k < i; k++) {
+                  min[j][i] = Math.min(min[j][k] + min[k + 1][i] + sum[j][i], min[j][i]);
+              }
+          }
+      }
+  }
+  return min[0][stones.length - 1];
+}
+
+```
+
