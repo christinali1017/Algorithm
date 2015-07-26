@@ -185,6 +185,7 @@
 * [20 Cutting wood](#20-cutting-wood)
 * [21 Merge stone](#21-merge-stone)
 * [22 Binary Tree Path Sum To Target](#22-binary-tree-path-sum-to-target)
+* [23 Common Elements in Three Sorted Array](#22-common-elements-in-three-sorted-array)
 
 
 
@@ -257,6 +258,71 @@
 
 ```
 
+<br>
+
+**Related**: Return all pairs 's indexs.
+
+> for example: given {3, 5, 3, 2, 4, 4}, target = 7, return [[1, 3], [0, 4], [2, 4], [0, 5], [2, 5]]
+
+```java
+  public List<List<Integer>> allPairs(int[] array, int target) {
+    List<List<Integer>> res = new ArrayList<List<Integer>>();
+    if (array == null || array.length == 0) {
+      return res;
+    }
+    Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
+    for (int i = 0; i < array.length; i++) {
+      List<Integer> indexs = map.get(target - array[i]);
+      if (indexs != null) {
+        for (Integer j : indexs) {
+          List<Integer> cur = new ArrayList<Integer>();
+          cur.add(j);
+          cur.add(i);
+          res.add(cur);
+        }
+      }
+      List<Integer> temp = map.get(array[i]);
+      if (temp == null) {
+        map.put(array[i], new ArrayList<Integer>());
+      }
+      map.get(array[i]).add(i);
+    }
+    return res;
+  }
+
+```
+
+<br>
+
+**Related**: return all distinct pairs.
+
+> for example: given {2, 1, 3, 2, 4, 3, 4, 2}, target = 4, return [[1, 3], [2, 2]]
+
+```java
+  public List<List<Integer>> allPairs(int[] array, int target) {
+    List<List<Integer>> res = new ArrayList<List<Integer>>();
+    if (array == null || array.length == 0) {
+      return res;
+    }
+    Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+    for (int i : array) {
+      Integer temp = map.get(target - i);
+      if (temp != null && temp == 1) {
+        List<Integer> cur = new ArrayList<Integer>();
+        cur.add(target - i);
+        cur.add(i);
+        res.add(cur);
+        map.put(target - i, 0);
+        map.put(i, 0);
+      }
+      if (!map.containsKey(i)) {
+        map.put(i, 1);
+      }
+    }
+    return res;
+  }
+
+```
 
 <br>
 <br>
@@ -1211,12 +1277,10 @@ We first need to sort the array, then use two pointers to find the two sum numbe
         for(int i = 0; i <= num.length - 3; i++){
             if(i != 0 && num[i] == num[i-1]) continue;
             List<List<Integer>> current = twoSum(num, i+1, -num[i]);
-            if(current.size() > 0){
-                for(List<Integer> l : current ){
-                    l.add(0, num[i]);
-                }
-                list.addAll(current);
+            for(List<Integer> l : current ){
+                l.add(0, num[i]);
             }
+            list.addAll(current);
         }
         return list;
     }
@@ -5989,6 +6053,34 @@ Use method1 need two pass. Method 2 only need one pass.
     }
 ```
 
+<br>
+
+**Solution 3**:
+```java
+  public int[] sortColors(int[] array) {
+    if (array == null || array.length <= 1) {
+      return array;
+    }
+    int l = 0;
+    int r = array.length - 1;
+    int m = 0;
+    while (m < r) {
+      if (array[m] == 1) {
+        m++;
+      } else if (array[m] == 0) {
+        swap(array, l++, m++);
+      } else {
+        swap(array, m, r--);
+      }
+    }
+    return array;
+    }
+    private void swap(int[] array, int i, int j) {
+      int temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+```
 
 
 <br>
@@ -7795,6 +7887,83 @@ public TreeNode buildTree(int[] preorder, int pStart, int pEnd, int[] inorder, i
 ```
 
 
+
+<br>
+
+**Related**:Reconstruct Binary Tree With Levelorder And Inorder
+
+**Time complexity**: if tree is balanced O(nlogn), otherwise, O(n ^ 2)
+
+```java
+  public TreeNode reconstruct(int[] in, int[] level) {
+    if (in == null || in.length == 0 || level == null || level.length == 0) {
+      return null;
+    }
+    Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+    for (int i = 0; i < in.length; i++) {
+      map.put(in[i], i);
+    }
+    return reconstruct(in, 0, in.length - 1, level, map);
+  }
+  private TreeNode reconstruct(int[] in, int inl, int inr, int[] level, Map<Integer, Integer> map) {
+    if (inl > inr) {
+      return null;
+    }
+    TreeNode root = new TreeNode(level[0]);
+    int rootIndex = map.get(level[0]);
+    int[] levelLeft = new int[rootIndex - inl];
+    int[] levelRight = new int[inr - rootIndex];
+    Map<Integer, Integer> leftMap = new HashMap<Integer, Integer>();
+    for (int i = inl; i < rootIndex; i++) {
+      leftMap.put(in[i], i);
+    }
+    int indexLeft = 0;
+    int indexRight = 0;
+    for (int i = 1; i < level.length; i++) {
+      if (leftMap.containsKey(level[i])) {
+        levelLeft[indexLeft++] = level[i];
+      } else {
+        levelRight[indexRight++] = level[i];
+      }
+    }
+    root.left = reconstruct(in, inl, rootIndex - 1, levelLeft, map);
+    root.right = reconstruct(in, rootIndex + 1, inr, levelRight, map);
+    return root;
+  }
+```
+
+<br>
+
+**Related**: Reconstruct Binary Search Tree With Postorder Traversal
+
+```java
+public TreeNode reconstruct(int[] post) {
+  if (post == null || post.length == 0) {
+      return null;
+  }
+  return reconstruct(post, 0, post.length - 1);
+}
+
+public TreeNode reconstruct(int[] post, int l, int r) {
+  if (l < 0 || r < 0 || l > r) {
+      return null;
+  }
+  TreeNode root = new TreeNode(post[r]);
+  int index = findIndex(post, l, r);
+  root.left = reconstruct(post, l, index);
+  root.right = reconstruct(post, index + 1, r - 1);
+  return root;
+}
+
+private int findIndex(int[] post, int l, int r) {
+  int root = post[r];
+  int index = r - 1;
+  while (index >= l && post[index] > root) {
+      index--;
+  }
+  return index;
+}
+```
 
 <br>
 <br>
@@ -10403,6 +10572,56 @@ public TreeNode UpsideDownBinaryTree(TreeNode root) {
 }   
 
 ```
+
+<br>
+
+**Related**: reverse binary tree.
+
+<pre>
+        1
+
+      /    \
+
+    2        5
+
+  /   \
+
+3      4
+
+is reversed to
+
+        3
+
+      /    \
+
+    2        4
+
+  /   \
+
+1      5
+
+
+</pre>
+
+```java
+  public TreeNode reverse(TreeNode root) {
+    TreeNode parent = null;
+    TreeNode preRight = null;
+    TreeNode right = null;
+    TreeNode left = null;
+    while (root != null) {
+      left = root.left;
+      right = root.right;
+      root.left = parent;
+      root.right = preRight;
+      parent = root;
+      root = left;
+      preRight = right;
+    }
+    return parent;
+  }
+
+```
 <br>
 <br>
 
@@ -12199,6 +12418,7 @@ From the suggestions of friends, I realized that I can use bitset to save space.
 
 
 **Idea**: Really straight forward. Let the next node pointer to the previous node until to the end of the list. Just need to take care of the null pointer. 
+**Iterative**:
 
 ```java
 
@@ -12217,6 +12437,21 @@ From the suggestions of friends, I realized that I can use bitset to save space.
         return pre;
     }
 
+```
+
+<br>
+**Recursive**:
+
+```java
+  public ListNode reverse(ListNode head) {
+    if (head == null || head.next == null) {
+      return head;
+    }
+    ListNode res = reverse(head.next);
+    head.next.next = head;
+    head.next = null;
+    return res;
+  }
 ```
 
 <br>
@@ -14332,3 +14567,56 @@ public int minCost(int[] stones) {
 
 <br>
 <br>
+
+
+###23 Common Elements in Three Sorted Array
+
+>Find all common elements in 3 sorted arrays.
+
+```java
+
+  public List<Integer> common(int[] a, int[] b, int[] c) {
+    List<Integer> res = new ArrayList<Integer>();
+    if (a == null || a.length == 0 || b == null || b.length == 0 || c == null || c.length == 0) {
+      return res;
+    }
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    while (i < a.length && j < b.length && k < c.length) {
+      if (a[i] == b[j] && a[i] == c[k]) {
+        res.add(a[i++]);
+        j++;
+        k++;
+      } else if (a[i] < b[j]) {
+        i++;
+      } else if (b[j] < c[k]) {
+        j++;
+      } else {
+        k++;
+      }
+    }
+    return res;
+  }
+```
+
+
+    List<List<Integer>> res = new ArrayList<List<Integer>>();
+    combinations(target, coins, 0, new ArrayList<Integer>(), res);
+    return res;
+  }
+  private void combinations(int target, int[] coins, int index, List<Integer> cur, List<List<Integer>> res) {
+    if (index == coins.length - 1) {
+      if (target % coins[coins.length - 1] == 0) {
+        cur.add(target / coins[coins.length - 1]);
+        res.add(new ArrayList<Integer>(cur));
+        cur.remove(cur.size() - 1);
+      }
+      return;
+    }
+    for (int i = 0, num = target/ coins[index]; i <= num; i++) {
+      cur.add(i);
+      combinations(target - i * coins[index], coins, index + 1, cur, res);
+      cur.remove(cur.size() - 1);
+    }
+
