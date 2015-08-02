@@ -158,7 +158,8 @@
 * [222 Count Complete Tree Nodes](#222-count-complete-tree-nodes)
 * [237 Delete Node in a Linked List](#237-delete-node-in-a-linked-list)
 * [238 Product of Array Except Self](#238-product-of-array-except-self)
-
+* [241 Different Ways to Add Parentheses](#241-different-ways-to-add-parentheses)
+* [242 Valid Anagram](#242-Valid Anagram)
 
 
 ###Others
@@ -13157,6 +13158,176 @@ Here is the O(1) space solution below.
 <br>
 <br>
 
+###241 Different Ways to Add Parentheses
+
+>Given a string of numbers and operators, return all possible results from computing all the different possible ways to group numbers and operators. The valid operators are +, - and *.
+
+<pre>
+Example 1
+Input: "2-1-1".
+
+((2-1)-1) = 0
+(2-(1-1)) = 2
+Output: [0, 2]
+
+
+Example 2
+Input: "2*3-4*5"
+
+(2*(3-(4*5))) = -34
+((2*3)-(4*5)) = -14
+((2*(3-4))*5) = -10
+(2*((3-4)*5)) = -10
+(((2*3)-4)*5) = 10
+Output: [-34, -14, -10, -10, 10]
+
+</pre>
+
+**Idea**: Divide and conquer. Divide the String into two parts based on the operator. We calculate the left part and right part separately, then combine the result.
+
+**Solution 1** :
+
+```java   
+public List<Integer> diffWaysToCompute(String input) {
+  List<Integer> res = new ArrayList<Integer>();
+  if (input == null || input.length() == 0) {
+      return res;
+  }
+  for (int i = 0; i < input.length(); i++) {
+      if (isOperator(input.charAt(i))) {
+          List<Integer> left = diffWaysToCompute(input.substring(0, i));
+          List<Integer> right = diffWaysToCompute(input.substring(i + 1));
+          for (Integer num1 : left) {
+              for (Integer num2 : right) {
+                  res.add(input.charAt(i) == '+' ? num1 + num2 : (input.charAt(i) == '-' ? num1 - num2 : num1 * num2)); 
+              }
+          }
+      }
+  }
+  if (res.size() == 0) {
+      res.add(Integer.parseInt(input));
+  } 
+  return res;
+}
+private boolean isOperator(char c) {
+  return c == '+' || c == '-' || c == '*';
+}
+
+```
+
+<br>
+There is some repeat operations in the above calculation. We can reduce it by store the calculated string into hashMap.
+
+Here is the modified solution based on solution 1.
+
+**Solution 2**:
+
+```java
+    public List<Integer> diffWaysToCompute(String input) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (input == null || input.length() == 0) {
+            return res;
+        }
+        Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+        return diffWaysToCompute(input, map);
+    }
+    private List<Integer> diffWaysToCompute(String input, Map<String, List<Integer>> map) {
+        List<Integer> res = new ArrayList<Integer>();
+        for (int i = 0; i < input.length(); i++) {
+            if (isOperator(input.charAt(i))) {
+                String lPart = input.substring(0, i);
+                String rPart = input.substring(i + 1);
+                List<Integer> left = map.containsKey(lPart) ? map.get(lPart) : diffWaysToCompute(lPart);
+                List<Integer> right = map.containsKey(rPart) ? map.get(rPart) : diffWaysToCompute(rPart);
+                map.put(lPart, left);
+                map.put(rPart, right);
+                for (Integer num1 : left) {
+                    for (Integer num2 : right) {
+                        res.add(input.charAt(i) == '+' ? num1 + num2 : (input.charAt(i) == '-' ? num1 - num2 : num1 * num2)); 
+                    }
+                }
+            }
+        }
+        if (res.size() == 0) {
+            res.add(Integer.parseInt(input));
+        } 
+        return res;
+    }
+    private boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*';
+    }
+```
+
+<br>
+<br>
+
+###242 Valid Anagram
+
+>Given two strings s and t, write a function to determine if t is an anagram of s.
+
+>For example,
+
+>s = "anagram", t = "nagaram", return true.
+
+>s = "rat", t = "car", return false.
+
+**Idea**:
+
+- Solution 1 : sort two String, then compare.
+
+- Solution 2 : use hash table, check if two strings have the same number of each char.
+
+**Java code**:
+
+**Solution 1**:
+
+```java
+public boolean isAnagram(String s, String t) {
+    if (s == null || t == null) {
+        return false;
+    }
+    char[] sArr = s.toCharArray();
+    char[] tArr = t.toCharArray();
+    Arrays.sort(sArr);
+    Arrays.sort(tArr);
+    return new String(sArr).equals(new String(tArr));
+}
+```
+
+<br>
+
+**Solution 2**:
+
+```java
+public boolean isAnagram(String s, String t) {
+    if (s == null || t == null || s.length() != t.length()) {
+        return false;
+    }
+    Map<Character, Integer> map = new HashMap<Character, Integer>();
+    char[] sArr = s.toCharArray();
+    char[] tArr = t.toCharArray();
+    for (char c : sArr) {
+        Integer temp = map.get(c);
+        if (temp == null) {
+            map.put(c, 1);
+        } else {
+            map.put(c, temp + 1);
+        }
+    }
+    for (char c : tArr) {
+        Integer temp = map.get(c);
+        if (temp == null || temp <= 0) {
+            return false;
+        } else {
+            map.put(c, temp - 1);
+        }
+    }
+    return true;
+}
+```
+
+<br>
+<br>
 
 ##Similar questions from other sources.
 
