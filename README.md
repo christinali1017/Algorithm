@@ -10388,23 +10388,26 @@ getMin() -- Retrieve the minimum element in the stack.
 
 **Idea**: Memory limits. If we just a corresponding minstack with the same length of the stack, we would exceed the limit on leetcode. What should we do? We just need to keep the current smallest element. Eg: push(1) to stack, we push(1) to minstack. Next time we push(2) to stack, we don't need to push(2) to minstack. Because the min value is still 1. Thus, every time we push an element to stack, we check if element x > minstack.peek(), if true, we don't need to push. When pop, we check if element x == minstack.peek(), if equals, minstack.pop().
 
-**Attention** : Duplicate elements. (less or equal than, push into min stack). Eg: push (0), push(1), push(0), the minstack should have element 0, 0. 
+**Attention** :
+
+-  Duplicate elements. (less or equal than, push into min stack). Eg: push (0), push(1), push(0), the minstack should have element 0, 0. 
+
+- **Stack class comeout at Java version 1.0. It's not efficient enough, we should avoid using stack.** 
 
 
 ```java
 
 public class Solution {
-  private Stack<Integer> stack;
-  private Stack<Integer> minStack;
+  private Deque<Integer> stack;
+  private Deque<Integer> minStack;
   public Solution() {
-    // write your solution here
-    stack = new Stack<Integer>();
-    minStack = new Stack<Integer>();
+    stack = new LinkedList<Integer>();
+    minStack = new LinkedList<Integer>();
   }
   
-  public int pop() {
+  public Integer pop() {
     if (stack.isEmpty()) {
-      return -1;
+      return null;
     }
     if (stack.peek() <= minStack.peek()) {
       minStack.pop();
@@ -10419,12 +10422,12 @@ public class Solution {
     stack.push(element);
   }
   
-  public int top() {
-    return stack.isEmpty() ? -1 : stack.peek();
+  public Integer top() {
+    return stack.isEmpty() ? null : stack.peek();
   }
   
-  public int getMin() {
-    return stack.isEmpty() ? -1 : minStack.peek();
+  public Integer min() {
+    return stack.isEmpty() ? null : minStack.peek();
   }
 }
 
@@ -13706,26 +13709,19 @@ public class Solution {
 
 ```java
   public ListNode insert(ListNode head, int value) {
-    // write your solution here
-    ListNode newNode = new ListNode(value);
-    if (head == null) {
-      head = newNode;
-      return head;
+    ListNode temp = new ListNode(value);
+    if (head == null || head.value >= value) {
+      temp.next = head;
+      return temp;
     }
-    //find insert position
-    ListNode temp = head;
-    ListNode pre = null;
-    while(temp != null && temp.value < value) {
-      pre = temp;
-      temp = temp.next;
+    ListNode pre = head;
+    while (pre.next != null && pre.next.value < value) {
+      pre = pre.next;
     }
-    if (head.value >= value) {
-      newNode.next = head;
-      return newNode;
-    }
-    pre.next = newNode;
-    newNode.next = temp;
+    temp.next = pre.next;
+    pre.next = temp;
     return head;
+  }
 }
 ```
 
