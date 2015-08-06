@@ -7099,9 +7099,6 @@ public List<Integer> inorderTraversal(TreeNode root) {
 ```java
   public List<Integer> getRange(TreeNode root, int min, int max) {
     List<Integer> res = new ArrayList<Integer>();
-    if (root == null) {
-      return res;
-    }
     getRange(root, min, max, res);
     return res;
   }
@@ -9871,22 +9868,28 @@ Note: Recursive solution is trivial, could you do it iteratively?
         if (root == null) {
             return res;
         }
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        while (root != null || !stack.isEmpty()) {
-            if (root != null) {
-                res.add(root.val);
-                stack.push(root);
-                root = root.left;
-            } else {
-                root = stack.pop();
-                root = root.right;
-            }
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+           TreeNode cur = stack.pop();
+           res.add(cur.val);
+           if (cur.right != null) {
+               stack.push(cur.right);
+           }
+           if (cur.left != null) {
+               stack.push(cur.left);
+           }
         }
         return res;
     }
 ```
 
-**Solution 3**: Morris traversal
+**Solution 3**:iterative with stack
+
+
+
+
+**Solution 4**: Morris traversal
 
 ```java
     public List<Integer> preorderTraversal(TreeNode root) {
@@ -10058,37 +10061,28 @@ public static List<Integer> postorderTraversal(TreeNode root){
 
 ```
 
-
-**Another iterative solution**, store the return status in statck
+**Solution 3**: based on preorder.
 
 ```java
-    public static List<Integer> postorderTraversal(TreeNode root){
-        List<Integer> list = new ArrayList<Integer>();
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        Stack<Integer> statusStack = new Stack<Integer>();
-        int status = 0;
-        statusStack.push(0);
-        while (root != null || !stack.isEmpty()) {
-            if (status == 0) {
-                if(root == null) {
-                    status = statusStack.pop();
-                    continue;
-                }
-                stack.push(root);
-                statusStack.push(1);
-                root = root.left;
-            } else if(status == 1) {
-                root = stack.peek();
-                root = root.right;
-                statusStack.push(2);
-                status = 0;
-            } else {
-                list.add(stack.pop().val);
-                status = statusStack.pop();
-            }
-        }
-        return list;
+  public List<Integer> postOrder(TreeNode root) {
+    List<Integer> res = new ArrayList<Integer>();
+    if (root == null) {
+      return res;
     }
+    Deque<TreeNode> stack = new LinkedList<TreeNode>();
+    stack.push(root);
+    while (!stack.isEmpty()) {
+      TreeNode cur = stack.pop();
+      res.add(0, cur.key);
+      if (cur.left != null) {
+        stack.push(cur.left);
+      }
+      if (cur.right != null) {
+        stack.push(cur.right);
+      }
+    }
+    return res;
+  }
 ```
 
 
