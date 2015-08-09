@@ -186,7 +186,8 @@
 * [20 Cutting wood](#20-cutting-wood)
 * [21 Merge stone](#21-merge-stone)
 * [22 Binary Tree Path Sum To Target](#22-binary-tree-path-sum-to-target)
-* [23 Common Elements in Three Sorted Array](#22-common-elements-in-three-sorted-array)
+* [23 Common Elements in Three Sorted Array](#23-common-elements-in-three-sorted-array)
+* [24 Kth smallest number in sorted matrix](#24-kth-smallest-number-in-sorted-matrix)
 
 
 
@@ -1665,6 +1666,30 @@ when encounter ), ], } pop corresponding parentheses.
 > "((()))", "(()())", "(())()", "()(())", "()()()"
 
 **Idea**: insert "\(\)" to possible spots of every parentheses string. eg : (), we have three spaces to insert. Inspite of duplicates, there are two possible ()() or (()). 
+
+**DFS Solution**: Number of ) shoule <= number of ( so far.
+
+```java
+  public List<String> validParentheses(int n) {
+    List<String> res = new ArrayList<>();
+    validParentheses(0, 0, n, res, new StringBuilder());
+    return res;
+  }
+  private void validParentheses(int l, int r, int n, List<String> res, StringBuilder sb) {
+    if (l + r == 2 * n) {
+      res.add(sb.toString());
+      return;
+    }
+    if (l < n) {
+      validParentheses(l + 1, r, n, res, sb.append("("));
+      sb.deleteCharAt(sb.length() - 1);
+    }
+    if (r < l) {
+      validParentheses(l, r + 1, n, res, sb.append(")"));
+      sb.deleteCharAt(sb.length() - 1);
+    }
+  }
+```
 
 **Iterative code **:
 
@@ -13754,33 +13779,31 @@ Let's give an example, suppose group red and blue, if node 1 is in group green, 
  */
 public class Solution {
   public boolean isBipartite(List<GraphNode> graph) {
-    if (graph == null) {
+    if (graph.size() == 0) {
       return true;
     }
-    Map<GraphNode, Integer> map = new HashMap<GraphNode, Integer>();
-    for (GraphNode n : graph) {
-      if (map.containsKey(n)) {
+    Map<GraphNode, Integer> map = new HashMap<>();
+    for (GraphNode node : graph) {
+      Queue<GraphNode> queue = new LinkedList<>();
+      if (!map.containsKey(node)) {
+        queue.offer(node);
+        map.put(node, 0);
+      } else {
         continue;
       }
-      Queue<GraphNode> queue = new LinkedList<GraphNode>();
-      queue.offer(n);
-      map.put(n, 0);
       while (!queue.isEmpty()) {
-        GraphNode cur = queue.poll();
-        List<GraphNode> neighbors = cur.neighbors;
-        int reverseColor = map.get(cur) == 0 ? 1 : 0;
-        for (int i = 0; i < neighbors.size(); i++){
-          GraphNode neighbor = neighbors.get(i);
-          if (!map.containsKey(neighbor)) {
-            map.put(neighbor, reverseColor);
-            queue.offer(neighbor);
-          } else if (map.get(neighbor) != reverseColor) {
-              return false;
-          }
+        GraphNode temp = queue.poll();
+        int color = map.get(temp);
+        for (GraphNode neib : temp.neighbors) {
+          if (!map.containsKey(neib)) {
+            map.put(neib, color == 0 ? 1 : 0);
+            queue.offer(neib);
+          } else if (map.get(neib) == color) {
+            return false;
+          } 
         }
       }
     }
-   
     return true;
   }
 }
@@ -14781,3 +14804,56 @@ public int minCost(int[] stones) {
       cur.remove(cur.size() - 1);
     }
 
+<br>
+<br>
+
+###24 Kth smallest number in sorted matrix
+
+<pre>
+int[][] matrix = { {1,  3,   5,   7},
+                   {2,  4,   8,   9},
+                   {3,  5,   11,  15},
+                   {6,  8,   13,  18} };
+
+</pre>
+**Idea**: Dijkstra algorithm
+
+**Time**: O(klogk)
+
+```java
+  class Node {
+    int val;
+    int row;
+    int col;
+    public Node(int row, int col, int val) {
+      this.val = val;
+      this.row = row;
+      this.col = col;
+    }
+  }
+  public int kthSmallest(int[][] matrix, int k) {
+    PriorityQueue<Node> queue = new PriorityQueue<Node>(10, new Comparator<Node>() {
+      public int compare(Node e1, Node e2) {
+        return e1.val - e2.val;
+      }
+    });
+    boolean[][] visited = new boolean[matrix.length][matrix[0].length];
+    queue.offer(new Node(0, 0, matrix[0][0]));
+    visited[0][0] = true;
+    while (true) {
+      Node temp = queue.poll();
+      k--;
+      if (k == 0) {
+        return temp.val;
+      }
+      if (temp.row < matrix.length - 1 && !visited[temp.row + 1][temp.col]) {
+        queue.offer(new Node(temp.row + 1, temp.col, matrix[temp.row + 1][temp.col]));
+        visited[temp.row + 1][temp.col] = true;
+      }
+      if (temp.col < matrix[0].length - 1 && !visited[temp.row][temp.col + 1]) {
+        queue.offer(new Node(temp.row, temp.col + 1, matrix[temp.row][temp.col + 1]));
+        visited[temp.row][temp.col + 1] = true;
+      }
+    }
+  }
+```
