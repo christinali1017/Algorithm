@@ -188,6 +188,7 @@
 * [22 Binary Tree Path Sum To Target](#22-binary-tree-path-sum-to-target)
 * [23 Common Elements in Three Sorted Array](#23-common-elements-in-three-sorted-array)
 * [24 Kth smallest number in sorted matrix](#24-kth-smallest-number-in-sorted-matrix)
+* [25 String Abbreviation Matching](#25-string-abbreviation-matching)
 
 
 
@@ -448,32 +449,26 @@ The time complexity is O(m+n) and space complexity is O(m+n).
 
 **Idea**: if encounter duplicates, start from the character after the dulicate appear at the first time. eg: abcab, at index 4 a is duplicated, we start count from index 1(after the first a).
 
+//assume s is not null.
+
 ```java
-
     public int lengthOfLongestSubstring(String s) {
-        if(s == null || s.length() == 0) return 0;
-        int start = 0;
-        int current = 0;
+        Set<Character> set = new HashSet<>();
+        int l = 0;
+        int r = 0;
         int max = 0;
-        Set<Character> set = new HashSet<Character>();
-        while(current < s.length()){
-            if(set.contains(s.charAt(current))){
-                max = Math.max(max, current - start);
-                while(s.charAt(start) != s.charAt(current)){
-                    set.remove(s.charAt(start));
-                    start++;
-                }
-                start++;
-            }else{
-                set.add(s.charAt(current));
+        char[] arr = s.toCharArray();
+        while (r < s.length()) {
+            if (set.contains(arr[r])) {
+                max = Math.max(max, r - l);
+                while (set.contains(arr[r])) {
+                    set.remove(arr[l++]);
+                } 
             }
-            current++;
+            set.add(arr[r++]);
         }
-        max = Math.max(current- start, max);
-        return max;
+        return Math.max(max, r - l);
     }
-    
-
 ```
 
 There is another solution use primitive string methods, such as indexOf, subString and contains. Because indexOf and contains take O(n*m), so it's really slow. It can be AC by leetcode, but when network is bad, it may time limit exceeded.
@@ -552,6 +547,42 @@ There is another solution use primitive string methods, such as indexOf, subStri
         
     }
 
+```
+
+Another solution: not as efficient as above solution:
+
+//assume nums1 is not null and nums2 is not null
+```java
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+
+        int len = nums1.length + nums2.length;
+        if (len % 2 == 1) {
+            return findMedianSortedArrays(nums1, nums2, len / 2 + 1, 0, nums1.length - 1, 0, nums2.length - 1);
+        } else {
+            return (findMedianSortedArrays(nums1, nums2, len / 2, 0, nums1.length - 1, 0, nums2.length - 1) + 
+            findMedianSortedArrays(nums1, nums2, len / 2 + 1, 0, nums1.length - 1, 0, nums2.length - 1)) / (double)2;
+        }
+    }
+    private int  findMedianSortedArrays(int[] nums1, int[] nums2, int k, int start1, int end1, int start2, int end2) {
+        int len1 = end1 - start1 + 1;
+        int len2 = end2 - start2 + 1;
+        if (len1 > len2) {
+            return findMedianSortedArrays(nums2, nums1, k, start2, end2, start1, end1);
+        } 
+        if (len1 <= 0) {
+            return nums2[start2 + k - 1];
+        }
+        if (k == 1) {
+            return Math.min(nums1[start1], nums2[start2]);
+        }
+
+        int compareLen = Math.min(len1, k/2);
+        if (nums1[start1 + compareLen - 1] < nums2[start2 + compareLen - 1]) {
+            return findMedianSortedArrays(nums1, nums2, k - compareLen, start1 + compareLen, end1, start2, end2);
+        } else {
+            return findMedianSortedArrays(nums1, nums2, k - compareLen, start1, end1, start2 + compareLen, end2);
+        }
+    }
 ```
 
 Here is the python code for this problem. We defined two extra functions: `median()` will find the median from *one* given array. `shrink()` will get two shrinked arrays, while one is from the left side and the other is the right side from the given arrays. Because either array may contains the median with exactly the middle two items in the array. So the shrinking size of array will be slightly less.
@@ -4596,7 +4627,7 @@ A = [3,2,1,0,4], return false.
 
     public boolean canJump(int[] A) {
         if(A == null || A.length <= 1) return true;
-        int max = A[0];
+        int max = 0;
         for(int i = 0; i < A.length && i <= max; i++){
             max = Math.max(max, i+A[i]);
             if(max >= A.length-1) return true;
@@ -14856,4 +14887,56 @@ int[][] matrix = { {1,  3,   5,   7},
       }
     }
   }
+```
+
+
+
+###25 String Abbreviation Matching
+
+>Word “book” can be abbreviated to 4, b3, b2k, etc. Given a string and an abbreviation, return if the string matches the abbreviation.
+
+>Assumptions:
+
+>The original string only contains alphabetic characters.
+Examples:
+
+>pattern “s11d” matches input “sophisticated” since “11” matches eleven chars “ophisticate”.
+
+**Idea**:
+
+Recursion: if pattern[i] is char, then compare patter[i] and pattern[j]
+otherwise, recursion to match(pattern, input, i + num's length, j + num's value);
+
+**Solution**:
+
+
+```java
+  public boolean match(String input, String pattern) {
+    if (input == null || pattern == null) {
+      return false;
+    }
+    return match(input.toCharArray(), pattern, 0, 0);
+  }
+  private boolean match(char[] input, String pattern, int ii, int pi) {
+    if (ii == input.length && pi == pattern.length()) {
+      return true;
+    }
+    if (ii >= input.length || pi >= pattern.length()) {
+      return false;
+    }
+    if (!isNum(pattern.charAt(pi))) {
+      return input[ii] == pattern.charAt(pi) ? match(input, pattern, ii + 1, pi + 1) : false;
+    } else {
+      int temp = pi;
+      while (pi < pattern.length() && isNum(pattern.charAt(pi))) {
+        pi++;
+      }
+      int count = Integer.parseInt(pattern.substring(temp, pi));
+      return match(input, pattern, ii + count, pi);
+    }
+  }
+  private boolean isNum(char c) {
+    return c >= '0' && c <= '9';
+  }
+
 ```
