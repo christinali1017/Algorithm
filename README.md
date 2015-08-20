@@ -644,26 +644,21 @@ class Solution:
 **solution1 code**
 
 ```java
-     public String longestPalindrome(String s) {
-        if(s == null || s.length() == 0) return s;
-        boolean[][] dp = new boolean[s.length()+1][s.length() + 1];
-        dp[0][0] = true;
-        int max = 0;
+    public String longestPalindrome(String s) {
+        boolean[][] arr = new boolean[s.length()][s.length()];
         String res = "";
-        for(int i = 0; i < s.length(); i++){
-            for(int j = 0; j <= i; j++){
-                if(s.charAt(i) == s.charAt(j) && (i - j <= 2 || dp[j+1][i-1])){
-                    dp[j][i] = true;
-                    if(i - j + 1 > max){
-                        max = i-j+1;
-                        res = s.substring(j, i+1);
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j <= i; j++) {
+                if (s.charAt(j) == s.charAt(i) && (i - j <= 2 || arr[j + 1][i - 1])) {
+                    arr[j][i] = true;
+                    if (i - j + 1 > res.length()) {
+                        res = s.substring(j, i + 1);
                     }
                 }
-                
             }
         }
         return res;
-  	}
+    }
 
 ```
 
@@ -764,17 +759,17 @@ index of middle element : size - i + j - i ; i is the row number, j is the start
 
 ```java
     public int reverse(int x) {
-        if(x <= 9 && x >= -9) return x;
-        int res = 0;
-        boolean positive = x > 0 ? true : false;
+        boolean sign = x > 0;
         x = Math.abs(x);
-        while(x > 0 && (Integer.MAX_VALUE - x % 10) / 10 >= res){
-            int mod = x % 10;
-            res = res * 10 + mod;
+        int res = 0;
+        while (x > 0) {
+            if (res > (Integer.MAX_VALUE - x % 10) / 10) {
+                return 0;
+            }
+            res = res * 10 + x % 10;
             x = x / 10;
         }
-        if(x > 0) return 0;
-        return positive ?  res : -res;
+        return sign ? res : -res;
     }
 
 ```
