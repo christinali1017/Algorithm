@@ -775,9 +775,6 @@ index of middle element : size - i + j - i ; i is the row number, j is the start
 ```
 
 
-
-
-
 ###8 String to Integer atoi
 
 >Implement atoi to convert a string to an integer.
@@ -799,32 +796,33 @@ index of middle element : size - i + j - i ; i is the row number, j is the start
 
 ```java
     public int myAtoi(String str) {
-        if (str == null) {
-            return 0;
-        }
         str = str.trim();
+        boolean positive = false;
         int res = 0;
-        boolean isPositive = true; 
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if (i == 0 && (c == '-' || c == '+')) {
-                if (c == '-') {
-                    isPositive = false;
+            if (i == 0) {
+                if (c == '+') {
+                    positive = true;
+                } else if (isNum(c)) {
+                    positive = true;
+                    res = res * 10 + (c - '0');
+                } else if (c != '-') {
+                    break;
                 }
                 continue;
             }
             if (!isNum(c)) {
                 break;
-            } else if (res > (Integer.MAX_VALUE - (c - '0')) / 10) {
-                return isPositive ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-            } else {
-                res = res * 10 + (c - '0');
             }
+            if (res > (Integer.MAX_VALUE - (c - '0')) / 10) {
+                return positive ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            }
+            res = res * 10 + (c - '0');
         }
-        return isPositive ? res : -res;
+        return positive ? res : -res;
     }
-    
-    public boolean isNum(char c) {
+    private boolean isNum(char c) {
         return c >= '0' && c <= '9';
     }
 
@@ -860,21 +858,26 @@ class Solution:
 ```java
 
     public boolean isPalindrome(int x) {
-        if(x < 0) return false;
-	    if(x <= 9) return true;
-	    int divide = 1;
-	    while((divide < Integer.MAX_VALUE/10) && (divide * 10) <= x){
-	        divide *= 10;
-	    }
-	    while(x != 0){
-	        int ms = x/divide;
-	        int ls = x%10;
-	        if(ms != ls) return false;
-	        x = (x % divide) / 10;
-	        divide  = divide / 100;
-	    }
-	    return true;
-	}
+        if (x < 0) {
+            return false;
+        }
+        int digits = 1;
+        int temp = x;
+        while (temp >= 10) {
+            digits *= 10;
+            temp /= 10;
+        }
+        while (x != 0) {
+            int left = x / digits;
+            int right = x % 10;
+            if (left != right) {
+                return false;
+            }
+            x = (x % digits) / 10;
+            digits /= 100;
+        }
+        return true;
+    }
 
 ```
 
@@ -916,20 +919,27 @@ isMatch("aab", "c*a*b") → true
 
 ```java
 
-	public boolean isMatch(String s, String p) {
-        if((s == null && p == null) || p.equals(".*")) return true;
-        return helper(s, p, 0, 0);
+    public boolean isMatch(String s, String p) {
+        return isMatch(s, p, 0, 0);
     }
-    public boolean helper(String s, String p, int i, int j){
-        if(j == p.length()) return i == s.length();
-         if(j+1 == p.length() || p.charAt(j+1) != '*'){
-            if(i < s.length() && (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.')) return helper(s, p, i+1, j+1);
-            else return false;
-         }
-         while(i < s.length() && (p.charAt(j) == '.' || p.charAt(j) == s.charAt(i))){
-             if(helper(s, p, i++, j+2)) return true;
-         }
-         return helper(s, p, i, j+2);
+    private boolean isMatch(String s, String p, int i, int j) {
+        if (j == p.length()) {
+            return i == s.length();
+        }
+        if (j < p.length() - 1 && p.charAt(j + 1) == '*') {
+            while (i < s.length() && (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.')) {
+                if (isMatch(s, p, i++, j + 2)) {
+                    return true;
+                }
+            }
+            return isMatch(s, p, i, j + 2);
+        } else {
+            if (i < s.length() && (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.')) {
+                return isMatch(s, p, i + 1, j + 1);
+            } else {
+                return false;
+            }
+        }
     }
 ```
 
