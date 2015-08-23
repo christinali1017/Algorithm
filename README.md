@@ -2164,6 +2164,26 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 ```
 
+**Use two pointers**:
+
+```java
+    public int removeDuplicates(int[] nums) {
+        if (nums.length == 0) {
+            return 0;
+        }
+        int l = 0;
+        int r = 1;
+        while (r < nums.length) {
+            if (nums[r] != nums[l]) {
+                nums[++l] = nums[r++];
+            } else {
+                r++;
+            }
+        }
+        return l + 1;
+    }
+```
+
 
 <br>
 
@@ -2370,7 +2390,7 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 ```
 
-**Code of solution3**: O(n)
+**Code of solution3**: O(n), KMP
  
 ```java
 
@@ -2430,6 +2450,40 @@ Your algorithm should use only constant space. You may not modify the values in 
 	}
 
 ```
+
+** Solution 4: Rolling hash**: Using this method, hash value might exceed long, we can use Biginteger or improve it use Rabin Karp
+
+```java
+    public int strStr(String haystack, String needle) {
+        //assume haystack and needle is not null.
+        if (haystack.length() < needle.length()) {
+            return -1;
+        }
+        int base = 13;
+        long needleHash = 0;
+        long hayHash = 0;
+        long temp = 1;
+        for (int i = 0; i < needle.length(); i++) {
+            needleHash += (int) needle.charAt(i) * temp;
+            hayHash += (int) haystack.charAt(i) * temp;
+            temp *= base;
+        }
+        if (needleHash == hayHash) {
+            return 0;
+        }
+        temp = temp / base;
+        for (int i = needle.length(); i < haystack.length(); i++) {
+            hayHash -= (int) haystack.charAt(i - needle.length());
+            hayHash /= base;
+            hayHash += (int) haystack.charAt(i) * temp;
+            if (needleHash == hayHash) {
+                return i - needle.length() + 1;
+            }
+        }
+        return -1;
+    }
+```
+
 
 <br>
 
@@ -2636,37 +2690,32 @@ For example. a permutation of 1 2 3 4 5 would be:
 **Java code**:
 
 ```java
-public void nextPermutation(int[] num) {
-    if(num == null || num.length == 0) {
-        return;
+    public void nextPermutation(int[] nums) {
+        int index = nums.length - 2;
+        while (index >= 0 && nums[index] >= nums[index + 1]) {
+            index--;
+        } 
+        if (index == -1) {
+            reverse(nums, 0, nums.length - 1);
+            return;
+        }
+        int swapIndex = nums.length - 1;
+        while (swapIndex >= 0 && nums[swapIndex] <= nums[index]) {
+            swapIndex--;
+        }
+        swap(nums, index, swapIndex);
+        reverse(nums, index + 1, nums.length - 1);
     }
-    int i = num.length - 2;
-    while (i >= 0 && num[i] >= num[i+1]) {
-        i--;
+    private void reverse(int[] nums, int l, int r) {
+        while (l < r) {
+            swap(nums, l++, r--);
+        }
     }
-    int index1 = i;
-    if (i == -1) {
-        reverse(num, 0);
-        return;
+    private void swap(int[] nums, int l, int r) {
+        int temp = nums[l];
+        nums[l] = nums[r];
+        nums[r] = temp;
     }
-    i = num.length - 1;
-    while (i >= 0 && num[i] <= num[index1]) {
-        i--;
-    }
-    swap(num, index1, i);
-    reverse(num, index1 + 1);
-}
-
-public void reverse(int[] num, int i) {
-    for (int j = i; j < (num.length - i) / 2 + i; j++) {
-        swap(num, j, num.length + i - j - 1);
-    }
-}
-public void swap(int[] num, int i, int j) {
-    int temp = num[i];
-    num[i] = num[j];
-    num[j] = temp;
-}
 
 ```
 
@@ -2687,7 +2736,7 @@ public void swap(int[] num, int i, int j) {
 >Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
 
 
-**Idea**: This problem has some similarities with the valid parentheses, we need to use the method in that problem to check if the current sequence of parentheses is valid. We use a stack to match the parentheses. The difference is that we store the **index** of the parenthese other than index. Because there is only one type of parentheses, so it's ok to store just the index. 
+**Idea**: This problem has some similarities with the valid parentheses, we need to use the method in that problem to check if the current sequence of parentheses is valid. We use a stack to match the parentheses. The difference is that we store the **index** of the parenthese other than parenthese itself. Because there is only one type of parentheses, so it's ok to store just the index. 
 
 Then how to calculate the longest valid parentheses? Like the valid parentheses problem, everytime, we encounter a '(', we push the current index. Then if the parentheses is ')', Obviously, if the stack is empty, then the previous parentheses sequence cannot be a valid parentheses, so we update the valid parentheses start position. Otherwise, we need to calculate the local longest parentheses. 
 
@@ -2698,17 +2747,21 @@ Then how to calculate the longest valid parentheses? Like the valid parentheses 
 
 ```java
     public int longestValidParentheses(String s) {
-        if(s == null || s.length() == 0) return 0;
+        Deque<Integer> stack = new LinkedList<>();
         int max = 0;
-        int start = 0;
-        Stack<Integer> stack = new Stack<Integer>();
-        for(int i = 0; i < s.length(); i++){
-            if(stack.isEmpty() && s.charAt(i) == ')') start = i+1;
-            else if(s.charAt(i) == ')'){
-                stack.pop();
-                max = stack.isEmpty()?Math.max(max, i -start+1) : Math.max(max, i-stack.peek());
-            } 
-            else if(s.charAt(i) == '(') stack.push(i);
+        int index = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stack.push(i);
+            } else {
+                if (stack.isEmpty()) {
+                    index = i + 1;
+                    continue;
+                } else {
+                    stack.pop();
+                    max = stack.isEmpty() ? Math.max(max, i - index + 1) : Math.max(max, i - stack.peek());
+                }
+            }
         }
         return max;
     }
