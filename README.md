@@ -981,7 +981,7 @@ isMatch("aab", "c*a*b") → true
 >Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
 Note: You may not slant the container.
 
-**Idea**: Thea easiest way we can do is brute force. We calcuate the possible value with element with all the values after it. The time complexity is O(n^2). Have have another efficient way. We set a window, l = 0, r = size -1. Each time we calculate the container of l r, then we compare the height[l] and height[r]. if(height[l] > height[r]), r--. Because we know that height[l] > height[r], if we move l pointer, then the volumn would decrease.
+**Idea**: Thea easiest way we can do is brute force. We calcuate the possible value with element with all the values after it. The time complexity is O(n^2). We have another efficient way. We set a window, l = 0, r = size -1. Each time we calculate the container of l r, then we compare the height[l] and height[r]. if(height[l] > height[r]), r--. Because we know that height[l] > height[r], if we move l pointer, then the volumn would decrease.
 
 
 ```java
@@ -1629,21 +1629,22 @@ when encounter ), ], } pop corresponding parentheses.
 ```java
 
 
-    public boolean isValid(String s) {
-        if(s == null || s.length() == 0) return true;
-        Stack<Character> stack = new Stack<Character>();
-        for(int i = 0; i < s.length(); i++){
-            char c = s.charAt(i);
-            if(stack.isEmpty() && (c == ')' || c == ']' || c == '}')) return false;
-            if(c == '(' || c == '[' || c == '{') stack.push(c);
-            else if(c == ')' || c == ']' || c == '}'){
-                if((c == ')' && stack.peek() != '(') || (c == ']' && stack.peek() != '[') || (c == '}' && stack.peek() != '{')) 
-                    return false;
-                else stack.pop();
+public boolean isValid(String s) {
+    Deque<Character> stack = new LinkedList<>();
+    for (int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
+        if (c == '(' || c == '[' || c == '{') {
+            stack.push(c);
+        } else {
+            if (!stack.isEmpty() && ((c == ')' && stack.peek() == '(') || (c == ']' && stack.peek() == '[') || (c == '}' && stack.peek() == '{'))) {
+                stack.pop();
+            } else {
+                return false;
             }
         }
-        return stack.isEmpty();
     }
+    return stack.isEmpty();
+}
 
 
 ```
@@ -2026,6 +2027,22 @@ Your algorithm should use only constant space. You may not modify the values in 
 	    temp.next = head;
 	    return fakeHead.next;
 	  }
+```
+
+<br>
+**Recursive way**:
+
+```java
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode next = head.next;
+        ListNode nextNext = head.next.next;
+        next.next = head;
+        head.next = swapPairs(nextNext);
+        return next;
+    }
 ```
 
 
