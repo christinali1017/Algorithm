@@ -2790,6 +2790,10 @@ Then how to calculate the longest valid parentheses? Like the valid parentheses 
 **Idea**: There is no duplicate, so after rotation, the array can be look as two parts, and these two parts are all in ascending order. Thus we can use the binary search method, and update the l and r pointer based on the comparison. See details of comparison on the code.
 
 
+**Note**:
+
+In the else if condition, we should use A[mid] >= A[l] other than A[mid] == A[l]. Otherwise can not pass 3, 1 use case.
+
 **Java code**: 
 
 
@@ -3539,7 +3543,7 @@ Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 
 **Idea**: 
 
-- 1) Solution1: Like [11 Container with Most Water](#11-container-with-most-water), we record two pointers, l and r, min = min(A[l], A[r]), if A[l] < A[r], we move right, and add water if A[l] < min; similarly, if A[l] > A[r], we move r left, and if A[r] < min, we add water. When l >= r, we get the total volumn. 
+- 1) Solution1: Like [11 Container with Most Water](#11-container-with-most-water), we record two pointers, l and r, min = min(A[l], A[r]), if A[l] < A[r], we move l right, and add water if A[l] < min; similarly, if A[l] > A[r], we move r left, and if A[r] < min, we add water. When l >= r, we get the total volumn. 
 
 
 ```java
