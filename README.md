@@ -3726,6 +3726,57 @@ isMatch("aab", "c*a*b") → false
 
 ```
 
+<br>
+
+**DP solution**: Two dimensional array.
+
+```java
+    public boolean isMatch(String s, String p) {
+        boolean[][] arr = new boolean[p.length() + 1][s.length() + 1];
+        arr[0][0] = true;
+        for (int i = 0; i < p.length(); i++) {
+            if (p.charAt(i) != '*') {
+                for (int j = 0; j < s.length(); j++) {
+                    arr[i + 1][j + 1] =  arr[i][j] && (s.charAt(j) == p.charAt(i) || p.charAt(i) == '?');
+                }
+            } else {
+                if (i == 0) {
+                    arr[i + 1][0] = true;
+                }
+                for (int j = 0; j < s.length(); j++) {
+                    arr[i][j + 1] |= arr[i][j];
+                    arr[i + 1][j] |= arr[i][j];
+                    arr[i + 1][j + 1] |=  arr[i][j + 1];
+                 }
+            }
+        }
+        return arr[p.length()][s.length()];
+    }
+```
+
+**DP solution**: One dimensional DP:
+
+```java
+    public boolean isMatch(String s, String p) {
+        boolean[] arr = new boolean[s.length() + 1];
+        arr[0] = true;
+        for (int i = 0; i < p.length(); i++) {
+            if (p.charAt(i) != '*') {
+                for (int j = s.length() - 1; j >= 0; j--) {
+                    arr[j + 1] =  arr[j] && (s.charAt(j) == p.charAt(i) || p.charAt(i) == '?');
+                }
+                arr[0] = false; // "" can only match "*+"
+            } else {
+                for (int j = 0; j < s.length(); j++) {
+                    arr[j + 1] |=  arr[j];
+                 }
+            }
+        }
+        return arr[s.length()];
+    }
+
+```
+
 
 
 <br>
