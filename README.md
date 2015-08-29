@@ -3839,6 +3839,24 @@ The minimum number of jumps to reach the last index is 2. (Jump 1 step from inde
     } 
     return max < array.length - 1 ? -1 : res;
   }
+
+  //or
+  public int jump(int[] nums) {
+    int min = 0;
+    int cur = 0;
+    int max = 0;
+    for (int i = 0; i < nums.length && i <= max; i++) {
+        max = Math.max(max, i + nums[i]);
+        if (cur <= i) {
+            if (cur >= nums.length - 1) {
+                return min;
+            }
+            min++;
+            cur = max;
+        }
+    }
+    return max < nums.length - 1 ? -1 : min;
+  }
 ```
 <br>
 **Related: min steps to jump out of the array**
@@ -3976,33 +3994,37 @@ Since there is no duplicate, we can add element one by one. For example:
 **Another way**: use swap
 
 ```java
-  public List<String> permutations(String set) {
-    List<String> res = new ArrayList<String>();
-    if (set == null) {
-      return res;
+    public List<List<Integer>> permute(int[] num) {
+      List<List<Integer>> list = new ArrayList<List<Integer>>();
+      if (num == null || num.length == 0) {
+          return list;
+      }
+        permute(list, num, 0);
+        return list;
     }
-    permutations(res, 0, set.toCharArray());
-    return res;
-  }
-  
-  public void permutations(List<String> res, int index, char[] arr) {
-    if (index == arr.length) {
-      String s = new String(arr);
-      res.add(s);
-      return;
+    
+    public void permute(List<List<Integer>> list, int[] num, int index){
+      if (index == num.length) {
+          //List<Integer> arr = IntStream.of(num).boxed().collect(Collectors.toList()); //speed is slow.
+          List<Integer> arr = new ArrayList<>();
+          for (int i : num) {
+              arr.add(i);
+          }
+        list.add(arr);
+        return;
+      }
+        for (int i = index; i < num.length; i++) {
+            swap(num, index, i);
+            permute(list, num, index + 1);
+            swap(num, index, i);
+        }
     }
-    for (int i = index; i < arr.length; i++) {
-      swap(arr, i, index);
-      permutations(res, index + 1, arr);
-      swap(arr, i, index);
+    
+    private void swap(int[] num, int i, int j) {
+        int temp = num[i];
+        num[i] = num[j];
+        num[j] = temp;
     }
-  }
-  
-  public void swap(char[] arr, int i, int j) {
-    char temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-  }
 ```
 <br>
 <br>
@@ -4143,15 +4165,16 @@ These two are accepted, the second one has better time complexity.
 
 ```java
     public List<List<Integer>> permuteUnique(int[] num) {
-        List<List<Integer>> list = new ArrayList<List<Integer>>();
-        if (num == null || num.length == 0) {
-            return list;
-        }
-        Arrays.sort(num);
-        list.add(IntStream.of(num).boxed().collect(Collectors.toList()));
-        while (nextPermutation(num)) {
-            list.add(IntStream.of(num).boxed().collect(Collectors.toList()));
-        }
+      List<List<Integer>> list = new ArrayList<List<Integer>>();
+      if (num == null || num.length == 0) {
+          return list;
+      }
+      Arrays.sort(num);
+      //list.add(IntStream.of(num).boxed().collect(Collectors.toList())); //speed is slow
+      list.add(toList(num));
+      while (nextPermutation(num)) {
+          list.add(toList(num));
+      }
         return list;
     }
     
@@ -4186,6 +4209,14 @@ These two are accepted, the second one has better time complexity.
         int temp = num[i];
         num[i] = num[j];
         num[j] = temp;
+    }
+    
+    private List<Integer> toList(int[] num) {
+        List<Integer> arr = new ArrayList<>();
+        for (int i : num) {
+            arr.add(i);
+        }
+        return arr;
     }
 
 ```
@@ -4753,18 +4784,16 @@ A = [3,2,1,0,4], return false.
 
 
 ```java
-
-
-    public boolean canJump(int[] A) {
-        if(A == null || A.length <= 1) return true;
-        int max = 0;
-        for(int i = 0; i < A.length && i <= max; i++){
-            max = Math.max(max, i+A[i]);
-            if(max >= A.length-1) return true;
+    public boolean canJump(int[] nums) {
+        int canReach = 0;
+        for (int i = 0; i < nums.length && i <= canReach; i++) {
+            canReach = Math.max(canReach, i + nums[i]);
+            if (canReach >= nums.length - 1) {
+                return true;
+            }
         }
-        return max >= A.length-1;
+        return canReach >= nums.length - 1;
     }
-
 ```
 
 <br>
