@@ -49,7 +49,7 @@
 * [46 Permutations](#46-permutations)
 * [47 Permutations II](#47-permutations-ii)
 * [48 Rotate Image](#48-rotate-image)
-* [49 Anagrams](#49-anagrams)
+* [49 Group Anagrams](#49-group-anagrams)
 * [50 Pow](#50-pow)
 * [51 N Queens](#51-n-queens)
 * [52 N Queens II](#52-n-queens-ii)
@@ -4161,7 +4161,7 @@ These two are accepted, the second one has better time complexity.
 
 <br>
 
-**M4: use next permutation**: tle on leetcode
+**M4: use next permutation**:
 
 ```java
     public List<List<Integer>> permuteUnique(int[] num) {
@@ -4269,7 +4269,7 @@ These two are accepted, the second one has better time complexity.
 <br>
 
 
-###49 Anagrams
+###49 Group Anagrams
 
 >Given an array of strings, return all groups of strings that are anagrams.
 
@@ -4354,6 +4354,38 @@ Here is another similar solution using hashmap, the difference is that it does n
 
 ```
 
+<br>
+**Solution for the updated question:**
+
+```java
+public List<List<String>> groupAnagrams(String[] strs) {
+    List<List<String>> res = new ArrayList<>();
+    if(strs == null || strs.length == 0) {
+        return res;
+    }
+    Map<String, List<String>> map = new HashMap<String, List<String>>();
+    for (String s : strs){
+        char[] arr = s.toCharArray();
+        Arrays.sort(arr);
+        String sorted = new String(arr);
+        if (map.containsKey(sorted)) {
+            map.get(sorted).add(s);
+        } else {
+            List<String> list = new ArrayList<String>();
+            list.add(s);
+            map.put(sorted, list);
+        }
+    }
+    Iterator<List<String>> ite = map.values().iterator();
+    while (ite.hasNext()) {
+        List<String> cur = ite.next();
+        Collections.sort(cur);
+        res.add(cur);
+    }
+    return res;
+}
+```
+
 
 <br>
 <br>
@@ -4364,20 +4396,13 @@ Here is another similar solution using hashmap, the difference is that it does n
 
 **Idea**: Dichotomy and calculate recursively. 
 ```java
-
-    public double myPow(double x, int n) {
-        if (n == 0) {
-            return 1;
-        }
-        double result = myPow(x, n/2);
-        if (n % 2 == 0) {
-            return result * result;
-        } else if (n % 2 == 1) {
-             return result * result * x;
-        } else {
-            return result * result / x;
-        }
+public double myPow(double x, int n) {
+    if (n == 0) {
+        return 1;
     }
+    double half = myPow(x, n / 2);
+    return n % 2 == 0 ? half * half : (n > 0 ? half * half * x : half * half / x);
+}
 ```
 
 
@@ -4465,6 +4490,18 @@ There exist two distinct solutions to the 4-queens puzzle:
 ```
 
 
+**Sililar to 52 N Queens II, we can improve the isValid method in the following way**:
+
+```java
+  Set<Integer> colSet = new HashSet<>(); //check col1 = col2
+  Set<Integer> posDiagSet = new HashSet<>(); //check row1 - row2 = col1 - col2 ==> row1 - col1 = row2 - col2
+  Set<Integer> negDiagSet = new HashSet<>(); // check row1 - row2 = - (col1 - col2) ==> row1 + col1 = row2 + col2
+
+  public boolean isValid(int r, int c, Set<Integer> colSet, Set<Integer> posDiagSet, Set<Integer> negDiagSet){
+    return !(colSet.contains(c) || posDiagSet.contains(r - c) || negDiagSet.contains(r + c));
+  }
+```
+
 <br>
 
 <br>
@@ -4511,6 +4548,47 @@ There exist two distinct solutions to the 4-queens puzzle:
 	}
 
 ```
+
+**In above method, we use O(n) time to check valid, we can do it in O(1)**
+
+```java
+    public int totalNQueens(int n) {
+        if(n <= 0) return 0;
+        int[] res = new int[1];
+        Set<Integer> colSet = new HashSet<>(); //check col1 = col2
+        Set<Integer> posDiagSet = new HashSet<>(); //check row1 - row2 = col1 - col2 ==> row1 - col1 = row2 - col2
+        Set<Integer> negDiagSet = new HashSet<>(); // check row1 - row2 = - (col1 - col2) ==> row1 + col1 = row2 + col2
+        solve(0, n, new int[n], res, colSet, posDiagSet, negDiagSet);
+        return res[0];
+    }
+    
+    public void solve(int r, int n, int[] cols, int[] res, Set<Integer> colSet, Set<Integer> posDiagSet, Set<Integer> negDiagSet){
+        if(r == n){
+          res[0]++;
+          return;
+        }
+        for(int i = 0; i < n; i++){
+            if(isValid(r, i, colSet, posDiagSet, negDiagSet)){
+                cols[r] = i;
+                colSet.add(i);
+                posDiagSet.add(r - i);
+                negDiagSet.add(r + i);
+                solve(r + 1, n, cols, res, colSet, posDiagSet, negDiagSet);
+                colSet.remove(i);
+                posDiagSet.remove(r - i);
+                negDiagSet.remove(r + i);
+            }
+        }  
+        
+    }
+    
+  public boolean isValid(int r, int c, Set<Integer> colSet, Set<Integer> posDiagSet, Set<Integer> negDiagSet){
+      return !(colSet.contains(c) || posDiagSet.contains(r - c) || negDiagSet.contains(r + c));
+  }
+
+```
+
+
 
 
 <br>
