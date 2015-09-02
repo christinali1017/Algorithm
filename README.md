@@ -68,6 +68,7 @@
 * [65 Valid Number](#65-valid-number)
 * [66 Plus One](#66-plus-one)
 * [67 Add Binary](#67-add-binary)
+* [68 Text Justification](#68-text-justification)
 * [69 Sqrt](#69-sqrt)
 * [70 Climbing Stairs](#70-climbing-stairs)
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
@@ -5017,12 +5018,12 @@ Otherwise, we need to compare the end of two intervals. If current.end > last.en
         
         for(; i < intervals.size(); i++){
             Interval cur = intervals.get(i);
-            Interval last = res.get(res.size()-1);
-            if(cur.start > last.end){
+            Interval previous = res.get(res.size()-1);
+            if(cur.start > previous.end){
                 res.add(cur);
             }else{
-                last.start = Math.min(last.start, cur.start);
-                last.end = Math.max(last.end, cur.end);
+                previous.start = Math.min(previous.start, cur.start);
+                previous.end = Math.max(previous.end, cur.end);
             }
         }
         return res;
@@ -5317,20 +5318,13 @@ This problem is much similar to fibonacci number or the climb steps. We can easi
 
 ```java
 
-    public int uniquePaths1(int m, int n) {
-    	if (n <= 0 || m <= 0) {
-    		return 0;
-    	}
-    	return helper(m-1, n-1);
-    }
-    
-    public int helper(int m, int n){
-    	if (m == 0 && n == 0) {
-    		return 1;
-    	} else if ( m < 0 || n < 0) {
-    		return 0;
-    	}
-    	return helper(m-1, n)+helper(m, n-1);
+    public int uniquePaths(int m, int n) {
+        if (m == 0 && n == 0) {
+            return 1;
+        } else if (m < 0 || n < 0) {
+            return 0;
+        }
+        return uniquePaths(m - 1, n) + uniquePaths(m, n - 1);
     }
 
 
@@ -5339,7 +5333,9 @@ This problem is much similar to fibonacci number or the climb steps. We can easi
 
 **Solution 2**
 
-Simply to the climb stairs problem, we can solve this problem use dynamic programming. Use dynamic programming. dp[m][n] = dp[m-1][n-1]. 
+Simply to the climb stairs problem, we can solve this problem use dynamic programming. Use dynamic programming.
+
+Induction rule:  dp[i][j] = dp[i-1][j] + dp[i][j-1]; 
 
 In dp, the initial value is really important. In this problem, how do we initialize the dp array? Generally, the initianization would be dp[0][0] or dp[0][i] or dp[i][0], or other. In this problem, we need to initialize dp[0][i] dp[i][0] to 1, because they all have single path. The code is below:
 
@@ -5403,7 +5399,9 @@ In the above dp code, the formula is  dp[i][j] = dp[i-1][j] + dp[i][j-1]. We can
 
 We can also use combination to solve this problem. We need to walk m+n-2 steps. m-1 steps down and n-1 steps right. 
 
-**Note that the numbers will because really big after a few steps. Remember to use double or big integers.**
+Thus we can select (m -1) from (m + n - 2) steps.
+
+**Note that the numbers will become really big after a few steps. Remember to use double or big integers.**
 
 ```java
 
@@ -5552,25 +5550,21 @@ you will find that we can solve this problem in the same way. We can use recursi
 ```java
 
     public int minPathSum(int[][] grid) {
-        if (grid == null || grid.length == 0 || grid[0].length == 0) {
-            return 0;
-        }
-        int m = grid.length; 
-        int n = grid[0].length;
-        int[][] dp = new int[m][n];
-        dp[0][0] = grid[0][0];
-        for (int i = 1; i < n; i++) {
-            dp[0][i] = dp[0][i-1] + grid[0][i];
-        }
-        for (int i = 1; i < m; i++) {
-            dp[i][0] = dp[i-1][0] + grid[i][0];
-        }
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                dp[i][j] = Math.min(dp[i-1][j] + grid[i][j], dp[i][j-1] + grid[i][j]);
+        int[][] dp = new int[grid.length][grid[0].length];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (i == 0 && j == 0) {
+                    dp[i][j] = grid[i][j];
+                } else if (i == 0) {
+                     dp[i][j] = dp[i][j - 1] + grid[i][j];
+                } else if (j == 0) {
+                    dp[i][j] = dp[i - 1][j] + grid[i][j];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+                }
             }
         }
-        return dp[m-1][n-1];
+        return dp[grid.length - 1][grid[0].length - 1]; 
     }
 
 ```
@@ -5580,28 +5574,22 @@ you will find that we can solve this problem in the same way. We can use recursi
 
 ```java
 
- public int minPathSum(int[][] grid) {
-        if (grid == null || grid.length == 0 || grid[0].length == 0) {
-            return 0;
-        }
-        int m = grid.length; 
-        int n = grid[0].length;
-        int[] dp = new int[n];
-        dp[0] = grid[0][0];
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (j == 0 && i == 0) {
-                    continue;
+    public int minPathSum(int[][] grid) {
+        int[] dp = new int[grid[0].length];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (i == 0 && j == 0) {
+                    dp[j] = grid[i][j];
                 } else if (i == 0) {
-                    dp[j] = dp[j-1] + grid[i][j];
+                     dp[j] = dp[j - 1] + grid[i][j];
                 } else if (j == 0) {
                     dp[j] = dp[j] + grid[i][j];
                 } else {
-                     dp[j] = Math.min(dp[j], dp[j-1]) + grid[i][j];
+                    dp[j] = Math.min(dp[j], dp[j - 1]) + grid[i][j];
                 }
             }
         }
-        return dp[n-1];
+        return dp[grid[0].length - 1]; 
     }
 
 
@@ -5643,7 +5631,7 @@ you will find that we can solve this problem in the same way. We can use recursi
 		* must has a number before it or after it 
 		
 	- - and + :
-		* must at the beginning or after e or E
+		* must at the beginning or after e or E or .
 		* must has a number or . after it.
 
 	- e or E:
@@ -5809,6 +5797,8 @@ There are two cases:
 
 It seems that it's a pretty good solution. Well, actually, we just need to store carry in index 0. **Why? Because if there are carry at the end, then the other digits must be 0**.  See detail on the **better solution** below. 
 
+Also, if carry is 0, we can return the array immediately.
+
 
 **Java code**:
 
@@ -5848,7 +5838,7 @@ It seems that it's a pretty good solution. Well, actually, we just need to store
 ```
 
 
-**Better solution**:
+**Modified solution 1**:
 
 ```java
     public int[] plusOne(int[] digits) {
@@ -5876,6 +5866,32 @@ It seems that it's a pretty good solution. Well, actually, we just need to store
 
 ```
 
+**Modified solution 2**:
+
+```java
+    public int[] plusOne(int[] digits) {
+        if (digits == null || digits.length == 0) {
+            return digits;
+        }
+        int carry = 0;
+        for (int i = digits.length - 1; i >= 0; i--) {
+            int digit = digits[i];
+            if (i == digits.length -1) {
+                digit += 1;
+            }
+            digit += carry;
+            digits[i] = digit % 10;
+            carry = digit / 10;
+            if (carry == 0) {
+                return digits;
+            } 
+        }
+        int[] res = new int[digits.length + 1];
+        res[0] = carry;
+        return res;
+    }
+```
+
 
 <br>
 <br>
@@ -5894,11 +5910,33 @@ It seems that it's a pretty good solution. Well, actually, we just need to store
 
 >Return "100".
 
+**Some note**:
 
-**Idea**:
-
+1) when calculate, we need to convert char to integer.
 
 **Solution**:
+
+```java
+public String addBinary(String a, String b) {
+    String longer = a.length() > b.length() ? a : b;
+    String shorter = longer == a ? b : a;
+    StringBuilder rs = new StringBuilder();
+    int carry = 0;
+    for (int i = longer.length() - 1; i >= 0; i--) {
+        int charShorter = '0';
+        if (i >= longer.length() - shorter.length()) {
+            charShorter = shorter.charAt(shorter.length() - (longer.length() - i));
+        }
+        int sum = carry + longer.charAt(i) + charShorter - 2 * '0';
+        rs.append("" + sum % 2);
+        carry = sum / 2;
+    }
+    if (carry == 1) {
+        rs.append("" + carry);
+    }
+    return rs.reverse().toString();
+}
+```
 
 
 
@@ -5960,6 +5998,35 @@ It seems that it's a pretty good solution. Well, actually, we just need to store
 
 <br>
 
+<br>
+
+###68 Text Justification
+
+>Given an array of words and a length L, format the text such that each line has exactly L characters and is fully (left and right) justified.
+
+>You should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces ' ' when necessary so that each line has exactly L characters.
+
+>Extra spaces between words should be distributed as **evenly** as possible. If the number of spaces on a line do not divide evenly between words, **the empty slots on the left will be assigned more spaces than the slots on the right**.
+
+>For the **last line of text, it should be left justified** and no extra space is inserted between words.
+
+<pre>
+For example,
+words: ["This", "is", "an", "example", "of", "text", "justification."]
+L: 16.
+
+Return the formatted lines as:
+[
+   "This    is    an",
+   "example  of text",
+   "justification.  "
+]
+Note: Each word is guaranteed not to exceed L in length.
+</pre>
+
+
+
+<br>
 <br>
 
 ###70 Climbing Stairs
