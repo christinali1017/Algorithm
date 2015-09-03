@@ -6024,7 +6024,84 @@ Return the formatted lines as:
 Note: Each word is guaranteed not to exceed L in length.
 </pre>
 
+**Idea**: Just need to be careful
 
+A few notes:
+
+- for rows except of the last row we need to take care of the case when there is only one word in the line.
+
+- for the last row, remember to add addtional spaces in the end of the line.
+
+
+```java
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> res = new ArrayList<>();
+        int len = 0;
+        int start = 0;
+        for (int i = 0; i < words.length; i++) {
+            if (len + words[i].length() + i - start > maxWidth) {
+                res.add(generateRow(i, start, maxWidth, words, len));
+                len = 0;
+                start = i;
+            }
+            len += words[i].length();
+        }
+        //last row
+        res.add(generateLastRow(start, maxWidth, words));
+        return res;
+    }
+    
+    private String generateLastRow(int start, int maxWidth, String[] words) {
+        StringBuilder res = new StringBuilder();
+        //separate each word with one space.
+        for (int i = start; i < words.length; i++) {
+            res.append(words[i]);
+            if (res.length() < maxWidth) {
+                res.append(" ");
+            }
+        }
+        //add extra spaces in the end.
+        for (int i = res.length(); i < maxWidth; i++) {
+            res.append(" ");
+        }
+        return res.toString();
+    }
+
+    private String generateRow(int i, int start, int maxWidth, String[] words, int len) {
+        //check space, slot number i - start - 1, i is not include, start is include
+        int spacePerWord = 0;
+        int remainSpace = 0;
+        if (i - start - 1 > 0) {
+            spacePerWord = (maxWidth - len) / (i - start - 1);
+            remainSpace = (maxWidth - len) % (i - start - 1);
+        }
+        //generate row
+        StringBuilder sb = new StringBuilder();
+        for (int j = start; j < i; j++) {
+            sb.append(words[j]);
+            if (j != i - 1) {
+                sb.append(createSpace(spacePerWord));
+            }
+            if (remainSpace > 0) {
+                sb.append(" ");
+            }
+            remainSpace--;
+        }
+        //for i - start - 1 = 0
+        for (int j = sb.length(); j < maxWidth; j++) {
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
+    
+    private String createSpace(int num) {
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < num; i++) {
+            res.append(" ");
+        }
+        return res.toString();
+    }
+```
 
 <br>
 <br>
