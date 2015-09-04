@@ -5945,61 +5945,6 @@ public String addBinary(String a, String b) {
 
 <br>
 
-###69 Sqrt
-
->Implement int sqrt(int x).
-
->Compute and return the square root of x.
-
-
-**Idea**: The result = x/result, so each time we can give a better guess result = (result + x/result)/2 until we get the correct answer.
-
-```java
-  public int mySqrt(int x) {
-        if (x < 1) {
-            return 0;
-        }
-        double res = 1;
-        while (true) {
-            if (Math.abs(res - x/res) < 0.00000001) {
-                return (int)res;
-            }
-            res = (res + x / res) / 2;
-        }
-    }
-```	
-**Other Idea**: Dichotomy. l = smallest possible result, r the largest possible result. mid = (l + r)/2 , check the relationship between mid and result
-
-**Attention**: mid <= x/mid && (mid + 1) > x/(mid+1) can not change to mid * mid <= x && (mid+1) * (mid+1) > x. Because, when **mid * mid overflows**, the result might change, also, it might lead to Time limit exceeded.
-
-```java
-    public int mySqrt(int x) {
-        if (x < 1) {
-            return 0;
-        }
-        int l = 1;
-        int r = x/2 + 1;
-        while (l <= r) {
-           int mid = l + (r - l) / 2;
-           if (mid <= x / mid && (mid + 1) > x / (mid + 1)) {
-               return mid;
-           } else if (mid > x / mid) {
-               r = mid - 1;
-           } else {
-               l = mid + 1;
-           }
-        }
-        return 0;
-    }
-
-```	
- 
-
-
-<br>
-
-<br>
-
 ###68 Text Justification
 
 >Given an array of words and a length L, format the text such that each line has exactly L characters and is fully (left and right) justified.
@@ -6105,6 +6050,55 @@ A few notes:
 
 <br>
 <br>
+
+###69 Sqrt
+
+>Implement int sqrt(int x).
+
+>Compute and return the square root of x.
+
+
+**Idea**: The result = x/result, so each time we can give a better guess result = (result + x/result)/2 until we get the correct answer.
+
+```java
+    public int mySqrt(int x) {
+        if (x < 1) {
+            return 0;
+        }
+        double res = 1;
+        while (Math.abs(res - x / res) > 0.00001) {
+            res = (res + x / res) / 2;
+        }
+        return (int) res;
+    }
+```	
+**Other Idea**: Dichotomy. l = smallest possible result, r the largest possible result. mid = (l + r)/2 , check the relationship between mid and result
+
+**Attention**: mid <= x/mid && (mid + 1) > x/(mid+1) can not change to mid * mid <= x && (mid+1) * (mid+1) > x. Because, when **mid * mid overflows**, the result might change, also, it might lead to Time limit exceeded.
+
+```java
+    public int mySqrt(int x) {
+      int l = 1;
+      int r = x / 2 + 1;
+      while (l <= r) {
+          int mid = l + (r - l) / 2;
+          if (x / mid >= mid && x / (mid + 1) < (mid + 1)) {
+              return mid;
+          } else if (x / mid > mid) {
+              l = mid + 1;
+          } else {
+              r = mid - 1;
+          }
+      }
+      return 0;
+  }
+```	
+
+<br>
+
+<br>
+
+
 
 ###70 Climbing Stairs
 
