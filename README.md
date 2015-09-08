@@ -6166,6 +6166,8 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
     
 ```
 
+**Solution 1: use stack.
+
 We see that the value of Fibonacci increases exponentially. If we use int, then we can only compute to F47, if we use long, we can compute to F96. So if our required numbers are big, it's unreasonable to use in/long as return value. We can use BigInteger in java. Eg:
 
 ```java
@@ -6190,6 +6192,85 @@ We see that the value of Fibonacci increases exponentially. If we use int, then 
 
 <br>
 <br>
+###71 Simplify Path
+
+> Given an absolute path for a file (Unix-style), simplify it.
+
+<pre>
+For example,
+path = "/home/", => "/home"
+path = "/a/./b/../../c/", => "/c"
+
+</pre>
+
+**Idea**: Use stack
+
+Note: When use linkedlist as stack, push add element to the front of the linkedlist. Pop removes the first element of the list. Thus when construct the result, we should use pollLast.
+
+```java
+ public String simplifyPath(String path) {
+        Deque<String> stack = new LinkedList<String>();
+        int i = 0;
+        while (i < path.length()) {
+            StringBuilder cur = new StringBuilder();
+            while(i < path.length() && path.charAt(i) != '/') {
+                cur.append(path.charAt(i++));
+            }
+            if (cur.length() > 0) {
+                if (cur.toString().equals("..")) {
+                    if (!stack.isEmpty()) {
+                        stack.pop();
+                    }
+                } else if (!cur.toString().equals(".")) {
+                    stack.push(cur.toString());
+                }
+            }
+            i++;
+        }
+        StringBuilder res = new StringBuilder();
+        if (stack.isEmpty()) {
+            return "/";
+        }
+        while (!stack.isEmpty()) {
+            res.append("/" +stack.pollLast());
+        }
+        return res.toString();
+    }
+```
+
+Another solution use regular expression to split the path.
+
+```java
+  public String simplifyPath(String path) {
+        Deque<String> stack = new LinkedList<String>();
+        String[] strs = path.split("/");
+        for (String s : strs) {
+            if (s.equals("")) {
+                continue;
+            } else if (s.equals("..")) {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+            } else if (!s.equals(".")) {
+                stack.push(s);
+            }
+        }
+        StringBuilder res = new StringBuilder();
+        if (stack.isEmpty()) {
+            return "/";
+        }
+        while (!stack.isEmpty()) {
+            res.append("/" +stack.pollLast());
+        }
+        return res.toString();
+    }
+```
+
+
+
+<br>
+<br>
+
 
 ###73 Set Matrix Zeroes
 
