@@ -6315,6 +6315,8 @@ We can also adapt the following code to use just one dimensional array.
 
 >Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
 
+**Solution 1**:
+
 **Idea**: The easiest way to do this problem is record the rows of columns needed to be set to 0. We can use extra array to record the rows and columns. The space complexity would ba O(m+n). If we use one row and one column that are supposed to set to 0s to stroe the information, we can get O(1) space complexity.
 
 **Java code**:
@@ -6351,6 +6353,57 @@ public void setZeroes(int[][] matrix) {
 
 ```
 
+**Solution 2**:
+
+Can we do it in place? Yes. We can use the first row and first column to record the rows and columns to be set to 0.
+The spot in the first row or column will be set to 0 if there exists 0 element in that row or column.
+
+```java
+    public void setZeroes(int[][] matrix) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return;
+        }
+        boolean firstRow = false;
+        for (int i = 0; i < matrix[0].length; i++) {
+            if (matrix[0][i] == 0) {
+                firstRow = true;
+                break;
+            }
+        }
+        boolean firstColumn = false;
+        for (int i = 0; i < matrix.length; i++) {
+            if (matrix[i][0] == 0) {
+                firstColumn = true;
+                break;
+            }
+        }
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+        }
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[0].length; j++) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if (firstRow) {
+            for (int i = 0; i < matrix[0].length; i++) {
+                matrix[0][i] = 0;
+            }
+        }
+        if (firstColumn) {
+            for (int i = 0; i < matrix.length; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+```
 
 
 <br>
