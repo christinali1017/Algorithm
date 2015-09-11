@@ -76,6 +76,7 @@
 * [73 Set Matrix Zeroes](#73-set-matrix-zeroes)
 * [74 Search a 2D Matrix](#74-search-a-2d-matrix)
 * [75 Sort Colors](#75-sort-colors)
+* [76 Minimum Window Substring](#76-minimum-window-substring)
 * [77 Combinations](#77-combinations)
 * [78 Subsets](#78-subsets)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
@@ -6687,6 +6688,71 @@ Use method1 need two pass. Method 2 only need one pass.
     }
 ```
 
+
+<br>
+<br>
+
+###76 Minimum Window Substring
+>Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+<pre>
+
+For example,
+S = "ADOBECODEBANC"
+T = "ABC"
+Minimum window is "BANC".
+
+Note:
+If there is no such window in S that covers all characters in T, return the emtpy string "".
+
+If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window in S.
+</pre>
+
+**Idea**: hashmap && sliding window.
+
+```java
+ public String minWindow(String s, String t) {
+        if (s.length() < t.length()) {
+            return "";
+        }
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < t.length(); i++) {
+            Integer temp = map.get(t.charAt(i));
+            if (temp == null) {
+                map.put(t.charAt(i), 1);
+            } else {
+                map.put(t.charAt(i), temp + 1);
+            }
+        }
+        int count = 0;
+        int start = 0;
+        String res = s;
+        boolean contains = false;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            Integer temp = map.get(c);
+            if (temp != null) {
+                map.put(c, temp - 1);
+                if (temp - 1 >= 0) {
+                    count++;
+                }
+            }
+            while (count == t.length()) {
+                contains = true;
+                if (res.length() > i - start + 1) {
+                    res = s.substring(start, i + 1);
+                }
+                if (start < s.length() && map.containsKey(s.charAt(start))) {
+                    map.put(s.charAt(start), map.get(s.charAt(start)) + 1);
+                    if (map.get(s.charAt(start)) > 0) {
+                        count--;
+                    }
+                }
+                start++;
+            }
+        }
+        return contains ? res : "";
+    }
+```
 
 <br>
 <br>
