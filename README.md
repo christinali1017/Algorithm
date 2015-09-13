@@ -6804,6 +6804,30 @@ If n = 4 and k = 2, a solution is:
 
 ```
 
+Similiar recursive solution:
+
+```java
+ public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (n <= 0 || n < k) {
+            return res;
+        }
+        combine(n, k, 1, new ArrayList<Integer>(), res);
+        return res;
+    }
+    private void combine(int n, int k, int start, List<Integer> cur, List<List<Integer>> res) {
+        if (k == 0) {
+            res.add(new ArrayList<Integer>(cur));
+            return;
+        }
+        for (int i = start; i <= n; i++) {
+            cur.add(i);
+            combine(n, k - 1, i + 1, cur, res);
+            cur.remove(cur.size() - 1);
+        }
+    }
+```
+
 <br>
 <br>
 
@@ -6912,28 +6936,25 @@ The Subset begin with [], after insert 1, it becomes [] [1], you need to combine
 
 <br>
 
-**Similar DFS solution for string**:
+**Similar DFS solution**:
 
 ```java
-  public List<String> subSets(String set) {
-    List<String> res = new ArrayList<String>();
-    if (set == null) {
-      return res;
-    }
-    char[] arr = set.toCharArray();
-    subSets(arr, 0, res, new StringBuilder());
+public List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> res = new ArrayList<>();
+    Arrays.sort(nums);
+    subsets(res, 0, nums, new ArrayList<Integer>());
     return res;
-  }
-  
-  public void subSets(char[] arr, int index, List<String> res, StringBuilder sb) {
-    if (index == arr.length) {
-      res.add(sb.toString());
-      return;
+}
+private void subsets(List<List<Integer>> res, int start, int[] nums, List<Integer> cur) {
+    if (start == nums.length) {
+        res.add(new ArrayList<Integer>(cur));
+        return;
     }
-    subSets(arr, index + 1, res, sb);
-    subSets(arr, index + 1, res, sb.append(arr[index]));
-    sb.deleteCharAt(sb.length() - 1);
-  }
+    subsets(res, start + 1, nums, cur);
+    cur.add(nums[start]);
+    subsets(res, start + 1, nums, cur);
+    cur.remove(cur.size() -1);
+}
 ```
 
 <br>
