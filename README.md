@@ -79,6 +79,7 @@
 * [76 Minimum Window Substring](#76-minimum-window-substring)
 * [77 Combinations](#77-combinations)
 * [78 Subsets](#78-subsets)
+* [79 Word Search](#79-word-search)
 * [80 Remove Duplicates from Sorted Array II](#80-remove-duplicates-from-sorted-array)
 * [81 Search in Rotated Sorted Array II](#81-search-in-rotated-sorted-array-ii)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
@@ -7043,6 +7044,63 @@ private void subsets(List<List<Integer>> res, int start, int[] nums, List<Intege
 <br>
 <br>
 
+
+###79 Word Search
+
+>Given a 2D board and a word, find if the word exists in the grid.
+
+<pre>
+The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once.
+
+For example,
+Given board =
+
+[
+  ["ABCE"],
+  ["SFCS"],
+  ["ADEE"]
+]
+word = "ABCCED", -> returns true,
+word = "SEE", -> returns true,
+word = "ABCB", -> returns false.
+
+</pre>
+
+**Idea**:
+
+
+**Solution**:
+
+```java
+  public boolean exist(char[][] board, String word) {
+      for (int i = 0; i < board.length; i++) {
+          for (int j = 0; j < board[0].length; j++) {
+              if (exist(board, word, i, j, 0)) {
+                  return true;
+              }
+          }
+      }
+      return false;
+  }
+  private boolean exist(char[][] board, String word, int i, int j, int index) {
+      if (index == word.length()) {
+          return true;
+      }
+      if (i >= board.length || j >= board[0].length || j < 0 || i < 0 || word.charAt(index) != board[i][j]) {
+          return false;
+      }
+      board[i][j] = '*'; //mark as read
+      boolean res = exist(board, word, i - 1, j, index + 1) || exist(board, word, i + 1, j, index + 1)
+                    || exist(board, word, i, j - 1, index + 1) || exist(board, word, i, j + 1, index + 1);
+      board[i][j] = word.charAt(index);
+      return res;
+  }
+
+```
+
+<br>
+<br>
+
 ###80 Remove Duplicates From Sorted Array II
 
 >Follow up for "Remove Duplicates":
@@ -7059,6 +7117,7 @@ private void subsets(List<List<Integer>> res, int start, int[] nums, List<Intege
 
 **Java Code**:
 
+First try:
 
 ```java
 
@@ -7078,6 +7137,23 @@ private void subsets(List<List<Integer>> res, int start, int[] nums, List<Intege
     }
 	
 
+```
+
+More concise solution:
+
+```java
+    public int removeDuplicates(int[] nums) {
+        if (nums.length <= 2) {
+            return nums.length;
+        }
+        int j = 2;
+        for (int i = 2; i < nums.length; i++) {
+            if (nums[i] != nums[j - 2]) {
+                nums[j++] = nums[i];
+            }
+        }
+        return j;
+    }
 ```
 
 
