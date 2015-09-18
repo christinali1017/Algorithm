@@ -84,7 +84,8 @@
 * [81 Search in Rotated Sorted Array II](#81-search-in-rotated-sorted-array-ii)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
-* [84 Largest Rectangle in Histogram](#largest-rectangle-in-histogram)
+* [84 Largest Rectangle in Histogram](#84-largest-rectangle-in-histogram)
+* [85 Maximal Rectangle](#85-maximal-rectangle)
 * [86 Partition List](#86-partition-list)
 * [89 Gray Code](#89-gray-code)
 * [90 Subsets II](#90-subsets-ii)
@@ -7358,6 +7359,47 @@ public int largestRectangleArea(int[] height) {
 
 <br>
 <br>
+
+###85 Maximal Rectangle
+
+>Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing all ones and return its area.
+
+**Solution**:
+
+- A great solution from leetcode discussion: https://leetcode.com/discuss/20240/share-my-dp-solution. It's hard for me to understand
+
+
+**Another Solution based on ###84 Largest Rectangle in Histogram**:
+
+Time complexity : O(m * n)
+
+```java
+public int maximalRectangle(char[][] matrix) {
+    if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+        return 0;
+    }
+    int[] height = new int[matrix[0].length + 1];
+    int res = 0;
+    for (int i = 0; i < matrix.length; i++) {
+        Deque<Integer> stack = new LinkedList<>();
+        for (int j = 0; j <= matrix[0].length; j++) {
+            if (j < matrix[0].length) {
+                height[j] = matrix[i][j] == '1' ? height[j] + 1 : 0;
+            }
+            while (!stack.isEmpty() && (j == matrix[0].length || height[stack.peek()] > height[j])) {
+                res = Math.max(res, height[stack.pop()] * (stack.isEmpty() ? j : (j - stack.peek() - 1)));
+            }
+            stack.push(j);
+        }
+    }
+    return res;
+}
+```
+
+<br>
+<br>
+
+
 
 ###86 Partition List
 
