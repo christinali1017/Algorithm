@@ -84,6 +84,7 @@
 * [81 Search in Rotated Sorted Array II](#81-search-in-rotated-sorted-array-ii)
 * [82 Remove Duplicates from Sorted List](#82-remove-duplicates-from-sorted-list)
 * [83 Remove Duplicates from Sorted List II](#83-remove-duplicates-from-sorted-list-ii)
+* [84 Largest Rectangle in Histogram](#largest-rectangle-in-histogram)
 * [86 Partition List](#86-partition-list)
 * [89 Gray Code](#89-gray-code)
 * [90 Subsets II](#90-subsets-ii)
@@ -7328,6 +7329,30 @@ Given 1->1->1->2->3, return 2->3.
 
 
 
+
+<br>
+<br>
+
+###84 Largest Rectangle in Histogram
+>Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+
+**Idea**: http://www.cnblogs.com/lichen782/p/leetcode_Largest_Rectangle_in_Histogram.html
+
+**Solution**:
+
+```java
+public int largestRectangleArea(int[] height) {
+  Deque<Integer> stack = new LinkedList<>();
+  int res = 0;
+  for (int i = 0; i <= height.length; i++) {
+      while (!stack.isEmpty() && (i == height.length || height[stack.peek()] > height[i])) {
+          res = Math.max(res, height[stack.pop()] * (stack.isEmpty() ? i : (i - stack.peek() - 1)));
+      }
+      stack.push(i);
+  }
+  return res;
+}
+```
 
 <br>
 <br>
