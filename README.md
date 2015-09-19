@@ -3266,43 +3266,104 @@ public int search(Dictionary dict, int target) {
 ```java
 
     public void solveSudoku(char[][] board) {
-        if(board == null || board.length != 9 | board[0].length != 9) return;
-        solverHelper(board, 0, 0);
+        if (board == null || board.length != 9 || board[0].length != 9) {
+            return;
+        }
+        solve(board, 0, 0);
     }
-    
-    public boolean solverHelper(char[][] board, int i, int j){
-        if(j == 9) return solverHelper(board, i+1, 0);
-        if(i == 9) return true;
-        if(board[i][j] == '.'){
-            for(int k = 1; k <=9; k++){
-                board[i][j] = (char)(k+'0');
-                if(isValid(board, i, j)){
-                   if(solverHelper(board, i, j+1)) return true;
+    private boolean solve(char[][] board, int i, int j) {
+        if (j == 9) {
+            return solve(board, i + 1, 0);
+        }
+        if (i == 9) {
+            return true;
+        }
+        if (board[i][j] == '.') {
+            for (int k = 1; k <= 9; k++) {
+                board[i][j] = (char) (k + '0');
+                if (isValid(board, i, j)) {
+                    if(solve(board, i, j + 1)) {
+                        return true;
+                    }
                 }
             }
             board[i][j] = '.';
-        }else return  solverHelper(board, i, j+1);
-        return false;
+            return false;
+        }
+        return solve(board, i, j + 1);
     }
-    public boolean isValid(char[][] board, int i, int j) {
-		 for(int k = 0; k < 9; k++){
-			 if(k != j && board[i][k] == board[i][j]) return false;
-			 if(k != i && board[i][j] == board[k][j]) return false;
-		 }
-		 
-		 for(int r = i/3 *3; r < i/3 *3 +3; r++){
-			 for(int c = j/3 * 3; c < j/3 * 3+3; c++){
-				 if((r != i || c != j) && board[r][c] == board[i][j]) return false;
-			 }
-		 }
-		 return true;
-	 }
+    private boolean isValid(char[][] board, int i, int j) {
+        for (int k = 0; k < 9; k++) {
+            if ((board[i][k] == board[i][j] && k != j) || (board[k][j] == board[i][j] && k != i)) {
+                return false;
+            }
+        }
+        int row = (i / 3);
+        int col = (j / 3);
+        for (int x = row * 3; x < row * 3 + 3; x++) {
+            for (int y = col * 3; y < col * 3 + 3; y++) {
+                if (board[i][j] == board[x][y] && (x != i || y != j)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 	 
 ```
 
 
 
+**Another solution**:
 
+```java
+    public void solveSudoku(char[][] board) {
+      if (board == null || board.length != 9 || board[0].length != 9) {
+          return;
+      }
+      solverHelper(board);
+    }
+    
+  private boolean solverHelper(char[][] board){
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == '.') {
+                    for (int k = 1; k <= 9; k++) {
+                        board[i][j] = (char) ('0' + k);
+                        if (isValid(board, i, j)) {
+                             if (solverHelper(board)) {
+                                 return true;
+                             } else {
+                                board[i][j] = '.';
+                             }
+                        } else {
+                            board[i][j] = '.';
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+  private boolean isValid(char[][] board, int i, int j) {
+        for (int k = 0; k < 9; k++) {
+            if ((board[i][k] == board[i][j] && k != j) || (board[k][j] == board[i][j] && k != i)) {
+                return false;
+            }
+        }
+        int row = (i / 3);
+        int col = (j / 3);
+        for (int x = row * 3; x < row * 3 + 3; x++) {
+            for (int y = col * 3; y < col * 3 + 3; y++) {
+                if (board[i][j] == board[x][y] && (x != i || y != j)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+```
 
 
 <br>
@@ -10169,27 +10230,26 @@ Visually, the graph looks like the following:
 ```java
 public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
     if (node == null) {
-        return node;
+        return null;
     }
-     UndirectedGraphNode copy = new UndirectedGraphNode(node.label);
-     Queue<UndirectedGraphNode> queue = new LinkedList<UndirectedGraphNode>();
-     Map<UndirectedGraphNode,UndirectedGraphNode> map = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
-     queue.add(node);
-     map.put(node, copy);
-     UndirectedGraphNode temp = null;
-     UndirectedGraphNode copyTemp = null;
-     while (!queue.isEmpty()) {
-          temp = queue.poll();
-          for (UndirectedGraphNode n : temp.neighbors) {
-              if (!map.containsKey(n)) {
-                  copyTemp = new UndirectedGraphNode(n.label);
-                  map.put(n, copyTemp);
-                  map.get(temp).neighbors.add(copyTemp);
-                  queue.add(n);
-              } else { 
-                  map.get(temp).neighbors.add(map.get(n));
-              }
-          }
+    UndirectedGraphNode copy = new UndirectedGraphNode(node.label);
+    Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<>();
+    Queue<UndirectedGraphNode> queue = new LinkedList<>();
+    queue.offer(node);
+    map.put(node, copy);
+    while (!queue.isEmpty()) {
+        UndirectedGraphNode cur = queue.poll();
+        for (UndirectedGraphNode neib : cur.neighbors) {
+            UndirectedGraphNode copyNeib = null;
+            if (map.get(neib) == null) {
+                copyNeib = new UndirectedGraphNode(neib.label);
+                queue.offer(neib);
+                map.put(neib, copyNeib);
+            } else {
+                copyNeib = map.get(neib);
+            }
+            map.get(cur).neighbors.add(copyNeib);
+        }
     }
     return copy;
 }
