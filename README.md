@@ -2359,22 +2359,20 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 
 ```java
-	public int strStr(String haystack, String needle) {
-        if (haystack == null || needle == null) {
+	 public int strStr(String haystack, String needle) {
+        if (haystack == null || needle == null || haystack.length() < needle.length()) {
             return -1;
         }
-        boolean contain = true;
-        for (int i = 0; i <= haystack.length() - needle.length(); i++){
-            for (int j = i; j < i + needle.length(); j++){
-                if (haystack.charAt(j) != needle.charAt(j-i)){
-                    contain = false;
-                    break;
-                } 
+        for (int i = 0; i <= haystack.length() - needle.length(); i++) {
+            boolean exist = true;
+            for (int j = 0; j < needle.length(); j++) {
+                if (haystack.charAt(i + j) != needle.charAt(j)) {
+                    exist = false;
+                }
             }
-            if (contain) {
+            if (exist) {
                 return i;
             }
-            contain = true;
         }
         return -1;
     }
@@ -2460,7 +2458,7 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 ```
 
-** Solution 4: Rolling hash**: Using this method, hash value might exceed long, we can use Biginteger or improve it use Rabin Karp
+**Solution 4: Rolling hash**: Using this method, hash value might exceed long, we can use Biginteger or improve it use Rabin Karp
 
 ```java
     public int strStr(String haystack, String needle) {
@@ -3203,35 +3201,44 @@ public int search(Dictionary dict, int target) {
 
 ```java
 
-
     public boolean isValidSudoku(char[][] board) {
-        if(board == null || board.length != 9 || board[0].length != 9) return false;
-        for(int i = 0; i < board.length; i++){
-            Set<Character> rset = new HashSet<Character>();
-            Set<Character> cset = new HashSet<Character>();
-            for(int j = 0; j < board[0].length; j++){
-                char rc = board[i][j];
-                if((rc != '.' && (rc > '9' || rc < '1')) || rset.contains(rc)) return false;
-                if(rc != '.') rset.add(rc);
-                char cc = board[j][i];
-                if((cc != '.' && (cc > '9' || cc < '1')) || cset.contains(cc)) return false;
-                if(cc != '.') cset.add(cc);
+        if (board == null || board.length != 9 || board[0].length != 9) {
+            return false;
+        }
+        for (int i = 0; i < 9; i++) {
+            Set<Character> rSet = new HashSet<>();
+            Set<Character> cSet = new HashSet<>();
+            for (int j = 0; j < 9; j++) {
+                if (rSet.contains(board[i][j]) || cSet.contains(board[j][i])) {
+                    return false;
+                }
+                if (board[i][j] != '.') {
+                    rSet.add(board[i][j]);
+                }
+                if (board[j][i] != '.') {
+                    cSet.add(board[j][i]);
+                }
             }
         }
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
-                if(!helper(i, j, board)) return false;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (!valid(board, i, j)) {
+                    return false;
+                }
             }
         }
         return true;
     }
-    public boolean helper(int i, int j, char[][] board){
-        Set<Character> set = new HashSet<Character>();
-        for(int k = 3*i; k < 3*i+3; k++){
-            for(int l = 3*j; l <3*j+3; l++){
-                char c = board[k][l];
-                if((c != '.' &&(c > '9' || c < '1')) || set.contains(c)) return false;
-                if(c != '.') set.add(c);
+    private boolean valid(char[][] board, int i, int j) {
+        Set<Character> set = new HashSet<>();
+        for (int x = i * 3; x < i * 3 + 3; x++) {
+            for (int y = j * 3; y < j * 3 + 3; y++) {
+                if (set.contains(board[x][y])) {
+                    return false;
+                }
+                if (board[x][y] != '.') {
+                    set.add(board[x][y]);
+                }
             }
         }
         return true;
