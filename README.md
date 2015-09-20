@@ -1598,9 +1598,76 @@ Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
     }
 ```
  
- **Other Idea**: 
- 
- we can twoSum combine twoSum to calculate 4Sum. Time complexity would be O(n^2 * lgn)
+ **Other Idea**: we can twoSum combine twoSum to calculate 4Sum. 
+
+ ```java
+public class Solution {
+    class Pair {
+        public int firstIndex;
+        public int secondIndex;
+        public Pair(int firstIndex, int secondIndex) {
+            this.firstIndex = firstIndex;
+            this.secondIndex = secondIndex;
+        }
+    }
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (nums == null || nums.length < 4) {
+            return res;
+        }
+        Map<Integer, List<Pair>> map = new HashMap<>();
+        Arrays.sort(nums);
+        generatePairs(nums, map);
+        generateQuards(nums, map, target, res);
+        return res;
+    }
+    private void generateQuards(int[] nums, Map<Integer, List<Pair>> map, int target, List<List<Integer>>  res) {
+        Set<List<Integer>> set = new HashSet<>();
+        for (Map.Entry<Integer, List<Pair>> entry : map.entrySet()) {
+            int twoSum = entry.getKey();
+            int compensate = target - twoSum;
+            if (map.containsKey(compensate)) {
+                List<Pair> list1 = map.get(twoSum);
+                List<Pair> list2 = map.get(compensate);
+                for (Pair p1 : list1) {
+                    for (Pair p2 : list2) {
+                        if (isValidFourSum(p1, p2)) {
+                            List<Integer> cur = new ArrayList<>();
+                            cur.add(nums[p1.firstIndex]);
+                            cur.add(nums[p1.secondIndex]);
+                            cur.add(nums[p2.firstIndex]);
+                            cur.add(nums[p2.secondIndex]);
+                            if (!set.contains(cur)) {
+                                res.add(cur);
+                                set.add(cur);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private void generatePairs(int[] nums, Map<Integer, List<Pair>> map) {
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                int twoSum = nums[i] + nums[j];
+                if (!map.containsKey(twoSum)) {
+                    map.put(twoSum, new ArrayList<Pair>());
+                }
+                Pair pair = new Pair(i, j);
+                map.get(twoSum).add(pair);
+            }
+        }
+    }
+    private boolean isValidFourSum(Pair el1, Pair el2) {
+          return el1.secondIndex < el2.firstIndex;
+    }
+    private boolean isSameValuePair(Pair el1, Pair el2, int[] nums) {
+        return nums[el1.firstIndex] == nums[el2.firstIndex] && nums[el1.secondIndex] == nums[el2.secondIndex];
+    }
+}
+
+ ```
  
 
     
