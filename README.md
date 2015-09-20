@@ -1561,6 +1561,42 @@ Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
     }
  
 ``` 
+
+**Similar solution based on two sum**:
+
+```java
+ public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        Set<List<Integer>> set = new HashSet<>();
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                int l = j + 1;
+                int r = nums.length - 1;
+                while (l < r) {
+                    if (nums[i] + nums[j] + nums[l] + nums[r] == target) {
+                        List<Integer> cur = new ArrayList<>();
+                        cur.add(nums[i]);
+                        cur.add(nums[j]);
+                        cur.add(nums[l]);
+                        cur.add(nums[r]);
+                        if (!set.contains(cur)) {
+                            set.add(cur);
+                            res.add(cur);
+                        }
+                        l++;
+                        r--;
+                    } else if (nums[i] + nums[j] + nums[l] + nums[r] < target) {
+                        l++;
+                    } else {
+                        r--;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+```
  
  **Other Idea**: 
  
