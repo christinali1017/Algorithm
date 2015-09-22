@@ -122,6 +122,8 @@
 * [133 Clone Graph](#133-clone-graph)
 * [135 Candy](#135-candy)
 * [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
+* [139 Word Break](#139-word-break)
+* [140 Word Break II](#140-word-break-ii)
 * [141 Linked List Cycle](#141-linked-list-cycle)
 * [142 Linked List Cycle II](#142-linked-list-cycle-ii)
 * [143 Reorder List](#143-reorder-list)
@@ -142,7 +144,9 @@
 * [162 Find Peak Element](#162-find-peak-element)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 * [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
+* [168 Excel Sheet Column Title](#168-excel-sheet-column-title)
 * [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
+* [171 Excel Sheet Column Number](#171-excel-sheet-column-number)
 * [173 Binary Search Tree Iterator](#173-binary-search-tree-iterator)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
@@ -10609,6 +10613,169 @@ public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
 <br>
 <br>
 
+
+###139 Word Break
+
+>Given a string s and a dictionary of words dict, determine if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+<pre>
+For example, given
+s = "leetcode",
+dict = ["leet", "code"].
+
+Return true because "leetcode" can be segmented as "leet code".
+</pre>
+
+**Idea**: DP.
+
+```java
+    public boolean wordBreak(String s, Set<String> wordDict) {
+        boolean[] arr = new boolean[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j <= i; j++) {
+                if (wordDict.contains(s.substring(j, i + 1)) && (j == 0 || arr[j - 1])) {
+                    arr[i] = true;
+                    break;
+                }
+            }
+        }
+        return arr[s.length() - 1];
+    }
+```
+
+
+
+<br>
+<br>
+
+###140 Word Break II
+
+
+
+>Given a string s and a dictionary of words dict, add spaces in s to construct a sentence where each word is a valid dictionary word.
+
+>Return all such possible sentences.
+
+>For example, given
+
+>s = "catsanddog",
+
+>dict = ["cat", "cats", "and", "sand", "dog"].
+
+>A solution is ["cats and dog", "cat sand dog"].
+
+**Brute force**: time limit exceeded for one use case "aaaaaaaaa......."
+
+For this use case, we can use the previous problem "Word Break" to check if it can breank, then use the brute force.
+
+```java
+ public List<String> wordBreak(String s, Set<String> wordDict) {
+      List<String> res = new ArrayList<>();
+      wb(s, 0, "", wordDict, res);
+      return res;
+  }
+  private void wb(String s, int index, String cur, Set<String> wordDict, List<String> res) {
+        if (index == s.length()) {
+            res.add(cur);
+            return;
+        }
+        for (int i = index; i < s.length(); i++) {
+            String temp = s.substring(index, i + 1);
+            if (wordDict.contains(temp)) {
+                String old = cur;
+                cur = cur.length() == 0 ? temp : cur + " " + temp;
+                wb(s, i + 1, cur, wordDict, res);
+                cur = old;
+            }
+        }
+    }
+```
+
+**Accepted solution based on the above brute force**:
+
+
+```java
+    public List<String> wordBreak(String s, Set<String> wordDict) {
+        List<String> res = new ArrayList<>();
+        if (!canBreak(s, wordDict)) {
+            return res;
+        }
+        wb(s, 0, "", wordDict, res);
+        return res;
+    }
+    
+    private void wb(String s, int index, String cur, Set<String> wordDict, List<String> res) {
+        if (index == s.length()) {
+            res.add(cur);
+            return;
+        }
+        for (int i = index; i < s.length(); i++) {
+            String temp = s.substring(index, i + 1);
+            if (wordDict.contains(temp)) {
+                String old = cur;
+                cur = cur.length() == 0 ? temp : cur + " " + temp;
+                wb(s, i + 1, cur, wordDict, res);
+                cur = old;
+            }
+        }
+    }
+    
+    private boolean canBreak(String s, Set<String> wordDict) {
+        boolean[] arr = new boolean[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j <= i; j++) {
+                if (wordDict.contains(s.substring(j, i + 1)) && (j == 0 || arr[j - 1])) {
+                    arr[i] = true;
+                    break;
+                }
+            }
+        }
+        return arr[s.length() - 1];
+    }
+```
+
+**Dp solution**:
+
+```java
+ public List<String> wordBreak(String s, Set<String> wordDict) {
+        if (!canBreak(s, wordDict)) {
+            return new ArrayList<String>();
+        }
+        List<String> init = new ArrayList<>();
+        Map<Integer, List<String>> map = new HashMap<>();
+        init.add("");
+        map.put(s.length(), init);
+        for (int i = s.length() - 1; i >= 0; i--) {
+            List<String> cur = new ArrayList<>();
+            for (int j = i + 1; j <= s.length(); j++) {
+                if (wordDict.contains(s.substring(i, j))) {
+                    for (String str : map.get(j)) {
+                        cur.add(s.substring(i, j) + (str.isEmpty() ? "" : " ") + str);
+                    }
+                }
+            }
+            map.put(i, cur);
+        }
+        return map.get(0);
+    }
+    
+    private boolean canBreak(String s, Set<String> wordDict) {
+        boolean[] arr = new boolean[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j <= i; j++) {
+                if (wordDict.contains(s.substring(j, i + 1)) && (j == 0 || arr[j - 1])) {
+                    arr[i] = true;
+                    break;
+                }
+            }
+        }
+        return arr[s.length() - 1];
+    }
+```
+
+<br>
+<br>
+
 ###141 Linked List Cycle
 
 >Given a linked list, determine if it has a cycle in it.
@@ -12282,6 +12449,40 @@ You may assume that each input would have exactly one solution.
 
 <br>
 
+###168 Excel Sheet Column Title
+
+>Given a positive integer, return its corresponding column title as appear in an Excel sheet.
+
+<pre>
+For example:
+
+    1 -> A
+    2 -> B
+    3 -> C
+    ...
+    26 -> Z
+    27 -> AA
+    28 -> AB 
+</pre>
+
+**Note**:
+
+Here A = 1, Z = 26. It's not A = 0, Z = 25, thus we need to do n - 1 for divide and mod.
+
+```java
+public String convertToTitle(int n) {
+    StringBuilder res = new StringBuilder();
+    while (n > 0) {
+        res.insert(0, (char) ((n - 1) % 26 + 'A'));
+        n = (n - 1) / 26;
+    }
+    return res.toString();
+}
+```
+
+<br>
+<br>
+
 
 ###170 Two Sum III Data Structure Design
 
@@ -12377,6 +12578,18 @@ int titleToNumber(char *s) {
     }
     
     return val;
+}
+```
+
+**Java solution**:
+
+```java
+public int titleToNumber(String s) {
+    int res = 0;
+    for (int i = 0; i < s.length(); i++) {
+        res = res * 26 + (s.charAt(i) - 'A' + 1);
+    }
+    return res;
 }
 ```
 
