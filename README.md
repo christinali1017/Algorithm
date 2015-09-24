@@ -90,6 +90,7 @@
 * [87 Scramble String](#87-sramble-string)
 * [89 Gray Code](#89-gray-code)
 * [90 Subsets II](#90-subsets-ii)
+* [91 Decode Ways](#91-decode-ways)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
 * [94 Binary Tree Inorder Traversal](#94-binary-tree-inorder-traversal)
 * [95 Unique Binary Search Trees](#95-unique-binary-search-trees)
@@ -8029,6 +8030,104 @@ Here are he solutions.
     
 
 ```
+
+
+<br>
+<br>
+
+###91 Decode Ways
+
+>A message containing letters from A-Z is being encoded to numbers using the following mapping:
+
+<pre>
+
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+Given an encoded message containing digits, determine the total number of ways to decode it.
+
+For example,
+Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
+
+The number of ways decoding "12" is 2.
+
+</pre>
+
+**Brute force && recursion**: For decoding, we can decode 1 character or 2 character(if these 2 characters are valid). 
+
+
+```java
+   public int numDecodings(String s) {
+        if (s == null || s.length() == 0 || s.charAt(0) == '0') {
+            return 0;
+        }
+        int[] res = new int[1];
+        decoding(res, s, 0);
+        return res[0];
+    }
+    private void decoding(int[] res, String s, int index) {
+        if (index == s.length()) {
+            res[0] += 1;
+            return;
+        }
+        if (s.charAt(index) == '0') {
+            if (s.charAt(index - 1) != '1' && s.charAt(index - 1) != '2') {
+              return;
+            }
+        } else {
+          decoding(res, s, index + 1);
+          if (index < s.length() - 1 && valid(s.substring(index, index + 2))) {
+            decoding(res, s, index + 2);
+          }
+        }
+    }
+    private boolean valid(String s) {
+      int val = Integer.valueOf(s);
+      return val >= 10 && val <= 26;
+    }
+```
+
+**DP solution**: It's kind of like climb stairs, each time we can climb one stair or two stairs. The difference here is that it is not guaranteed that we can decode 2 characters at a time. 
+
+Thus the induction rule of the DP is : 
+
+- dp[i] = dp[i - 1] + dp[i - 2] if we can decode 2 characters at a time.
+- dp[i] = dp[i - 1] if we can only decode one character at a time.
+
+
+```java
+
+    public int numDecodings(String s) {
+        if (s == null || s.length() == 0 || s.charAt(0) == '0') {
+            return 0;
+        }
+        int res = 1;
+        int pre = 1;
+        int prepre = 1;
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) == '0') {
+                if (s.charAt(i - 1) != '1' && s.charAt(i - 1) != '2') {
+                    return 0;
+                }
+                res = prepre;
+            } else if (valid(s.substring(i - 1, i + 1))) {
+                res = pre + prepre;
+            }
+            prepre = pre;
+            pre = res;
+        }
+        return res;
+    }
+    
+    private boolean valid(String s) {
+      int val = Integer.valueOf(s);
+      return val >= 10 && val <= 26;
+    }
+
+```
+
+
 
 
 <br>
