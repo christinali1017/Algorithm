@@ -87,6 +87,7 @@
 * [84 Largest Rectangle in Histogram](#84-largest-rectangle-in-histogram)
 * [85 Maximal Rectangle](#85-maximal-rectangle)
 * [86 Partition List](#86-partition-list)
+* [87 Scramble String](#87-sramble-string)
 * [89 Gray Code](#89-gray-code)
 * [90 Subsets II](#90-subsets-ii)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
@@ -7651,6 +7652,109 @@ return 1->2->2->4->3->5.
     return fakeHead1.next;
   }
 ```
+
+<br>
+<br>
+
+###87 Scramble String
+
+>Given a string s1, we may represent it as a binary tree by partitioning it to two non-empty substrings recursively.
+
+<pre>
+
+Below is one possible representation of s1 = "great":
+
+    great
+   /    \
+  gr    eat
+ / \    /  \
+g   r  e   at
+           / \
+          a   t
+To scramble the string, we may choose any non-leaf node and swap its two children.
+
+For example, if we choose the node "gr" and swap its two children, it produces a scrambled string "rgeat".
+
+    rgeat
+   /    \
+  rg    eat
+ / \    /  \
+r   g  e   at
+           / \
+          a   t
+We say that "rgeat" is a scrambled string of "great".
+
+Similarly, if we continue to swap the children of nodes "eat" and "at", it produces a scrambled string "rgtae".
+
+    rgtae
+   /    \
+  rg    tae
+ / \    /  \
+r   g  ta  e
+       / \
+      t   a
+We say that "rgtae" is a scrambled string of "great".
+
+Given two strings s1 and s2 of the same length, determine if s2 is a scrambled string of s1.
+
+</pre>
+
+**Solution 1**: Devide and Conqure + Recursion. Divide String into two parts. s1[0, i) and s1[i, end]. Check if isScramble(s1[0, i), s2[0, i)) && isScramble(s1[i, end], s2[i, end]) is true or 
+isScramble(s1[0, i), s2[s2.length() - i, end)) && isScramble(s1[i, end], s2[0, s2.length() - i])
+
+```java
+ public boolean isScramble(String s1, String s2) {
+    if (!isAnagram(s1, s2)) {
+        return false;
+    }
+    if (s1.equals(s2)) {
+        return true;
+    }
+    for (int i = 1; i < s1.length(); i++) {
+        if ((isScramble(s1.substring(0, i), s2.substring(0, i)) && isScramble(s1.substring(i), s2.substring(i))) || (isScramble(s1.substring(0, i), s2.substring(s2.length() - i)) && isScramble(s1.substring(i), s2.substring(0, s2.length() - i)))) {
+            return true;
+        } 
+    }
+    return false;
+}
+private boolean isAnagram(String s1, String s2) {
+    char[] arr1 = s1.toCharArray();
+    char[] arr2 = s2.toCharArray();
+    Arrays.sort(arr1);
+    Arrays.sort(arr2);
+    return Arrays.equals(arr1, arr2);
+}
+```
+
+
+**Solution 2**: DP, the induction rule has the same idea with the resursion solution.
+
+dp[i][j][len] represents that s1 starts from index i, length len, s2 starts from index j, length len, check if they are scramble.
+)
+To check if dp[i][j][len] is true, we need to divide len into two parts. (1, len-1)  or (2, len-2).....
+
+
+```java
+public boolean isScramble(String s1, String s2) {
+    if (s1.length() != s2.length()) {
+        return false;
+    }
+   boolean dp[][][] = new boolean[s1.length()][s1.length()][s1.length() + 1];
+   for (int i = s1.length() - 1; i >= 0; i--) {
+       for (int j = s1.length() - 1; j >= 0; j--) {
+           dp[i][j][1] = (s1.charAt(i) == s2.charAt(j));
+           for (int len = 2; i + len <= s1.length() && j + len <= s1.length(); len++) {
+               for (int k = 1; k < len; k++) {
+                   dp[i][j][len] |= (dp[i][j][k] && dp[i + k][j + k][len - k])
+                                    || (dp[i][j + len - k][k] && dp[i + k][j][len - k]);
+               }
+           }
+       }
+   }
+   return dp[0][0][s1.length()];
+}
+```
+
 
 <br>
 <br>
