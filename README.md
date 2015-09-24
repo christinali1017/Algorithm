@@ -7054,6 +7054,27 @@ The Subset begin with [], after insert 1, it becomes [] [1], you need to combine
 
 **Attention** : What is the time complexity of this problem? Note that the number of subsets increase exponentially.
 
+**Concise DFS solution**:
+
+
+```java
+ public List<List<Integer>> subsets(int[] nums) {
+      List<List<Integer>> res = new ArrayList<>();
+      Arrays.sort(nums);
+      subsets(nums, new ArrayList<Integer>(), 0, res);
+      return res;
+  }
+  private void subsets(int[] nums, List<Integer> list, int index, List<List<Integer>> res) {
+      res.add(new ArrayList<Integer>(list));
+      for (int i = index; i < nums.length; i++) {
+          list.add(nums[i]);
+          subsets(nums, list, i + 1, res);
+          list.remove(list.size() - 1);
+      }
+  }
+
+```
+
 
 **Iterative**:
 
@@ -7137,6 +7158,8 @@ private void subsets(List<List<Integer>> res, int start, int[] nums, List<Intege
     cur.remove(cur.size() -1);
 }
 ```
+
+
 
 <br>
 
@@ -7915,6 +7938,28 @@ Consider the case [2, 2, 2, 2, 2]
 Actually, the start position we need to insert is the size of the prev subsets result. 
 
 Here are he solutions.
+
+
+**Concise DFS solution**:
+
+```java
+  public List<List<Integer>> subsetsWithDup(int[] nums) {
+      List<List<Integer>> res = new ArrayList<>();
+      Arrays.sort(nums);
+      subsets(nums, new ArrayList<Integer>(), 0, res);
+      return res;
+  }
+  private void subsets(int[] nums, List<Integer> list, int index, List<List<Integer>> res) {
+      res.add(new ArrayList<Integer>(list));
+      for (int i = index; i < nums.length; i++) {
+          if (i == index || nums[i] != nums[i - 1]) {
+              list.add(nums[i]);
+              subsets(nums, list, i + 1, res);
+              list.remove(list.size() - 1);
+          }
+      }
+  }
+```
 
 
 **Iterative**:
