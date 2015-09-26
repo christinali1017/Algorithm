@@ -92,6 +92,7 @@
 * [90 Subsets II](#90-subsets-ii)
 * [91 Decode Ways](#91-decode-ways)
 * [92 Reverse Linked List II](#92-reverse-linked-list-ii)
+* [93 Restore IP Addresses](#93-restore-ip-addresses)
 * [94 Binary Tree Inorder Traversal](#94-binary-tree-inorder-traversal)
 * [95 Unique Binary Search Trees](#95-unique-binary-search-trees)
 * [96 Unique Binary Search Trees II](#96-unique-binary-search-trees)
@@ -8234,6 +8235,95 @@ Pretty much the save with the above, just change while to for:
      }
      
 ``` 
+
+
+<br>
+<br>
+
+
+###93 Restore IP Addresses
+
+>Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+
+<pre>
+For example:
+Given "25525511135",
+
+return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
+</pre>
+
+**Idea**: Because it is ip address, thus we need to divide it into valid 4 parts. 
+
+**Iterative solution**:
+
+```java
+ public List<String> restoreIpAddresses(String s) {
+    List<String> res = new ArrayList<>();
+    if (s == null || s.length() < 4 || s.length() > 12) {
+        return res;
+    }
+    for (int i = 1; i < 4 && i < s.length() - 2; i++) {
+        for (int j = i + 1; j < i + 4 && j < s.length() - 1; j++) {
+            for (int k = j + 1; k < j + 4 && k < s.length(); k++) {
+                String s1 = s.substring(0, i);
+                String s2 = s.substring(i, j);
+                String s3 = s.substring(j, k);
+                String s4 = s.substring(k, s.length());
+                if (isValid(s1) && isValid(s2) && isValid(s3) && isValid(s4)) {
+                    res.add(s1 + "." + s2 + "." + s3 + "." + s4);
+                }
+            }
+        }
+    }
+    return res;
+}
+private boolean isValid(String s) {
+    return s.length() > 0 && s.length() <= 3 && Integer.parseInt(s) <= 255 && !(s.charAt(0) == '0' && s.length() > 1);
+}
+```
+
+**Recursion**:
+
+```java
+   public List<String> restoreIpAddresses(String s) {
+        List<String> res = new ArrayList<>();
+        if (s == null || s.length() < 4 || s.length() > 12) {
+            return res;
+        }
+        restore(s, 0, 1, "", res);
+        return res;
+    }
+    
+    private void restore(String s, int index, int segmentNum, String cur, List<String> res) {
+        if (index >= s.length()) {
+            return;
+        }
+        if (segmentNum == 4) {
+            String seg = s.substring(index);
+            if (isValid(seg)) {
+                res.add(cur + "." + seg);
+            }
+            return;
+        }
+        for (int i = 1; i < 4 && ((index + i) < s.length()); i++) {
+            String seg = s.substring(index, index + i);
+            if (isValid(seg)) {
+                if (segmentNum == 1) {
+                    restore(s, index + i, segmentNum + 1, seg, res);
+                } else {
+                    restore(s, index + i, segmentNum + 1, cur + "." + seg, res);
+                }
+            }
+        }
+    }
+    
+    private boolean isValid(String s) {
+        return s.length() > 0 && s.length() <= 3 && Integer.parseInt(s) <= 255 && !(s.charAt(0) == '0' && s.length() > 1);
+    }
+```
+
+
+
 
 
 <br>
