@@ -96,6 +96,7 @@
 * [94 Binary Tree Inorder Traversal](#94-binary-tree-inorder-traversal)
 * [95 Unique Binary Search Trees](#95-unique-binary-search-trees)
 * [96 Unique Binary Search Trees II](#96-unique-binary-search-trees)
+* [97 Interleaving String](#97-interleaving-string)
 * [98 Validate Binary Search Tree](#98-validate-binary-search-tree)
 * [99 Recover Binary Search Tree](#99-recover-binary-search-tree)
 * [100 Same Tree](#100-same-tree)
@@ -8057,6 +8058,7 @@ The number of ways decoding "12" is 2.
 
 **Brute force && recursion**: For decoding, we can decode 1 character or 2 character(if these 2 characters are valid). 
 
+Time limit exceeded on leetcode.
 
 ```java
    public int numDecodings(String s) {
@@ -8545,7 +8547,7 @@ This is a bottom up approach, we create the trees from leaves. The time complexi
 **Attention**: In order to create all the combinations in the for loop. So when left subtree is null, we still need to add null to list. 
 
 ```java
-	public List<TreeNode> generateTrees(int n) {
+    public List<TreeNode> generateTrees(int n) {
         List<TreeNode> res = new ArrayList<TreeNode>();
         if (n < 0) {
            return res;
@@ -8553,24 +8555,25 @@ This is a bottom up approach, we create the trees from leaves. The time complexi
         return generateTrees(1, n);
     }
     public List<TreeNode> generateTrees(int l,  int r) {
-        List<TreeNode> res = new ArrayList<TreeNode>();
-        if (l > r) {
-            res.add(null);
-            return res;
-        }
-        for (int i = l; i <= r; i++) {
-            List<TreeNode> lList = generateTrees(l, i-1);
-            List<TreeNode> rList = generateTrees(i+1, r);
-            for (int j = 0; j < lList.size(); j++) {
-                for (int k = 0; k < rList.size(); k++) {
-                    TreeNode root = new TreeNode(i);
-                    root.left = lList.get(j);
-                    root.right = rList.get(k);
-                    res.add(root);
-                }
-            }
-        }
-        return res;
+       List<TreeNode> res = new ArrayList<>();
+       if (l > r) {
+           res.add(null);
+           return res;
+       }
+       for (int i = l; i <= r; i++) {
+           //i is root.
+           List<TreeNode> resL = generateTrees(l, i - 1);
+           List<TreeNode> resR = generateTrees(i + 1, r);
+           for (TreeNode lNode : resL) {
+               for (TreeNode rNode : resR) {
+                   TreeNode root = new TreeNode(i);
+                   root.left = lNode;
+                   root.right = rNode;
+                   res.add(root);
+               }
+           }
+       }
+       return res;
     }
 ```
 
@@ -8580,7 +8583,75 @@ This is a bottom up approach, we create the trees from leaves. The time complexi
 <br>
 <br>
 
+###97 Interleaving String
 
+>Given s1, s2, s3, find whether s3 is formed by the interleaving of s1 and s2.
+
+<pre>
+For example,
+Given:
+s1 = "aabcc",
+s2 = "dbbca",
+
+When s3 = "aadbbcbcac", return true.
+When s3 = "aadbbbaccc", return false.
+</pre>
+
+**Brute force*: time limit exceeded.
+
+```java
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if (s3.length() != s1.length() + s2.length()) {
+            return false;
+        }
+        return isInterleave(s1, 0, s2, 0, s3, 0);
+    }
+    private boolean isInterleave(String s1, int i1, String s2, int i2, String s3, int i3) {
+        if (i3 == s3.length() && i1 == s1.length() && i2 == s2.length()) {
+            return true;
+        }
+        if (i3 == s3.length() || (i1 == s1.length() && i2 == s2.length())) {
+            return false;
+        }
+        if (i1 == s1.length()) {
+             return s2.charAt(i2) == s3.charAt(i3) ? isInterleave(s1, i1, s2, i2 + 1, s3, i3 + 1) : false;
+        }
+        if (i2 == s2.length()) {
+            return s1.charAt(i1) == s3.charAt(i3) ? isInterleave(s1, i1 + 1, s2, i2, s3, i3 + 1) : false;
+        }
+        return (s1.charAt(i1) == s3.charAt(i3) && isInterleave(s1, i1 + 1, s2, i2, s3, i3 + 1)) || 
+                ( s2.charAt(i2) == s3.charAt(i3) && isInterleave(s1, i1, s2, i2 + 1, s3, i3 + 1));
+    }
+```
+
+**Dp solution**: Since the dp induction rule is just based on previous row, thus we can reduce it to one dimensional array.
+
+```java
+  public boolean isInterleave(String s1, String s2, String s3) {
+      if (s3.length() != s1.length() + s2.length()) {
+          return false;
+      }
+      boolean[][] dp = new boolean[s1.length() + 1][s2.length() + 1];
+      dp[0][0] = true;
+      for (int i = 0; i <= s1.length(); i++) {
+          for (int j = 0; j <= s2.length(); j++) {
+              if (i == 0 && j == 0) {
+                   dp[i][j] = true;
+              } else if (i == 0) {
+                  dp[i][j] = dp[i][j - 1] && s2.charAt(j - 1) == s3.charAt(j - 1);
+              } else if (j == 0) {
+                   dp[i][j] = dp[i - 1][j] && s1.charAt(i - 1) == s3.charAt(i - 1);
+              } else {
+                  dp[i][j] = (dp[i - 1][j] && s1.charAt(i - 1) == s3.charAt(i + j - 1)) || (dp[i][j - 1] && s2.charAt(j - 1) == s3.charAt(i + j - 1));
+              }
+          }
+      }
+      return dp[s1.length()][s2.length()]; 
+  }
+```
+
+<br>
+<br>
 
 
 ###98 Validate Binary Search Tree
