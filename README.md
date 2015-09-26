@@ -111,6 +111,8 @@
 * [109 Convert Sorted List to Binary Search Tree](#109-convert-sorted-list-to-binary-search-tree)
 * [110 Balanced Binary Tree](#110-balanced-binary-tree)
 * [111 Minimum Depth of Binary Tree](#111-minimum-depth-of-binary-tree)
+* [112 Path Sum](#112-path-sum)
+* [113 Path Sum II](#113-path-sum-ii)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
 * [118 Pascal Triangle](#118-pascal-triangle)
 * [119 Pascal Triangle II](#119-pascal-triangle-ii)
@@ -9432,10 +9434,28 @@ public TreeNode buildTree(int[] inorder, int iStart, int iEnd, int[] postorder, 
 
 ###107 Binary Tree Level Order Traversal II
 
+>Given a binary tree, return the bottom-up level order traversal of its nodes' values. (ie, from left to right, level by level from leaf to root).
+
+<pre>
+For example:
+Given binary tree {3,9,20,#,#,15,7},
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its bottom-up level order traversal as:
+[
+  [15,7],
+  [9,20],
+  [3]
+]
+</pre>
+
 **Idea**: The solution below is same with 102  Binary Tree Level Order Traversal. The only difference is that when insert into list of list, we insert at index 0. Is there any other better solution other than the this method and recursion version of level order traverse? 
 
 
-**Solution**:
+**BFS Solution**:
 
 ```java
 public List<List<Integer>> levelOrderBottom(TreeNode root) {
@@ -9465,6 +9485,28 @@ public List<List<Integer>> levelOrderBottom(TreeNode root) {
 ```
 
 
+**DFS solution**:
+
+```java
+public List<List<Integer>> levelOrderBottom(TreeNode root) {
+    List<List<Integer>> res = new ArrayList<>();
+    levelOrder(res, 0, root);
+    return res;
+}
+private void levelOrder(List<List<Integer>> res, int level, TreeNode root) {
+    if (root == null) {
+        return;
+    }
+    if (res.size() < level + 1) {
+        res.add(0, new ArrayList<Integer>());
+    }
+    res.get(res.size() - (level + 1)).add(root.val);
+    levelOrder(res, level + 1, root.left);
+    levelOrder(res, level + 1, root.right);
+}
+```
+
+
 <br>
 <br>
 
@@ -9472,9 +9514,11 @@ public List<List<Integer>> levelOrderBottom(TreeNode root) {
     
 ###108 Convert Sorted Array to Binary Search Tree  
 
->Given a singly linked list where elements are sorted in ascending order, convert it to a height balanced BST.
+>Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
 
 **Idea**: 
+
+Top down.
 
 Just find the mid of the list each time and create the tree from root.
 
@@ -9663,21 +9707,20 @@ In this method, we omit repeated getheight part. Thus the time is better than th
 
 
 ```java
-    public boolean isBalanced(TreeNode root){
-        return helper(root) >= 0;
+    public boolean isBalanced(TreeNode root) {
+        return validHeight(root) >= 0;
     }
-
-    public int helper(TreeNode root){
+    private int validHeight(TreeNode root) {
         if (root == null) {
             return 0;
         }
-        int left = helper(root.left);
-        int right = helper(root.right);
+        int left = validHeight(root.left);
+        int right = validHeight(root.right);
         if (left < 0 || right < 0 || Math.abs(left - right) > 1) {
             return -1;
         }
         return Math.max(left, right) + 1;
-    }
+    } 
 ```
 <br>
 <br>
@@ -9719,6 +9762,97 @@ public int minDepth(TreeNode root) {
 }
 ```
 
+<br>
+<br>
+
+###112 Path Sum
+
+>Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.
+
+<pre>
+For example:
+Given the below binary tree and sum = 22,
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \      \
+        7    2      1
+return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
+
+**Idea**: Recursion.
+
+</pre>
+
+```java
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null) {
+            return false;
+        }
+        if (root.val == sum && root.left == null && root.right == null) {
+            return true;
+        }
+        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+    }
+
+```
+<br>
+<br>
+
+###113 Path Sum II
+
+> Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given sum.
+
+<pre>
+For example:
+Given the below binary tree and sum = 22,
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \    / \
+        7    2  5   1
+return
+[
+   [5,4,11,2],
+   [5,8,4,5]
+]
+</pre>
+
+**Same idea with Path Sum. Except that we need to record all the paths.
+
+```java
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        path(root, sum, res, new ArrayList<Integer>());
+        return res;
+    }
+    private void path(TreeNode root, int sum, List<List<Integer>> res, List<Integer> cur) {
+        if (root == null) {
+            return;
+        }
+        cur.add(root.val);
+        sum -= root.val;
+        if (sum == 0 && root.left == null && root.right == null) {
+            res.add(new ArrayList<Integer>(cur));
+            return;
+        }
+        path(root.left, sum, res, cur);
+        if (root.left != null) {
+            cur.remove(cur.size() - 1);
+        }
+        path(root.right, sum, res, cur);
+        if (root.right != null) {
+            cur.remove(cur.size() - 1);
+        }
+    }
+
+```
 <br>
 <br>
 
