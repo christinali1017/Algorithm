@@ -116,6 +116,7 @@
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
 * [115 Distinct Subsequences](#115-distinct-subsequences)
 * [116 Populating Next Right Pointers in Each Node](#116-populating-next-right-pointers-in-each-node)
+* [117 Populating Next Right Pointers in Each Node II](#117-populating-next-right-pointers-in-each-node-ii)
 * [118 Pascal Triangle](#118-pascal-triangle)
 * [119 Pascal Triangle II](#119-pascal-triangle-ii)
 * [120 Triangle](#120-triangle)
@@ -123,6 +124,7 @@
 * [122 Best Time to Buy and Sell Stock II](#122-best-time-to-buy-and-sell-stock-ii)
 * [123 Best Time to Buy and Sell Stock III](#123-best-time-to-buy-and-sell-stock-iii)
 * [124 Binary Tree Maximum Path Sum](#124-binary-tree-maximum-path-sum)
+* [125 Valid Palindrome](#125-valid-palindrome)
 * [126 Word Ladder](#126-word-ladder)
 * [127 Word Ladder II](#127-word-ladder-ii)
 * [131 Parlindrome partitioning](#131-parlindrome-partitioning)
@@ -10021,53 +10023,6 @@ public int numDistinct(String s, String t) {
 <br>
 <br>
 
-###118 Pascal Triangle
-
->Given numRows, generate the first numRows of Pascal's triangle.
-
-<pre>
-For example, given numRows = 5,
-Return
-
-[
-     [1],
-    [1,1],
-   [1,2,1],
-  [1,3,3,1],
- [1,4,6,4,1]
-]
-
-</pre>
-
-
-**Idea**: First row : 1. Then each row is calculated based on the last row. In each row the first element and the last element is 1. Thus val = j == 0 || j == pre.size() ? 1 : pre.get(j-1)+pre.get(j);
-
-```java
-            public List<List<Integer>> generate(int numRows) {
-	        List<List<Integer>> list = new ArrayList<List<Integer>>();
-	        if(numRows <= 0) return list;
-	        List<Integer> firstR = new ArrayList<Integer>();
-	        firstR.add(1);
-	        list.add(firstR);
-	        for(int i = 1; i < numRows; i++){
-	            List<Integer> current = new ArrayList<Integer>();
-	            List<Integer> pre = list.get(list.size()-1);
-	            for(int j = 0; j <= pre.size(); j++){
-	                int val = j == 0 || j == pre.size() ? 1 : pre.get(j-1)+pre.get(j);
-	                current.add(val);
-	            }
-	            list.add(current);
-	        }
-	        return list;
-	    }
-	    
-
-```
-
-
-<br>
-<br>
-
 ###116 Populating Next Right Pointers in Each Node
 
 >Given a binary tree
@@ -10130,6 +10085,110 @@ public void connect(TreeLinkNode root) {
 <br>
 <br>
 
+###117 Populating Next Right Pointers in Each Node II
+
+>Follow up for problem "Populating Next Right Pointers in Each Node".
+
+<pre>
+
+What if the given tree could be any binary tree? Would your previous solution still work?
+
+Note:
+
+You may only use constant extra space.
+For example,
+Given the following binary tree,
+         1
+       /  \
+      2    3
+     / \    \
+    4   5    7
+After calling your function, the tree should look like:
+         1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+     / \    \
+    4-> 5 -> 7 -> NULL
+
+</pre>
+
+**Same solution with last problem**:
+
+
+```java
+ public void connect(TreeLinkNode root) {
+        while (root != null) {
+            TreeLinkNode nextList = new TreeLinkNode(-1);
+            TreeLinkNode temp = nextList;
+            while (root != null) {
+                if (root.left != null) {
+                    temp.next = root.left;
+                    temp = temp.next;
+                } 
+                if (root.right != null) {
+                    temp.next = root.right;
+                    temp = temp.next;
+                }
+                root = root.next;
+            }
+            root = nextList.next;
+        }
+    }
+
+```
+
+<br>
+<br>
+
+###118 Pascal Triangle
+
+>Given numRows, generate the first numRows of Pascal's triangle.
+
+<pre>
+For example, given numRows = 5,
+Return
+
+[
+     [1],
+    [1,1],
+   [1,2,1],
+  [1,3,3,1],
+ [1,4,6,4,1]
+]
+
+</pre>
+
+
+**Idea**: First row : 1. Then each row is calculated based on the last row. In each row the first element and the last element is 1. Thus val = j == 0 || j == pre.size() ? 1 : pre.get(j-1)+pre.get(j);
+
+```java
+            public List<List<Integer>> generate(int numRows) {
+	        List<List<Integer>> list = new ArrayList<List<Integer>>();
+	        if(numRows <= 0) return list;
+	        List<Integer> firstR = new ArrayList<Integer>();
+	        firstR.add(1);
+	        list.add(firstR);
+	        for(int i = 1; i < numRows; i++){
+	            List<Integer> current = new ArrayList<Integer>();
+	            List<Integer> pre = list.get(list.size()-1);
+	            for(int j = 0; j <= pre.size(); j++){
+	                int val = j == 0 || j == pre.size() ? 1 : pre.get(j-1)+pre.get(j);
+	                current.add(val);
+	            }
+	            list.add(current);
+	        }
+	        return list;
+	    }
+	    
+
+```
+
+
+<br>
+<br>
+
+
+
 
 ###119 Pascal Triangle II
 
@@ -10141,10 +10200,26 @@ Return [1,3,3,1].
 Note:
 Could you optimize your algorithm to use only O(k) extra space?
 
+**Revised solution**: overwrite from the last second element to the second element. In this way, we don't need to store any previous value.
+
+```java
+public List<Integer> getRow(int rowIndex) {
+    List<Integer> list = new ArrayList<>();
+    list.add(1);
+    for(int i = 1; i <= rowIndex; i++){
+        list.add(1);
+        for(int j = list.size() - 2; j > 0; j--){
+            list.set(j, list.get(j) + list.get(j - 1));
+        } 
+    }
+    return list;
+}
+
+```
+
 **Idea**: If we can only use O(k) space, then we need to store all rows info in a single array. So the current row is calculated based on the last row. Eg: the last row is 1 2 1, we need to replace it with 1 3 3 1. We can ignore the first 1. Then 3 = 1 + 2 = pre + list.get(j). We need to store the current elment before we overwrite it. 
 
 If there is no other requirements, then we can just use the result in [118 Pascal Triangle](#118-pascal-triangle) and get the last row. 
-
 
 **Attention**:
 
@@ -10154,7 +10229,7 @@ If there is no other requirements, then we can just use the result in [118 Pasca
 <br>
 
 ```java
-     public List<Integer> getRow(int rowIndex) {
+public List<Integer> getRow(int rowIndex) {
 	List<Integer> list = new ArrayList<Integer>();
     	if(rowIndex < 0) return list;
     	list.add(1);
@@ -10226,47 +10301,42 @@ res array:
 We can also calculate from the top layer, then go down. It's similar to the method above. It's easier to handle the index if we begin from the last layer.
 
 ```java
-	public int minimumTotal(List<List<Integer>> triangle) {
-	    if(triangle == null || triangle.size() == 0) return 0;
-	    int[] res = new int[triangle.get(triangle.size()-1).size()];
-	    for(int i = 0; i < res.length; i++){
-	        res[i] = triangle.get(triangle.size()-1).get(i);
-	    }
-	    for(int i = triangle.size()-2; i >= 0; i--){
-	        List<Integer> current = triangle.get(i);
-	        for(int j = 0; j < current.size(); j++){
-	            res[j] = Math.min(res[j], res[j+1]) + current.get(j);
-	        }
-	    }
-	    return res[0];
-	 }
+public int minimumTotal(List<List<Integer>> triangle) {
+    List<Integer> res = triangle.get(triangle.size() - 1);
+    for(int i = triangle.size()-2; i >= 0; i--){
+        List<Integer> current = triangle.get(i);
+        for(int j = 0; j < current.size(); j++){
+            res.set(j, Math.min(res.get(j), res.get(j + 1)) + current.get(j));
+        }
+    }
+    return res.get(0);
+}
 ```
 
 **Solution 2**: From top to bottom:
 
 ```java
 	/* from top to bottom */
-	 public int minimumTotal1(List<List<Integer>> triangle) {
-		   if(triangle == null || triangle.size() == 0) return 0;
-		   int[] sum = new int[triangle.get(triangle.size()-1).size()];
-		   sum[0] = triangle.get(0).get(0);
-		   int min = Integer.MAX_VALUE;
-		   for(int i = 1; i < triangle.size(); i++){
-		       List<Integer> cur = triangle.get(i);
-		       for(int j = cur.size() -1 ; j >= 0; j--){
-		          if(j == cur.size()-1) sum[j] = cur.get(j) + sum[j-1];
-		          else if(j == 0) sum[j] = cur.get(j) + sum[0];
-		          else sum[j] = cur.get(j) + Math.min(sum[j], sum[j-1]);
-		       }
-		   }
-		   for(int i = 0; i < sum.length; i++){
-		       if(min > sum[i]) min = sum[i];
-		   }
-		   return min;
-		 }
-    
-
-
+    public int minimumTotal(List<List<Integer>> triangle) {
+        if (triangle.size() == 0) {
+            return 0;
+        }
+        List<Integer> res = new ArrayList<>();
+        res.add(triangle.get(0).get(0));
+        for (int i = 1; i < triangle.size(); i++) {
+            List<Integer> cur = triangle.get(i);
+            res.add(cur.get(cur.size() - 1) + res.get(res.size() - 1));
+            for (int j = cur.size() - 2; j >= 1; j--) {
+                res.set(j, Math.min(res.get(j), res.get(j - 1)) + cur.get(j));
+            }
+            res.set(0, res.get(0) + cur.get(0));
+        }
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < res.size(); i++) {
+            min = Math.min(min, res.get(i));
+        }
+        return min;
+    }
 ```
 
 
@@ -10324,15 +10394,13 @@ We can also calculate from the top layer, then go down. It's similar to the meth
 
 **Space** : O(1)
 ```java
-	public int maxProfit(int[] prices){
-		int max = 0;
-		int dif = 0;
-		for(int i = 1; i < prices.length; i++){
-			dif = Math.max(0, prices[i] - prices[i-1]);
-			max = max + dif;
-		}
-		return max;
-	}
+public int maxProfit(int[] prices) {
+    int res = 0;
+    for (int i = 1; i < prices.length; i++) {
+        res = res + Math.max(0, prices[i] - prices[i - 1]);
+    }
+    return res;
+}
 ```	
 
 <br>
@@ -10547,6 +10615,49 @@ public int maxPathSum(TreeNode root, int[] maxSum) {
 <br>
 <br>
 
+###125 Valid Palindrome
+
+>Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+
+<pre>
+For example,
+"A man, a plan, a canal: Panama" is a palindrome.
+"race a car" is not a palindrome.
+
+Note:
+Have you consider that the string might be empty? This is a good question to ask during an interview.
+
+For the purpose of this problem, we define empty string as valid palindrome.
+</pre>
+
+```java
+public boolean isPalindrome(String s) {
+    int l = 0;
+    int r = s.length() - 1;
+    while (l < r) {
+        if (isNotCharacter(s.charAt(l))) {
+            l++;
+        } else if (isNotCharacter(s.charAt(r))) {
+            r--;
+        } else {
+            if (Character.toLowerCase(s.charAt(l)) == Character.toLowerCase(s.charAt(r))) {
+                l++;
+                r--;
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+private boolean isNotCharacter(char c) {
+    return ! ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'));
+}
+
+```
+<br>
+<br>
+
 ###126 Word Ladder
 
 >Given two words (start and end), and a dictionary, find the length of shortest transformation sequence from start to end, such that:
@@ -10579,9 +10690,9 @@ All words contain **only lowercase alphabetic characters**.
 
 
 
-**Idea**: This shortest transformation ladder is just like a shortest path in a graph. We teat each string as a graph node. If these two strings only have one different char, then we add an edge to these two nodes. When we come to the end string, we find the shortest path. 
+**Idea**: This shortest transformation ladder is just like a shortest path in a graph. We treat each string as a graph node. If these two strings only have one different char, then we add an edge to these two nodes. When we come to the end string, we find the shortest path. 
 
-If we use bfs, we can use an additional lenqueue to record the path length of each node. 
+If we use bfs, we can use an additional len queue to record the path length of each node. 
 
 
 **Attention**: 
@@ -10620,8 +10731,40 @@ If we use bfs, we can use an additional lenqueue to record the path length of ea
     
 ```
 
-* [126 Word Ladder](#126-word-ladder)
-* [127 word Ladder II](#127-word-ladder-ii)
+**Another BFS solution**:
+
+Space O(n)
+
+```java
+public int ladderLength(String start, String end, Set<String> dict) {
+        Deque<String> queue = new LinkedList<>();
+        queue.add(start);
+        dict.add(end);
+        int res = 0;
+        while (!queue.isEmpty()) {
+            res++;
+            int size = queue.size();
+            for (int j = 0; j < size; j++) {
+                start = queue.poll();
+                if (start.equals(end)) {
+                    return res;
+                }
+                for (int i = 0; i < start.length(); i++) {
+                    char[] arr = start.toCharArray();
+                    for (arr[i] = 'a'; arr[i] <= 'z'; arr[i]++) {
+                        String temp = new String(arr);
+                        if (dict.contains(temp)) {
+                            queue.add(temp);
+                            dict.remove(temp);
+                        }
+                    }
+                }
+                
+            }
+        }
+        return 0;
+    }
+```
 
 <br>
 <br>
@@ -10665,84 +10808,132 @@ All words contain only lowercase alphabetic characters.
 
 </span>
 
-<br>
+
 ```java
-    public List<List<String>> findLadders(String start, String end, Set<String> dict) {
-        List<List<String>> res = new ArrayList<List<String>>();
-        if(dict == null || dict.size() == 0 || start == null || end == null) return res;
-        /*if start equals end, we can return [[start, end]]*/
-        if(start.equals(end)){
-            List<String> temp = new ArrayList<String>();
-            temp.add(start);
-            temp.add(end);
-            return res;
-        }
-        
-        /*if dict contains end, remove end from dict, otherwise we might have duplicates */
-        dict.remove(end); 
-        
+      public List<List<String>> findLadders(String start, String end, Set<String> dict) {
+          List<List<String>> res = new ArrayList<>();
+          Deque<String> queue = new LinkedList<>();
+          Map<String, Set<String>> parentMap = new HashMap<>();
+          parentMap.put(end, new HashSet<String>());
+          queue.add(start);
+          dict.add(end);
+          String saveStart = start;
+          while (!queue.isEmpty()) {
+              List<String> toRemove = new LinkedList<>();
+              int size = queue.size();
+              for (int j = 0; j < size; j++) {
+                  start = queue.poll();
+                  for (int i = 0; i < start.length(); i++) {
+                      char[] arr = start.toCharArray();
+                      for (arr[i] = 'a'; arr[i] <= 'z'; arr[i]++) {
+                          String temp = new String(arr);
+                          if (dict.contains(temp)) {
+                              if (!parentMap.containsKey(temp)) {
+                                  parentMap.put(temp, new HashSet<String>());
+                              }
+                              parentMap.get(temp).add(start);
+                              queue.add(temp);
+                              toRemove.add(temp);
+                          }
+                      }
+                  }
+              }
+              if (parentMap.get(end).size() > 0) {
+                  break;
+              }
+              for (String string : toRemove) {
+                  dict.remove(string);
+              }
+          }
+          List<String> curPath = new ArrayList<>();
+          curPath.add(end);
+          buildPaths(parentMap, res, end, saveStart, curPath);
+          return res;
+      }
+      
+      private void buildPaths(Map<String, Set<String>> parentMap, List<List<String>> res, String end, String start, List<String> path) {
+          if (end.equals(start)) {
+              List<String> p = new ArrayList<>(path);
+              Collections.reverse(p);
+              res.add(p);
+              return;
+          }
+          Set<String> parent = parentMap.get(end);
+          for (String s : parent) {
+              path.add(s);
+              buildPaths(parentMap, res, s, start, path);
+              path.remove(path.size() - 1);
+          }
+      }
+```
+
+<br>
+
+**Another similar solution:**: 
+
+
+```java
+  public List<List<String>> findLadders(String start, String end, Set<String> dict) {
+        List<List<String>> res = new ArrayList<>();
         Queue<String> queue = new LinkedList<String> ();
-        
-        /*store the parent node of each node*/
-        Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+        Map<String, ArrayList<String>> map = new HashMap<>();
         queue.offer(start);
-        for(String s : dict){
+        for (String s : dict) {
             map.put(s, new ArrayList<String>());
         }
         map.put(end, new ArrayList<String>());
-        List<String> cur = new ArrayList<String>();
+        List<String> cur = new ArrayList<>();
         
         while(!queue.isEmpty()){
             cur.clear();
-            for(int i = 0, size = queue.size(); i < size; i++){
-            	String temp = queue.poll();
+            for (int i = 0, size = queue.size(); i < size; i++) {
+              String temp = queue.poll();
                 cur.add(temp);
                 dict.remove(temp);
             }
-            for(String s : cur){
-                for(int i = 0; i < s.length(); i++){
+            for (String s : cur){
+                for (int i = 0; i < s.length(); i++) {
                     char[] arr = s.toCharArray();
-                    for(arr[i] = 'a'; arr[i] <= 'z'; arr[i]++){
+                    for (arr[i] = 'a'; arr[i] <= 'z'; arr[i]++) {
                         String temp = new String(arr);
-                        /* It's ok not add this sentence. just to jump unnecessary operations*/
-                        if(temp.equals(s)) continue;
-                        if(temp.equals(end)){
-                            map.get(end).add(s);
-                        }
-                        if(dict.contains(temp)){
-                            if(!map.containsKey(temp)){
+                        if (dict.contains(temp)) {
+                            if (!map.containsKey(temp)) {
                                 map.put(temp, new ArrayList<String>());
                             }
                             map.get(temp).add(s);
-                            if(!queue.contains(temp)) queue.offer(temp);
+                            if (!queue.contains(temp)) {
+                                queue.offer(temp);
+                            }
                         }
                     }
                 }
             }
             
-            if(map.get(end).size()>0) break;
+            if (map.get(end).size()>0) {
+                break;
+            }
         }
         
         List<String> path = new ArrayList<String>();
         path.add(end);
         buildPaths(map, res, end, start, path);
         return res;
- 	}
- 	
- 	public void buildPaths(Map<String, ArrayList<String>> map, List<List<String>> res, String end, String start, List<String> path){
- 	    if(end.equals(start)){
- 	        List<String> apath = new ArrayList<String>(path);
- 	        Collections.reverse(apath);
- 	        res.add(apath);
- 	        return;
- 	    }
- 	    List<String> pre = map.get(end);
- 	    for(String s : pre){
- 	        path.add(s);
- 	        buildPaths(map, res, s, start, path);
- 	        path.remove(path.size()-1);
- 	    }
- 	}
+  }
+  
+  public void buildPaths(Map<String, ArrayList<String>> map, List<List<String>> res, String end, String start, List<String> path){
+      if (end.equals(start)) {
+          List<String> apath = new ArrayList<>(path);
+          Collections.reverse(apath);
+          res.add(apath);
+          return;
+      }
+      List<String> pre = map.get(end);
+      for (String s : pre) {
+          path.add(s);
+          buildPaths(map, res, s, start, path);
+          path.remove(path.size() - 1);
+      }
+  }
  	
 ```
 
