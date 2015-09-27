@@ -115,6 +115,7 @@
 * [113 Path Sum II](#113-path-sum-ii)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
 * [115 Distinct Subsequences](#115-distinct-subsequences)
+* [116 Populating Next Right Pointers in Each Node](#116-populating-next-right-pointers-in-each-node)
 * [118 Pascal Triangle](#118-pascal-triangle)
 * [119 Pascal Triangle II](#119-pascal-triangle-ii)
 * [120 Triangle](#120-triangle)
@@ -10063,6 +10064,68 @@ Return
 
 ```
 
+
+<br>
+<br>
+
+###116 Populating Next Right Pointers in Each Node
+
+>Given a binary tree
+
+<pre>
+    struct TreeLinkNode {
+      TreeLinkNode *left;
+      TreeLinkNode *right;
+      TreeLinkNode *next;
+    }
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+Note:
+
+You may only use constant extra space.
+You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).
+For example,
+Given the following perfect binary tree,
+         1
+       /  \
+      2    3
+     / \  / \
+    4  5  6  7
+After calling your function, the tree should look like:
+         1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+     / \  / \
+    4->5->6->7 -> NULL
+
+</pre>
+
+**Idea**: Binary tree level order traversal. Here we need to use constant space, thus we can not use queen. 
+
+We can use the LinkNode to reach the same result.
+
+```java
+public void connect(TreeLinkNode root) {
+    while (root != null) {
+        TreeLinkNode nextList = new TreeLinkNode(-1);
+        TreeLinkNode temp = nextList;
+        while (root != null) {
+            if (root.left != null) {
+                temp.next = root.left;
+                temp = temp.next;
+            } 
+            if (root.right != null) {
+                temp.next = root.right;
+                temp = temp.next;
+            }
+            root = root.next;
+        }
+        root = nextList.next;
+    }
+}
+```
 
 <br>
 <br>
