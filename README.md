@@ -114,6 +114,7 @@
 * [112 Path Sum](#112-path-sum)
 * [113 Path Sum II](#113-path-sum-ii)
 * [114 Flatten Binary Tree to Linked List](#114-flatten-binary-tree-to-linked-list)
+* [115 Distinct Subsequences](#115-distinct-subsequences)
 * [118 Pascal Triangle](#118-pascal-triangle)
 * [119 Pascal Triangle II](#119-pascal-triangle-ii)
 * [120 Triangle](#120-triangle)
@@ -9892,7 +9893,7 @@ The flattened tree should look like:
 
 - 2) We need to save the right child, because the right child has changed when we visit the left child. 
 
-*Reversion code* : 
+*Reversion code && Preorder* : 
 
 ```java
 public void flatten(TreeNode root){
@@ -9904,7 +9905,7 @@ public void flatten(TreeNode root){
     flatten(root, pre);
 }
 
-public void flatten(TreeNode root, TreeNode[] pre) {
+private void flatten(TreeNode root, TreeNode[] pre) {
     if (root == null) {
         return;
     }
@@ -9917,7 +9918,28 @@ public void flatten(TreeNode root, TreeNode[] pre) {
 }
 ```
 
-*Stack*:
+*Recursion && Postorder*:
+
+```java
+public void flatten(TreeNode root){
+    TreeNode[] pre = new TreeNode[1];
+    pre[0] = null;
+    flatten(root, pre);
+}
+
+private void flatten(TreeNode root, TreeNode[] pre) {
+    if (root == null) {
+        return;
+    }
+    flatten(root.right, pre);
+    flatten(root.left, pre);
+    root.right = pre[0];
+    root.left = null;
+    pre[0] = root;
+}
+```
+
+*Stack && Preorder*: 
 
 ```java
 public void flatten(TreeNode root){
@@ -9944,6 +9966,57 @@ public void flatten(TreeNode root){
 
 
 
+<br>
+<br>
+
+###115 Distinct Subsequences
+
+>Given a string S and a string T, count the number of distinct subsequences of T in S.
+
+>A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a subsequence of "ABCDE" while "AEC" is not).
+
+>Here is an example: S = "rabbbit", T = "rabbit" Return 3.
+
+
+**DP** Two dimensional:
+
+dp[i][j] represents the number of distinct subsequences of T[0, j] in S[0, i]
+
+Induction rule: dp[i][j] = s.charAt(i - 1) == t.charAt(j - 1) ? dp[i - 1][j - 1] + dp[i - 1][j] :  dp[i - 1][j];
+
+```java
+ public int numDistinct(String s, String t) {
+      int[][] dp = new int[s.length() + 1][t.length() + 1];
+      for (int i = 0; i <= s.length(); i++) {
+          for (int j = 0; j <= t.length(); j++) {
+              if (j == 0) {
+                  dp[i][j] = 1;
+              } else if (i == 0) {
+                  continue;
+              } else {
+                   dp[i][j] = s.charAt(i - 1) == t.charAt(j - 1) ? dp[i - 1][j - 1] + dp[i - 1][j] :  dp[i - 1][j];
+              }
+          }
+      }
+      return dp[s.length()][t.length()];
+  }
+
+```
+
+**One dimensional dp**:
+
+```java
+public int numDistinct(String s, String t) {
+    int[] dp = new int[t.length() + 1];
+    dp[0] = 1;
+    for (int i = 1; i <= s.length(); i++) {
+        for (int j = t.length(); j >= 1; j--) {
+            dp[j] = s.charAt(i - 1) == t.charAt(j - 1) ? dp[j - 1] + dp[j] : dp[j];
+        }
+    }
+    return dp[t.length()];
+}
+```
 <br>
 <br>
 
@@ -11600,12 +11673,7 @@ Note: Recursive solution is trivial, could you do it iteratively?
     }
 ```
 
-**Solution 3**:iterative with stack
-
-
-
-
-**Solution 4**: Morris traversal
+**Solution 3**: Morris traversal
 
 ```java
     public List<Integer> preorderTraversal(TreeNode root) {
