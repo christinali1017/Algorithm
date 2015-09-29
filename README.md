@@ -127,6 +127,7 @@
 * [125 Valid Palindrome](#125-valid-palindrome)
 * [126 Word Ladder](#126-word-ladder)
 * [127 Word Ladder II](#127-word-ladder-ii)
+* [128 Longest Consecutive Sequence](#128-longest-consecutive-sequence)
 * [131 Parlindrome partitioning](#131-parlindrome-partitioning)
 * [132 Parlindrome partitioning II](#132-parlindrome-partitioning-ii)
 * [133 Clone Graph](#133-clone-graph)
@@ -10941,6 +10942,85 @@ All words contain only lowercase alphabetic characters.
 
 <br>
 <br>
+
+###128 Longest Consecutive Sequence
+
+>Given an unsorted array of integers, find the length of the longest consecutive elements sequence.
+
+
+<pre>
+For example,
+Given [100, 4, 200, 1, 3, 2],
+The longest consecutive elements sequence is [1, 2, 3, 4]. Return its length: 4.
+
+Your algorithm should run in O(n) complexity.
+
+</pre>
+
+**Idea**: Use set to check if an element exist in O(1) time.
+
+Pick an element, go to the left and right consecutive as far as possible. For each consecutive sequence we check once.
+
+http://blog.csdn.net/linhuanmars/article/details/22964467
+
+
+
+```java
+  public int longestConsecutive(int[] nums) {
+        Set<Integer> set = new HashSet<Integer>();
+        for (int i : nums) {
+            set.add(i);
+        }
+        int res = 0;
+        while (!set.isEmpty()) {
+            int len = 1;
+            Iterator<Integer> iterator = set.iterator();
+            int cur = iterator.next();
+            set.remove(cur);
+            int left = cur - 1;
+            while (set.contains(left)) {
+                set.remove(left--);
+                len++;
+            }
+            int right = cur + 1;
+            while (set.contains(right)) {
+                set.remove(right++);
+                len++;
+            }
+            res = Math.max(len, res);
+        }
+        return res;
+    }
+
+```
+
+**Another solution based on leetcode discussion**:
+
+```java
+public int longestConsecutive(int[] nums) {
+  Map<Integer, Integer> map = new HashMap<>();
+  int res = 0;
+  for (int num : nums) {
+      if (!map.containsKey(num)) {
+          int l = map.containsKey(num - 1) ? map.get(num - 1) : 0;
+          int r = map.containsKey(num + 1) ? map.get(num + 1) : 0;
+          int count = l + r + 1;
+          map.put(num, count);
+          res = Math.max(res, count);
+          map.put(num - l, count);
+          map.put(num + r, count);
+      }
+  }
+  return res;
+}
+
+``
+
+
+<br>
+<br>
+
+
 ###131 Parlindrome partitioning
 
 >Given a string s, partition s such that every substring of the partition is a palindrome.
