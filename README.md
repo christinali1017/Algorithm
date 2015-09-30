@@ -128,6 +128,8 @@
 * [126 Word Ladder](#126-word-ladder)
 * [127 Word Ladder II](#127-word-ladder-ii)
 * [128 Longest Consecutive Sequence](#128-longest-consecutive-sequence)
+* [129 Sum Root to Leaf Numbers](#129-sum-root-to-leaf-numbers)
+* [130 Surrounded Regions](#130-Surrounded Regions)
 * [131 Parlindrome partitioning](#131-parlindrome-partitioning)
 * [132 Parlindrome partitioning II](#132-parlindrome-partitioning-ii)
 * [133 Clone Graph](#133-clone-graph)
@@ -11014,8 +11016,201 @@ public int longestConsecutive(int[] nums) {
   return res;
 }
 
-``
+```
 
+
+<br>
+<br>
+
+
+###129 Sum Root to Leaf Numbers
+
+
+>Given a binary tree containing digits from 0-9 only, each root-to-leaf path could represent a number.
+
+<pre>
+An example is the root-to-leaf path 1->2->3 which represents the number 123.
+
+Find the total sum of all root-to-leaf numbers.
+
+For example,
+
+    1
+   / \
+  2   3
+The root-to-leaf path 1->2 represents the number 12.
+The root-to-leaf path 1->3 represents the number 13.
+
+Return the sum = 12 + 13 = 25.
+
+</pre>
+
+```java
+    public int sumNumbers(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int[] res = new int[1];
+        sumPath(res, root, 0);
+        return res[0];        
+    }
+    private void sumPath(int[] res, TreeNode root, int cur) {
+        if (root == null) {
+            return;
+        }
+        cur = cur * 10 + root.val;
+        if (root.left == null && root.right == null) {
+            res[0] += cur;
+            return;
+        }
+        sumPath(res, root.left, cur);
+        sumPath(res, root.right, cur);
+    }
+
+```
+
+Or
+
+```java
+public int sumNumbers(TreeNode root) {
+    return sumPath(root, 0);
+}
+private int sumPath(TreeNode root, int cur) {
+    if (root == null) {
+        return 0;
+    }
+    cur = cur * 10 + root.val;
+    if (root.left == null && root.right == null) {
+        return cur;
+    }
+    return sumPath(root.left, cur) + sumPath(root.right, cur);
+}
+```
+
+<br>
+<br>
+
+
+###130 Surrounded Regions
+
+>Given a 2D board containing 'X' and 'O', capture all regions surrounded by 'X'.
+
+A region is captured by flipping all 'O's into 'X's in that surrounded region.
+
+For example,
+X X X X
+X O O X
+X X O X
+X O X X
+After running your function, the board should be:
+
+X X X X
+X X X X
+X X X X
+X O X X
+
+**Idea**:
+
+Change all unsurrounded 'O' to other character, then fill surrounded 'O' with 'X'. Then change unsurrounded '0' back.
+
+
+```java
+public void solve(char[][] board) {
+        if (board == null || board.length == 0 || board[0].length == 0) {
+            return;
+        }
+        for (int i = 0; i < board.length; i++) {
+            flood(board, i, 0);
+            flood(board, i, board[0].length - 1);
+        }
+        for (int i = 0; i < board[0].length; i++) {
+            flood(board, 0, i);
+            flood(board, board.length - 1, i);
+        }
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == 'O') {
+                    board[i][j] = 'X';
+                } else if (board[i][j] == 'A') {
+                    board[i][j] = 'O';
+                }
+            }
+        }
+    }
+    
+    private void flood(char[][] board, int i, int j) {
+        if (i < 0 || i > board.length - 1 || j < 0 || j > board[0].length - 1 || board[i][j] != 'O') {
+            return;
+        }
+        board[i][j] = 'A';
+        if (i > 1) {
+            flood(board, i - 1, j);
+        }
+        if (i < board.length - 2) {
+            flood(board, i + 1, j);
+        }
+        if (j > 1) {
+            flood(board, i, j - 1); 
+        }
+        if (j < board[0].length - 2) {
+            flood(board, i, j + 1);
+        }
+    }
+```
+
+<br>
+
+The more concise version of flood is following, but will get TLE on leetcode. This takes O(4 ^ n) for the flood.
+
+```java
+    private void flood(char[][] board, int i, int j) {
+        if (i < 0 || i > board.length - 1 || j < 0 || j > board[0].length - 1 || board[i][j] != 'O') {
+            return;
+        }
+        board[i][j] = 'A';
+        flood(board, i - 1, j);
+        flood(board, i + 1, j);
+        flood(board, i, j - 1);
+        flood(board, i, j + 1);
+    }
+```
+
+
+<br>
+
+**Iterative version of flood**: Use iterative way, the flood takes O(m * n)
+
+```java
+    private void flood(char[][] board, int i, int j) {
+        if (board[i][j] != 'O') {
+            return;
+        }
+        board[i][j] = 'A';
+        Deque<Integer> queue = new LinkedList<>();
+        queue.offer(i * board[0].length + j);
+        while (!queue.isEmpty()) {
+            int pos = queue.poll();
+            int row = pos / board[0].length;
+            int col = pos % board[0].length;
+            if (row > 0 && board[row - 1][col] == 'O') {
+                queue.offer(pos - board[0].length);
+                board[row - 1][col] = 'A';
+            }
+            if (row < board.length - 1 && board[row + 1][col] == 'O') {
+                queue.offer(pos + board[0].length);
+                board[row + 1][col] = 'A';
+            }
+            if (col > 0 && board[row][col - 1] == 'O') {
+                queue.offer(pos - 1);
+                board[row][col - 1] = 'A';
+            }
+            if (col < board[0].length - 1 && board[row][col + 1] == 'O') {
+                queue.offer(pos + 1);
+                board[row][col + 1] = 'A';
+            }
+        }
+    }
+``` 
 
 <br>
 <br>
