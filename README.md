@@ -135,6 +135,7 @@
 * [133 Clone Graph](#133-clone-graph)
 * [134 Gas Station](#134-gas-station)
 * [135 Candy](#135-candy)
+* [136 Single Number II](#136-single-number-ii)
 * [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
 * [139 Word Break](#139-word-break)
 * [140 Word Break II](#140-word-break-ii)
@@ -11712,118 +11713,96 @@ public int canCompleteCircuit(int[] gas, int[] cost) {
 
 ```java
 
-    public static int candy(int[] ratings) {
-        if(ratings == null || ratings.length == 0) return 0;
+    public int candy(int[] ratings) {
+        if (ratings == null || ratings.length == 0) {
+            return 0;
+        }
         int[] left = new int[ratings.length];
         left[0] = 1;
-        for(int i = 1; i < ratings.length; i++){
-            if(ratings[i] > ratings[i-1]) left[i] = left[i-1] +1;
-            else left[i] = 1;
+        for (int i = 1; i < ratings.length; i++) {
+            left[i] = ratings[i] > ratings[i - 1] ? left[i - 1] + 1 : 1;
         }
-        int res = left[ratings.length-1];
-        for(int i = ratings.length - 2; i >= 0; i--){
-            int right = 1;
-            if(ratings[i] > ratings[i+1]){
-                right = left[i+1] + 1;
-            }
-            res += Math.max(right, left[i]);
+        int sum = left[left.length - 1];
+        for (int i = ratings.length - 2; i >= 0; i--) {
+            int right = ratings[i] > ratings[i + 1] ? left[i + 1] + 1 : 1;
+            sum += Math.max(left[i], right);
             left[i] = right;
         }
-        return res;
+        return sum;
     }
 
 ```
 
-
-
+<br>
 <br>
 
-- 2) solution 2: Brute force. O(n ^2 )
+####136 Single Number
+
+>Given an array of integers, every element appears three times except for one. Find that single one.
+
+Note:
+Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+
+**Idea**:
+If we can use extra memory, we can easily solve it using a hashmap. 
+
+If can not use memory, you need to be aware of "Bit manipulation".
+
+N1 ^ N2 ^ N1 ^ N2 ^ N3 = N3
+
+```java
+public int singleNumber(int[] nums) {
+    int res = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        res ^= nums[i];
+    }
+    return res;
+}
+```
+<br>
+<br>
+
+###137 Single Number II
+
+>Given an array of integers, every element appears three times except for one. Find that single one.
+
+Note:
+Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+
+**Idea**: Too hard for me. See the following link.
+
+https://leetcode.com/discuss/31595/detailed-explanation-generalization-bitwise-operation-numbers
+
+https://leetcode.com/discuss/43377/the-simplest-solution-ever-with-clear-explanation
+
+Basic idea of the following solution:
+
+Suppose all the numbers are 1 bit. Then we can use sum % 3 to know the single number. We can extend it to 32 bits.
+
 
 ```java
 
-    public static int candy(int[] ratings) {
-    	if(ratings == null || ratings.length == 0) return 0;
-    	
-    	int preRating = ratings[0],
-    		count = 1,
-    		preCandy = 1,
-    		lastIncreasingIndex = 0,
-    		lastDecreasingIndex = 0,
-    		lastIncreasingCandy = 1,
-    		changeFlag = 0;
-    	for(int i = 1, len = ratings.length; i < len; i++){
-    		if(ratings[i] >= preRating){
-    			if(changeFlag == 1){				
-    				if(ratings[i] == preRating){
-        				/*if increasing sequence is longer than deceasing sequence */
-        				if(lastIncreasingCandy > lastDecreasingIndex - lastIncreasingIndex +1){
-        					count += sumTools(lastDecreasingIndex - lastIncreasingIndex);
-        				}else{
-            				count -= lastIncreasingCandy;
-            				count += sumTools(lastDecreasingIndex - lastIncreasingIndex+1);
-        				}
-    					count += 1;
-    					preCandy = 1;
-    				}else{
-        				/*if increasing sequence is longer than deceasing sequence */
-        				if(lastIncreasingCandy > lastDecreasingIndex - lastIncreasingIndex +1){
-        					count += sumTools(lastDecreasingIndex - lastIncreasingIndex);
-        				}else{
-            				count -= lastIncreasingCandy;
-            				count += sumTools(lastDecreasingIndex - lastIncreasingIndex +1);
-        				}
-    					count += 2;
-        				preCandy = 2;
-    				}
-    				changeFlag = 0;
-        			lastIncreasingIndex = i;
-        			lastIncreasingCandy = preCandy;
-        			preRating = ratings[i];
-    				continue;
-    			}else{
-    				if(ratings[i] == preRating){
-    					preCandy = 1;
-    				}else{
-    					preCandy++;
-    				}
-        			count += preCandy;
-        			preRating = ratings[i];
-        			lastIncreasingIndex = i;
-        			lastIncreasingCandy = preCandy;
-    			}
-    			
-    		}else{
-    			lastDecreasingIndex = i;
-    			preRating = ratings[i];
-    			changeFlag = 1;
-    			continue;
-    		}
-    	}
-    	
-    	if(changeFlag == 1){
-    		if(lastIncreasingCandy > lastDecreasingIndex - lastIncreasingIndex +1){
-				count += sumTools(lastDecreasingIndex - lastIncreasingIndex);
-			}else{
-				count -= lastIncreasingCandy;
-				count += sumTools(lastDecreasingIndex - lastIncreasingIndex +1);
-			} 
-    	}
-        return count;
-    }
+ public static int singleNumber(int[] A) {
+        int result = 0;
+      int count = 0;
+      int pos = 0;
     
-    public static int sumTools(int n){
-    	int sum = 0;
-    	for(int i = 1; i <= n; i++ ){
-    		sum += i;
-    	}
-    	return sum;
+      for(int i = 0; i < 32; i++){
+        count = 0;
+        pos = 1 << i;
+        for (int j = 0, len = A.length; j < len; j++) {
+          if ((pos & A[j]) != 0) {
+              count++;
+          }
+        }
+        if ((count % 3) != 0) {
+            result |= pos;
+        }
+      }
+      return result;
     }
 
 ```
-
-
-
 
 <br>
 <br>
