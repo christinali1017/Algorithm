@@ -135,7 +135,8 @@
 * [133 Clone Graph](#133-clone-graph)
 * [134 Gas Station](#134-gas-station)
 * [135 Candy](#135-candy)
-* [136 Single Number II](#136-single-number-ii)
+* [136 Single Number](#136-single-number)
+* [137 Single Number II](#136-single-number-ii)
 * [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
 * [139 Word Break](#139-word-break)
 * [140 Word Break II](#140-word-break-ii)
@@ -144,6 +145,7 @@
 * [143 Reorder List](#143-reorder-list)
 * [144 Binary Tree Preorder Traversal](#144-binary-tree-preorder-traversal)
 * [145 Binary Tree Postorder Traversal](#145-binary-tree-postorder-traversal)
+* [146 LRU Cache](#146-lru-cache)
 * [147 Insertion Sort List](#147-insertion-sort-list)
 * [148 Sort List](#148-sort-list)
 * [151 Reverse Words in a String](#151-reverse-words-in-a-string)
@@ -12469,7 +12471,7 @@ public void postorderTraversal(TreeNode root, List<Integer> res) {
 }
 ```
 
-*Solution 2**: Iterative, from wiki
+**Solution 2**: Iterative, from wiki
 
 ```java
 public static List<Integer> postorderTraversal(TreeNode root){
@@ -12521,10 +12523,128 @@ public static List<Integer> postorderTraversal(TreeNode root){
 ```
 
 
-**Solution 3**: Morris
+**Solution 4**: Morris
 
  See details on blog [Morris traversal](http://wishyouhappy.github.io/2014/12/17/morris%20traversal-traverse%20a%20binary%20tree%20without%20stack/)
 
+
+<br>
+<br>
+
+###146 LRU Cache
+
+>Design and implement a data structure for Least Recently Used (LRU) cache. It should support the following operations: get and set.
+
+>get(key) - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return -1.
+set(key, value) - Set or insert the value if the key is not already present. When the cache reached its capacity, it should invalidate the least recently used item before inserting a new item.
+
+**Idea** HashMap + double LinkedList
+
+1) We use hashmap to quickly get value by key. 
+
+
+2) We use double LinkedList not single linkedlist because when we get(key), we need to update the node to the tail of the linkedlist and remove it from the original place, thus double list not single list is needed.
+
+**Get**:
+
+- if node exists, update the node to the tail of the list and return value.
+
+**Set**:
+
+- If node exists, change the value, update it to tail
+- Otherwise, check if cache is full
+-- if is full, remove node from head(least recent used), then add node to tail.
+-- otherwise, just add node to tail.
+
+Remember to check if head/tail is null when set values.
+
+**Solution**:
+
+```java
+public class LRUCache {
+    class Node {
+        Node pre, next;
+        int key;
+        int val;
+        public Node(int key, int val) {
+            this.key = key;
+            this.val = val;
+        }
+    }
+    
+    private Map<Integer, Node> map;
+    
+    private Node head;
+    
+    private Node tail;
+    
+    private int capacity;
+    
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        map = new HashMap<>();
+    }
+    
+    public int get(int key) {
+        Node node = map.get(key);
+        if (node == null) {
+            return -1;
+        }
+        updateToLatest(key, node);
+        return node.val;
+    }
+    
+    private void updateToLatest(int key, Node node) {
+         if (node != tail) {
+            //remove node from the original place.
+            if (node == head) {
+                head = head.next;
+            } else {
+                node.pre.next = node.next;
+            }
+            node.next.pre = node.pre;
+            
+            //add node to tail.
+            tail.next = node;
+            node.pre = tail;
+            node.next = null;
+            tail = node;
+        }
+    }
+    
+    public void set(int key, int value) {
+        Node node = map.get(key);
+        if (node != null) {
+            //set node's value
+            node.val = value;
+            updateToLatest(key, node);
+        } else {
+            Node target = new Node(key, value);
+            //If cache is full, remove least recent from head
+            if (map.size() >= capacity) {
+                map.remove(head.key);
+                head = head.next;
+                if (head != null) {
+                    head.pre = null;
+                } else {
+                    tail = null;
+                }
+            }
+            if (head == null){
+                head = target;
+                tail = target;
+            } else {
+                tail.next = target;
+                target.pre = tail;
+                tail = target;
+                map.put(key, target);
+            }
+            map.put(key, target);
+        }
+    }
+}
+
+```
 
 <br>
 <br>
