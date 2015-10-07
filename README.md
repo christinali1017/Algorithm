@@ -129,10 +129,11 @@
 * [127 Word Ladder II](#127-word-ladder-ii)
 * [128 Longest Consecutive Sequence](#128-longest-consecutive-sequence)
 * [129 Sum Root to Leaf Numbers](#129-sum-root-to-leaf-numbers)
-* [130 Surrounded Regions](#130-Surrounded Regions)
+* [130 Surrounded Regions](#130-Surrounded-regions)
 * [131 Parlindrome partitioning](#131-parlindrome-partitioning)
 * [132 Parlindrome partitioning II](#132-parlindrome-partitioning-ii)
 * [133 Clone Graph](#133-clone-graph)
+* [134 Gas Station](#134-gas-station)
 * [135 Candy](#135-candy)
 * [138 Copy List With Random Pointer](#138-copy-list-with-random-pointer)
 * [139 Word Break](#139-word-break)
@@ -11352,7 +11353,7 @@ Base case: cut[i] = i, every single character must be parlindrome.
 
 Induction rule: cut[i] = min(cut[i], cut[j - 1] + 1), if substring(j, i + 1) is parlindrome. 
 
-Note is j = 0, and isParlindrome[j][i] = true, then cut[i] = 0
+Note if j = 0, and isParlindrome[j][i] = true, then cut[i] = 0
 
 
 - *Solution 2*: combine the cut[] isParlindrome[][] together, then we only need n ^ 2, other then 2 * (n ^ 2) 
@@ -11516,6 +11517,148 @@ public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
 ```
 
 <br>
+<br>
+
+
+###134 Gas Station
+>There are N gas stations along a circular route, where the amount of gas at station i is gas[i].
+
+>You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from station i to its next station (i+1). You begin the journey with an empty tank at one of the gas stations.
+
+>Return the starting gas station's index if you can travel around the circuit once, otherwise return -1.
+
+>Note:The solution is guaranteed to be unique.
+
+**Brute force, o(n^2)**:
+
+```java
+public static int canCompleteCircuit(int[] gas, int[] cost) {
+      for (int i = 0, len = cost.length; i < len; i++){
+          int remain = gas[i] - cost[i];
+        if (remain < 0) {
+            continue;
+        }
+        int j = 0; 
+        for (j = i + 1; j < len; j++){
+            remain += gas[j] - cost[j];
+          if (remain < 0) {
+              break;
+          }
+        }
+
+        if (j != len) {
+            continue;
+        }
+        
+        for (j = 0; j < i; j++){
+            remain += gas[j] - cost[j];
+          if (remain < 0) {
+              break;
+          }
+        }
+
+        if(j == i) {
+            return i;
+        }
+      }
+      
+        return -1;
+    }
+```
+
+
+<br>
+
+**Improve the above solution to O(n) solution**:
+
+When we found at station A, remainGas + gas[A] - cost[A] < 0, we start from A + 1.
+
+Just add one line i = j in the following for loop block:
+
+```java
+for (j = i + 1; j < len; j++){
+    remain += gas[j] - cost[j];
+  if (remain < 0) {
+      i = j;
+      break;
+  }
+}
+```
+
+```java
+ public static int canCompleteCircuit(int[] gas, int[] cost) {
+      for (int i = 0, len = cost.length; i < len; i++){
+          int remain = gas[i] - cost[i];
+        if (remain < 0) {
+            continue;
+        }
+        int j = 0; 
+        for (j = i + 1; j < len; j++){
+            remain += gas[j] - cost[j];
+          if (remain < 0) {
+              i = j;
+              break;
+          }
+        }
+
+        if (j != len) {
+            continue;
+        }
+        
+        for (j = 0; j < i; j++){
+            remain += gas[j] - cost[j];
+          if (remain < 0) {
+              break;
+          }
+        }
+
+        if(j == i) {
+            return i;
+        }
+      }
+      
+        return -1;
+    }
+
+```
+
+**Another solution**:
+
+Based on the following two ideas:
+
+1) if car can not reach from A to B, then car not start from A + 1, A + 2....B - 1 to B
+
+2) if sum (gas[i] - cost[i]) >= 0, then there must have a solution.
+
+For details, please look at the following two links.
+
+http://blog.csdn.net/linhuanmars/article/details/22706553
+
+https://leetcode.com/discuss/4159/share-some-of-my-ideas
+
+
+```java
+public int canCompleteCircuit(int[] gas, int[] cost) {
+    if (gas == null || cost == null) {
+        return -1;
+    }
+    int total = 0;
+    int cur = 0;
+    int start = 0;
+    for (int i = 0; i < gas.length; i++) {
+        total += gas[i] - cost[i];
+        cur += gas[i] - cost[i];
+        if (cur < 0) {
+            cur = 0;
+            start = i + 1;
+        }
+    }
+    return total >= 0 ? start : -1;
+}
+```
+
+<br>
+
 <br>
 
 
