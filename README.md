@@ -148,6 +148,7 @@
 * [146 LRU Cache](#146-lru-cache)
 * [147 Insertion Sort List](#147-insertion-sort-list)
 * [148 Sort List](#148-sort-list)
+* [149 Max Points on a Line](#149-max-points-on-a-line)
 * [151 Reverse Words in a String](#151-reverse-words-in-a-string)
 * [153 Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
 * [154 Find Minimum in Rotated Sorted Array II](#154-find-minimum-in-rotated-sorted-array-ii)
@@ -12691,7 +12692,8 @@ If we add a fakeHead pointer to avoid the null pointer cases, we can have more c
 
 <br>
 
-	/* Actually, in some cases the code below is a little faster then above. 	Because when the element is alreay in the right place, we don't need to find 	from the beginning */
+ Actually, in some cases the code below is a little faster then above. 	Because when the element is alreay in the right place, we don't need to find 	from the beginning 
+
 ```java	
 	 public ListNode insertionSortList(ListNode head) {
 	        if(head == null) return null;
@@ -12735,50 +12737,133 @@ If we add a fakeHead pointer to avoid the null pointer cases, we can have more c
 
 <br>
 ```java
-	   public ListNode sortList(ListNode head){
-		    if(head == null || head.next == null) return head;
-		    ListNode f = head;
-		    ListNode s = head;
-		    ListNode pre = null;
-		    while(f != null){
-		        f = f.next;
-		        if(f != null){
-		            f = f.next;
-		            pre = s;
-		            s = s.next;
-		        }
-		    }
-		    pre.next = null;
-		    return merge(sortList(s), sortList(head));
-		}
-		
-		public ListNode merge(ListNode l1, ListNode l2){
-		    if(l1 == null) return l2;
-		    if(l2 == null) return l1;
-		    ListNode fakeHead = new ListNode(-1);
-		    ListNode temp = fakeHead;
-		    while(l1 != null && l2 != null){
-		        if(l1.val > l2.val){
-		            temp.next = l2;
-		            l2 = l2.next;
-		        }else{
-		            temp.next = l1;
-		            l1 = l1.next;
-		        }
-		        temp = temp.next;
-		    }
-		    if(l1 != null) temp.next = l1;
-		    if(l2 != null) temp.next = l2;
-		    return fakeHead.next;
-		}
+public ListNode sortList(ListNode head) {
+    if (head == null || head.next == null) {
+        return head;
+    }
+    ListNode faster = head;
+    ListNode slower = head;
+    while (faster.next != null && faster.next.next != null) {
+        faster = faster.next.next;
+        slower = slower.next;
+    }
+    ListNode right = sortList(slower.next);
+    slower.next = null;
+    return merge(sortList(head), right);
+}
+
+private ListNode merge(ListNode h1, ListNode h2) {
+    ListNode fakeHead = new ListNode(-1);
+    ListNode h = fakeHead;
+    while (h1 != null && h2 != null) {
+        if (h1.val < h2.val) {
+            h.next = h1;
+            h1 = h1.next;
+        } else {
+            h.next = h2;
+            h2 = h2.next;
+        }
+        h = h.next;
+    }
+    if (h1 != null) {
+        h.next = h1;
+    } else if (h2 != null) {
+        h.next = h2;
+    }
+    return fakeHead.next;
+}
 ```		
 
 
 <br>
 <br>
 
+###149 Max Points on a Line
 
-153 Find Minimum in Rotated Sorted Array
+>Given n points on a 2D plane, find the maximum number of points that lie on the same straight line.
+
+**Note**:
+
+- Make sure to consider the same points ( x and y both the same)
+- Make sure to consider x1 = x2
+- Make sure when y1 = y2, don't use (y1 - y2)/(x1 - x2) to calculate the k, because they have twp values
+  **0.0 / -0.0**
+
+```java
+  public int maxPoints(Point[] points) {
+        if (points.length <= 1) {
+            return points.length;
+        }
+        int res = 0;
+        for (int i = 0; i < points.length; i++) {
+            Map<Double, Integer> map = new HashMap<>();
+            Point p1 = points[i];
+            int same = 1;
+            for (int j = i + 1; j < points.length; j++) {
+                Point p2 = points[j];
+                if (p1.x == p2.x && p1.y == p2.y) {
+                    same++;
+                } else {
+                    double k = 0;
+                    if (p1.x == p2.x) {
+                        k = Double.MAX_VALUE;
+                    } else if (p1.y == p2.y) {
+                        k = 0.0;
+                    } else {
+                        k = (double) (p1.y - p2.y) / (double) (p1.x - p2.x);
+                    }
+                    Integer count = map.get(k);
+                    if (count == null) {
+                        map.put(k, 1);
+                    } else {
+                        map.put(k, count + 1);
+                    }
+                }
+            }
+            int local = 0;
+            for (Map.Entry<Double, Integer> entry : map.entrySet()) {
+                local = Math.max(local, entry.getValue());
+            }
+            res = Math.max(res, local + same);
+        }
+        return res;
+    }
+```
+<br>
+<br>
+
+
+###151 reverse words in a string
+
+**Idea**:
+
+- 1) First remove spaces at beginning and at end
+- 2) use regular expression split words.
+- 3) recreate result string
+
+**Solution**:
+
+```java
+public String reverseWords(String input) {
+    if (input == null || input.length() == 0) {
+      return input;
+    }
+    input = input.trim();
+    String[] arr = input.split("\\s+");
+    StringBuilder res = new StringBuilder();
+    for (int i = arr.length - 1; i >= 0; i--) {
+      res.append(arr[i] + " ");
+    }
+    return res.toString().trim();
+}
+
+```
+
+<br>
+
+
+
+###153 Find Minimum in Rotated Sorted Array
 
 >Suppose a sorted array is rotated at some pivot unknown to you beforehand.
 
@@ -12890,38 +12975,6 @@ Each time we find the increasing interval. For example, if A[mid] > A[l], then t
 <br>
 <br>
 
-
-###151-reverse-words-in-a-string
-
-**Idea**:
-
-- 1) First remove spaces at beginning and at end
-- 2) use regular expression split words.
-- 3) recreate result string
-
-**Solution**:
-
-```java
-public String reverseWords(String input) {
-    if (input == null || input.length() == 0) {
-      return input;
-    }
-    input = input.trim();
-    String[] arr = input.split("\\s+");
-    StringBuilder res = new StringBuilder();
-    for (int i = arr.length - 1; i >= 0; i--) {
-      res.append(arr[i] + " ");
-    }
-    return res.toString().trim();
-}
-
-```
-
-<br>
-
-**Related**: 
-<br>
-<br>
 
 
 
