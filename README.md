@@ -149,6 +149,7 @@
 * [147 Insertion Sort List](#147-insertion-sort-list)
 * [148 Sort List](#148-sort-list)
 * [149 Max Points on a Line](#149-max-points-on-a-line)
+* [150 Evaluate Reverse Polish Notation](#150-Evaluate-Reverse-Polish-Notation)
 * [151 Reverse Words in a String](#151-reverse-words-in-a-string)
 * [153 Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
 * [154 Find Minimum in Rotated Sorted Array II](#154-find-minimum-in-rotated-sorted-array-ii)
@@ -12832,6 +12833,86 @@ private ListNode merge(ListNode h1, ListNode h2) {
 <br>
 <br>
 
+###150 Evaluate Reverse Polish Notation
+
+>Evaluate the value of an arithmetic expression in Reverse Polish Notation.
+
+<pre>
+Valid operators are +, -, *, /. Each operand may be an integer or another expression.
+
+Some examples:
+  ["2", "1", "+", "3", "*"] -> ((2 + 1) * 3) -> 9
+  ["4", "13", "5", "/", "+"] -> (4 + (13 / 5)) -> 6
+</pre>
+
+**Idea**:
+
+Use a stack, when number, push to stack. when operator, pop two elements from the stack, then push the result to stack
+
+```java
+    public int evalRPN(String[] tokens) {
+        int res = 0;
+        Deque<Integer> stack = new LinkedList<>();
+        for (String token : tokens) {
+            if (isOperator(token)) {
+                int num1 = Integer.parseInt(stack.pop());
+                int num2 = Integer.parseInt(stack.pop());
+                res = getValue(num1, num2, token);
+                stack.push(res);
+            } else {
+                stack.push(Integer.parseInt(token));
+            }
+        }
+        return stack.pop();
+    }
+    private boolean isOperator(String s) {
+        return s.equals("+") || s.equals("-") || s.equals("*") || s.equals("/"); 
+    }
+    private int getValue(int num1, int num2, String token) {
+        if (token.equals("+")) {
+            return num2 + num1;
+        } else if (token.equals("-")) {
+            return num2 - num1;
+        } else if (token.equals("*")){
+            return num2 * num1;
+        } else {
+            return num2 / num1;
+        }
+    }
+```
+
+**More concise code, jdk >= 1.7**:
+
+```java
+ public int evalRPN(String[] tokens) {
+        Deque<Integer> stack = new LinkedList<>();
+        for (String token : tokens) {
+            switch (token) {
+                case "+":
+                    stack.push(stack.pop() + stack.pop());
+                    break;
+                case "-":
+                    stack.push(-stack.pop() + stack.pop());
+                    break;
+                case "*":
+                    stack.push(stack.pop() * stack.pop());
+                    break;
+                case "/":
+                    int num1 = stack.pop();
+                    stack.push(stack.pop() / num1);
+                    break;
+                default:
+                    stack.push(Integer.parseInt(token));
+            }
+        }
+        return stack.pop();
+    }
+```
+
+
+<br>
+<br>
+
 
 ###151 reverse words in a string
 
@@ -12859,6 +12940,44 @@ public String reverseWords(String input) {
 
 ```
 
+
+**Solution without use regular expresssion**:
+
+```java
+public String reverseWords(String input) {
+        input = input.trim();
+        if (input.length() == 0) {
+            return input;
+        }
+        char[] arr = input.toCharArray();
+        reverse(arr, 0, arr.length - 1);
+        int i = 0;
+        StringBuilder res = new StringBuilder();
+        while (i < arr.length) {
+            int j = i;
+            while (j < arr.length && arr[j] != ' ') {
+                j++;
+            }
+            reverse(arr, i, j - 1);
+            res.append(new String(Arrays.copyOfRange(arr, i, j)) + " ");
+            while (j < arr.length && arr[j] == ' ') {
+                j++;
+            }
+            i = j;
+        }
+        return res.toString().trim();
+    }
+    private void reverse (char[] arr, int i, int j) {
+        while (i < j) {
+            swap(arr, i++, j--);
+        }
+    }
+    private void swap(char[] arr, int i, int j) {
+        char c = arr[i];
+        arr[i] = arr[j];
+        arr[j] = c;
+    }
+```
 <br>
 
 
