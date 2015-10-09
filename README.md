@@ -1,5 +1,6 @@
 
 
+
 ### Overview
 * [1 Two Sum](#1-two-sum)
 * [2 Add Two Numbers](#2-add-two-numbers)
@@ -151,6 +152,7 @@
 * [149 Max Points on a Line](#149-max-points-on-a-line)
 * [150 Evaluate Reverse Polish Notation](#150-Evaluate-Reverse-Polish-Notation)
 * [151 Reverse Words in a String](#151-reverse-words-in-a-string)
+* [152 Maximum Product Subarray](#152-maximum-product-subarray)
 * [153 Find Minimum in Rotated Sorted Array](#153-find-minimum-in-rotated-sorted-array)
 * [154 Find Minimum in Rotated Sorted Array II](#154-find-minimum-in-rotated-sorted-array-ii)
 * [155 Min Stack](#155-min-stack)
@@ -12980,6 +12982,55 @@ public String reverseWords(String input) {
 ```
 <br>
 
+###152 Maximum Product Subarray
+
+>Find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+For example, given the array [2,3,-2,4],
+the contiguous subarray [2,3] has the largest product = 6.
+
+
+**Idea**: dp
+
+```java
+ public int maxProduct(int[] nums) {
+    int max = nums[0];
+    int min = nums[0];
+    int res = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        if (nums[i] >= 0) {
+            max = Math.max(max * nums[i], nums[i]);
+            min = Math.min(min * nums[i], nums[i]);
+        } else {
+            int temp = max;
+            max = Math.max(min * nums[i], nums[i]);
+            min = Math.min(temp * nums[i], nums[i]);
+        }
+        res = Math.max(max, res);
+    }
+    return res;
+}
+```
+
+**A more simple solution**:
+
+```java
+public int maxProduct(int[] nums) {
+    int max = nums[0];
+    int min = nums[0];
+    int res = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        int temp = max;
+        max = Math.max(Math.max(nums[i] * max, nums[i]), min * nums[i]);
+        min = Math.min(Math.min(temp * nums[i], nums[i]), min * nums[i]);
+        res = Math.max(max, res);
+    }
+    return res;
+}
+```
+
+<br>
+<br>
 
 
 ###153 Find Minimum in Rotated Sorted Array
