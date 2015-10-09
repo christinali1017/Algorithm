@@ -163,6 +163,7 @@
 * [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 * [161 One edit distance](#161-one-edit-distance)
 * [162 Find Peak Element](#162-find-peak-element)
+* [163 Missing Ranges](#163-missing-reanges)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 * [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
 * [168 Excel Sheet Column Title](#168-excel-sheet-column-title)
@@ -13887,7 +13888,7 @@ Suppose in the above three cases, 5 is the mid.
 - case 2: num[mid -1] > num[mid], thus there must exist a peak on the left side. Why? If 7 is larger than the element on the left side of it, then 7 is a peak, otherwise, the element on the left side of 7 might be a peak. Because we know that there is a -inf on the leftmost.
 - case 3: num[mid - 1] < num[mid], then we move to the right part. Because the element on the right side of 5 must be larger than 5. Otherwise, 5 is a peak.
 
-**Java code **: 
+**Java code**: 
 
 
 **Binary search**: TIME : O(lgn)
@@ -13934,6 +13935,38 @@ Suppose in the above three cases, 5 is the mid.
 ```
 
 
+
+<br>
+<br>
+
+###163 Missing Ranges
+
+>Given a sorted integer array where the range of elements are [0, 99] inclusive, return its missing ranges.
+For example, given [0, 1, 3, 50, 75], return [“2”, “4->49”, “51->74”, “76->99”]
+
+**Idea**:
+
+Check if the end - start > 1, if true, add range. Otherwise, continue.
+
+
+
+```java
+public List<String> findMissingRanges(int[] vals, int lower, int upper) {
+    List<String> res = new ArrayList<>();
+    int start = lower;
+    for (int i = 0; i <= vals.length; i++) {
+        int end = (i == vals.length) ? upper + 1: vals[i];
+        if (end > start + 1) {
+            res.add(getRangeString(start, end));
+        }
+        start = end;
+    }
+    return res;
+}
+private String getRangeString(int start, int end) {
+    return (end - start == 2) ? ("" + (start + 1)) : (start + 1) + "->" + (end - 1);
+}
+```
 
 <br>
 <br>
