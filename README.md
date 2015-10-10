@@ -163,10 +163,13 @@
 * [160 Intersection of Two Linked Lists](#160-intersection-of-two-linked-lists)
 * [161 One edit distance](#161-one-edit-distance)
 * [162 Find Peak Element](#162-find-peak-element)
-* [163 Missing Ranges](#163-missing-reanges)
+* [163 Missing Ranges](#163-missing-ranges)
+* [164 Maximum Gap](#164-maximum-gap)
+* [165 Compare Version Numbers](#165-compare-version-numbers)
 * [166 Fraction to Recurring Decimal](#166-fraction-to-recurring-decimal)
 * [167 Two Sum II Input array is sorted](#167-two-sum-ii-input-array-is-sorted)
 * [168 Excel Sheet Column Title](#168-excel-sheet-column-title)
+* [169 Majority Element](#169-majority-element)
 * [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 * [171 Excel Sheet Column Number](#171-excel-sheet-column-number)
 * [173 Binary Search Tree Iterator](#173-binary-search-tree-iterator)
@@ -13971,6 +13974,172 @@ private String getRangeString(int start, int end) {
 <br>
 <br>
 
+###164 Maximum Gap
+
+>Given an unsorted array, find the maximum difference between the successive elements in its sorted form.
+
+>Try to solve it in linear time/space.
+
+>Return 0 if the array contains less than 2 elements.
+
+>You may assume all elements in the array are non-negative integers and fit in the 32-bit signed integer range.
+
+
+**Solution 1** : radix sort
+
+```java
+   public int maximumGap(int[] num) {
+        if (num == null || num.length <= 1) {
+            return 0;
+        }
+    LinkedList<Integer>[] bucket = new LinkedList[10];
+        for (int i = 0; i <10; i++) {
+          bucket[i] = new LinkedList<Integer>();
+        }
+        int mod = 10;
+        int divider = 1;
+        
+        /* sort the array use radix sort*/
+        for (int i = 0; i < 10; i++, mod *= 10, divider *= 10) {
+          for (int j = 0; j < num.length; j++) {
+            bucket[(num[j] % mod)/divider].add(num[j]);
+          }
+          int pos = 0;
+          for (int j = 0; j < 10; j++){
+            while (bucket[j].peek() != null) {
+              num[pos++] = bucket[j].poll();
+            }
+          }
+        }
+        
+        /* find the maximumGap */
+        int max = 0;
+        for (int i = 1; i < num.length; i++) {
+          max = Math.max (max, Math.abs(num[i] - num[i-1]));
+        }
+        return max;
+    }
+```
+
+**Solution 2** : bucket sort
+
+
+```java
+ class Bucket {
+    int start;
+    int end;
+    public Bucket() {
+        start = -1;
+        end = -1;
+    }
+}
+public int maximumGap(int[] nums) {
+    if (nums.length < 2) {
+        return 0;
+    }
+    int max = nums[0];
+    int min = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        max = Math.max(max, nums[i]);
+        min = Math.min(min, nums[i]);
+    }
+    Bucket[] buckets = new Bucket[nums.length + 1];
+    for (int i = 0; i < buckets.length; i++) {
+        buckets[i] = new Bucket();
+    }
+    double gap = (double) (max - min) / (double) (nums.length);
+    for (int i = 0; i < nums.length; i++) {
+        int index = (int) ((nums[i] - min) / gap);
+        if (buckets[index].start == -1) {
+            buckets[index].start = nums[i];
+            buckets[index].end = nums[i];
+        } else {
+            buckets[index].start = Math.min(buckets[index].start, nums[i]);
+            buckets[index].end = Math.max(buckets[index].end, nums[i]);
+        }
+    }
+    int res = 0;
+    int pre = buckets[0].end;
+    for (int i = 1; i < buckets.length; i++) {
+        if (buckets[i].start != -1) {
+            res = Math.max(res, buckets[i].start - pre);
+            pre = buckets[i].end;
+        }
+    }
+    return res;
+}
+```
+<br>
+<br>
+
+###165 Compare Version Numbers
+
+>Compare two version numbers version1 and version2.
+If version1 > version2 return 1, if version1 < version2 return -1, otherwise return 0.
+>
+>You may assume that the version strings are non-empty and contain only digits and the . character.
+The . character does not represent a decimal point and is used to separate number sequences.
+For instance, 2.5 is not "two and a half" or "half way to version three", it is the fifth second-level revision of the second first-level revision.
+>
+>Here is an example of version numbers ordering:
+
+0.1 < 1.1 < 1.2 < 13.37
+
+
+**Solution 1**: use two pointers, compare each segment.
+
+```java
+   public int compareVersion(String version1, String version2) {
+      int i = 0;
+      int j = 0;
+      while (i < version1.length() || j <= version2.length()) {
+          int num1 = 0;
+          int num2 = 0;
+          while (i < version1.length() && version1.charAt(i) != '.') {
+              num1 = num1 * 10 + version1.charAt(i) - '0';
+              i++;
+          }
+          while (j < version2.length() && version2.charAt(j) != '.') {
+              num2 = num2 * 10 + version2.charAt(j) - '0';
+              j++;
+          }
+          if (num1 > num2) {
+              return 1;
+          } else if (num1 < num2) {
+              return -1;
+          } else {
+              i++;
+              j++;
+          }
+      }
+      return 0;
+    }
+```
+
+**Solution 2**: use split to get all segements then compare.
+
+```java
+ public int compareVersion(String version1, String version2) {
+    String[] arr1 = version1.split("\\.");
+    String[] arr2 = version2.split("\\.");
+    int i = 0;
+    while (i < arr1.length || i < arr2.length) {
+        int num1 = (i < arr1.length) ? Integer.parseInt(arr1[i]) : 0;
+        int num2 = (i < arr2.length) ? Integer.parseInt(arr2[i]) : 0;
+        if (num1 < num2) {
+            return -1;
+        } else if (num1 > num2) {
+            return 1;
+        }
+        i++;
+    }
+    return 0;
+}
+```
+
+
+<br>
+<br>
 
 
 ###166 Fraction to Recurring Decimal
@@ -14013,29 +14182,34 @@ In order to know when the recuisive begins, we need to record the remainder at e
 
 <br>
 ```java
-    public String fractionToDecimal(int numerator, int denominator) {
-        if(denominator == 0 || numerator == 0) return "0";
+   public String fractionToDecimal(int numerator, int denominator) {
+        if (numerator == 0) {
+            return "0";
+        }
         StringBuilder res = new StringBuilder();
-        Map<Long, Integer> map = new HashMap<Long, Integer>();
         boolean positive = ((numerator ^ denominator) >>> 31) == 0;
-        if(!positive) res.append("-");
-        long num = Math.abs((long)numerator);
-        long den = Math.abs((long)denominator);
-        res.append(num/den);
-        if(num % den == 0) return res.toString();
+        if (!positive) {
+            res.append("-");
+        }
+        long num = Math.abs((long) numerator);
+        long denom = Math.abs((long) denominator);
+        res.append(num / denom);
+        if (num % denom == 0) {
+            return res.toString();
+        }
+        num = num % denom;
         res.append(".");
-        long mod = num % den;
-        while(mod != 0){
-            if(map.containsKey(mod)){
-                res.insert(map.get(mod), "(");
+        Map<Long, Integer> map = new HashMap<>();
+        while (num != 0) {
+            if (map.containsKey(num)) {
+                res.insert(map.get(num), "(");
                 res.append(")");
                 return res.toString();
             }
-            map.put(mod, res.length());
-            mod = mod * 10;
-            long divide = mod/den;
-            mod = mod % den;
-            res.append(divide);
+            map.put(num, res.length());
+            num *= 10;
+            res.append(num / denom);
+            num = num % denom;
         }
         return res.toString();
     }
@@ -14118,6 +14292,42 @@ public String convertToTitle(int n) {
 }
 ```
 
+<br>
+<br>
+
+###169 Majority Element
+
+>Given an array of size n, find the majority element. The majority element is the element that appears more than ⌊ n/2 ⌋ times.
+>
+>You may assume that the array is non-empty and the majority element always exist in the array.
+
+**Solution 1: Sort, then pick the n/2th element, O(nlgn)**
+
+```java
+public int majorityElement(int[] nums) {
+    Arrays.sort(nums);
+    return nums[nums.length / 2];
+}
+```
+
+**Solution 2: voting algorithm**:
+
+```java
+    public int majorityElement(int[] nums) {
+        int count = 1;
+        int res = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (res == nums[i]) {
+                count++;
+            } else if (count > 0) {
+                count--;
+            } else if (count == 0) {
+                res = nums[i];
+            }
+        }
+        return res;
+    }
+```
 <br>
 <br>
 
