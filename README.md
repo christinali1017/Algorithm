@@ -225,7 +225,8 @@
 * [23 Common Elements in Three Sorted Array](#23-common-elements-in-three-sorted-array)
 * [24 Kth smallest number in sorted matrix](#24-kth-smallest-number-in-sorted-matrix)
 * [25 String Abbreviation Matching](#25-string-abbreviation-matching)
-
+* [26 Permutation index](#26-permutation-index)
+* [27 Permutation index II](#26-permutation-index-ii)
 
 
 
@@ -17951,3 +17952,145 @@ otherwise, recursion to match(pattern, input, i + num's length, j + num's value)
   }
 
 ```
+
+
+<br>
+
+<br>
+
+###26 Permutation Index
+
+> Given a permutation which contains no repeated number, find its index in all the permutations of these numbers, which are ordered in lexicographical order. The index begins at 1.
+
+**Idea**: Refer to 60 Permutation Sequence
+
+
+**Solution**:
+
+```java
+ public long permutationIndex(int[] A) {
+    if(A == null || A.length == 0) {
+        return 0;
+    }
+    long res = 1;
+    long factor = 1;
+    for (int i = A.length - 1; i >= 0; i--) {
+        int count = 0;
+        for (int j = i + 1; j < A.length; j++) {
+            if (A[i] > A[j]) {
+                count++;
+            }
+        }
+        res += count * factor;
+        factor *= (A.length - i);
+    }
+    return res;
+}
+```
+
+<br>
+<br>
+
+
+###27 Permutation Index
+
+>Given a permutation which may contain repeated numbers,
+find its index in all the permutations of these numbers,
+which are ordered in lexicographical order. The index begins at 1.
+>
+>Example
+Given the permutation [1, 4, 2, 2], return 3.
+
+**Idea**:
+In this problem, we need to handle duplicates. If there is one duplicate, the factor reduces to factor/2
+
+**Revised Solution**: Move map out of for loop. Time is better.
+
+```java
+  public long permutationIndexII(int[] A) {
+    if (A == null || A.length == 0) {
+        return 0;
+    }
+    long res = 1;
+    long factor = 1;
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = A.length - 1; i >= 0; i--) {
+        int count = 0;
+        Integer val = map.get(A[i]);
+        if (val == null) {
+            map.put(A[i], 1);
+        } else {
+            map.put(A[i], val + 1);
+        }
+        for (int j = i + 1; j < A.length; j++) {
+            if (A[i] > A[j]) {
+                count++;
+            }
+        }
+        res += count * factor / duplicatesFactor(map);
+        factor *= (A.length - i);
+    }
+    return res;
+}
+private long duplicatesFactor(Map<Integer, Integer> map) {
+    long res = 1;
+    for (int val : map.values()) {
+        res *= getFactor(val);
+    }
+    return res;
+}
+private long getFactor(int num) {
+    long res = 1;
+    for (int i = 1; i <= num; i++) {
+        res *= i;
+    }
+    return res;
+}
+```
+
+**First try**:
+
+```java
+    public long permutationIndexII(int[] A) {
+        if (A == null || A.length == 0) {
+            return 0;
+        }
+        long res = 1;
+        long factor = 1;
+        for (int i = A.length - 1; i >= 0; i--) {
+            Map<Integer, Integer> map = new HashMap<>();
+            int count = 0;
+            map.put(A[i], 1);
+            for (int j = i + 1; j < A.length; j++) {
+                Integer val = map.get(A[j]);
+                if (val == null) {
+                    map.put(A[j], 1);
+                } else {
+                    map.put(A[j], val + 1);
+                }
+                if (A[i] > A[j]) {
+                    count++;
+                }
+            }
+            res += count * factor / duplicatesFactor(map);
+            factor *= (A.length - i);
+        }
+        return res;
+    }
+    private long duplicatesFactor(Map<Integer, Integer> map) {
+        long res = 1;
+        for (int val : map.values()) {
+            res *= getFactor(val);
+        }
+        return res;
+    }
+    private long getFactor(int num) {
+        long res = 1;
+        for (int i = 1; i <= num; i++) {
+            res *= i;
+        }
+        return res;
+    }
+```
+
+
