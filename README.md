@@ -196,6 +196,7 @@
 * [238 Product of Array Except Self](#238-product-of-array-except-self)
 * [241 Different Ways to Add Parentheses](#241-different-ways-to-add-parentheses)
 * [242 Valid Anagram](#242-Valid Anagram)
+* [255 Verify Preorder Sequence in Binary Search Tree](#255-Verify-Preorder-Sequence-in-Binary-Search-Tree)
 
 
 ###Others
@@ -16393,6 +16394,90 @@ public boolean isAnagram(String s, String t) {
 
 <br>
 <br>
+
+###255 Verify Preorder Sequence in Binary Search Tree
+
+>Given an array of numbers, verify whether it is the correct preorder traversal sequence of a binary search tree.
+>
+>You may assume each number in the sequence is unique.
+>
+>Follow up:
+Could you do it using only constant space complexity?
+
+
+**Idea**:
+
+Let's begin with an example:
+
+Here is a valid perorder sequence [4, 2, 1, 3, 5, 7].
+
+In this BST, 4 is the root, 2, 1, 3, is the left subtree, 5, 7 is the right subtree
+
+In subtree 2, 1, 3 : 2 is the root, 1 is left subtree, 3 is right subtree.
+
+In subtree 5 7: 5 is root, 7 is the right subtree.
+
+Thus a naive solution is recursively check if we can divide it into subtree and the subtree also satisfy the BST rules.
+
+Here is the solution for this method. 
+
+This solution use recursion, thus is not constant space. If tree is balanced, then time is O(nlgn). Otherwise, the worst case can be O(n^2)
+
+```java
+public boolean verifyPreorder(int[] preorder) {
+    if (preorder == null || preorder.length <= 1) {
+        return true;
+    }
+    return verify(preorder, 0, preorder.length - 1);
+}
+
+private boolean verify(int[] preorder, int start, int end) {
+    if (start >= end) {
+        return true;
+    }
+    int i = start + 1;
+    while (i <= end && preorder[i] < preorder[start]) {
+        i++;
+    }
+    int pos = i;
+    while (i <= end && preorder[i] > preorder[start]) {
+        i++;
+    }
+    if (i != end + 1) {
+        return false;
+    }
+    return verify(preorder, start + 1, pos - 1) && verify(preorder, pos, end);
+}
+
+```
+
+**A constant space solution**: This method will change the original input.
+
+```java
+public boolean verifyPreorder(int[] preorder) {
+    if (preorder == null || preorder.length <= 1) {
+        return true;
+    }
+    int i = -1;
+    int lower = Integer.MIN_VALUE;
+    for (int num : preorder) {
+        if (num < lower)  {
+            return false;
+        }
+        while (i >= 0 && num > preorder[i]) {
+            lower = preorder[i--];
+        }
+        preorder[++i] = num;
+    }
+    return true;
+}
+```
+
+
+
+<br>
+<br>
+
 
 ##Similar questions from other sources.
 
