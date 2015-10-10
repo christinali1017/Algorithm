@@ -196,7 +196,7 @@
 * [238 Product of Array Except Self](#238-product-of-array-except-self)
 * [241 Different Ways to Add Parentheses](#241-different-ways-to-add-parentheses)
 * [242 Valid Anagram](#242-Valid Anagram)
-* [255 Verify Preorder Sequence in Binary Search Tree](#255-Verify-Preorder-Sequence-in-Binary-Search-Tree)
+* [255 Verify Preorder Sequence in Binary Search Tree](#255-verify-preorder-sequence-in-binary-search-tree)
 
 
 ###Others
@@ -227,7 +227,7 @@
 * [24 Kth smallest number in sorted matrix](#24-kth-smallest-number-in-sorted-matrix)
 * [25 String Abbreviation Matching](#25-string-abbreviation-matching)
 * [26 Permutation index](#26-permutation-index)
-* [27 Permutation index II](#26-permutation-index-ii)
+* [27 Permutation index II](#27-permutation-index-ii)
 
 
 
