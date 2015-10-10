@@ -196,7 +196,7 @@
 * [238 Product of Array Except Self](#238-product-of-array-except-self)
 * [241 Different Ways to Add Parentheses](#241-different-ways-to-add-parentheses)
 * [242 Valid Anagram](#242-Valid Anagram)
-* [255 Verify Preorder Sequence in Binary Search Tree](#255-Verify-Preorder-Sequence-in-Binary-Search-Tree)
+* [255 Verify Preorder Sequence in Binary Search Tree](#255-verify-preorder-sequence-in-binary-search-tree)
 
 
 ###Others
