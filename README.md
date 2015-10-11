@@ -230,6 +230,7 @@
 * [27 Permutation index II](#27-permutation-index-ii)
 * [28 SellTicket](#28-sellticket)
 * [29 Uneaten leaves](#29-uneaten-leaves)
+* [30 Longest Chain](#30-longest-chain)
 
 
 
@@ -18362,4 +18363,44 @@ For example if caterpillars : [2, 4, 5];
 
 http://www.iarcs.org.in/inoi/contests/sep2004/Advanced-2-solution.php
 
+
+<br>
+<br>
+
+###30 Longest Chain
+eg a, abcd, bcd, abd, cd, c)：
+longest chain:  abcd-- bcd -- cd -- c, thus we should return 4.
+
+```java
+ public int longest_chain(String[] w) {
+    Set<String> dict = new HashSet<>();
+    Map<String, Integer> map = new HashMap<>();
+    for (String s : w) {
+        dict.add(s);
+    }
+    int res = 0;
+    for (String s : w) {
+        int length = getChainLen(s, dict, map);
+        map.put(s, length);
+        res = Math.max(res, length);
+    }
+    return res;
+}
+
+private int getChainLen(String s, Set<String> dict, Map<String, Integer> map) {
+    for (int i = 0; i < s.length(); i++) {
+        StringBuilder sb = new StringBuilder(s);
+        sb.deleteCharAt(i);
+        String next = sb.toString();
+        if (dict.contains(next)) {
+            if (map.containsKey(next)) {
+                return map.get(next) + 1;
+            }
+            return getChainLen(next, dict, map) + 1;
+        }
+    }
+    return 1;
+}
+
+```
 
