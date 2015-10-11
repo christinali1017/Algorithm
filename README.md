@@ -228,6 +228,8 @@
 * [25 String Abbreviation Matching](#25-string-abbreviation-matching)
 * [26 Permutation index](#26-permutation-index)
 * [27 Permutation index II](#27-permutation-index-ii)
+* [28 SellTicket](#28-sellticket)
+* [29 Uneaten leaves](#29-uneaten-leaves)
 
 
 
@@ -18077,7 +18079,7 @@ otherwise, recursion to match(pattern, input, i + num's length, j + num's value)
 <br>
 
 
-###27 Permutation Index
+###27 Permutation Index II
 
 >Given a permutation which may contain repeated numbers,
 find its index in all the permutations of these numbers,
@@ -18177,5 +18179,187 @@ private long getFactor(int num) {
         return res;
     }
 ```
+
+Initiate factor array, thus we don't need to calculate it each time.
+
+```java
+public long permutationIndexII(int[] A) {
+    if (A == null || A.length == 0) {
+        return 0;
+    }
+    long res = 1;
+    long factor = 1;
+    long[] factorsArr = getFactors(A.length);
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = A.length - 1; i >= 0; i--) {
+        int count = 0;
+        Integer val = map.get(A[i]);
+        if (val == null) {
+            map.put(A[i], 1);
+        } else {
+            map.put(A[i], val + 1);
+        }
+        for (int j = i + 1; j < A.length; j++) {
+            if (A[i] > A[j]) {
+                count++;
+            }
+        }
+        res += count * factor / duplicatesFactor(map, factorsArr);
+        factor *= (A.length - i);
+    }
+    return res;
+}
+private long duplicatesFactor(Map<Integer, Integer> map, long[] factorsArr) {
+    long res = 1;
+    for (int val : map.values()) {
+        res *= factorsArr[val];
+    }
+    return res;
+}
+
+private long[] getFactors(int num) {
+    long[] res = new long[num + 1];
+    long temp = 1;
+    for (int i = 1; i <= num; i++) {
+        temp *= i;
+        res[i] = temp;
+    }
+    return res;
+}
+
+```
+
+<br>
+<br>
+###28 SellTicket
+
+>N ticket windows, ith window has ai tickets available.
+>The price of a ticket is equal to the number of tikcets remaining in that window at that time.
+>Waht is the maximum amount of money the railway station can earn from selling the first m tickets.
+
+<pre>
+Input n m
+a1 a2 ...an
+
+output 
+S
+
+sample input 
+2 4
+2 5
+sample out
+14
+
+</pre>
+
+
+**Solution 1**: Priority queue
+
+Time : m*lgn
+
+```java
+public long sellTicket1(int[] arr, long m) {
+    long res = 0;
+    PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
+            public int compare(Integer el1, Integer el2) {
+                return el2 - el1;
+            }
+    });
+    for (int num : arr) {
+        queue.offer(num);
+    }
+    long tickets = m;
+    while (tickets > 0) {
+        int count = queue.poll();
+        res += count;
+        queue.offer(count - 1);
+        tickets--;
+    }
+    return res;
+}
+```
+
+**Solution 2**:  Find x so that when sells all ai >= x, sum (x + 1) < m < sum(x)
+
+```java
+public  long sellTicket(int[] arr, long m) {
+    long res = 0;
+    int threshold = 0;
+    int l = 0;
+    int r = 0;
+    for (int num : arr) {
+        r = Math.max(num, r);
+    }
+    while (l <= r) {
+        threshold = l + (r - l) / 2;
+        long sum1 = getSum(threshold, arr);
+        long sum2 = getSum(threshold + 1, arr);
+        if (sum2 <= m && m <= sum1) {
+            break;
+        } else if (sum1 < m) {
+            r = threshold;
+        } else {
+            l = threshold;
+        }
+    }
+    long tickets = 0;
+    for (int num : arr) {
+        if (num >= threshold) {
+            tickets += num - threshold + 1;
+            res += ((long) (threshold + num) * (long) (num - threshold + 1)) / 2;
+        }
+    }
+    res -= (tickets - m) * threshold;
+    return res;
+} 
+
+private long getSum(int threshold, int[] arr) {
+    long res = 0;
+    for (int num : arr) {
+        res += num - threshold >= 0 ? num - threshold + 1 : 0;
+    }
+    return res;
+}
+```
+
+
+<br>
+
+<br>
+
+###29 Uneaten leaves
+
+
+>K caterpillars are eating their way through N leaves, each caterpillar falls from leaf to leaf in a unique sequence, all caterpillars start at a twig at position 0 and falls onto the leaves at position between 1 and N. Each caterpillar j has as associated jump number Aj. A caterpillar with jump number j eats leaves at positions that are multiple of j. It will proceed in the order j, 2j, 3j…. till it reaches the end of the leaves and it stops and build its cocoon. Given a set A of K elements K<-15, N<=10^9, we need to determine the number of uneaten leaves.
+
+
+**Brute force**: O(kn)
+
+```java
+public int countUneatenLeaves(int[] jumpNumber, int numberLeaves) {
+    int catArraySize = jumpNumber.length;
+    int countEaten = 0;
+    Map<Integer,Integer> mapPosition = new HashMap<>();
+    for( int i = 0; i < catArraySize; i++ ){
+        int catervalue = jumpNumber[i];
+        for(int j = 1; j * catervalue <= numberLeaves; j++){
+            if(!mapPosition.containsKey(jumpNumber[i] * j)){
+                mapPosition.put(jumpNumber[i] * j, 1);
+                countEaten++;
+            }
+        }
+    }
+    return numberLeaves - countEaten;
+}
+}
+```
+
+**Inclusive and exclusive**: k * 2 ^ k
+
+For example if caterpillars : [2, 4, 5];
+
+|S| = |S2| + |S4| + |S5| - |S24| - |S25| - |S45| + |S245|
+
+http://www.iarcs.org.in/inoi/contests/sep2004/Advanced-2-solution.php
 
 
