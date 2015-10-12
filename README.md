@@ -172,7 +172,9 @@
 * [169 Majority Element](#169-majority-element)
 * [170 Two Sum III Data Structure Design](#170-two-sum-iii-data-structure-design)
 * [171 Excel Sheet Column Number](#171-excel-sheet-column-number)
+* [172 Factorial Trailing zeros](#172-factorial-trailing-zeros)
 * [173 Binary Search Tree Iterator](#173-binary-search-tree-iterator)
+* [174 Dungeon Game](#174-dungeon-game)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
@@ -231,6 +233,7 @@
 * [28 SellTicket](#28-sellticket)
 * [29 Uneaten leaves](#29-uneaten-leaves)
 * [30 Longest Chain](#30-longest-chain)
+* [31 Friend Circle](#31-friend-circle)
 
 
 
@@ -14449,6 +14452,31 @@ public int titleToNumber(String s) {
 <br>
 <br>
 
+###172 Factorial Trailing zeros
+
+>Given an integer n, return the number of trailing zeroes in n!.
+
+>Note: Your solution should be in logarithmic time complexity.
+
+**Idea**: To find the number of trailing zeroes, we need to find the number of 2 and number od 5. Since the number of 2 is more than number of 5, thus we only need to count the number of 5. 
+
+Here is the solution.
+
+```java
+public int trailingZeroes(int n) {
+  int res = 0;
+  while (n > 0) {
+      n /= 5;
+      res += n;
+  }
+  return res;
+}
+
+```
+
+<br>
+<br>
+
 ###173 Binary Search Tree Iterator
 
 >Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.
@@ -14508,39 +14536,100 @@ public class BinarySearchTreeIterator {
 
 ```java
 public class BSTIterator {
-    Stack<TreeNode> stack; 
-    public BSTIterator(TreeNode root) {
-        stack = new Stack<TreeNode>();
-        while(root != null) {
-            stack.push(root);
-            root = root.left;
-        }
-    }
+  Deque<TreeNode> stack = new LinkedList<>();
+  public BSTIterator(TreeNode root) {
+      while (root != null) {
+          stack.push(root);
+          root = root.left;
+      }
+  }
 
-    /** @return whether we have a next smallest number */
-    public boolean hasNext() {
-        return !stack.isEmpty();
-    }
+  /** @return whether we have a next smallest number */
+  public boolean hasNext() {
+      return !stack.isEmpty();
+  }
 
-    /** @return the next smallest number */
-    public int next() {
-        if (stack.isEmpty()) {
-            return -1;
-        }
-        TreeNode cur = stack.pop();
-        int res = cur.val;
-        if (cur.right != null) {
-            cur = cur.right;
-            while(cur != null) {
-                stack.push(cur);
-                cur = cur.left;
-            }
-        }
-        return res;
-    }
+  /** @return the next smallest number */
+  public int next() {
+      if (!hasNext()) {
+          return -1;
+      }
+      TreeNode res = stack.pop();
+      TreeNode temp = res.right;
+      while (temp != null) {
+          stack.push(temp);
+          temp = temp.left;
+      }
+      return res.val;
+  }
 }
 
 ```
+<br>
+<br>
+
+###174 Dungeon Game
+
+>The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
+
+The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
+
+Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
+
+In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
+
+
+Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
+
+For example, given the dungeon below, the initial health of the knight must be at least 7 if he follows the optimal path RIGHT-> RIGHT -> DOWN -> DOWN.
+
+-2 (K)  -3  3
+-5  -10 1
+10  30  -5 (P)
+
+Notes:
+
+The knight's health has no upper bound.
+Any room can contain threats or power-ups, even the first room the knight enters and the bottom-right room where the princess is imprisoned.
+
+**Idea**: DP, start from the bottom-right. dp[i][j] represents the minimum health point the knight should have to maintain alive when enter room room[i][j].
+
+The Knight should have at least 1 point to maintain alive. 
+
+Thus if knight go down from room[i][j] to room[i + 1][j], 
+
+if room[i][j]  >= 0, then dp[i][j] = dp[i + 1][j] - room[i][j] > 0 ? dp[i + 1][j] - room[i][j] : 1; 
+
+if room[i][j] < 0, dp[i][j] = dp[i + 1][j] - room[i][j]. 
+
+Combine the above two case, dp[i][j] = Math.max(1, dp[i + 1][j] - room[i][j]) if knight go down.
+
+For each step, the knight can go down or right(if not on the border), thus, dp[i][j] = Math.min(pointDown, pointRight);
+
+
+```java
+public int calculateMinimumHP(int[][] dungeon) {
+    int[][] healthPoint = new int[dungeon.length][dungeon[0].length];
+    for (int i = dungeon.length - 1; i >= 0; i--) {
+        for (int j = dungeon[0].length - 1; j >= 0; j--) {
+            if (i == dungeon.length - 1 && j == dungeon[0].length - 1) {
+                healthPoint[i][j] = dungeon[i][j] >= 0 ? 1 : (1 - dungeon[i][j]);
+            } else if (j == dungeon[0].length - 1) {
+                healthPoint[i][j] = Math.max(1, healthPoint[i + 1][j] - dungeon[i][j]);
+            } else if (i == dungeon.length - 1) {
+                healthPoint[i][j] = Math.max(1, healthPoint[i][j + 1] - dungeon[i][j]);
+            } else {
+                int pointDown = Math.max(1, healthPoint[i + 1][j] - dungeon[i][j]);
+                int pointRight = Math.max(1, healthPoint[i][j + 1] - dungeon[i][j]);
+                healthPoint[i][j] = Math.min(pointDown, pointRight);
+            }
+        }
+    }
+    return healthPoint[0][0];
+}
+```
+
+
 <br>
 <br>
 	
@@ -18341,10 +18430,10 @@ public int countUneatenLeaves(int[] jumpNumber, int numberLeaves) {
     int catArraySize = jumpNumber.length;
     int countEaten = 0;
     Map<Integer,Integer> mapPosition = new HashMap<>();
-    for( int i = 0; i < catArraySize; i++ ){
+    for (int i = 0; i < catArraySize; i++){
         int catervalue = jumpNumber[i];
-        for(int j = 1; j * catervalue <= numberLeaves; j++){
-            if(!mapPosition.containsKey(jumpNumber[i] * j)){
+        for (int j = 1; j * catervalue <= numberLeaves; j++){
+            if (!mapPosition.containsKey(jumpNumber[i] * j)) {
                 mapPosition.put(jumpNumber[i] * j, 1);
                 countEaten++;
             }
@@ -18368,8 +18457,43 @@ http://www.iarcs.org.in/inoi/contests/sep2004/Advanced-2-solution.php
 <br>
 
 ###30 Longest Chain
-eg a, abcd, bcd, abd, cd, c)：
+eg a, abcd, bcd, abd, cd, c)： each time we can delete a char to go to the next word of the chain.
 longest chain:  abcd-- bcd -- cd -- c, thus we should return 4.
+
+Revised.
+
+```java
+public int longest_chain(String[] w) {
+    Set<String> dict = new HashSet<>();
+    Map<String, Integer> map = new HashMap<>();
+    for (String s : w) {
+        dict.add(s);
+    }
+    int res = 0;
+    for (String s : w) {
+        res = Math.max(res, getChainLen(s, dict, map));
+    }
+    return res;
+}
+
+private int getChainLen(String s, Set<String> dict, Map<String, Integer> map) {
+    if (map.containsKey(s)) {
+        return map.get(s);
+    }
+    int res = 1;
+    for (int i = 0; i < s.length(); i++) {
+        StringBuilder sb = new StringBuilder(s);
+        String next = sb.deleteCharAt(i).toString();
+        if (dict.contains(next)) {
+            res = Math.max(res, getChainLen(next, dict, map) + 1);
+        }
+    }
+    map.put(s, res);
+    return res;
+}
+```
+
+First try.
 
 ```java
  public int longest_chain(String[] w) {
@@ -18403,4 +18527,66 @@ private int getChainLen(String s, Set<String> dict, Map<String, Integer> map) {
 }
 
 ```
+
+<br>
+<br>
+
+###31 Friend Circle
+
+>Problem Statement
+>
+>There are N students in a class. Some of them are friends, while some are not. Their friendship is transitive in nature, i.e., if A is friend of B and B is friend of C, then A is also friend of C. A friend circle is a group of students who are directly or indirectly friends.
+>
+>You are given a N×N−matrix M which consists of characters Y or N. If M[i][j]=Y, then ith and jth students are friends with each other, otherwise not. You have to print the total number of friend circles in the class.
+>
+>Input Format 
+>First line of the input contains an integer N - (size of the matrix), followed by N lines each having N characters.
+>
+>Output Format 
+>Print the maximum number of friend circles.
+>
+>Constraints 
+>1≤N≤300 
+>Each element of matrix friends will be Y or N. 
+>Number of rows and columns will be equal in the matrix.
+
+>M[i][i]=Y, where 0≤i<N 
+>M[i][j] = M[j][i], where 0<=i<j<N
+
+**Solution 1**: flood
+
+```java
+ static int friendCircles(String[] friends) {
+    int res = 0;
+    Queue<Integer> queue = new LinkedList<>();
+    for (int i = 0; i < friends.length; i++) {
+        if (friends[i].contains("Y")) {
+            res++;
+            friends[i] = replaceY(friends[i], queue);
+            while (!queue.isEmpty()) {
+                int next = queue.poll();
+                friends[next] = replaceY(friends[next], queue);
+            }
+        }
+    }
+    return res;
+}
+
+static String replaceY(String row, Queue<Integer> queue) {
+    int index = 0;
+    while ((index = row.indexOf("Y")) != -1) {
+        queue.offer(index);
+        row = row.replaceFirst("Y", "N");
+    }
+    return row;
+}
+```
+
+
+**Union find set**: http://www.geeksforgeeks.org/union-find/
+
+
+
+
+
 
