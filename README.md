@@ -175,6 +175,7 @@
 * [172 Factorial Trailing zeros](#172-factorial-trailing-zeros)
 * [173 Binary Search Tree Iterator](#173-binary-search-tree-iterator)
 * [174 Dungeon Game](#174-dungeon-game)
+* [179 Largest Number](#179-largest-number)
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
@@ -234,6 +235,7 @@
 * [29 Uneaten leaves](#29-uneaten-leaves)
 * [30 Longest Chain](#30-longest-chain)
 * [31 Friend Circle](#31-friend-circle)
+* [32 Stock Max](#32-stock-max)
 
 
 
@@ -14571,16 +14573,17 @@ public class BSTIterator {
 ###174 Dungeon Game
 
 >The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
-
-The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
-
-Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
-
+>
+>The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
+>
+>Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
+>
 In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
+>
+>
+>Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
 
-
-Write a function to determine the knight's minimum initial health so that he is able to rescue the princess.
-
+<pre>
 For example, given the dungeon below, the initial health of the knight must be at least 7 if he follows the optimal path RIGHT-> RIGHT -> DOWN -> DOWN.
 
 -2 (K)  -3  3
@@ -14591,6 +14594,8 @@ Notes:
 
 The knight's health has no upper bound.
 Any room can contain threats or power-ups, even the first room the knight enters and the bottom-right room where the princess is imprisoned.
+
+</pre>
 
 **Idea**: DP, start from the bottom-right. dp[i][j] represents the minimum health point the knight should have to maintain alive when enter room room[i][j].
 
@@ -14629,6 +14634,17 @@ public int calculateMinimumHP(int[][] dungeon) {
 }
 ```
 
+
+<br>
+<br>
+
+###179 Largest Number
+
+>Given a list of non negative integers, arrange them such that they form the largest number.
+>
+>For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.
+>
+>Note: The result may be very large, so you need to return a string instead of an integer.
 
 <br>
 <br>
@@ -18586,7 +18602,97 @@ static String replaceY(String row, Queue<Integer> queue) {
 **Union find set**: http://www.geeksforgeeks.org/union-find/
 
 
+<br>
+<br>
 
+###32 Stock Max
+
+[question source](https://www.hackerrank.com/challenges/stockmax)
+<pre>
+
+Your algorithms have become so good at predicting the market that you now know what the share price of Wooden Orange Toothpicks Inc. (WOT) will be for the next N days.
+
+Each day, you can either buy one share of WOT, sell any number of shares of WOT that you own, or not make any transaction at all. What is the maximum profit you can obtain with an optimum trading strategy?
+
+Input
+
+The first line contains the number of test cases T. T test cases follow:
+
+The first line of each test case contains a number N. The next line contains N integers, denoting the predicted price of WOT shares for the next N days.
+
+Output
+
+Output T lines, containing the maximum profit which can be obtained for the corresponding test case.
+
+Constraints
+
+1 <= T <= 10 
+1 <= N <= 50000
+
+All share prices are between 1 and 100000
+
+Sample Input
+
+3
+3
+5 3 2
+3
+1 2 100
+4
+1 3 1 2
+Sample Output
+
+0
+197
+3
+Explanation
+
+For the first case, you cannot obtain any profit because the share price never rises. 
+For the second case, you can buy one share on the first two days, and sell both of them on the third day. 
+For the third case, you can buy one share on day 1, sell one on day 2, buy one share on day 3, and sell one share on day 4.
+
+</pre>
+
+**Idea** to get the max profit, we need to buy the stocks that has latter stocks with higher price than it.
+
+For example: 1 3 1 5 9 : we need to buy 1 3 1 5 and sell at 9. Thus we can calculate the max profit from the end of the array.
+
+Here is the solution:
+
+```java
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+    static long getProfit(int[] prices) {
+        long res = 0;
+        long max = Integer.MIN_VALUE;
+        for (int i = prices.length - 1; i >= 0; i--) {
+            max = Math.max(max, prices[i]);
+            res += (max - prices[i]);
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner in = new Scanner(System.in);
+        int cases = in.nextInt();
+        for (int i = 0; i < cases; i++) {
+            int n = in.nextInt();
+            int[] prices = new int[n];
+            for (int j = 0; j < n; j++) {
+                prices[j] = in.nextInt();
+            }
+            System.out.println(getProfit(prices));
+        }
+    }
+}
+
+```
 
 
 
