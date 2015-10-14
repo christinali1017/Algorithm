@@ -194,6 +194,9 @@
 * [209 Minimum Size Subarray Sum](#209-minimum-size-subarray-sum)
 * [210 Course Schedule II](#210-course-schedule-ii)
 * [216 Combination Sum III](#216-combination-sum-iii)
+* [217 Contains Duplicate](#217-contains-duplicates)
+* [219 Contains Duplicate II](#219-contains-duplicates-ii)
+* [220 Contains Duplicate III](#220-contains-duplicates-iii)
 * [222 Count Complete Tree Nodes](#222-count-complete-tree-nodes)
 * [237 Delete Node in a Linked List](#237-delete-node-in-a-linked-list)
 * [238 Product of Array Except Self](#238-product-of-array-except-self)
@@ -236,6 +239,8 @@
 * [30 Longest Chain](#30-longest-chain)
 * [31 Friend Circle](#31-friend-circle)
 * [32 Stock Max](#32-stock-max)
+* [33 Flipping bits](#33-flipping-bits)
+* [34 Hamming distance](#34-hamming-distance)
 
 
 
@@ -16142,6 +16147,93 @@ Output:
 <br>
 <br>
 
+###217 Contains Duplicate
+
+>Given an array of integers, find if the array contains any duplicates. Your function should return true if any value appears at least twice in the array, and it should return false if every element is distinct.
+
+```java
+public boolean containsDuplicate(int[] nums) {
+    if (nums.length <= 1) {
+        return false;
+    }
+    Set<Integer> set = new HashSet<>();
+    for (int i : nums) {
+        if (set.contains(i)) {
+            return true;
+        }
+        set.add(i);
+    }
+    return false;
+}
+```
+
+<br>
+<br>
+
+###219 Contains Duplicate II
+
+>Given an array of integers and an integer k, find out whether there are two distinct indices i and j in the array such that nums[i] = nums[j] and the difference between i and j is at most k.
+
+
+```java
+ public boolean containsNearbyDuplicate(int[] nums, int k) {
+    if (nums.length <= 1) {
+        return false;
+    }
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < nums.length; i++) {
+        Integer index = map.get(nums[i]);
+        if (index != null) {
+            if (i <= k + index) {
+                return true;
+            }
+        }
+        map.put(nums[i], i);
+    }
+    return false;
+}
+
+```
+
+<br>
+<br>
+
+###220 Contains Duplicate III
+
+>Given an array of integers, find out whether there are two distinct indices i and j in the array such that the difference between nums[i] and nums[j] is at most t and the difference between i and j is at most k.
+
+
+**Time**:O(Nlogk)
+
+```java
+public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+    if (nums.length <= 1) {
+        return false;
+    }
+    TreeSet<Long> set = new TreeSet<>();
+    for (int i = 0; i < nums.length; i++) {
+       Long floor = set.floor((long) nums[i] + t);
+       Long ceiling = set.ceiling((long) nums[i] - t);
+       if ((floor != null && floor >= nums[i]) || (ceiling != null && ceiling <= nums[i])) {
+           return true;
+       }
+       set.add((long) nums[i]);
+       if (i >= k) {
+           set.remove((long) nums[i - k]);
+       }
+    }
+    return false;
+}
+```
+
+Another solution use bucket, time O(n)
+
+https://leetcode.com/discuss/38206/ac-o-n-solution-in-java-using-buckets-with-explanation
+
+
+<br>
+<br>
+
 
 
 ###222 Count Complete Tree Nodes
@@ -18693,6 +18785,55 @@ public class Solution {
 }
 
 ```
+
+
+
+<br>
+<br>
+
+###33 Flipping bits
+
+>You are given an integer array with N elements: d[0], d[1], ... d[N - 1]. 
+>
+>You can perform AT MOST one move on the array: choose any two integers [L, R], and flip all the elements between (and including) the L-th and R-th bits. L and R represent the left-most and right-most index of the bits marking the boundaries of the segment which you have decided to flip.
+>
+>What is the maximum number of '1'-bits (indicated by S) which you can obtain in the final bit-string? 
+
+> Example: 1 0 0 1 0 0 1 0 Result : 6 . We can get a maximum of 6 ones in the given binary array by performing either of the following operations: Flip [1, 5] ==> 1 1 1 0 1 1 1 0
+
+**Idea**: Same with maximum subarray, one dimensional dp.
+
+```java
+public int flipBits(int[] a) {
+    int initial = 0; /* initial number of 1s*/
+    int resIncreased = 0; /* Increased 1s */
+    int temp = 0;
+    for (int i : a) {
+        if (i == 0) {
+            temp++;
+        } else {
+            initial++;
+            temp--;
+        }
+        temp = Math.max(0, temp);
+        resIncreased = Math.max(temp, resIncreased);
+    }
+    return initial + resIncreased;
+}
+```
+
+<br>
+<br>
+
+###34 Hamming distance
+
+>Given int array, calcaulate sum of hamming distance of all pairs in O(n) time.
+
+**Idea**:
+
+For each digit, we find the count of 0s and 1s, then multiply. The final result is the sum of multiply result of 32 bits.
+
+
 
 
 
