@@ -241,6 +241,8 @@
 * [32 Stock Max](#32-stock-max)
 * [33 Flipping bits](#33-flipping-bits)
 * [34 Hamming distance](#34-hamming-distance)
+* [35 Find a pair with given sum in a Balanced BST](#35-Find-a-pair-with-given-sum-in-a-Balanced-BST)
+* [36 Sliding window maximum](#36-sliding-window-maximum)
 
 
 
@@ -18834,6 +18836,103 @@ public int flipBits(int[] a) {
 For each digit, we find the count of 0s and 1s, then multiply. The final result is the sum of multiply result of 32 bits.
 
 
+<br>
+<br>
 
+###35 Find a pair with given sum in a Balanced BST
 
+>Given a Balanced Binary Search Tree and a target sum, write a function that returns true if there is a pair with sum equals to target sum, otherwise return false. **Expected time complexity is O(n) and only O(Logn)** extra space can be used. Any modification to Binary Search Tree is not allowed. Note that height of a Balanced BST is always O(Logn).
 
+http://www.geeksforgeeks.org/find-a-pair-with-given-sum-in-bst/
+
+**Idea**: traverse the binary tree both inorder and reverse-inorder. 
+- If current-inorder + current-reverse == sum, return true;
+- If current-inorder + current-reverse < sum, we continue visit the next element in inorder;
+- otherwise we visit the next element in reverse-inorder.
+
+```java
+public boolean findPair(TreeNode root, int target) {
+    Deque<TreeNode> stackInorder = new LinkedList<>();
+    Deque<TreeNode> stackReverse = new LinkedList<>();
+    TreeNode p1 = root;
+    TreeNode p2 = root;
+    boolean turn1 = true;
+    boolean turn2 = true;
+    int val1 = 0;
+    int val2 = 0;
+    while (true) {
+        while (turn1 && (p1 != null || !stackInorder.isEmpty())) {
+            if (p1 != null) {
+                stackInorder.push(p1);
+                p1 = p1.left;
+            } else {
+                p1 = stackInorder.pop();
+                val1 = p1.key;
+                p1 = p1.right;
+                turn1 = false;
+            }
+        }
+        while (turn2 && (p2 != null || !stackReverse.isEmpty())) {
+            if (p2 != null) {
+                stackReverse.push(p2);
+                p2 = p2.right;
+            } else {
+                p2 = stackReverse.pop();
+                val2 = p2.key;
+                p2 = p2.left;
+                turn2 = false;
+            }
+        }
+        if (val1 != val2 && val1 + val2 == target) {
+            return true;
+        } else if (val1 + val2 < target) {
+            turn1 = true;
+        } else {
+            turn2 = true;
+        }
+        if (val1 >= val2) {
+            return false;
+        }
+    }
+}
+```
+<br>
+<br>
+
+###36 Sliding window maximum
+
+>Given array A, sliding window size of w moving from left to the right. Return array B, B[i] is the maximum number in the window. For example, given [1, 3, 2, 5, 8, 9, 4, 7, 3], window size k = 3, return [3, 5, 8, 9, 9, 9, 7, 7, 3]
+
+**Idea**: Deque, when new element enters, check from the right of the deque, if it smaller than the new element, remove it from the queue. After all smaller elements are removed, we insert the new element to the deque.
+
+Here to maintain the size of sliding window, we store index in the deque other than the real value.
+
+```java
+public int[] slidingMaximum(int[] A, int w) {
+    Deque<Integer> deque = new LinkedList<>();
+    for (int i = 0; i < w; i++) {
+        while (!deque.isEmpty() && A[deque.peekLast()] <= A[i]) {
+            deque.pollLast();
+        }
+        deque.offerLast(i);
+    }
+    int[] res = new int[A.length];
+    for (int i = w; i < A.length; i++) {
+        res[i - w] = A[deque.peekFirst()];
+        while (!deque.isEmpty() && A[deque.peekLast()] <= A[i]) {
+            deque.pollLast();
+        }
+        while (!deque.isEmpty() && deque.peekFirst() <= i - w) {
+            deque.pollFirst();
+        }
+        deque.offerLast(i);
+    }
+    for (int i = w; i > 0; i--) {
+        res[A.length - i] = A[deque.peekFirst()];
+        if (deque.peekFirst() <= (A.length - i)) {
+            deque.pollFirst();
+        }
+    }
+    return res;
+}
+```
