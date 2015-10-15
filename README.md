@@ -176,6 +176,8 @@
 * [173 Binary Search Tree Iterator](#173-binary-search-tree-iterator)
 * [174 Dungeon Game](#174-dungeon-game)
 * [179 Largest Number](#179-largest-number)
+* [186 Reverse Words in a String II](#186-Reverse-Words-in-a-String-II)
+* [187 Repeated DNA Sequences](#187-Repeated-DNA-Sequences) 
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
@@ -5323,30 +5325,6 @@ Otherwise, we need to compare the end of two intervals. If current.end > last.en
 
 
 ```
-
-
-<br>
-
-**Related**: reverse words in a sentence
-
-
-```java
-  public String reverseWords(String input) {
-    if (input == null || input.length() == 0) {
-      return input;
-    }
-    input = input.trim();
-    String[] arr = input.split("\\s+");
-    StringBuilder res = new StringBuilder();
-    for (int i = arr.length - 1; i >= 0; i--) {
-      res.append(arr[i]);
-      res.append(" ");
-    }
-    return res.toString().trim();
-  }
-
-```
-
 
 
 
@@ -14698,6 +14676,104 @@ Looks good, right? But we'll get out of memory error. Because in one test case, 
 ```
 **Solution:**
 
+
+
+<br>
+<br>
+
+###186 Reverse Words in a String II
+
+>Given an input string, reverse the string word by word. A word is defined as a sequence of non-space characters.
+>
+>The input string does not contain leading or trailing spaces and the words are always separated by a single space.
+>
+>For example,
+>Given s = "the sky is blue",
+>return "blue is sky the".
+
+>Could you do it in-place without allocating extra space?
+
+**Idea**: Same with 151, actually, this problem is simpler. Because it don't have leading/trailing space and only single space between words.
+
+```java
+public void reverseWords(char[] arr) {
+    reverse(arr, 0, arr.length - 1);
+    int start = 0;
+    for (int i = 0; i <= arr.length; i++) {
+        if (i == arr.length || arr[i] == ' ') {
+            reverse(arr, start, i - 1);
+            start = i + 1;
+        }
+    }
+}
+
+private void reverse(char[] arr, int l, int r) {
+   while (l < r) {
+       swap(arr, l++, r--);
+   }
+}
+
+private void swap(char[] arr, int i, int j) {
+    char c = arr[i];
+    arr[i] = arr[j];
+    arr[j] = c;
+}
+```
+
+
+<br>
+<br>
+
+###187 Repeated DNA Sequences
+
+>All DNA is composed of a series of nucleotides abbreviated as A, C, G, and T, for example: "ACGAATTCCG". When studying DNA, it is sometimes useful to identify repeated sequences within the DNA.
+>
+>Write a function to find all the 10-letter-long sequences (substrings) that occur more than once in a DNA molecule.
+>
+>For example,
+>
+>Given s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT",
+>
+>Return:
+>["AAAAACCCCC", "CCCCCAAAAA"].
+
+**Idea**: convert String to integer use bit operation.
+
+A - 0
+
+C - 1
+
+G - 2
+
+T - 3
+
+```java
+public List<String> findRepeatedDnaSequences(String s) {
+    Map<Integer, Integer> map = new HashMap<>();
+    List<String> res = new ArrayList<>();
+    char[] codes = new char[26];
+    codes['C' - 'A'] = 1;
+    codes['G' - 'A'] = 2;
+    codes['T' - 'A'] = 3;
+    for (int i = 0; i <= s.length() - 10; i++) {
+        int val = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int j = i; j < i + 10; j++) {
+            val |= codes[s.charAt(j) - 'A'];
+            val <<= 2;
+            sb.append(s.charAt(j));
+        }
+        Integer count = map.get(val);
+        if (null == count) {
+            map.put(val, 1);
+        } else if (count == 1) {
+            res.add(sb.toString());
+            map.put(val, count + 1);
+        }
+    }
+    return res;
+}
+```
 
 
 <br>
