@@ -197,6 +197,9 @@
 * [210 Course Schedule II](#210-course-schedule-ii)
 * [211 Add and Search Word Data structure design](#211-add-and-search-word-data-structure-design)
 * [212 Word Search II](#212-word-search-ii)
+* [213 House Robber II](#213-house-robber-ii)
+* [214 Shortest Palindrome](#214-shortest-palindrome)
+* [215 Kth Largest Element in an Array](#215-kth-largest-element-in-an-array)
 * [216 Combination Sum III](#216-combination-sum-iii)
 * [217 Contains Duplicate](#217-contains-duplicates)
 * [219 Contains Duplicate II](#219-contains-duplicates-ii)
@@ -16389,6 +16392,159 @@ private void dfs(char[][] board, boolean[][] visited, Trie trie, int i, int j, S
     visited[i][j] = false;
 }
 ```
+
+<br>
+<br>
+
+###213 House Robber II
+
+>After robbing those houses on that street, the thief has found himself a new place for his thievery so that he will not get too much attention. This time, **all houses at this place are arranged in a circle**. That means the first house is the neighbor of the last one. Meanwhile, the security system for these houses remain the same as for those in the previous street.
+>
+>Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight without alerting the police.
+
+**Idea**: Two cases: rob the first house or not rob the first house.
+
+```java
+public int rob(int[] nums) {
+    if (nums.length == 1) {
+        return nums[0];
+    }
+    return Math.max(robLine(nums, 0, nums.length - 2), robLine(nums, 1, nums.length - 1));
+}
+
+private int robLine(int[] nums, int start, int end) {
+    int robYes = 0;
+    int robNo = 0;
+    for (int i = start; i <= end; i++) {
+        int temp = robNo;
+        robNo = Math.max(robNo, robYes);
+        robYes = temp + nums[i];
+    }
+    return Math.max(robYes, robNo);
+}
+```
+
+<br>
+<br>
+
+###214 Shortest Palindrome
+
+>Given a string S, you are allowed to convert it to a palindrome by adding characters in front of it. Find and return the shortest palindrome you can find by performing this transformation.
+>
+>For example:
+>
+>Given "aacecaaa", return "aaacecaaa".
+>
+>sGiven "abcd", return "dcbabcd".
+
+
+**Brute force** TLE:
+```java
+public String shortestPalindrome(String s) {
+    int i = 0;
+    int r = s.length() - 1;
+    int j = r;
+    while (i < j) {
+        if (s.charAt(i) == s.charAt(j)) {
+            i++;
+            j--;
+        } else {
+            i = 0;
+            r--;
+            j = r;
+        }
+    }
+    return new StringBuilder(s.substring(r + 1)).reverse().toString() + s;
+}
+```
+
+**Accepted**:
+
+```java
+public String shortestPalindrome(String s) {
+    int i = 0;
+    for (int j = s.length() - 1; j >= 0; j--) {
+        if (s.charAt(j) == s.charAt(i)) {
+            i++;
+        }
+    }
+    if (i == s.length()) {
+        return s;
+    }
+    String suffix = s.substring(i);
+    return new StringBuilder(suffix).reverse().toString() + shortestPalindrome(s.substring(0, i)) + suffix;
+}
+```
+
+<br>
+<br>
+
+###215 Kth Largest Element in an Array
+
+>Find the kth largest element in an unsorted array. Note that it is the kth largest element in the sorted order, not the kth distinct element.
+>
+>For example,
+>Given [3,2,1,5,6,4] and k = 2, return 5.
+>
+>Note: 
+>You may assume k is always valid, 1 ≤ k ≤ array's length.
+
+**Idea** quicksort, pivot. Each time cut unnecessary parts in the array.
+
+The cutting logic is as follows:
+
+```java
+int pivot = pivot(nums, start, end);
+if (k == end - pivot + 1) {
+    return nums[pivot];
+} else if (k < end - pivot + 1) {
+    return quicksort(nums, k, pivot + 1, end);
+} else {
+    return quicksort(nums, k - (end - pivot + 1), start, pivot - 1);
+}
+```
+
+```java
+public int findKthLargest(int[] nums, int k) {
+    return quicksort(nums, k, 0, nums.length - 1);
+}
+private int quicksort(int[] nums, int k, int start, int end) {
+    int pivot = pivot(nums, start, end);
+    if (k == end - pivot + 1) {
+        return nums[pivot];
+    } else if (k < end - pivot + 1) {
+        return quicksort(nums, k, pivot + 1, end);
+    } else {
+        return quicksort(nums, k - (end - pivot + 1), start, pivot - 1);
+    }
+}
+private int pivot(int[] nums, int start, int end) {
+    int pivot = start + (end - start) / 2;
+    swap(nums, pivot, end);
+    int i = start;
+    int j = end - 1;
+    while (i <= j) {
+        while (i <= end && nums[i] < nums[end]) {
+            i++;
+        }
+        while (j >= start && nums[j] >= nums[end]) {
+            j--;
+        }
+        if (i < j) {
+            swap(nums, i++, j--);
+        }
+    }
+    swap(nums, i, end);
+    return i;
+}
+private void swap(int[] nums, int i, int j) {
+    int temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+}
+```
+
+
 
 <br>
 <br>
