@@ -176,8 +176,8 @@
 * [173 Binary Search Tree Iterator](#173-binary-search-tree-iterator)
 * [174 Dungeon Game](#174-dungeon-game)
 * [179 Largest Number](#179-largest-number)
-* [186 Reverse Words in a String II](#186-Reverse-Words-in-a-String-II)
-* [187 Repeated DNA Sequences](#187-Repeated-DNA-Sequences) 
+* [186 Reverse Words in a String II](#186-reverse-words-in-a-string-ii)
+* [187 Repeated DNA Sequences](#187-repeated-dna-sequences) 
 * [188 Best Time to Buy and Sell Stock IV](#188-best-time-to-buy-and-sell-stock-iv)
 * [189 Rotate Array](#189-rotate-array)
 * [190 Reverse Bits](#190-reverse-bits)
@@ -195,6 +195,8 @@
 * [208 Implement Trie Prefix Tree](#208-implement-trie-prefix-tree)
 * [209 Minimum Size Subarray Sum](#209-minimum-size-subarray-sum)
 * [210 Course Schedule II](#210-course-schedule-ii)
+* [211 Add and Search Word Data structure design](#211-add-and-search-word-data-structure-design)
+* [212 Word Search II](#212-word-search-ii)
 * [216 Combination Sum III](#216-combination-sum-iii)
 * [217 Contains Duplicate](#217-contains-duplicates)
 * [219 Contains Duplicate II](#219-contains-duplicates-ii)
@@ -14634,52 +14636,7 @@ public int calculateMinimumHP(int[][] dungeon) {
 <br>
 <br>
 	
-### 188 Best Time to Buy and Sell Stock IV
 
-> Say you have an array for which the ith element is the price of a given stock on day i.
-
->Design an algorithm to find the maximum profit. You may complete **at most k transactions**.
-
->Note:
-
->You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
-
-**First try:** Use the idea in [Best time to buy and sale stock iii](#123-best-time-to-buy-and-sell-stock-iii).
-global[i][j]: denotes max profit, at most j transactions before day i:
-
- **global[i][j]=max(local[i][j],global[i-1][j])**
-
-local[i][j]: denotes max profit, at most j transactions before day i, and last transaction is saled on day i: 
-
-**local[i][j]=max(global[i-1][j-1]+max(diff,0),local[i-1][j]+diff)**
-
-**Time complexity**: O(k * n)
-
-**Space** : O(k)
-
-Looks good, right? But we'll get out of memory error. Because in one test case, k = 100000. 
-
-```java
-	public int maxProfit(int k, int[] prices){
-		if(prices == null || prices.length <= 1) return 0;
-		int[] global = new int[k+1];
-		int[] local = new int[k+1];
-		for(int i = 1; i < prices.length; i++){
-			int dif = prices[i] - prices[i-1];
-			for(int j = k; j >= 1; j--){
-				local[j] = Math.max(global[j-1] + Math.max(dif, 0), local[j] + dif);
-				global[j] = Math.max(local[j], global[j]);
-			}
-		}
-		return global[k];
-	}
-```
-**Solution:**
-
-
-
-<br>
-<br>
 
 ###186 Reverse Words in a String II
 
@@ -14779,6 +14736,81 @@ public List<String> findRepeatedDnaSequences(String s) {
 <br>
 <br>
 
+### 188 Best Time to Buy and Sell Stock IV
+
+> Say you have an array for which the ith element is the price of a given stock on day i.
+
+>Design an algorithm to find the maximum profit. You may complete **at most k transactions**.
+
+>Note:
+
+>You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+**First try:** Use the idea in [Best time to buy and sale stock iii](#123-best-time-to-buy-and-sell-stock-iii).
+global[i][j]: denotes max profit, at most j transactions before day i:
+
+ **global[i][j]=max(local[i][j],global[i-1][j])**
+
+local[i][j]: denotes max profit, at most j transactions before day i, and last transaction is saled on day i: 
+
+**local[i][j]=max(global[i-1][j-1]+max(diff,0),local[i-1][j]+diff)**
+
+**Time complexity**: O(k * n)
+
+**Space** : O(k)
+
+Looks good, right? But we'll get out of memory error. Because in one test case, k = 100000. 
+
+```java
+  public int maxProfit(int k, int[] prices){
+    if(prices == null || prices.length <= 1) return 0;
+    int[] global = new int[k+1];
+    int[] local = new int[k+1];
+    for(int i = 1; i < prices.length; i++){
+      int dif = prices[i] - prices[i-1];
+      for(int j = k; j >= 1; j--){
+        local[j] = Math.max(global[j-1] + Math.max(dif, 0), local[j] + dif);
+        global[j] = Math.max(local[j], global[j]);
+      }
+    }
+    return global[k];
+  }
+```
+
+Handle TLE.
+
+
+
+```java
+public int maxProfit(int k, int[] prices) {
+    if (k >= prices.length / 2) {
+        //process as many transactions to reach max profits.
+        int res = 0;
+        for (int i = 1; i < prices.length; i++) {
+            res += Math.max(0, prices[i] - prices[i - 1]);
+        }
+        return res;
+    }
+    
+    int[] global = new int[k + 1];
+    int[] local = new int[k + 1];
+    for (int i = 1; i < prices.length; i++) {
+        int dif = prices[i] - prices[i - 1];
+        for (int j = k; j >= 1; j--) {
+            local[j] = Math.max(global[j - 1] + Math.max(dif, 0), local[j] + dif);
+            global[j] = Math.max(local[j], global[j]);
+        }
+    }
+    return global[k];
+}
+```
+
+
+
+
+<br>
+<br>
+
 
 ###189 Rotate Array
 
@@ -14852,20 +14884,21 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 ```java
 
     public int reverseBits(int n) {
-        if(n == 0) return 0;
-        for(int i = 0; i < 16; i++){
-        	n = swap(n, i, 32-i-1);
+        int l = 0;
+        int r = 31;
+        while (l < r) {
+            n = swap(n, l++, r--);
         }
         return n;
     }
     
-    public int swap(int n,int i, int j){
-    	int bitI = (n >> i) & 1;
-    	int bitJ = (n >> j) & 1;
-    	if((bitI ^ bitJ) != 0){
-    		n = n ^ ((1 << i) | (1 << j));
-    	}
-    	return n;
+    private int swap(int n, int i, int j) {
+        int bitI = (n >> i) & 1;
+        int bitJ = (n >> j) & 1;
+        if ((bitI ^ bitJ) == 1) {
+            n ^= (1 << i) | (1 << j);
+        }
+        return n;
     }
 
 ```
@@ -14915,8 +14948,6 @@ Try to come up as many solutions as you can, there are at least 3 different ways
 
 
 ```java
-
-
     public int hammingWeight(int n) {
         if(n == 0) return 0;
         int res = 0;
@@ -15304,7 +15335,7 @@ public int numIslands(char[][] grid) {
 
 >For example, given the range [5, 7], you should return 4.
 
-**Idea**: what we need to do is to  find the similar bits of of m and n on the left side. For eample, if n = 111, m = 101, then the similar part on the left side is 1, then the result is 100. Then we left shift 1 by 2 we can get the result.
+**Idea**: what we need to do is to  find the similar bits of of m and n on the left side. For eample, if n = 111, m = 101, we need to find the similar part on the left side of m and n. Similar left side + Fill 0s on the right side is the result.
 
 
 **Java code**:
@@ -15323,6 +15354,17 @@ public int numIslands(char[][] grid) {
         return m << count;
     }
 
+```
+
+Another solution:
+
+```java
+public int rangeBitwiseAnd(int m, int n) {
+    while (m < n) {
+        n = n & (n - 1);
+    }
+    return n;
+}
 ```
 
 <br>
@@ -15473,27 +15515,24 @@ So at first try code like this:
 
 ```java 
 
- public int countPrimes1(int n) {
-        if(n <= 2) {
-            return 0;
-        }
-        boolean[] prime = new boolean[n];
-        for(int i = 2; i <= n/2; i++ ) {
-            // if i is prime
-            if(!prime[i]){
-                for(int j = i+i; j < n; j += i) {
-                    prime[j] = true;
-                }
-            }
-        }
-        int res = 1;
-        for(int i = 3; i < n; i++){
-            if(!prime[i]){
-                res++;
-            }
-        }
-        return res;
+public int countPrimes(int n) {
+    if(n <= 2) {
+        return 0;
     }
+    boolean[] notPrime = new boolean[n];
+    for (int i = 2; i <= n / 2; i++) {
+        if (!notPrime[i]) {
+            for (int j = i + i; j < n; j += i) {
+                notPrime[j] = true;
+            }
+        }
+    }
+    int res = 1;
+    for (int i = 3; i < n; i++) {
+        res += (notPrime[i] ? 0 : 1);
+    }
+    return res;
+}
 
 
 ```
@@ -16162,6 +16201,197 @@ The input prerequisites is a graph represented by a list of edges, not adjacency
     }
 ```
 
+
+<br>
+<br>
+
+###211 Add and Search Word - Data structure design
+
+>Design a data structure that supports the following two operations:
+
+<pre>
+
+void addWord(word)
+bool search(word)
+search(word) can search a literal word or a regular expression string containing only letters a-z or .. A . means it can represent any one letter.
+
+For example:
+
+addWord("bad")
+addWord("dad")
+addWord("mad")
+search("pad") -> false
+search("bad") -> true
+search(".ad") -> true
+search("b..") -> true
+Note:
+You may assume that all words are consist of lowercase letters a-z.
+</pre>
+
+**Idea** based on trie
+
+```java
+class TrieNode {
+    public TrieNode[] edges;
+    public boolean isLeaf;
+    public TrieNode() {
+        edges = new TrieNode[26];
+    }
+}
+public class WordDictionary {
+    TrieNode root;
+    
+    public WordDictionary () {
+        root = new TrieNode();
+    }
+    // Adds a word into the data structure.
+    public void addWord(String word) {
+        root = insert(root, word, 0);
+    }
+    private TrieNode insert(TrieNode node, String word, int index) {
+        if (node == null) {
+            node = new TrieNode();
+        }
+        if (index == word.length()) {
+            node.isLeaf = true;
+            return node;
+        }
+        int pos = word.charAt(index) - 'a';
+        node.edges[pos] = insert(node.edges[pos], word, index + 1);
+        return node;
+    }
+
+    // Returns if the word is in the data structure. A word could
+    // contain the dot character '.' to represent any one letter.
+    public boolean search(String word) {
+        return searchWord(root, word, 0);
+    }
+    private boolean searchWord(TrieNode node, String word, int index) {
+        if (index == word.length()) {
+            return node.isLeaf;
+        }
+        if (word.charAt(index) == '.') {
+            for (TrieNode n : node.edges) {
+                if (n != null && searchWord(n, word, index + 1)) {
+                    return true;
+                }
+            }
+        } else {
+            int pos = word.charAt(index) - 'a';
+            return node.edges[pos] != null && searchWord(node.edges[pos], word, index + 1);
+        }
+        return false;
+    }
+}
+```
+
+
+<br>
+<br>
+
+###212 Word Search II
+
+>Given a 2D board and a list of words from the dictionary, find all words in the board.
+
+<pre>
+Each word must be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.
+
+For example,
+Given words = ["oath","pea","eat","rain"] and board =
+
+[
+  ['o','a','a','n'],
+  ['e','t','a','e'],
+  ['i','h','k','r'],
+  ['i','f','l','v']
+]
+Return ["eat","oath"].
+Note:
+You may assume that all inputs are consist of lowercase letters a-z.
+</pre>
+
+
+**TLE** HashSet
+
+```java
+    public List<String> findWords(char[][] board, String[] words) {
+        Set<String> dict = new HashSet<>();
+        for (String s : words) {
+            dict.add(s);
+        }
+        Set<String> res = new HashSet<>();
+        boolean[][] visited = new boolean[board.length][board[0].length];
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                dfs(board, visited, dict, i, j, "", res);
+            }
+        }
+        return new ArrayList<String>(res);
+    }
+    private void dfs(char[][] board, boolean[][] visited, Set<String> dict, int i, int j, String s, Set<String> res) {
+        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || visited[i][j]) {
+            return;
+        }
+        s += board[i][j];
+        if (dict.contains(s)) {
+            res.add(s);
+        }
+        visited[i][j] = true;
+        dfs(board, visited, dict, i - 1, j, s, res);
+        dfs(board, visited, dict, i + 1, j, s, res);
+        dfs(board, visited, dict, i, j - 1, s, res);
+        dfs(board, visited, dict, i, j + 1, s, res);
+        visited[i][j] = false;
+    }
+```
+
+**Accepted**: trie + dfs
+
+```java
+    if (!trie.startsWith(s)) {
+        return;
+    }
+```
+
+By using the above check, we can avoid and cut unnecessary dfs. Otherwise, we also get TLE use trie.
+
+```java
+public List<String> findWords(char[][] board, String[] words) {
+    Trie trie = new Trie();
+    for (String s : words) {
+        trie.insert(s);
+    }
+    Set<String> res = new HashSet<>();
+    boolean[][] visited = new boolean[board.length][board[0].length];
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            dfs(board, visited, trie, i, j, "", res);
+        }
+    }
+    return new ArrayList<String>(res);
+}
+private void dfs(char[][] board, boolean[][] visited, Trie trie, int i, int j, String s, Set<String> res) {
+    if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || visited[i][j]) {
+        return;
+    }
+    s += board[i][j];
+    if (!trie.startsWith(s)) {
+        return;
+    }
+    if (trie.search(s)) {
+        res.add(s);
+    }
+    visited[i][j] = true;
+    dfs(board, visited, trie, i - 1, j, s, res);
+    dfs(board, visited, trie, i + 1, j, s, res);
+    dfs(board, visited, trie, i, j - 1, s, res);
+    dfs(board, visited, trie, i, j + 1, s, res);
+    visited[i][j] = false;
+}
+```
+
+<br>
+<br>
 
 ###216 Combination Sum III
 
