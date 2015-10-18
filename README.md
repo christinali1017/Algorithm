@@ -202,9 +202,16 @@
 * [215 Kth Largest Element in an Array](#215-kth-largest-element-in-an-array)
 * [216 Combination Sum III](#216-combination-sum-iii)
 * [217 Contains Duplicate](#217-contains-duplicates)
+* [218 The Skyline Problem](#218-the-skyline-problem)
 * [219 Contains Duplicate II](#219-contains-duplicates-ii)
 * [220 Contains Duplicate III](#220-contains-duplicates-iii)
+* [221 Maximal Square](#221-maximal-square)
 * [222 Count Complete Tree Nodes](#222-count-complete-tree-nodes)
+* [223 Rectangle Area](#223-rectangle-area)
+* [224 Basic Calculator](#224-basic-calculator)
+* [225 Implement Stack using Queues](#225-implement-stack-using-queues)
+* [226 Invert Binary Tree](#226-invert-binary-tree)
+* [227 Basic Calculator II](#227-basic-calculator)
 * [237 Delete Node in a Linked List](#237-delete-node-in-a-linked-list)
 * [238 Product of Array Except Self](#238-product-of-array-except-self)
 * [241 Different Ways to Add Parentheses](#241-different-ways-to-add-parentheses)
@@ -16504,6 +16511,8 @@ if (k == end - pivot + 1) {
 }
 ```
 
+**Solution**:
+
 ```java
 public int findKthLargest(int[] nums, int k) {
     return quicksort(nums, k, 0, nums.length - 1);
@@ -16634,6 +16643,158 @@ public boolean containsDuplicate(int[] nums) {
 <br>
 <br>
 
+###218-the-skyline-problem
+
+> [Problem detail](https://leetcode.com/problems/the-skyline-problem/)
+
+**Solution 1**: sort + priorityqueue. 
+
+- Get lines of all the buildings.Each line contains x coordinate, y coordinate and flag indicates if it is the left outline of building or right outline.
+
+- Sort lines. This part is important. The sort rules is below. Because for the right outline has the same x we print only the lower point. So when !el1.isLeft && !el2.isLeft, we put the lower line before the higher line. 
+
+```java
+ public int compare(Skyline el1, Skyline el2) {
+     if (el1.x != el2.x) {
+         return el1.x - el2.x;
+     } else if (el1.isLeft && el2.isLeft) {
+         return el2.y - el1.y;
+     } else if (!el1.isLeft && !el2.isLeft) {
+         return el1.y - el2.y;
+     } else {
+         return el1.isLeft ? -1 : 1;
+     }
+ }
+```
+
+**Code**: 
+
+```java
+public class Solution {
+    class Skyline {
+        int x;
+        int y;
+        boolean isLeft;
+        public Skyline(int x, int y, boolean isLeft) {
+            this.x = x;
+            this.y = y;
+            this.isLeft = isLeft;
+        }
+    }
+    public List<int[]> getSkyline(int[][] buildings) {
+        List<int[]> res = new ArrayList<>();
+        if (buildings == null || buildings.length == 0 || buildings[0].length == 0) {
+            return res;
+        }
+        List<Skyline> lines = new ArrayList<>();
+        for (int[] b : buildings) {
+            lines.add(new Skyline(b[0], b[2], true));
+            lines.add(new Skyline(b[1], b[2], false));
+        }
+        sortLines(lines);
+        getPoints(lines, res);
+        return res;  
+    }
+    private void getPoints(List<Skyline> lines, List<int[]> res) {
+        PriorityQueue<Integer> heap = new PriorityQueue<>(10, Collections.reverseOrder());
+        for (Skyline line : lines) {
+            if (line.isLeft) {
+                if (heap.isEmpty() || line.y > heap.peek()) {
+                    res.add(new int[] {line.x, line.y});
+                }
+                heap.add(line.y);
+            } else {
+                heap.remove(line.y);
+                if (heap.isEmpty()) {
+                    res.add(new int[] {line.x, 0});
+                } else if (line.y > heap.peek()){
+                    res.add(new int[] {line.x, heap.peek()});
+                }
+            }
+        }
+    }
+    private void sortLines(List<Skyline> lines) {
+        Collections.sort(lines, new Comparator<Skyline>() {
+           @Override
+           public int compare(Skyline el1, Skyline el2) {
+               if (el1.x != el2.x) {
+                   return el1.x - el2.x;
+               } else if (el1.isLeft && el2.isLeft) {
+                   return el2.y - el1.y;
+               } else if (!el1.isLeft && !el2.isLeft) {
+                   return el1.y - el2.y;
+               } else {
+                   return el1.isLeft ? -1 : 1;
+               }
+           }
+        });
+    }
+}
+```
+
+**Solution 2**: divide and conquer, merge buildings recursively. 
+
+```java
+public List<int[]> getSkyline(int[][] buildings) {
+    if (buildings == null || buildings.length == 0 || buildings[0].length == 0) {
+        return new ArrayList<>();
+    }
+    return mergeSkyline(buildings, 0, buildings.length - 1);  
+}
+private List<int[]> mergeSkyline(int[][] buildings, int l, int r) {
+    if (l == r) {
+        List<int[]> res = new ArrayList<>();
+        res.add(new int[] {buildings[l][0], buildings[l][2]});
+        res.add(new int[] {buildings[l][1], 0});
+        return res;
+    } else {
+        int mid = l + (r - l) / 2;
+        return merge(mergeSkyline(buildings, l, mid), mergeSkyline(buildings, mid + 1, r));
+    }
+}
+private  List<int[]> merge(List<int[]> l1, List<int[]> l2) {
+    List<int[]> res = new ArrayList<>();
+    int i = 0;
+    int j = 0;
+    int y1 = 0;
+    int y2 = 0;
+    while (i < l1.size() && j < l2.size()) {
+        int[] b1 = l1.get(i);
+        int[] b2 = l2.get(j);
+        int x = 0;
+        int y = 0;
+        if (b1[0] < b2[0]) {
+            x = b1[0];
+            y1 = b1[1];
+            i++;
+        } else if (b1[0] > b2[0]) {
+            x = b2[0];
+            y2 = b2[1];
+            j++;
+        } else {
+            x = b1[0];
+            y1 = b1[1];
+            y2 = b2[1];
+            i++;
+            j++;
+        }
+        y = Math.max(y1, y2);
+        if (res.size() == 0 || y != res.get(res.size() - 1)[1]) {
+            res.add(new int[] {x, y});
+        }
+    }
+    while (i < l1.size()) {
+        res.add(l1.get(i++));
+    }
+    while (j < l2.size()) {
+        res.add(l2.get(j++));
+    }
+    return res;
+}
+```
+<br>
+<br>
+
 ###219 Contains Duplicate II
 
 >Given an array of integers and an integer k, find out whether there are two distinct indices i and j in the array such that nums[i] = nums[j] and the difference between i and j is at most k.
@@ -16694,6 +16855,44 @@ Another solution use bucket, time O(n)
 
 https://leetcode.com/discuss/38206/ac-o-n-solution-in-java-using-buckets-with-explanation
 
+
+<br>
+<br>
+
+###221 Maximal Square
+
+>Given a 2D binary matrix filled with 0's and 1's, find the largest square containing all 1's and return its area.
+
+<pre>
+For example, given the following matrix:
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+Return 4.
+</pre>
+
+**DP, two dimension**:
+
+```java
+public int maximalSquare(char[][] matrix) {
+    if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+        return 0;
+    }
+    int[][] len = new int[matrix.length + 1][matrix[0].length + 1];
+    int res = 0;
+    for (int i = 1; i <= matrix.length; i++) {
+        for (int j = 1; j <= matrix[0].length; j++) {
+            if (matrix[i - 1][j - 1] == '1') {
+                len[i][j] = Math.min(len[i - 1][j - 1], Math.min(len[i - 1][j], len[i][j - 1])) + 1;
+                res = Math.max(res, len[i][j]);
+            }
+        }
+    }
+    return res * res;
+}
+```
 
 <br>
 <br>
@@ -16809,6 +17008,324 @@ public int getHeight(TreeNode root) {
     return true;
   }
 ```
+
+<br>
+<br>
+
+###223 Rectangle Area
+
+>Find the total area covered by two rectilinear rectangles in a 2D plane.
+>
+>Each rectangle is defined by its bottom left corner and top right corner as shown in the figure.
+>
+>Rectangle Area
+>Assume that the total area is never beyond the maximum possible value of int.
+
+**Idea** This problem is confusing. It asks to calculate the total area  other than the shared area.
+
+```java
+public int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+    int r = Math.min(C, G);
+    int l = Math.max(A, E);
+    int u = Math.min(D, H);
+    int d = Math.max(B, F);
+    int shared = (C <= E || B >= H || A >= G || F >= D) ? 0 : Math.max(0, r - l) * Math.max(0, u - d);
+    int total = (D - B) * (C - A) + (G- E) * (H - F);
+    return total - shared;
+}
+```
+
+
+<br>
+<br>
+
+###224 Basic Calculator
+
+>Implement a basic calculator to evaluate a simple expression string.
+>
+>The expression string may contain open ( and closing parentheses ), the plus + or minus sign -, non-negative integers and empty spaces .
+>
+>You may assume that the given expression is always valid.
+>
+>Some examples:
+>
+"1 + 1" = 2
+>
+>" 2-1 + 2 " = 3
+>
+>"(1+(4+5+2)-3)+(6+8)" = 23
+
+**Idea**: 
+- Use a stack to store the val and sign before ( 
+- Pop from stack and calculate when encounter )
+          
+
+```java
+public int calculate(String s) {
+    int res = 0;
+    int sign = 1;
+    int num = 0;
+    Deque<Integer> stack = new LinkedList<>();
+    for (int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
+        if (isNumber(c)) {
+            num = num * 10 + c - '0';
+        } else if (c == '+' || c == '-') {
+            res += num * sign;
+            sign = c == '+' ? 1 : -1;
+            num = 0;
+        } else if (c == '(') {
+            stack.push(res);
+            stack.push(sign);
+            sign = 1;
+            res = 0;
+        } else if (c == ')') {
+            res += sign * num;
+            res *= stack.pop();
+            res += stack.pop();
+            num = 0;
+        }
+    }
+    res += sign * num;
+    return res;
+}
+private boolean isNumber(char c) {
+    return c >= '0' && c <= '9';
+}
+```
+
+<br>
+<br>
+
+###225 Implement Stack using Queues
+
+>Implement the following operations of a stack using queues.
+
+<pre>
+push(x) -- Push element x onto stack.
+pop() -- Removes the element on top of the stack.
+top() -- Get the top element.
+empty() -- Return whether the stack is empty.
+Notes:
+You must use only standard operations of a queue -- which means only push to back, peek/pop from front, size, and is empty operations are valid.
+Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
+You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
+</pre>
+
+```java
+class MyStack {
+    Deque<Integer> queue1 = new LinkedList<>();
+    Deque<Integer> queue2 = new LinkedList<>();
+    
+    // Push element x onto stack.
+    public void push(int x) {
+        queue1.offer(x);
+    }
+
+    // Removes the element on top of the stack.
+    public void pop() {
+        while (queue1.size() > 1) {
+            queue2.offer(queue1.poll());
+        }
+        if (!queue1.isEmpty()) {
+            queue1.poll();
+        }
+        Deque<Integer> temp = queue1;
+        queue1 = queue2;
+        queue2 = temp;
+    }
+
+    // Get the top element.
+    public int top() {
+        int res = -1;
+        while (queue1.size() >= 1) {
+            res = queue1.poll();
+            queue2.offer(res);
+        }
+        Deque<Integer> temp = queue1;
+        queue1 = queue2;
+        queue2 = temp;
+        return res;
+    }
+
+    // Return whether the stack is empty.
+    public boolean empty() {
+        return queue1.isEmpty();
+    }
+}
+```
+
+
+<br>
+<br>
+
+###226 Invert Binary Tree
+
+>Invert a binary tree.
+
+<pre>
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+to
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+
+</pre>
+
+**Solution**:
+
+```java
+public TreeNode invertTree(TreeNode root) {
+    if (root == null) {
+        return null;
+    }
+    TreeNode temp = root.left;
+    root.left = invertTree(root.right);
+    root.right = invertTree(temp);
+    return root;
+}
+```
+
+
+**First try**:
+
+```java
+public TreeNode invertTree(TreeNode root) {
+    if (root == null) {
+        return null;
+    }
+    invert(root.left, root.right, root);
+    return root;
+}
+private void invert(TreeNode l, TreeNode r, TreeNode root) {
+    if (l == null && r == null) {
+        return;
+    } else if (l == null) {
+        root.left = r;
+        root.right = null;
+        invert(r.left, r.right, r);
+    } else if (r == null) {
+        root.right = l;
+        root.left = null;
+        invert(l.left, l.right, l);
+    } else {
+        root.left = r;
+        root.right = l;
+        invert(l.left, l.right, l);
+        invert(r.left, r.right, r);
+    }
+    
+}
+```
+
+<br>
+<br>
+
+###227 Basic Calculator II
+>Implement a basic calculator to evaluate a simple expression string.
+>
+>The expression string contains only non-negative integers, +, -, *, / operators and empty spaces . The integer division should truncate toward zero.
+>
+>You may assume that the given expression is always valid.
+>
+>Some examples:
+>"3+2*2" = 7
+>" 3/2 " = 1
+>" 3+5 / 2 " = 5
+
+**Solution 1** O(n) time, O(1) space. Remember to handle the last operation when string ends.
+
+```java
+public int calculate(String s) {
+    int res = 0;
+    char preSign = '+';
+    int num = 0;
+    int pre = 0;
+    int i = 0;
+    s = s.trim();
+    while (i < s.length()) {
+        while (i < s.length() && isNumber(s.charAt(i))) {
+            num = num * 10 + s.charAt(i++) - '0';
+        }
+        if (i == s.length() || (!isNumber(s.charAt(i)) && s.charAt(i) != ' ')) {
+            switch (preSign) {
+                case '+':
+                    res += pre;
+                    pre = num;
+                    break;
+                case '-':
+                    res += pre;
+                    pre = -num; 
+                    break;
+                case '*':
+                    pre *= num;
+                    break;
+                case '/':
+                    pre /= num;
+                    break;
+            }
+            num = 0;
+            if (i != s.length()) {
+                preSign = s.charAt(i);
+            }
+        }
+        i++;
+    }
+    return res + pre;
+}
+private boolean isNumber(char c) {
+    return c >= '0' && c <= '9';
+}
+```
+
+**Soltion 2**: O(N) time + O(N) space. Pretty similar with the first solution. Since we only need to pop one element from the stack each time.
+
+```java
+public int calculate(String s) {
+    int res = 0;
+    int num = 0;
+    Deque<Integer> stack = new LinkedList<>();
+    char preSign = '+';
+    for (int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
+        if (isNumber(c)) {
+            num = num * 10 + s.charAt(i) - '0';
+        } 
+        if (i == s.length() - 1 || (!isNumber(c) && s.charAt(i) != ' ')) {
+            switch (preSign) {
+                case '+':
+                    stack.push(num);
+                    break;
+                case '-':
+                    stack.push(-num);
+                    break;
+                case '*':
+                    stack.push(stack.pop() * num);
+                    break;
+                case '/':
+                    stack.push(stack.pop() / num);
+                    break;
+            }
+            num = 0;
+            preSign = c;
+        }
+    }
+    for (int i : stack) {
+        res += i;
+    }
+    return res;
+}
+private boolean isNumber(char c) {
+    return c >= '0' && c <= '9';
+}
+```
+
 
 <br>
 <br>
