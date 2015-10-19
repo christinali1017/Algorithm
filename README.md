@@ -212,6 +212,15 @@
 * [225 Implement Stack using Queues](#225-implement-stack-using-queues)
 * [226 Invert Binary Tree](#226-invert-binary-tree)
 * [227 Basic Calculator II](#227-basic-calculator)
+* [228 Summary Ranges](#228-summary-ranges)
+* [229 Majority Element II](#229-majority-element-ii)
+* [230 Kth Smallest Element in a BST](#230-kth-smallest-element-in-a-bst)
+* [231 Power of Two](#231-power-of-two)
+* [232 Implement Queue using Stacks](#232-implement-queue-using-stacks)
+* [233 Number of Digit One](#233-number-of-digit-one)
+* [234 Palindrome Linked List](#234-palindrome-linked-list)
+* [235 Lowest Common Ancestor of a Binary Search Tree](#235-lowest-common-ancestor-of-a-binary-search-tree)
+* [236 Lowest Common Ancestor of a Binary Tree](#236-lowest-common-ancestor-of-a-binary-tree)
 * [237 Delete Node in a Linked List](#237-delete-node-in-a-linked-list)
 * [238 Product of Array Except Self](#238-product-of-array-except-self)
 * [241 Different Ways to Add Parentheses](#241-different-ways-to-add-parentheses)
@@ -17329,6 +17338,513 @@ private boolean isNumber(char c) {
 
 <br>
 <br>
+
+###228 Summary Ranges
+
+>Given a sorted integer array without duplicates, return the summary of its ranges.
+>
+>For example, given [0,1,2,4,5,7], return ["0->2","4->5","7"].
+
+```java
+public List<String> summaryRanges(int[] nums) {
+    List<String> res = new ArrayList<>();
+    if (nums.length == 0) {
+        return res;
+    }
+    int start = nums[0];
+    int end = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        if (nums[i] - end == 1) {
+            end++;
+        } else {
+            res.add(start == end ? start + "" : start + "->" + end);
+            start = nums[i];
+            end = nums[i];
+        }
+    }
+    res.add(start == end ? start + "" : start + "->" + end);
+    return res;
+}
+```
+
+
+
+<br>
+<br>
+
+###229 Majority Element II
+>Given an integer array of size n, find all elements that appear more than ⌊ n/3 ⌋ times. The algorithm should run in linear time and in O(1) space.
+
+**Solution 1**: voting algorithm
+
+```java
+public List<Integer> majorityElement(int[] nums) {
+    List<Integer> res = new ArrayList<>();
+    int count1 = 0;
+    int candidate1 = 0;
+    int count2 = 0;
+    int candidate2 = 1;
+    for (int i : nums) {
+        if (i == candidate1) {
+            count1++;
+        } else if (i == candidate2) {
+            count2++;
+        } else if (count1 == 0) {
+            candidate1 = i;
+            count1 = 1;
+        } else if (count2 == 0) {
+            count2 = 1;
+            candidate2 = i;
+        } else {
+            count1--;
+            count2--;
+        }
+    }
+    count1 = 0;
+    count2 = 0;
+    for (int i : nums) {
+        if (i == candidate1) {
+            count1++;
+        }
+        if (i == candidate2) {
+            count2++;
+        }
+    }
+    if (count1 > nums.length / 3) {
+        res.add(candidate1);
+    }
+    if (count2 > nums.length / 3) {
+        res.add(candidate2);
+    }
+    return res;
+}
+```
+
+**Solution 2**: quick select. This method can not pass test case "11...........1122.....22" in leetcode. If we handle it specially then it can be accepted.
+
+```java
+public List<Integer> majorityElement(int[] nums) {
+    List<Integer> res = new ArrayList<>();
+    if (nums.length == 0) {
+        return res;
+    }
+    int candidate1 = quickSelect(nums, nums.length / 3 + 1, 0, nums.length - 1);
+    int candidate2 = quickSelect(nums, (nums.length * 2) / 3 + 1, 0, nums.length - 1);
+    int count1 = 0;
+    int count2 = 0;
+    for (int i : nums) {
+        if (i == candidate1) {
+            count1++;
+        }
+        if (i == candidate2) {
+            count2++;
+        }
+    }
+    if (count1 > nums.length / 3) {
+        res.add(candidate1);
+    }
+    if (count2 > nums.length / 3 && candidate1 != candidate2) {
+        res.add(candidate2);
+    }
+    return res;
+}
+private int quickSelect(int[] nums, int k, int start, int end) {
+    int pivot = pivot(nums, start, end);
+    if (k == end - pivot + 1) {
+        return nums[pivot];
+    } else if (k < end - pivot + 1) {
+        return quickSelect(nums, k, pivot + 1, end);
+    } else {
+        return quickSelect(nums, k - (end - pivot + 1), start, pivot - 1);
+    }
+}
+private int pivot(int[] nums, int start, int end) {
+    int pivot = start + (end - start) / 2;
+    swap(nums, pivot, end);
+    int i = start;
+    int j = end - 1;
+    while (i <= j) {
+        while (i <= end && nums[i] < nums[end]) {
+            i++;
+        }
+        while (j >= start && nums[j] >= nums[end]) {
+            j--;
+        }
+        if (i < j) {
+            swap(nums, i++, j--);
+        }
+    }
+    swap(nums, i, end);
+    return i;
+}
+private void swap(int[] nums, int i, int j) {
+    int temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+}
+```
+
+
+
+<br>
+<br>
+
+###230 Kth Smallest Element in a BST
+
+>Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.
+>
+>Note: 
+>You may assume k is always valid, 1 ≤ k ≤ BST's total elements.
+
+**Solution 1**: inorder traversal.
+
+```java
+public int kthSmallest(TreeNode root, int k) {
+    Deque<TreeNode> stack = new LinkedList<>();
+    while (root != null || !stack.isEmpty()) {
+        if (root != null) {
+            stack.push(root);
+            root = root.left;
+        } else {
+            root = stack.pop();
+            k--;
+            if (k == 0) {
+                return root.val;
+            }
+            root = root.right;
+        }
+    }
+    return -1;
+}
+```
+
+**Solution 2**: Count number of nodes in left and right substree. If the tree is a order-statistic tree, then this method would be simpler.
+
+```java
+public int kthSmallest(TreeNode root, int k) {
+    int[] res = new int[1];
+    getK(res, root, k);
+    return res[0];
+}
+private int getK(int[] res, TreeNode root, int k) {
+    if (root == null) {
+        return 0;
+    }
+    int left = getK(res, root.left, k);
+    if (k == left + 1) {
+        res[0] = root.val;
+    }
+    int right = getK(res, root.right, k - left - 1);
+    return left + right + 1;
+}
+```
+
+
+
+<br>
+<br>
+
+###231 Power of Two
+
+>Given an integer, write a function to determine if it is a power of two.
+
+```java
+public boolean isPowerOfTwo(int n) {
+    if (n <= 0) {
+        return false;
+    }
+    return (n & (n - 1)) == 0;
+}
+```
+
+**Solution 2**:
+
+```java
+public boolean isPowerOfTwo(int n) {
+    return n > 0 && Integer.bitCount(n) == 1;
+}
+```
+<br>
+<br>
+###232 Implement Queue using Stacks
+
+>Implement the following operations of a queue using stacks.
+
+<pre>
+push(x) -- Push element x to the back of queue.
+pop() -- Removes the element from in front of queue.
+peek() -- Get the front element.
+empty() -- Return whether the queue is empty.
+Notes:
+You must use only standard operations of a stack -- which means only push to top, peek/pop from top, size, and is empty operations are valid.
+Depending on your language, stack may not be supported natively. You may simulate a stack by using a list or deque (double-ended queue), as long as you use only standard operations of a stack.
+You may assume that all operations are valid (for example, no pop or peek operations will be called on an empty queue).
+</pre>
+
+```java
+class MyQueue {
+    // Push element x to the back of queue.
+    Deque<Integer> stack1 = new LinkedList<>();
+    Deque<Integer> stack2 = new LinkedList<>();
+    public void push(int x) {
+        stack1.push(x);
+    }
+
+    // Removes the element from in front of queue.
+    public void pop() {
+        if (!stack2.isEmpty()) {
+            stack2.pop();
+        } else {
+            while (!stack1.isEmpty()) {
+                stack2.push(stack1.pop());
+            }
+            if (!stack2.isEmpty()) {
+                stack2.pop();
+            }
+        }
+    }
+
+    // Get the front element.
+    public int peek() {
+        if (!stack2.isEmpty()) {
+            return stack2.peek();
+        } else {
+            while (!stack1.isEmpty()) {
+                stack2.push(stack1.pop());
+            }
+            if (!stack2.isEmpty()) {
+                return stack2.peek();
+            }
+            return -1;
+        }
+    }
+
+    // Return whether the queue is empty.
+    public boolean empty() {
+        return stack1.isEmpty() && stack2.isEmpty();
+    }
+}
+```
+
+
+
+
+<br>
+<br>
+###233 Number of Digit One
+
+>Given an integer n, count the total number of digit 1 appearing in all non-negative integers less than or equal to n.
+
+For example:
+Given n = 13,
+Return 6, because digit 1 occurred in the following numbers: 1, 10, 11, 12, 13.
+
+**Idea**:
+- 1 - 9 : 1
+
+- 10 - 19 : 1 + 10
+
+- 20 -29 : 1
+
+-.....
+
+- 90 -99 : 1
+
+- 100 - 109 : 11
+
+- 110 -119 : 11 + 10
+
+- 120 - 129 : 11
+
+- .....
+
+- 190 - 199 : 11
+
+- 200 - 209 : 1
+
+- 210 - 219 : 1 + 10
+
+-......
+
+- 990 - 999 : 1
+
+- 1000 - 1099 : 100 + 19 
+
+- 1100 - 1199 : 100 + 100 + 19
+
+- 1200 - 1299 : 100 + 19
+
+- ......
+
+- 1900 -1999 : 100 + 19
+
+The idea of the solution below calculate number of one in each digit. For example, if n = 121
+
+digit 1 = 12 + 1 : 1 11, 21 ...91, 101, 111, 121.
+digit 10 = 20 : 10 - 19 110 - 119
+digit 100 = 22 : 100 - 121 
+
+```java
+public int countDigitOne(int n) {
+    int res = 0;
+    int digit = 1;
+    int r = 1;
+    while (n > 0) {
+        int lastDigit = n % 10;
+        res += lastDigit >= 2 ? ((n / 10) + 1) * digit : (n / 10) * digit;
+        res += lastDigit == 1 ? r : 0;
+        r += lastDigit * digit;
+        digit *= 10;
+        n /= 10;
+    }
+    return res;
+}
+
+```
+
+**More consice solution:** 
+
+Use (n + 8) / 10 to check if number is >20 or > 120 ....
+
+```java
+public int countDigitOne(int n) {
+    int res = 0;
+    int m = 1;
+    int r = 1;
+    while (n > 0) {
+        res += (n + 8) / 10 * m + (n % 10 == 1 ? r : 0);
+        r += (n % 10) * m;
+        m *= 10;
+        n /= 10;
+    }
+    return res;
+}
+```
+
+
+
+
+<br>
+<br>
+
+###234 Palindrome Linked List
+>Given a singly linked list, determine if it is a palindrome.
+>
+>Follow up:
+Could you do it in O(n) time and O(1) space?
+
+```java
+public boolean isPalindrome(ListNode head) {
+    if (head == null || head.next == null) {
+        return true;
+    }
+    ListNode faster = head;
+    ListNode slower = head; 
+    while (faster.next != null && faster.next.next != null) {
+        faster = faster.next.next;
+        slower = slower.next;
+    }
+    ListNode lastHalf = reverse(slower.next);
+    while (lastHalf != null) {
+        if (lastHalf.val != head.val) {
+            return false;
+        }
+        lastHalf = lastHalf.next;
+        head = head.next;
+    }
+    return true;
+}
+private ListNode reverse(ListNode head) {
+    ListNode pre = null;
+    ListNode next = null;
+    while (head != null) {
+        next = head.next;
+        head.next = pre;
+        pre = head;
+        head = next;
+    }
+    return pre;
+}
+```
+
+<br>
+<br>
+###235 Lowest Common Ancestor of a Binary Search Tree
+
+>Given a binary search tree (BST), find the lowest common ancestor (LCA) of two given nodes in the BST.
+
+<pre>
+According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
+
+        _______6______
+       /              \
+    ___2__          ___8__
+   /      \        /      \
+   0      _4       7       9
+         /  \
+         3   5
+For example, the lowest common ancestor (LCA) of nodes 2 and 8 is 6. Another example is LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself according to the LCA definition.
+</pre>
+
+**Idea**: Pretty straight forward. 
+
+- if both p and q < root, go left
+- if both p and q > root, go right
+- otherwise, root is the ancester.
+
+```java
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if (root == null) {
+        return null;
+    } else if (root.val > p.val && root.val > q.val) {
+        return lowestCommonAncestor(root.left, p, q);
+    } else if (root.val < p.val && root.val < q.val) {
+        return lowestCommonAncestor(root.right, p, q);
+    } else {
+        return root;
+    }
+}
+```
+
+
+<br>
+<br>
+###236 Lowest Common Ancestor of a Binary Tree
+
+>Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+
+<pre>
+According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
+
+        _______3______
+       /              \
+    ___5__          ___1__
+   /      \        /      \
+   6      _2       0       8
+         /  \
+         7   4
+For example, the lowest common ancestor (LCA) of nodes 5 and 1 is 3. Another example is LCA of nodes 5 and 4 is 5, since a node can be a descendant of itself according to the LCA definition.
+</pre>
+
+
+```java
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if (root == null || root == p || root == q) {
+        return root;
+    } 
+    TreeNode left = lowestCommonAncestor(root.left, p, q);
+    TreeNode right = lowestCommonAncestor(root.right, p, q);
+    if (left != null && right != null) {
+        return root;
+    }
+    return left == null ? right : left;
+}
+```
+
+
+<br>
+<br>
+
 
 ###237 Delete Node in a Linked List
 
