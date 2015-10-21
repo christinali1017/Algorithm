@@ -223,8 +223,16 @@
 * [236 Lowest Common Ancestor of a Binary Tree](#236-lowest-common-ancestor-of-a-binary-tree)
 * [237 Delete Node in a Linked List](#237-delete-node-in-a-linked-list)
 * [238 Product of Array Except Self](#238-product-of-array-except-self)
+* [239 Sliding Window Maximum](#239-sliding-window-maximum)
+* [240 Search a 2D Matrix II](#240-search-a-2d-matrix-ii)
 * [241 Different Ways to Add Parentheses](#241-different-ways-to-add-parentheses)
 * [242 Valid Anagram](#242-Valid Anagram)
+* [243 Shortest Word Distance](#243-shortest-word-distance)
+* [244 Shortest Word Distance II](#244-shortest-word-distance-ii)
+* [245 Shortest Word Distance III](#245-shortest-word-distance-iii)
+* [246 Strobogrammatic Number](#246-strobogrammatic-number)
+* [247 Strobogrammatic Number](#247-strobogrammatic-number-ii)
+* [248 Strobogrammatic Number](#248-strobogrammatic-number-iii)
 * [255 Verify Preorder Sequence in Binary Search Tree](#255-verify-preorder-sequence-in-binary-search-tree)
 
 
@@ -17921,6 +17929,93 @@ Here is the O(1) space solution below.
 <br>
 <br>
 
+###239 Sliding Window Maximum
+
+>Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves right by one position.
+
+<pre>
+For example,
+Given nums = [1,3,-1,-3,5,3,6,7], and k = 3.
+
+Window position                Max
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+Therefore, return the max sliding window as [3,3,5,5,6,7].
+
+Note: 
+You may assume k is always valid, ie: 1 ≤ k ≤ input array's size for non-empty array.
+</pre>
+
+**Idea**: [36-sliding-window-maximum](https://github.com/wishyouhappy/Algorithm/blob/master/README.md#36-sliding-window-maximum)
+
+```java
+
+public int[] maxSlidingWindow(int[] A, int w) {
+    if (A == null || A.length == 0) {
+        return new int[0];
+    }
+    Deque<Integer> deque = new LinkedList<>();
+    for (int i = 0; i < w; i++) {
+        while (!deque.isEmpty() && A[deque.peekLast()] <= A[i]) {
+            deque.pollLast();
+        }
+        deque.offerLast(i);
+    }
+    int[] res = new int[A.length - w + 1];
+    for (int i = w; i < A.length; i++) {
+        res[i - w] = A[deque.peekFirst()];
+        while (!deque.isEmpty() && A[deque.peekLast()] <= A[i]) {
+            deque.pollLast();
+        }
+        while (!deque.isEmpty() && deque.peekFirst() <= i - w) {
+            deque.pollFirst();
+        }
+        deque.offerLast(i);
+    }
+    res[A.length - w] = A[deque.peekFirst()];
+    return res;
+}
+
+```
+
+<br>
+<br>
+
+###240 Search a 2D Matrix II
+
+>Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+
+<pre>
+Integers in each row are sorted in ascending from left to right.
+Integers in each column are sorted in ascending from top to bottom.
+For example,
+
+Consider the following matrix:
+
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
+Given target = 5, return true.
+
+Given target = 20, return false.
+</pre>
+
+**Idea and solution**: [https://github.com/wishyouhappy/Algorithm/blob/master/README.md#1-search-a-2d-matrix-ii](https://github.com/wishyouhappy/Algorithm/blob/master/README.md#1-search-a-2d-matrix-ii)
+
+
+<br>
+<br>
+
+
 ###241 Different Ways to Add Parentheses
 
 >Given a string of numbers and operators, return all possible results from computing all the different possible ways to group numbers and operators. The valid operators are +, - and *.
@@ -18088,6 +18183,157 @@ public boolean isAnagram(String s, String t) {
     return true;
 }
 ```
+
+<br>
+<br>
+
+###243 Shortest Word Distance
+>Given a list of words and two words word1 and word2, return the shortest distance between these two words in the list.
+
+<pre>
+For example,
+Assume that words = ["practice", "makes", "perfect", "coding", "makes"].
+
+Given word1 = "coding", word2 = "practice", return 3.
+Given word1 = "makes", word2 = "coding", return 1.
+
+Note:
+You may assume that word1 does not equal to word2, and word1 and word2 are both in the list.
+
+</pre>
+
+```java
+public int shortestDistance(String[] words, String word1, String word2) {
+    int index1 = -1;
+    int index2 = -1;
+    int res = Integer.MAX_VALUE;
+    for (int i = 0; i < words.length; i++) {
+        if (words[i].equals(word1)) {
+            index1 = i;
+        }
+        if (words[i].equals(word2)) {
+            index2 = i;
+        }
+        if (index1 != -1 && index2 != -1) {
+            res = Math.min(res, Math.abs(index1 - index2));
+        }
+    }
+    return res;
+}
+```
+<br>
+<br>
+
+###244 Shortest Word Distance II
+>Problem Description:
+>
+>This is a follow up of Shortest Word Distance. The only difference is now you are given the list of words and your method will be called repeatedly many times with different parameters. How would you optimize it?
+>
+>Design a class which receives a list of words in the constructor, and implements a method that takes two words word1 and word2 and return the shortest distance between these two words in the list.
+>
+>For example,
+>Assume that words = ["practice", "makes", "perfect", "coding", "makes"].
+>
+>Given word1 = "coding”, word2 = "practice”, return 3.
+>Given word1 = "makes", word2 = "coding", return 1.
+>
+>Note:
+>You may assume that word1 does not equal to word2, and word1 and word2 are both in the list.
+
+```java
+import java.util.*;
+public class WordDistance {
+
+    private Map<String, List<Integer>> map;
+
+    public WordDistance(String[] words) {
+        map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            List<Integer> ls = map.get(words[i]);
+            if (ls == null) {
+                ls = new ArrayList<>();
+            }
+            ls.add(i);
+            map.put(words[i], ls);
+        }
+    }
+
+    public int shortest(String word1, String word2) {
+        List<Integer> ls1 = map.get(word1);
+        List<Integer> ls2 = map.get(word2);
+        int res = Integer.MAX_VALUE;
+        int i = 0;
+        int j = 0;
+        while (i < ls1.size() && j < ls2.size()) {
+            res = Math.min(res, Math.abs(ls1.get(i) - ls2.get(j)));
+            if (ls1.get(i) < ls2.get(j)) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return res;
+    }
+}
+
+```
+
+<br>
+<br>
+
+###245 Shortest Word Distance III
+
+>Given a list of words and two words word1 and word2, return the shortest distance between these two words in the list.
+>
+>word1 and word2 may be the same and they represent two individual words in the list.
+>
+>For example,
+>
+>Assume that words = ["practice", "makes", "perfect", "coding", "makes"].
+>
+>Given word1 = "makes", word2 = "coding", return 1. Given word1 = "makes", word2 = "makes", return 3.
+>
+>Note:
+>
+>You may assume word1 and word2 are both in the list.
+
+```java
+public int shortestDistance(String[] words, String word1, String word2) {
+    int index1 = -1;
+    int index2 = -1;
+    boolean same = word1.equals(word2);
+    int res = Integer.MAX_VALUE;
+    for (int i = 0; i < words.length; i++) {
+        if (words[i].equals(word1)) {
+            if (same) {
+                index1 = index2;
+                index2 = i;
+            } else {
+                index1 = i;
+            }
+        } else if (words[i].equals(word2)) {
+            index2 = i;
+        }
+        if (index1 != -1 && index2 != -1) {
+            res = Math.min(res, Math.abs(index1 - index2));
+        }
+    }
+    return res;
+}
+```
+
+
+<br>
+<br>
+
+###246 Strobogrammatic Number
+
+<br>
+<br>
+###247 Strobogrammatic Number II
+<br>
+<br>
+###248 Strobogrammatic Number III
 
 <br>
 <br>
