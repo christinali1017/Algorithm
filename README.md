@@ -233,6 +233,12 @@
 * [246 Strobogrammatic Number](#246-strobogrammatic-number)
 * [247 Strobogrammatic Number](#247-strobogrammatic-number-ii)
 * [248 Strobogrammatic Number](#248-strobogrammatic-number-iii)
+* [249 Group Shifted Strings](#249-group-shifted-strings)
+* [250 Count Univalue Subtrees](#250-count-univalue-subtrees)
+* [251 Flatten 2D Vector](#251-flatten-2d-vector)
+* [252 Meeting Rooms](#252-meeting-rooms)
+* [253 Meeting Rooms II](#253-meeting-rooms-ii)
+* [254 Factor Combinations](#254-factor-combinations)
 * [255 Verify Preorder Sequence in Binary Search Tree](#255-verify-preorder-sequence-in-binary-search-tree)
 
 
@@ -18327,13 +18333,509 @@ public int shortestDistance(String[] words, String word1, String word2) {
 <br>
 
 ###246 Strobogrammatic Number
+>A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+>
+>Write a function to determine if a number is strobogrammatic. The number is represented as a string.
+>
+>For example, the numbers "69", "88", and "818" are all strobogrammatic.
+
+```java
+public boolean isStrobogrammatic(String num) {
+    Map<Character, Character> map = new HashMap<>();
+    initiateStrobogrammaticNumberMap(map);
+    int l = 0;
+    int r = num.length() - 1;
+    while (l <= r) {
+        Character temp = map.get(num.charAt(l));
+        if (temp == null) {
+            return false;
+        }
+        if (temp != num.charAt(r)) {
+            return false;
+        }
+        l++;
+        r--;
+    }
+    return true;
+}
+
+private void initiateStrobogrammaticNumberMap(Map<Character, Character> map) {
+    map.put('6', '9');
+    map.put('9', '6');
+    map.put('1', '1');
+    map.put('0', '0');
+    map.put('8', '8');
+}
+```
 
 <br>
 <br>
 ###247 Strobogrammatic Number II
+
+> Find all strobogrammatic numbers that are of length = n.
+
+**Idea**: Append two chars each time, until length is n.s 
+
+```java
+public List<String> findStrobogrammatic(int n) {
+    Map<Character, Character> map = new HashMap<>();
+    initiateStrobogrammaticNumberMap(map);
+    return findS(n, n, map);
+}
+
+private List<String> findS(int index, int n, Map<Character, Character> map) {
+    List<String> res = new ArrayList<>();
+    if (index == 0) {
+        res.add("");
+        return res;
+    } else if (index == 1) {
+        res.add("0");
+        res.add("1");
+        res.add("8");
+        return res;
+    }
+    List<String> next = findS(index - 2, n, map);
+    for (String s : next) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("0").append(s).append("0");
+        for (Map.Entry<Character, Character> entry : map.entrySet()) {
+            if (entry.getKey() == '0' && index == n) {
+                continue;
+            }
+            res.add(setCharsAtBeginAndEnd(sb, entry.getKey(), entry.getValue()).toString());
+        }
+    }
+    return res;
+}
+
+private StringBuilder setCharsAtBeginAndEnd(StringBuilder sb, char begin, char end) {
+    sb.setCharAt(0, begin);
+    sb.setCharAt(sb.length() - 1, end);
+    return sb;
+}
+
+private void initiateStrobogrammaticNumberMap(Map<Character, Character> map) {
+    map.put('6', '9');
+    map.put('9', '6');
+    map.put('1', '1');
+    map.put('0', '0');
+    map.put('8', '8');
+}
+```
+
 <br>
 <br>
+
+
 ###248 Strobogrammatic Number III
+
+>Write a function to count the total strobogrammatic numbers that exist in the range of low <= num <= high.
+>
+>Given low = "50", high = "100", return 3. Because 69, 88, and 96 are three strobogrammatic numbers.
+
+```java
+public int strobogrammaticInRange(String low, String high) {
+    int res = 0;
+    for (int i = low.length(); i <= high.length(); i++) {
+        List<String> cur = findStrobogrammatic(i);
+        for (String s : cur) {
+            if ((s.length() == low.length() && s.compareTo(low) <0) ||
+                    (s.length() == high.length() && s.compareTo(high) > 0)) {
+                continue;
+            }
+            res++;
+        }
+    }
+    return res;
+}
+public List<String> findStrobogrammatic(int n) {
+    Map<Character, Character> map = new HashMap<>();
+    initiateStrobogrammaticNumberMap(map);
+    return findS(n, n, map);
+}
+
+private List<String> findS(int index, int n, Map<Character, Character> map) {
+    List<String> res = new ArrayList<>();
+    if (index == 0) {
+        res.add("");
+        return res;
+    } else if (index == 1) {
+        res.add("0");
+        res.add("1");
+        res.add("8");
+        return res;
+    }
+    List<String> next = findS(index - 2, n, map);
+    for (String s : next) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("0").append(s).append("0");
+        for (Map.Entry<Character, Character> entry : map.entrySet()) {
+            if (entry.getKey() == '0' && index == n) {
+                continue;
+            }
+            res.add(setCharsAtBeginAndEnd(sb, entry.getKey(), entry.getValue()).toString());
+        }
+    }
+    return res;
+}
+
+private StringBuilder setCharsAtBeginAndEnd(StringBuilder sb, char begin, char end) {
+    sb.setCharAt(0, begin);
+    sb.setCharAt(sb.length() - 1, end);
+    return sb;
+}
+
+private void initiateStrobogrammaticNumberMap(Map<Character, Character> map) {
+    map.put('6', '9');
+    map.put('9', '6');
+    map.put('1', '1');
+    map.put('0', '0');
+    map.put('8', '8');
+}
+```
+
+<br>
+<br>
+
+###249 Group Shifted Strings
+
+>Given a string, we can “shift” each of its letter to its successive letter, for example: “abc” -> “bcd”. We can keep “shifting” which forms the sequence:
+>
+>
+>"abc" -> "bcd" -> ... -> "xyz"
+>Given a list of strings which contains only lowercase alphabets, group all strings that belong to the same shifting sequence.
+>
+>For example,
+>
+>given: ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"], Return:
+>
+>
+>[
+ > ["abc","bcd","xyz"],
+  >["az","ba"],
+  >["acef"],
+  >["a","z"]
+>]
+
+**Idea**: Use hashmap, for each string calculate the hash string based on itself so that for string in the same group would have the same hash string.
+
+```java
+    public List<List<String>> groupStrings(String[] strings) {
+        List<List<String>> res = new ArrayList<>();
+        Map<String, List<String>> map = new HashMap<>();
+        for (String s : strings) {
+            String key = getHash(s);
+            List<String> cur = map.get(key);
+            if (cur == null) {
+                cur = new ArrayList<>();
+            }
+            cur.add(s);
+            map.put(key, cur);
+        }
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            List<String> ls = entry.getValue();
+            Collections.sort(ls);
+            res.add(ls);
+        }
+        return res;
+    }
+
+    private String getHash(String s) {
+        if (s.length() == 0) {
+            return "";
+        }
+        StringBuilder res = new StringBuilder();
+        int offset = s.charAt(0) - 'a';
+        for (int i = 0; i < s.length(); i++) {
+            char temp = (char) (s.charAt(i) - offset);
+            res.append(temp >= 'a' ?  temp : temp + 26);
+        }
+        return res.toString();
+    }
+```
+
+
+<br>
+<br>
+###250 Count Univalue Subtrees
+
+>Given a binary tree, count the number of uni-value subtrees.
+>
+>A Uni-value subtree means all nodes of the subtree have the same value.
+>
+>For example:
+>Given binary tree,
+
+<pre>
+              5
+             / \
+            1   5
+           / \   \
+          5   5   5
+return 4.
+</pre>
+
+At first confusing about what is subtree. If the result of the above example is 4, then the subtree's meaning should be :
+start from a node, the node and all of it's children construct the subtree.
+
+```java
+public int countUnivalSubtrees(TreeNode root) {
+    int[] res = new int[1];
+    count(res, root);
+    return res[0];
+}
+private boolean count(int[] res, TreeNode root) {
+    if (root == null) {
+        return true;
+    }
+    boolean l = count(res, root.left);
+    boolean r = count(res, root.right);
+    if ((l && r) && (root.left == null || root.val == root.left.val) && (root.right == null || root.right.val == root.val)) {
+        res[0]++;
+        return true;
+    }
+    return false;
+}
+```
+
+
+<br>
+<br>
+###251 Flatten 2D Vector
+
+>Implement an iterator to flatten a 2d vector.
+>
+>For example,
+>Given 2d vector =
+>
+>[
+>  [1,2],
+>  [3],
+>  [4,5,6]
+>]
+>By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,2,3,4,5,6].
+
+**Native solution with two pointers:**: 
+
+```java
+public class Vector2D {
+    private List<List<Integer>> vec2d;
+    private int row = 0;
+    private int col = 0;
+    public Vector2D(List<List<Integer>> vec2d) {
+        this.vec2d = vec2d;
+    }
+
+    public int next() {
+        if (!hasNext()) {
+            return -1;
+        }
+        int res = vec2d.get(row).get(col++);
+        if (col == vec2d.get(row).size() && row != vec2d.size() - 1) {
+            row++;
+            col = 0;
+        }
+        return res;
+    }
+
+    public boolean hasNext() {
+        while (row <= vec2d.size() - 1 && col >= vec2d.get(row).size()) {
+            row++;
+        }
+        if (vec2d.size() == 0 || row > vec2d.size() - 1 || (row == vec2d.size() - 1 && col > vec2d.get(vec2d.size() - 1).size() - 1)) {
+            return false;
+        }
+        return true;
+    }
+}
+```
+
+
+**Solution 2, use java Iterator**:
+```java
+public class Vector2D {
+    private Iterator<List<Integer>> row;
+    private Iterator<Integer> col;
+    public Vector2D(List<List<Integer>> vec2d) {
+        this.row = vec2d.iterator();
+    }
+
+    public int next() {
+        if (!hasNext()) {
+            return -1;
+        }
+        return col.next();
+    }
+
+    public boolean hasNext() {
+        while ((col == null || (!col.hasNext())) && row.hasNext()) {
+            col = row.next().iterator();
+        }
+        return col != null && col.hasNext();
+    }
+}
+```
+<br>
+<br>
+###252 Meeting Rooms
+
+>Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), determine if a person could attend all meetings.
+>
+>For example,
+>Given [[0, 30],[5, 10],[15, 20]],
+>return false.
+
+```java
+public boolean canAttendMeetings(Interval[] intervals) {
+    if (intervals.length <= 1) {
+        return true;
+    }
+    Arrays.sort(intervals, new Comparator<Interval>() {
+       public int compare(Interval i1, Interval i2) {
+           return i1.start - i2.start;
+       } 
+    });
+    for (int i = 1; i < intervals.length; i++) {
+        if (intervals[i].start < intervals[i - 1].end) {
+            return false;
+        }
+    }
+    return true;
+}
+```
+
+
+
+
+<br>
+<br>
+
+###253 Meeting Rooms II
+
+>Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), find the minimum number of conference rooms required.
+>
+>For example,
+>Given [[0, 30],[5, 10],[15, 20]],
+>return 2.
+
+**Solution 1** Use treemap to store the timeline. Start an interval, room++, end of a interval room--. Store the max room numbers during the process.
+
+```java
+public int minMeetingRooms(Interval[] intervals) {
+    TreeMap<Integer, Integer> roomsMap = new TreeMap<>();
+    for (Interval interval : intervals) {
+        Integer start = roomsMap.get(interval.start);
+        roomsMap.put(interval.start, start == null ? 1 : start + 1);
+        Integer end = roomsMap.get(interval.end);
+        roomsMap.put(interval.end, end == null ? -1 : end - 1);
+    }
+    int res = 0;
+    int temp = 0;
+    for (Map.Entry<Integer, Integer> entry : roomsMap.entrySet()) {
+        temp += entry.getValue();
+        res = Math.max(res, temp);
+    }
+    return res;
+}
+```
+
+**Solution**: combine unoverlapping intervals. The total number of result intervals is the min room number.
+
+Note that in the below solution, when use priorityqueue and modify the value of top elements, we can not just modify it. We need to poll, change, offer again. Otherwise, simply change the value the priorityqueue will not reajust the order. 
+
+```java
+    public int minMeetingRooms(Interval[] intervals) {
+        if (intervals == null || intervals.length == 0) {
+            return 0;
+        }
+        Arrays.sort(intervals, new Comparator<Interval>() {
+           public int compare(Interval i1, Interval i2) {
+               return i1.start - i2.start;
+           } 
+        });
+        PriorityQueue<Interval> minHeap = new PriorityQueue<>(new Comparator<Interval>() {
+            public int compare(Interval el1, Interval el2) {
+                return el1.end - el2.end;
+            }
+        });
+        minHeap.offer(intervals[0]);
+        for (int i = 1; i < intervals.length; i++) {
+            Interval cur = minHeap.poll();
+            if (intervals[i].start >= cur.end) {
+                cur.end = intervals[i].end;
+            } else {
+                minHeap.offer(intervals[i]);
+            }
+            minHeap.offer(cur);
+        }
+        return minHeap.size();
+    }
+```
+
+<br>
+<br>
+
+###254 Factor Combinations
+
+>Numbers can be regarded as product of its factors. For example,
+>
+>8 = 2 x 2 x 2;
+>  = 2 x 4.
+>Write a function that takes an integer n and return all possible combinations of its factors.
+>
+>Note: 
+>Each combination's factors must be sorted ascending, for example: The factors of 2 and 6 is [2, 6], not [6, 2].
+>You may assume that n is always positive.
+>Factors should be greater than 1 and less than n.
+>Examples: 
+>input: 1
+>output: 
+>[]
+>input: 37
+>utput: 
+>[]
+>input: 12
+>output:
+>[
+>  [2, 6],
+>  [2, 2, 3],
+>  [3, 4]
+>]
+>input: 32
+>output:
+>[
+>  [2, 16],
+>  [2, 2, 8],
+> [2, 2, 2, 4],
+> [2, 2, 2, 2, 2],
+>  [2, 4, 4],
+>  [4, 8]
+>]
+
+**Idea**: dfs and take care of the ascending order.
+
+```java
+public List<List<Integer>> getFactors(int n) {
+    List<List<Integer>> res = new ArrayList<>();
+    factors(res, n, new ArrayList<Integer>(), 2);
+    return res;
+}
+private void factors(List<List<Integer>> res, int n, List<Integer> cur, int start) {
+    if (n <= 1) {
+        if (cur.size() > 1) {
+            res.add(new ArrayList<Integer>(cur));
+        }
+        return;
+    }
+    for (int i = start; i <= n; i++) {
+        if (n % i == 0) {
+            cur.add(i);
+            factors(res, n / i, cur, i);
+            cur.remove(cur.size() - 1);
+        }
+    }
+}
+```
 
 <br>
 <br>
