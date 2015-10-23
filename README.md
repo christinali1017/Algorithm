@@ -240,6 +240,16 @@
 * [253 Meeting Rooms II](#253-meeting-rooms-ii)
 * [254 Factor Combinations](#254-factor-combinations)
 * [255 Verify Preorder Sequence in Binary Search Tree](#255-verify-preorder-sequence-in-binary-search-tree)
+* [256 Paint House](#256-paint-house)
+* [257 Binary Tree Paths](#257-binary-tree-paths)
+* [258 Add Digits](#258-add-digits)
+* [259 3Sum Smaller](#259-3sum-smaller)
+* [260 Single Number III](#260-single-number-iii)
+* [261 Graph Valid Tree](#261-graph-valid-tree)
+* [263 Ugly Number](#263-ugly-number)
+* [264 Ugly Number II](#264-ugly-number-ii)
+* [265 Paint House II](#265-paint-house-ii)
+* [266 Palindrome Permutation](#266-palindrome-permutation)
 
 
 ###Others
@@ -18923,6 +18933,520 @@ public boolean verifyPreorder(int[] preorder) {
 <br>
 <br>
 
+###256 Paint House
+
+>There are a row of n houses, each house can be painted with one of the three colors: red, blue or green. The cost of painting each house with a certain color is different. You have to paint all the houses such that no two adjacent houses have the same color.
+>
+>The cost of painting each house with a certain color is represented by a n x 3 cost matrix. For example, costs[0][0] is the cost of painting house 0 with color red; costs[1][2] is the cost of painting house 1 with color green, and so on... Find the minimum cost to paint all houses.
+
+**DP**: we can also reduce the O(n) space to O(1)
+
+```java
+public int minCost(int[][] costs) {
+    if (costs.length == 0) {
+        return 0;
+    }
+    int[][] dp = new int[costs.length][3];
+    for (int i = 0; i < costs.length; i++) {
+        if (i == 0) {
+            dp[i][0] = costs[i][0];
+            dp[i][1] = costs[i][1];
+            dp[i][2] = costs[i][2];
+        } else {
+            dp[i][0] = Math.min(dp[i - 1][1], dp[i - 1][2]) + costs[i][0];
+            dp[i][1] = Math.min(dp[i - 1][0], dp[i - 1][2]) + costs[i][1];
+            dp[i][2] = Math.min(dp[i - 1][1], dp[i - 1][0]) + costs[i][2];
+        }
+    }
+    return Math.min(Math.min(dp[costs.length - 1][0], dp[costs.length - 1][1]), dp[costs.length - 1][2]);
+}
+```
+
+**O(1) space:**
+
+```java
+public int minCost(int[][] costs) {
+    if (costs.length == 0) {
+        return 0;
+    }
+    int num1 = costs[0][0];
+    int num2 = costs[0][1];
+    int num3 = costs[0][2];
+    for (int i = 1; i < costs.length; i++) {
+        int saveNum1 = num1;
+        int saveNum2 = num2;
+        num1 = Math.min(num2, num3) + costs[i][0];
+        num2 = Math.min(saveNum1, num3) + costs[i][1];
+        num3 = Math.min(saveNum2, saveNum1) + costs[i][2];
+    }
+    return Math.min(Math.min(num1, num2), num3);
+}
+```
+
+
+<br>
+<br>
+
+###257 Binary Tree Paths
+
+>Given a binary tree, return all root-to-leaf paths.
+
+<pre>
+For example, given the following binary tree:
+
+   1
+ /   \
+2     3
+ \
+  5
+All root-to-leaf paths are:
+
+["1->2->5", "1->3"]
+</pre>
+
+**Solution 1** DFS, use StringBuilder store path
+
+```java
+public List<String> binaryTreePaths(TreeNode root) {
+    List<String> res = new ArrayList<>();
+    paths(res, root, new StringBuilder());
+    return res;
+}
+private void paths(List<String> res, TreeNode root, StringBuilder sb) {
+    if (root == null) {
+        return;
+    }
+    sb.append(sb.length() == 0 ? root.val : "->" + root.val);
+    if (root.left == null && root.right == null) {
+        res.add(sb.toString());
+        return;
+    }
+    if (root.left != null) {
+        int index = sb.length();
+        paths(res, root.left, sb);
+        sb = new StringBuilder(sb.substring(0, index));
+    }
+    if (root.right != null) {
+        int index = sb.length();
+        paths(res, root.right, sb);
+    }
+}
+```
+
+
+**Solution 2** DFS, use String store path
+
+```java
+public List<String> binaryTreePaths(TreeNode root) {
+    List<String> res = new ArrayList<>();
+    paths(res, root, "");
+    return res;
+}
+private void paths(List<String> res, TreeNode root, String s) {
+    if (root == null) {
+        return;
+    }
+    s += s.length() == 0 ? root.val : "->" + root.val;
+    if (root.left == null && root.right == null) {
+        res.add(s) ;
+        return;
+    }
+    paths(res, root.left, s);
+    paths(res, root.right, s);
+}
+```
+
+**Solution 3** : DFS
+
+```java
+public List<String> binaryTreePaths(TreeNode root) {
+    List<String> res = new ArrayList<>();
+    if (root == null) {
+        return res;
+    }
+    if (root.left == null && root.right == null) {
+        res.add(root.val + "") ;
+        return res;
+    }
+    for (String s : binaryTreePaths(root.left)) {
+        res.add(root.val + "->" + s);
+    }
+    for (String s : binaryTreePaths(root.right)) {
+        res.add(root.val + "->" + s);
+    }
+    return res;
+}
+```
+
+
+<br>
+<br>
+
+###258 Add Digits
+
+>Given a non-negative integer num, repeatedly add all its digits until the result has only one digit.
+>
+>For example:
+>
+>Given num = 38, the process is like: 3 + 8 = 11, 1 + 1 = 2. Since 2 has only one digit, return it.
+>
+>Follow up:
+>Could you do it without any loop/recursion in O(1) runtime?
+
+
+**Solution**: with loop:
+
+```java
+public int addDigits(int num) {
+    while (num >= 10) {
+        int temp = 0;
+        while (num > 0) {
+            temp += num % 10;
+            num /= 10;
+        }
+        num = temp;
+    }
+    return num;
+}
+```
+
+**It can be calculated without loop or recursion**: https://en.wikipedia.org/wiki/Digital_root
+
+It helps to see the digital root of a positive integer as the position it holds with respect to the largest multiple of 9 less than it. For example, the digital root of 11 is 2, which means that 11 is the second number after 9. Likewise, the digital root of 2035 is 1, which means that 2035 − 1 is a multiple of 9. If a number produces a digital root of exactly 9, then the number is a multiple of 9.
+
+Thus we get the following solution:
+
+```java
+public int addDigits(int num) {
+    return (num - 1) % 9 + 1;
+}
+```
+
+
+<br>
+<br>
+
+###259 3Sum Smaller
+
+>Given an array of n integers nums and a target, find the number of index triplets i, j, k with 0 <= i < j < k < n that satisfy the condition nums[i] + nums[j] + nums[k] < target.
+>
+>For example, given nums = [-2, 0, 1, 3], and target = 2.
+>
+>Return 2. Because there are two triplets which sums are less than 2:
+>
+>[-2, 0, 1]
+>[-2, 0, 3]
+>Follow up:
+>Could you solve it in O(n2) runtime?
+
+**Idea**: three pointers. current i, l= i + 1, r = length - 1. Just need to take care when nums[i] + nums[l] + nums[r] < target, the result count should plus r - l other than 1.
+
+```java
+public int threeSumSmaller(int[] nums, int target) {
+    int res = 0;
+    Arrays.sort(nums);
+    for (int i = 0; i <= nums.length - 3; i++) {
+        res += getCount(nums, i, target);
+    }
+    return res;
+}
+private int getCount(int[] nums, int i, int target) {
+    int l = i + 1;
+    int r = nums.length - 1;
+    int res = 0;
+    while (l < r) {
+        if (nums[i] + nums[l] + nums[r] < target) {
+            res += r - l;
+            l++;
+        } else {
+            r--;
+        }
+    }
+    return res;
+}
+```
+
+<br>
+<br>
+###260 Single Number III
+
+>Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
+>
+>For example:
+>
+>Given nums = [1, 2, 1, 3, 2, 5], return [3, 5].
+>
+>Note:
+>The order of the result is not important. So in the above example, [5, 3] is also correct.
+Your algorithm should run in linear runtime complexity. Could you implement it using only constant space complexity?
+
+**Idea**: find a bit that the two numbers differ. This can be done by xor all numbers. Then partition the numbers into two group based on this different bit, the two numbers we need to find must in two different groups and all pairs should in the same group. 
+
+```java
+public int[] singleNumber(int[] nums) {
+    int xor = 0;
+    for (int num : nums) {
+        xor ^= num;
+    }
+    int bit = Integer.lowestOneBit(xor);
+    int[] res = new int[2];
+    for (int num : nums) {
+        if ((num & bit) == 0) {
+            res[0] ^= num;
+        } else {
+            res[1] ^= num;
+        }
+    }
+    return res;
+}
+```
+
+
+<br>
+<br>
+
+
+###261 Graph Valid Tree
+
+>Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a function to check whether these edges make up a valid tree.
+>
+>for example:
+>
+>Given n = 5 and edges = [[0, 1], [0, 2], [0, 3], [1, 4]], return true.
+>
+>Given n = 5 and edges = [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]], return false.
+
+**Idea**: Use[Union find](http://www.wishyouhappy.net/2015/10/22/Union%20Find/) to check if cycle exist. Also, check if edges = nodes - 1. 
+
+
+
+```java
+public boolean validTree(int n, int[][] edges) {
+    int[] ids = new int[n];
+    for (int i = 0; i < n; i++) {
+        ids[i] = i;
+    }
+    for (int i = 0; i < edges.length; i++) {
+        int root1 = root(ids, edges[i][0]);
+        int root2 = root(ids, edges[i][1]);
+        if (root1 == root2) { //find
+            return false;
+        }
+        ids[root1] = root2; //union
+    }
+    return n - 1 == edges.length;
+}
+private int root(int[] ids, int i) {
+    while (i != ids[i]) {
+        i = ids[i];
+    }
+    return i;
+}
+```
+
+<br>
+<br>
+
+###263 Ugly Number
+
+>Write a program to check whether a given number is an ugly number.
+>
+>Ugly numbers are positive numbers whose prime factors only include 2, 3, 5. For example, 6, 8 are ugly while 14 is not ugly since it includes another prime factor 7.
+>
+>Note that 1 is typically treated as an ugly number.
+
+**Recursion**:
+
+```java
+public boolean isUgly(int num) {
+    if (num <= 0) {
+        return false;
+    } else if (num <= 3) {
+        return true;
+    }
+    return (num % 2 == 0 && isUgly(num / 2)) || (num % 3 == 0 && isUgly(num / 3))
+            || (num % 5 == 0 && isUgly(num / 5));
+}
+```
+
+**Iterative**:
+
+```java
+public boolean isUgly(int num) {
+    if (num <= 0) {
+        return false;
+    }
+    int[] factors = {2, 3, 5};
+    for (int i : factors) {
+        while (num % i == 0) {
+            num /= i;
+        }
+    }
+    return num == 1;
+}
+```
+
+
+<br>
+<br>
+
+###264 Ugly Number II
+
+>Write a program to find the n-th ugly number.
+>
+>Ugly numbers are positive numbers whose prime factors only include 2, 3, 5. For example, 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 is the sequence of the first 10 ugly numbers.
+>
+>Note that 1 is typically treated as an ugly number.
+
+**Idea**: select current smallest ugly element from base2 * 2, base3 * 3, base5 * 5.
+
+**Note**: need to ne careful, since 2 * 3 == 3 * 2, etc. when increase the base2, base3, base5's indices, we should use if, if, other than if else if. Otherwise, we would have duplicate ugly number.
+
+```java
+public int nthUglyNumber(int n) {
+    if (n <= 0) {
+        throw new IllegalArgumentException("Input parameter is not valid");
+    }
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    List<Integer> res = new ArrayList<>();
+    res.add(1);
+    while (res.size() < n) {
+        int next = Math.min(res.get(i) * 2, Math.min(res.get(j) * 3, res.get(k) * 5));
+        res.add(next);
+        if (res.get(i) * 2 == next) {
+            i++;
+        }
+        if (res.get(j) * 3 == next) {
+            j++;
+        }
+        if (res.get(k) * 5 == next) {
+            k++;
+        }
+    }
+    return res.get(res.size() - 1);
+}
+```
+
+
+<br>
+<br>
+###265 Paint House II
+
+>There are a row of n houses, each house can be painted with one of the k colors. The cost of painting each house with a certain color is different. You have to paint all the houses such that no two adjacent houses have the same color.
+>
+>The cost of painting each house with a certain color is represented by a n x k cost matrix. For example, costs[0][0] is the cost of painting house 0 with color 0; costs[1][2] is the cost of painting house 1 with color 2, and so on... Find the minimum cost to paint all houses.
+>
+>Note:
+>All costs are positive integers.
+>
+>Follow up:
+>Could you solve it in O(nk) runtime?
+
+**Solution based on paint house**: time O(n * k^2)
+
+```java
+public int minCostII(int[][] costs) {
+    if (costs.length == 0) {
+        return 0;
+    }
+    int[][] dp = new int[costs.length][costs[0].length];
+    for (int i = 0; i < costs.length; i++) {
+        for (int j = 0; j < costs[0].length; j++) {
+            dp[i][j] = i == 0 ? costs[i][j] : getMin(dp, i - 1, j) + costs[i][j];
+        }
+    }
+    return getMin(dp, dp.length - 1, dp[0].length);
+}
+private int getMin(int[][] dp, int house, int color) {
+    int res = Integer.MAX_VALUE;
+    for (int i = 0; i < dp[house].length; i++) {
+        if (i == color) {
+            continue;
+        }
+        res = Math.min(res, dp[house][i]);
+    }
+    return res;
+}
+```
+
+**O(n * k) solution**: Use two variable to maintain min and second min, so we don't need to get the minimum for each loop. 
+
+```java
+public int minCostII(int[][] costs) {
+    if (costs.length == 0) {
+        return 0;
+    }
+    int minIndex = -1;
+    int nextMinIndex = -1;
+    int[][] dp = new int[costs.length][costs[0].length];
+    for (int i = 0; i < costs.length; i++) {
+        int preMinIndex = minIndex;
+        int preNextMinIndex = nextMinIndex;
+        minIndex = -1;
+        nextMinIndex = -1;
+        for (int j = 0; j < costs[0].length; j++) {
+            if (i == 0) {
+                dp[i][j] = costs[i][j];
+            } else {
+                if (j == preMinIndex) {
+                    dp[i][j] = dp[i - 1][preNextMinIndex] + costs[i][j];
+                } else {
+                    dp[i][j] = dp[i - 1][preMinIndex] + costs[i][j];
+                }
+            } 
+            if (minIndex < 0 || dp[i][j] < dp[i][minIndex]) {
+                nextMinIndex = minIndex;
+                minIndex = j;
+            } else if (nextMinIndex < 0 || dp[i][j] < dp[i][nextMinIndex]) {
+                nextMinIndex = j;
+            }
+        }
+    }
+    return dp[dp.length - 1][minIndex];
+}
+```
+
+
+<br>
+<br>
+###266 Palindrome Permutation
+
+>Given a string, determine if a permutation of the string could form a palindrome.
+>
+>For example,
+>"code" -> False, "aab" -> True, "carerac" -> True.
+
+**For a valid palindrome, the character appear odd times should only be one in the string.**
+
+```java
+public boolean canPermutePalindrome(String s) {
+    Map<Character, Integer> map = new HashMap<>();
+    for (int i = 0; i < s.length(); i++) {
+        Integer count = map.get(s.charAt(i));
+        if (count == null) {
+            map.put(s.charAt(i), 1);
+        } else {
+            map.put(s.charAt(i), count + 1);
+        }
+    }
+    int num = 0;
+    for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+        if (entry.getValue() % 2 != 0) {
+            num++;
+        }
+        if (num >= 2) {
+            return false;
+        }
+    }
+    return true;
+}
+
+```
+
+<br>
+<br>
 
 ##Similar questions from other sources.
 
