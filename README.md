@@ -250,6 +250,15 @@
 * [264 Ugly Number II](#264-ugly-number-ii)
 * [265 Paint House II](#265-paint-house-ii)
 * [266 Palindrome Permutation](#266-palindrome-permutation)
+* [267 Palindrome Permutation II](#267-palindrome-permutation-ii)
+* [268 Missing Number](#268-missing-number)
+* [269 Alien Dictionary](#269-alien-dictionary)
+* [270 Closest Binary Search Tree Value](#270-Closest Binary Search Tree Value)
+* [271 Encode and Decode Strings](#271-encode-and-encode-strings)
+* [272 Closest Binary Search Tree Value II](#270-Closest Binary Search Tree Value II)
+* [273 Integer to English Words](#273-integer-to-english-words)
+* [274 H-Index](#274-h-index)
+* [275 H-Index II](#275-h-index-ii)
 
 
 ###Others
@@ -19443,6 +19452,567 @@ public boolean canPermutePalindrome(String s) {
     return true;
 }
 
+```
+
+<br>
+<br>
+
+###267 Palindrome Permutation II
+
+>Given a string s, return all the palindromic permutations (without duplicates) of it. Return an empty list if no palindromic permutation could be form.
+>
+>For example:
+>
+>Given s = "aabb", return ["abba", "baab"].
+>
+>Given s = "abc", return [].
+
+**Idea**: First check if it can form a palindrome. Then use dfs to generate palindrome. Remember one the odd number character should always appear in middle. 
+
+```java
+    public List<String> generatePalindromes(String s) {
+        List<String> res = new ArrayList<>();
+        Map<Character, Integer> map = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
+        if (canPermutePalindrome(s, map, sb)) {
+            if (sb.length() != 0) {
+                map.put(sb.charAt(0), map.get(sb.charAt(0)) - 1);
+            }
+            getPalindromes(map, res, sb, s.length());
+        }
+        return res;
+    }
+    private void getPalindromes(Map<Character, Integer> map, List<String> res, StringBuilder sb, int len) {
+        if (sb.length() == len) {
+            res.add(sb.toString());
+            return;
+        }
+        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+            if (entry.getValue() <= 0) {
+                continue;
+            }
+            entry.setValue(entry.getValue() - 2);
+            sb.insert(0, entry.getKey()).append(entry.getKey());
+            getPalindromes(map, res, sb, len);
+            sb.deleteCharAt(0).deleteCharAt(sb.length() - 1);
+            entry.setValue(entry.getValue() + 2);
+        }
+    }
+    private boolean canPermutePalindrome(String s, Map<Character, Integer> map, StringBuilder sb) {
+        for (int i = 0; i < s.length(); i++) {
+            Integer count = map.get(s.charAt(i));
+            if (count == null) {
+                map.put(s.charAt(i), 1);
+            } else {
+                map.put(s.charAt(i), count + 1);
+            }
+        }
+        int num = 0;
+        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+            if (entry.getValue() % 2 != 0) {
+                num++;
+                sb.append(entry.getKey());
+            }
+            if (num >= 2) {
+                return false;
+            }
+        }
+        return true;
+    }
+```
+
+
+<br>
+<br>
+###268 Missing Number
+
+>Given an array containing n distinct numbers taken from 0, 1, 2, ..., n, find the one that is missing from the array.
+>
+>For example,
+Given nums = [0, 1, 3] return 2.
+>
+>Note:
+>Your algorithm should run in linear runtime complexity. Could you implement it using only constant extra space complexity?
+
+**Solution 1**: Move number to right index. 
+
+```java
+public int missingNumber(int[] nums) {
+    for (int i = 0; i < nums.length; i++) {
+        if (i != nums[i]) {
+            if (nums[i] < nums.length) {
+                int temp = nums[nums[i]];
+                nums[nums[i]] = nums[i];
+                nums[i] = temp;
+                i--;
+            } 
+        }
+    }
+    for (int i = 0; i < nums.length; i++) {
+        if (nums[i] != i) {
+            return i;
+        }
+    }
+    return nums.length;
+}
+```
+
+**Solution 2**: Xor, same idea with single number.
+
+```java
+public int missingNumber(int[] nums) {
+    int res = 0;
+    for (int i = 0; i < nums.length; i++) {
+        res ^= nums[i];
+        res ^= i;
+    }
+    return res ^ nums.length;
+}
+```
+
+**Solution 3**: Sum
+
+```java
+public int missingNumber(int[] nums) {
+    int res = 0;
+    for (int num : nums) {
+        res += num;
+    }
+    return nums.length * (nums.length + 1) / 2 - res;
+}
+```
+<br>
+<br>
+
+
+###269 Alien Dictionary
+>There is a new alien language which uses the latin alphabet. However, the order among letters are unknown to you. You receive a list of words from the dictionary, where words are sorted lexicographically by the rules of this new language. Derive the order of letters in this language.
+>
+>For example,
+>Given the following words in dictionary,
+>
+[
+  "wrt",
+  "wrf",
+  "er",
+  "ett",
+  "rftt"
+]
+>
+>The correct order is: "wertf".
+>
+>Note:
+>You may assume all letters are in lowercase.
+>If the order is invalid, return an empty string.
+>There may be multiple valid order of letters, return any one of them is fine.
+
+**Topological sort**: Remember to check if the order is valid!
+
+
+```java
+    public String alienOrder(String[] words) {
+        Map<Character, Set<Character>> graph = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            for (int j = 0; j < words[i].length(); j++) {
+                if (!graph.containsKey(words[i].charAt(j))) {
+                    graph.put(words[i].charAt(j), new HashSet<Character>());
+                }
+            }
+            setOrder(graph, words, i);
+        }
+        return topologicalSort(graph);
+    }
+    
+    private String topologicalSort(Map<Character, Set<Character>> graph) {
+        Map<Character, Integer> inDegree = new HashMap<>();
+        for (Map.Entry<Character, Set<Character>> entry : graph.entrySet()) {
+            for (char node : entry.getValue()) {
+                Integer in = inDegree.get(node);
+                inDegree.put(node, in == null ? 1 : in + 1);
+            }
+        }
+        Queue<Character> queue = new LinkedList<>();
+        for (Map.Entry<Character, Set<Character>> entry : graph.entrySet()) {
+            if (!inDegree.containsKey(entry.getKey())) {
+                queue.offer(entry.getKey());
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        while (!queue.isEmpty()) {
+            char node = queue.poll();
+            sb.append(node);
+            for (char neighbor : graph.get(node)) {
+                inDegree.put(neighbor, inDegree.get(neighbor) - 1);
+                if (inDegree.get(neighbor) == 0) {
+                    queue.offer(neighbor);
+                }
+            }
+        }
+        //Check if valid
+        for (int val : inDegree.values()) {
+            if (val != 0) {
+                return "";
+            }
+        }
+        return sb.toString();
+    }
+    
+    private void setOrder(Map<Character, Set<Character>> graph, String[] words, int index) {
+        if (index <= 0) {
+            return;
+        }
+        for (int i = 0, len1 = words[index].length(), len2 = words[index - 1].length(); i < len1 && i < len2; i++) {
+            char c1 = words[index - 1].charAt(i);
+            char c2 = words[index].charAt(i);
+            if (c1 != c2) {
+                if (!graph.get(c1).contains(c2)) {
+                    graph.get(c1).add(c2);
+                }
+                break;
+            }
+        }
+    }
+```
+<br>
+<br>
+###270 Closest Binary Search Tree Value
+
+>Given a non-empty binary search tree and a target value, find the value in the BST that is closest to the target.
+>
+>Given target value is a floating point.
+You are guaranteed to have only one unique value in the BST that is closest to the target.
+
+**Binary search**:
+
+```java
+public int closestValue(TreeNode root, double target) {
+    int res = root.val;
+    while (root != null) { 
+        if (Math.abs(target - res) > Math.abs(target - root.val)) {
+            res = root.val;
+        }
+        if (root.val < target) {
+            root = root.right;
+        } else {
+            root = root.left;
+        }
+    }
+    return res;
+}
+```
+
+<br>
+<br>
+###271 Encode and Decode Strings
+
+>Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and is decoded back to the original list of strings.
+>
+>Machine 1 (sender) has the function:
+>
+
+<pre>
+string encode(vector<string> strs) {
+  // ... your code
+  return encoded_string;
+}
+Machine 2 (receiver) has the function:
+vector<string> decode(string s) {
+  //... your code
+  return strs;
+}
+
+</pre>
+>So Machine 1 does:
+>
+>string encoded_string = encode(strs);
+and Machine 2 does:
+>
+>vector<string> strs2 = decode(encoded_string);
+>strs2 in Machine 2 should be the same as strs in Machine 1.
+>
+>Implement the encode and decode methods.
+>
+>Note:
+>The string may contain any possible characters out of 256 valid ascii characters. Your algorithm should be generalized enough to work on any possible characters.
+>Do not use class member/global/static variables to store states. Your encode and decode algorithms should be stateless.
+Do not rely on any library method such as eval or serialize methods. You should implement your own encode/decode algorithm.
+
+**Idea**: The solution below is simply concat the strings and record the length.
+
+- The first character stores the length of (length of string)
+- Then store the length of string
+- Store the actual string.
+
+We can increase the number of characters to store the length of the (length of string) if in some use cases the length is really long.
+
+```java
+public class Codec {
+    // Encodes a list of strings to a single string.
+    public String encode(List<String> strs) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : strs) {
+            long len = s.length();
+            sb.append(getDigits(len)).append("" + len).append(s);
+        }
+        return sb.toString();
+    }
+    
+    private int getDigits(long len) {
+        if (len == 0) {
+            return 1;
+        }
+        int res = 0;
+        while (len > 0) {
+            res++;
+            len /= 10;
+        }
+        return res;
+    }
+
+    // Decodes a single string to a list of strings.
+    public List<String> decode(String s) {
+        List<String> res = new ArrayList<>();
+        int i = 0;
+        while (i < s.length()) {
+            int digits = s.charAt(i++) - '0';
+            int len = 0;
+            for (int j = 0; j < digits; j++) {
+                len = len * 10 + s.charAt(i + j) - '0';
+            }
+            res.add(s.substring(i + digits, i + digits + len));
+            i += digits + len;
+        }
+        return res;
+    }
+}
+```
+
+<br>
+<br>
+###272 Closest Binary Search Tree Value II
+
+>Given a non-empty binary search tree and a target value, find k values in the BST that are closest to the target.
+>
+>Note:
+>Given target value is a floating point.
+>You may assume k is always valid, that is: k ≤ total nodes.
+>You are guaranteed to have only one unique set of k values in the BST that are closest to the target.
+>Follow up:
+>ssume that the BST is balanced, could you solve it in less than O(n) runtime (where n = total nodes)?
+
+**Solution 1**: Inorder traverse, then find the element closest to the target. From the element closest to target, use two pointers to move left and right separately.
+
+**Solution 2**: Traverse the tree inorder and reverse inorder to find tree nodes smaller than target and tree nodes larger or equal than the target. Then use two pointers like the solution 1 to get the k nodes.
+
+**Solution 3**: Each time get the largest element smaller than target and smallest element larger than target, compare these two values and add one to result, until we get the k nodes. If we have parent pointer, this is a good approach. If tree is balanced, the time complexity is K * log(n)
+
+**Here is code for solution 2**:
+
+```java
+public List<Integer> closestKValues(TreeNode root, double target, int k) {
+    Deque<Integer> preStack = new LinkedList<>();
+    Deque<Integer> sucStack = new LinkedList<>();
+    inorder(root, target, preStack, false);
+    inorder(root, target, sucStack, true);
+    List<Integer> res = new ArrayList<>();
+    while (k-- > 0) {
+        if (preStack.isEmpty()) {
+            res.add(sucStack.pop());
+        } else if (sucStack.isEmpty()) {
+            res.add(preStack.pop());
+        } else if (Math.abs(target - preStack.peek()) < Math.abs(target - sucStack.peek())){
+            res.add(preStack.pop());
+        } else {
+            res.add(sucStack.pop());
+        }
+    }
+    return res;
+}
+private void inorder(TreeNode root, double target, Deque<Integer> stack, boolean reverse) {
+    if (root == null) {
+        return;
+    }
+    inorder(reverse ? root.right : root.left, target, stack, reverse);
+    if ((!reverse && root.val > target) || (reverse && root.val <= target)) {
+        return;
+    }
+    stack.push(root.val);
+    inorder(reverse ? root.left : root.right, target, stack, reverse);
+}
+```
+
+
+
+<br>
+<br>
+###273 Integer to English Words
+>Convert a non-negative integer to its english words representation. Given input is guaranteed to be less than 231 - 1.
+>
+>For example,
+>123 -> "One Hundred Twenty Three"
+>12345 -> "Twelve Thousand Three Hundred Forty Five"
+>1234567 -> "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+
+Note: 
+
+- Each word is separated with space
+- Take care of Zeros, it has different ways to handle space.
+- Remember to trim the unnecessary spaces.
+
+```java
+public String numberToWords(int num) {
+    if (num == 0) {
+        return "Zero";
+    }
+    String[] thousands = {"", "Thousand", "Million", "Billion"};
+    String res = "";
+    int i = 0;
+    while (num > 0) {
+        if (num % 1000 != 0) {
+            res = hundredToString(num % 1000) + thousands[i] + " " + res;
+        }
+        num /= 1000;
+        i++;
+    }
+    return res.trim();
+}
+private String hundredToString(int num) {
+    String[] twenty = {"Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",                     "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+                       "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    String[] ten = {"", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+    String res = "";
+    if (num / 100 != 0) {
+        res += twenty[num / 100] + " Hundred ";
+        num %= 100;
+    }
+    if (num / 10 >= 2) {
+        res += ten[num / 10];
+        num %= 10;
+        res += num == 0 ? " " : " " + twenty[num % 10] + " ";
+    } else {
+        res += num == 0 ? "" : twenty[num] + " ";
+    }
+    return res;
+}
+```
+
+<br>
+<br>
+
+
+
+###274 H-Index
+
+>Given an array of citations (each citation is a non-negative integer) of a researcher, write a function to compute the researcher's h-index.
+
+According to the definition of h-index on Wikipedia: "A scientist has index h if h of his/her N papers have at least h citations each, and the other N − h papers have no more than h citations each."
+
+For example, given citations = [3, 0, 6, 1, 5], which means the researcher has 5 papers in total and each of them had received 3, 0, 6, 1, 5 citations respectively. Since the researcher has 3 papers with at least 3 citations each and the remaining two with no more than 3 citations each, his h-index is 3.
+
+Note: If there are several possible values for h, the maximum one is taken as the h-index.
+
+**Solution 1**: sort. Time: O(n * logn)
+
+```java
+public int hIndex(int[] citations) {
+    Arrays.sort(citations);
+    int res = citations.length;
+    for (int i = 0; i < citations.length; i++) {
+        if (citations[i] < res) {
+            res--;
+        } else {
+            break;
+        }
+    }
+    return res;
+}
+```
+
+**Solution 2**: Binary search. Time: O(n * logn)
+
+```java
+public int hIndex(int[] citations) {
+    if (citations.length == 0) {
+        return 0;
+    }
+    int l = 0; 
+    int r = citations.length;
+    while (true) {
+        int mid = l + (r - l) / 2;
+        int less = getH(citations, mid);
+        int more = getH(citations, mid + 1);
+        if (less >= mid && more <= mid) {
+            return mid;
+        } else if (less < mid) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+}
+private int getH(int[] citations, int num) {
+    int count = 0;
+    for (int i : citations) {
+        if (i >= num) {
+            count++;
+        }
+    }
+    return count;
+}
+```
+
+**Solution 3**: Use additional array to sort the array.
+
+```java
+public int hIndex(int[] citations) {
+    int[] arr = new int[citations.length + 1];
+    for (int num : citations) {
+        if (num > citations.length) {
+            arr[citations.length]++;
+        } else {
+            arr[num]++;
+        }
+    }
+    int res = 0;
+    int h = 0;
+    for (int i = arr.length - 1; i >= 0; i--) {
+        h += arr[i];
+        if (h >= i) {
+            return i;
+        }
+    }
+    return 0;
+}
+```
+
+
+<br>
+<br>
+###275 H-Index II
+
+>Follow up for H-Index: What if the citations array is sorted in ascending order? Could you optimize your algorithm?
+
+**Idea**: binary search.
+
+```java
+public int hIndex(int[] citations) {
+    if (citations.length == 0) {
+        return 0;
+    }
+    int l = 0; 
+    int r = citations.length - 1;
+    while (l <= r) {
+        int mid = l + (r - l) / 2;
+        if (citations[mid] == citations.length - mid) {
+            return citations[mid]; 
+        } else if (citations[mid] > citations.length - mid) {
+            r = mid - 1;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return citations.length -  l;
+}
 ```
 
 <br>
