@@ -259,7 +259,27 @@
 * [273 Integer to English Words](#273-integer-to-english-words)
 * [274 H-Index](#274-h-index)
 * [275 H-Index II](#275-h-index-ii)
-
+* [276 Paint Fence](#276-Paint-fence)
+* [277 Find the Celebrity](#277-Find the Celebrity)
+* [278 First Bad Version](#278-first-bad-version)
+* [279 Perfect Squares](#279-perfect-squares)
+* [280 Wiggle Sort](#280-wiggle-sort)
+* [281 Zigzag Iterator](#281-zigzag-iterator)
+* [282 Expression Add Operators](#282-expression-add-operators)
+* [283 Move Zeroes](#283-move-zeroes)
+* [284 Peeking Iterator](#284-peeking-iterator)
+* [285 Inorder Successor in BST](#285-inorder0-successor-in-bst)
+* [286 Walls and Gates](#286-walls-and-gates)
+* [287 Find the Duplicate Number](#287-find-the-duplicate-number)
+* [288 Unique Word Abbreviation](#288-unique-word-abbreviation)
+* [289 Game of Life](#289-game-of-life)
+* [290 Word Pattern](#290-word-pattern)
+* [291 Word Pattern II](#291-word-pattern-ii)
+* [292 Nim Game](#292-nim-game)
+* [293 Flip Game](#293-flip-game)
+* [294 Flip Game II](#294-flip-game)
+* [295 Find Median from Data Stream](#295-find-median-from-data-stream)
+* [296 Best Meeting Point](#296-best-meeting-point)
 
 ###Others
 
@@ -20014,6 +20034,1024 @@ public int hIndex(int[] citations) {
     return citations.length -  l;
 }
 ```
+
+<br>
+<br>
+
+###276 Paint Fence
+
+>There is a fence with n posts, each post can be painted with one of the k colors.
+>
+>You have to paint all the posts such that no more than two adjacent fence posts have the same color.
+>
+>Return the total number of ways you can paint the fence.
+>
+>Note:
+>n and k are non-negative integers.
+
+**Idea**:
+
+- if current post use different color with previous, then we have (k - 1) color choices, no matter if previous and previous privous have the same color
+
+- if current post use same color with previous post, the only choice is that the previous's color is different with previous previous color.
+
+```java
+public int numWays(int n, int k) {
+    if (n <= 0) {
+        return 0;
+    } else if (n == 1) {
+        return k;
+    }
+    int diff = k * (k - 1);
+    int same = k;
+    for (int i = 3; i <= n; i++) {
+        int temp = diff;
+        diff = (diff + same) * (k - 1);
+        same = temp;
+    }
+    return diff + same;
+}
+```
+
+
+<br>
+<br>
+
+
+###277 Find the Celebrity
+
+>Suppose you are at a party with n people (labeled from 0 to n - 1) and among them, there may exist one celebrity. The definition of a celebrity is that all the other n - 1 people know him/her but he/she does not know any of them.
+>
+>Now you want to find out who the celebrity is or verify that there is not one. The only thing you are allowed to do is to ask questions like: "Hi, A. Do you know B?" to get information of whether A knows B. You need to find out the celebrity (or verify there is not one) by asking as few questions as possible (in the asymptotic sense).
+>
+>You are given a helper function bool knows(a, b) which tells you whether A knows B. Implement a function int findCelebrity(n), your function should minimize the number of calls to knows.
+>
+>Note: There will be exactly one celebrity if he/she is in the party. Return the celebrity's label if there is a celebrity in the party. If there is no celebrity, return -1.
+
+**Idea**: First find the possible celebrity, then check if it is celebrity.
+
+```java
+public int findCelebrity(int n) {
+    int candidate = 0;
+    for (int i = 1; i <= n - 1; i++) {
+        if (knows(candidate, i)) {
+            candidate = i;
+        }
+    }
+    for (int i = 0; i <= n - 1; i++) {
+        if (i != candidate && (!knows(i, candidate) || knows(candidate, i))) {
+            return -1;
+        }
+    }
+    return candidate;
+}
+
+```
+
+<br>
+<br>
+###278 First Bad Version](#278-first-bad-version)
+
+>You are a product manager and currently leading a team to develop a new product. Unfortunately, the latest version of your product fails the quality check. Since each version is developed based on the previous version, all the versions after a bad version are also bad.
+>
+>Suppose you have n versions [1, 2, ..., n] and you want to find out the first bad one, which causes all the following ones to be bad.
+>
+>You are given an API bool isBadVersion(version) which will return whether version is bad. Implement a function to find the first bad version. You should minimize the number of calls to the API.
+
+
+**Idea**: binary search
+
+```java
+/* The isBadVersion API is defined in the parent class VersionControl.
+      boolean isBadVersion(int version); */
+
+public class Solution extends VersionControl {
+    public int firstBadVersion(int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("Input is not valid");
+        }
+        int l = 1;
+        int r = n;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (super.isBadVersion(mid)) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
+    }
+}
+```
+
+
+<br>
+<br>
+
+###279 Perfect Squares](#279-perfect-squares)
+
+>Given a positive integer n, find the least number of perfect square numbers (for example, 1, 4, 9, 16, ...) which sum to n.
+>
+>For example, given n = 12, return 3 because 12 = 4 + 4 + 4; given n = 13, return 2 because 13 = 4 + 9.
+
+**DP solution**: Time : (n * log n)
+
+```java
+public int numSquares(int n) {
+    int[] dp = new int[n + 1];
+    dp[1] = 1;
+    for (int i = 2; i <= n; i++) {
+        dp[i] = Integer.MAX_VALUE;
+        for (int j = 1 ; j * j <= i; j++) {
+            dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+        }
+    }
+    return dp[n];
+}
+```
+
+
+<br>
+<br>
+###280 Wiggle Sort](#280-wiggle-sort)
+
+>Given an unsorted array nums, reorder it in-place such that nums[0] <= nums[1] >= nums[2] <= nums[3]....
+>
+>For example, given nums = [3, 5, 2, 1, 6, 4], one possible answer is [1, 6, 2, 5, 3, 4].
+
+**Idea**: swap adjacent elements if not fullfil the rules.
+
+```java
+public void wiggleSort(int[] nums) {
+    for (int i = 1; i < nums.length; i++) {
+        if ((i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nums[i] > nums[i - 1])) {
+            int temp = nums[i - 1];
+            nums[i - 1] = nums[i];
+            nums[i] = temp;
+        }
+    }
+}
+```
+
+A good way to replace "i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nums[i] > nums[i - 1]" from Stefan:
+
+```java
+    public void wiggleSort(int[] nums) {
+        for (int i = 1; i < nums.length; i++) {
+            if (i % 2 == 1 == nums[i] < nums[i - 1]) {
+                int temp = nums[i - 1];
+                nums[i - 1] = nums[i];
+                nums[i] = temp;
+            }
+        }
+    }
+```
+
+<br>
+<br>
+###281 Zigzag Iterator](#281-zigzag-iterator)
+
+>Given two 1d vectors, implement an iterator to return their elements alternately.
+>
+>For example, given two 1d vectors:
+>
+>v1 = [1, 2]
+>v2 = [3, 4, 5, 6]
+>By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1, 3, 2, 4, 5, 6].
+>
+>Follow up: What if you are given k 1d vectors? How well can your code be extended to such cases?
+>
+>Clarification for the follow up question - Update (2015-09-18):
+>The "Zigzag" order is not clearly defined and is ambiguous for k > 2 cases. If "Zigzag" does not look right to you, replace "Zigzag" with "Cyclic". For example, given the following input:
+>
+>[1,2,3]
+>[4,5,6,7]
+>[8,9]
+>It should return [1,4,8,2,5,9,3,6,7].
+
+
+**Primitive solution**: use two pointers point to the current index of two lists.
+
+```java
+public class ZigzagIterator {
+    private int index1;
+    private int index2;
+    private List<Integer> v1;
+    private List<Integer> v2;
+    private boolean nextV1 = true;
+    
+    public ZigzagIterator(List<Integer> v1, List<Integer> v2) {
+        this.v1 = v1;
+        this.v2 = v2;
+        index1 = 0;
+        index2 = 0;
+    }
+
+    public int next() {
+        if (!hasNext()) {
+            return -1;
+        }
+        if (nextV1) {
+            if (index1 < v1.size()) {
+                nextV1 = false;
+                return v1.get(index1++);
+            } else {
+                nextV1 = false;
+                return v2.get(index2++);
+            }
+        } else {
+            if (index2 < v2.size()) {
+                nextV1 = true;
+                return v2.get(index2++);
+            } else {
+                nextV1 = true;
+                return v1.get(index1++);
+            }
+        }
+    }
+
+    public boolean hasNext() {
+        return !(index1 == v1.size() && index2 == v2.size());
+    }
+}
+```
+
+**Solution using java iterator**:
+
+```java
+public class ZigzagIterator {
+    private Iterator<Integer> i1;
+    private Iterator<Integer> i2;
+    
+    public ZigzagIterator(List<Integer> v1, List<Integer> v2) {
+        i1 = v1.iterator();
+        i2 = v2.iterator();
+    }
+
+    public int next() {
+        if (!hasNext()) {
+            return -1;
+        }
+        if (i1.hasNext()) {
+            Iterator<Integer> temp = i1;
+            i1 = i2;
+            i2 = temp;
+        }
+        return i2.next();
+    }
+
+    public boolean hasNext() {
+        return i1.hasNext() || i2.hasNext();
+    }
+}
+```
+<br>
+<br>
+###282 Expression Add Operators](#282-expression-add-operators)
+
+>Given a string that contains only digits 0-9 and a target value, return all possibilities to add binary operators (not unary) +, -, or * between the digits so they evaluate to the target value.
+>
+
+<pre>
+Examples: 
+"123", 6 -> ["1+2+3", "1*2*3"] 
+"232", 8 -> ["2*3+2", "2+3*2"]
+"105", 5 -> ["1*0+5","10-5"]
+"00", 0 -> ["0+0", "0-0", "0*0"]
+"3456237490", 9191 -> []
+</pre>
+
+**Idea**: dfs. 
+
+```java
+    public List<String> addOperators(String num, int target) {
+        List<String> res = new ArrayList<>();
+        dfs(res, num, target, 0, "", 0, 0);
+        return res;
+    }
+    /**
+     * index: index of num string
+     * s: result string formula
+     * val: current value before index
+     * preNum: previous num in the formula
+     **/
+    private void dfs(List<String> res, String num, int target, int index, String s, long val, long preNum) {
+        if (index == num.length()) {
+            if (val == target) {
+                res.add(s);
+            }
+            return;
+        }
+        for (int i = index; i < num.length(); i++) {
+            /**Start zeros is not vaid except 0, eg, 05**/
+            if (i > index && num.charAt(index) == '0') {
+                break;
+            }
+            long temp = Long.parseLong(num.substring(index, i + 1));
+            if (index == 0) {
+                dfs(res, num, target, i + 1, "" + temp, temp, temp);
+            } else {
+                dfs(res, num, target, i + 1, s + "+" + temp, val + temp, temp);
+                dfs(res, num, target, i + 1, s + "-" + temp, val - temp, -temp);
+                dfs(res, num, target, i + 1, s + "*" + temp, preNum * temp + val - preNum, preNum * temp);
+            }
+        }
+    }
+```
+<br>
+<br>
+###283 Move Zeroes](#283-move-zeroes)
+>Given an array nums, write a function to move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+>
+>For example, given nums = [0, 1, 0, 3, 12], after calling your function, nums should be [1, 3, 12, 0, 0].
+>
+>Note:
+>You must do this in-place without making a copy of the array.
+Minimize the total number of operations.
+
+```java
+public void moveZeroes(int[] nums) {
+    int i = 0;
+    for (int num : nums) {
+        if (num != 0) {
+            nums[i++] = num;
+        }
+    }
+    for (int j = i; j < nums.length; j++) {
+        nums[j] = 0;
+    }
+}
+
+```
+
+
+<br>
+<br>
+###284 Peeking Iterator](#284-peeking-iterator)
+
+>Given an Iterator class interface with methods: next() and hasNext(), design and implement a PeekingIterator that support the peek() operation -- it essentially peek() at the element that will be returned by the next call to next().
+>
+>Here is an example. Assume that the iterator is initialized to the beginning of the list: [1, 2, 3].
+>
+>Call next() gets you 1, the first element in the list.
+>
+>Now you call peek() and it returns 2, the next element. Calling next() after that still return 2.
+>
+>You call next() the final time and it returns 3, the last element. Calling hasNext() after that should return false.
+>
+>Follow up: How would you extend your design to be generic and work with all types, not just integer?
+
+**Idea**: store the next element.
+
+```java
+// Java Iterator interface reference:
+// https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html
+class PeekingIterator implements Iterator<Integer> {
+    private Integer next;
+    private Iterator<Integer> iterator;
+
+    public PeekingIterator(Iterator<Integer> iterator) {
+        this.iterator = iterator;
+        // initialize any member here.
+        if (this.iterator.hasNext()) {
+            next = this.iterator.next();
+        }
+    }
+
+    // Returns the next element in the iteration without advancing the iterator.
+    public Integer peek() {
+        return next;
+    }
+
+    // hasNext() and next() should behave the same as in the Iterator interface.
+    // Override them if needed.
+    @Override
+    public Integer next() {
+        Integer res = next;
+        if (iterator.hasNext()) {
+            next = iterator.next();
+        } else {
+            next = null;
+        }
+        return res;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return next != null;
+    }
+}
+
+```
+
+<br>
+<br>
+###285 Inorder Successor in BST](#285-inorder0-successor-in-bst)
+>Given a binary search tree and a node in it, find the in-order successor of that node in the BST.
+
+>Note: If the given node has no in-order successor in the tree, return null.
+
+```java
+public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+    if (p.right != null) {
+        TreeNode temp = p.right;
+        while (temp.left != null) {
+            temp = temp.left;
+        }
+        return temp;
+    } 
+    return succ(root, p);
+}
+private TreeNode succ(TreeNode root, TreeNode p) {
+    if (root == p) {
+        return null;
+    } else if (root.val < p.val) {
+        return succ(root.right, p);
+    } else {
+        TreeNode left = succ(root.left, p);
+        return left == null ? root : left;
+    }
+}
+```
+
+<br>
+<br>
+###286 Walls and Gates](#286-walls-and-gates)
+
+>You are given a m x n 2D grid initialized with these three possible values.
+
+<pre>
+-1 - A wall or an obstacle.
+0 - A gate.
+INF - Infinity means an empty room. We use the value 231 - 1 = 2147483647 to represent INF as you may assume that the distance to a gate is less than 2147483647.
+Fill each empty room with the distance to its nearest gate. If it is impossible to reach a gate, it should be filled with INF.
+
+For example, given the 2D grid:
+INF  -1  0  INF
+INF INF INF  -1
+INF  -1 INF  -1
+  0  -1 INF INF
+After running your function, the 2D grid should be:
+  3  -1   0   1
+  2   2   1  -1
+  1  -1   2  -1
+  0  -1   3   4
+</pre>
+
+**Idea**: Best first search
+
+```java
+public void wallsAndGates(int[][] rooms) {
+    if (rooms.length == 0 || rooms[0].length == 0) {
+        return;
+    }
+    Queue<int[]> queue = new LinkedList<>();
+    for (int i = 0; i < rooms.length; i++) {
+        for (int j = 0; j < rooms[0].length; j++) {
+            if (rooms[i][j] == 0) {
+                queue.offer(new int[] {i, j});
+            }
+        }
+    }
+    bfs(rooms, queue);
+}
+private void bfs(int[][] rooms, Queue<int[]> queue) {
+    while (!queue.isEmpty()) {
+        int[] cur = queue.poll();
+        if (cur[0] > 0 && rooms[cur[0] - 1][cur[1]] == Integer.MAX_VALUE) {
+            rooms[cur[0] - 1][cur[1]] = rooms[cur[0]][cur[1]] + 1;
+            queue.offer(new int[] {cur[0] - 1, cur[1]});
+        }
+        if (cur[0] < rooms.length - 1 && rooms[cur[0] + 1][cur[1]] == Integer.MAX_VALUE) {
+            rooms[cur[0] + 1][cur[1]] = rooms[cur[0]][cur[1]] + 1;
+            queue.offer(new int[] {cur[0] + 1, cur[1]});
+        }
+        if (cur[1] > 0 && rooms[cur[0]][cur[1] - 1] == Integer.MAX_VALUE) {
+            rooms[cur[0]][cur[1] - 1] = rooms[cur[0]][cur[1]] + 1;
+            queue.offer(new int[] {cur[0], cur[1] - 1});
+        }
+        if (cur[1] < rooms[0].length - 1 && rooms[cur[0]][cur[1] + 1] == Integer.MAX_VALUE) {
+            rooms[cur[0]][cur[1] + 1] = rooms[cur[0]][cur[1]] + 1;
+            queue.offer(new int[] {cur[0], cur[1] + 1});
+        }
+    }
+}
+```
+
+<br>
+<br>
+###287 Find the Duplicate Number](#287-find-the-duplicate-number)
+
+>Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), prove that at least one duplicate number must exist. Assume that there is only one duplicate number, find the duplicate one.
+>
+>Note:
+>You must not modify the array (assume the array is read only).
+>You must use only constant, O(1) extra space.
+>Your runtime complexity should be less than O(n2).
+>There is only one duplicate number in the array, but it could be repeated more than once.
+
+
+**Solution 1**: binary search
+
+```java
+public int findDuplicate(int[] nums) {
+    int l = 1;
+    int r = nums.length - 1;
+    while (l <= r) {
+        int mid = l + (r - l) / 2;
+        int count = getCount(nums, mid);
+        if (count > mid) {
+            r = mid - 1;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return l;
+}
+/**Get numbers <= mid**/
+private int getCount(int[] nums, int mid) {
+    int res = 0;
+    for (int num : nums) {
+        if (num <= mid) {
+            res++;
+        }
+    }
+    return res;
+}
+```
+
+**Solution 2**: find begin point in linkedlist with cycle.
+
+Explaination: [link1](http://keithschwarz.com/interesting/code/?dir=find-duplicate)
+              [link2](https://leetcode.com/discuss/61086/java-time-and-space-solution-similar-find-loop-in-linkedlist)
+
+
+
+```java
+public int findDuplicate(int[] nums) {
+    int i = 0;
+    int j = 0;
+    do {
+        i = nums[i];
+        j = nums[nums[j]];
+    } while (i != j);
+    i = 0;
+    while (i != j) {
+        i = nums[i];
+        j = nums[j];
+    }
+    return i;
+}
+```
+
+<br>
+<br>
+###288 Unique Word Abbreviation](#288-unique-word-abbreviation)
+An abbreviation of a word follows the form <first letter><number><last letter>. Below are some examples of word abbreviations:
+<pre>
+>a) it                      --> it    (no abbreviation)
+
+     1
+b) d|o|g                   --> d1g
+
+              1    1  1
+     1---5----0----5--8
+c) i|nternationalizatio|n  --> i18n
+
+              1
+     1---5----0
+d) l|ocalizatio|n          --> l10n
+Assume you have a dictionary and given a word, find whether its abbreviation is unique in the dictionary. A word's abbreviation is unique if no other word from the dictionary has the same abbreviation.
+
+Example: 
+Given dictionary = [ "deer", "door", "cake", "card" ]
+
+isUnique("dear") -> false
+isUnique("cart") -> true
+isUnique("cane") -> false
+isUnique("make") -> true
+</pre>
+
+**Idea**: HashMap
+
+```java
+public class ValidWordAbbr {
+    private Map<String, String> map;
+    public ValidWordAbbr(String[] dictionary) {
+        map = new HashMap<>();
+        for (String s : dictionary) {
+            String abbr = getAbbr(s);
+            if (!map.containsKey(abbr)) {
+                map.put(abbr, s);
+            } else {
+                map.put(abbr, abbr);
+            }
+        }
+    }
+
+    public boolean isUnique(String word) {
+        String abbr = getAbbr(word);
+        return !map.containsKey(abbr) || map.get(abbr).equals(word) ;
+    }
+    
+    private String getAbbr(String s) {
+        if (s.length() <= 2) {
+            return s;
+        } else {
+            return s.charAt(0) + "" + (s.length() - 2) + "" + s.charAt(s.length() - 1);
+        }
+    }
+}
+
+```
+
+
+<br>
+<br>
+###289 Game of Life](#289-game-of-life)
+
+>According to the Wikipedia's article: "The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970."
+>
+>Given a board with m by n cells, each cell has an initial state live (1) or dead (0). Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) using the following four rules (taken from the above Wikipedia article):
+>
+>Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+>Any live cell with two or three live neighbors lives on to the next generation.
+>Any live cell with more than three live neighbors dies, as if by over-population..
+>Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+>Write a function to compute the next state (after one update) of the board given its current state.
+>
+>Follow up: 
+>Could you solve it in-place? Remember that the board needs to be updated at the same time: You cannot update some cells first and then use their updated values to update other cells.
+>In this question, we represent the board using a 2D array. In principle, the board is infinite, which would cause problems when the active area encroaches the border of the array. How would you address these problems?
+
+
+**Solution 1** Use an additional array to store the pre state, then calculate the next state by the given rules.
+
+Time : O(m * n), Space O(m * n)
+
+```java
+
+public void gameOfLife(int[][] board) {
+    if (board.length == 0 || board[0].length == 0) {
+        return;
+    }
+    int[][] pre = new int[board.length][board[0].length];
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            pre[i][j] = board[i][j];
+        }
+    }
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            int live = getLive(pre, i, j);
+            if (pre[i][j] == 0 && live == 3) {
+                board[i][j] = 1;
+            } else if ((pre[i][j] == 1 && live > 3) || live < 2) {
+                board[i][j] = 0;
+            }
+        }
+    }
+}
+private int getLive(int[][] board, int row, int col) {
+    int live = 0;
+    for (int i = Math.max(0, row - 1); i <= Math.min(row + 1, board.length - 1); i++) {
+        for (int j = Math.max(0, col - 1); j <= Math.min(col + 1, board[0].length - 1); j++) {
+            live += board[i][j] & 1;
+        }
+    }
+    return live - (board[row][col] & 1);
+}
+```
+
+**Solution 2**: Use the second bit of each int to store the next state, and convert it back after all finished.
+
+```java
+public void gameOfLife(int[][] board) {
+    if (board.length == 0 || board[0].length == 0) {
+        return;
+    }
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            int live = getLive(board, i, j);
+            if (live == 3 || (live == 2 && board[i][j] == 1)) {
+                board[i][j] |= 2;
+            }
+        }
+    }
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            board[i][j] >>= 1;
+        }
+    }
+}
+private int getLive(int[][] board, int row, int col) {
+    int live = 0;
+    for (int i = Math.max(0, row - 1); i <= Math.min(row + 1, board.length - 1); i++) {
+        for (int j = Math.max(0, col - 1); j <= Math.min(col + 1, board[0].length - 1); j++) {
+            live += board[i][j] & 1;
+        }
+    }
+    return live - (board[row][col] & 1);
+}
+```
+
+<br>
+<br>
+###290 Word Pattern](#290-word-pattern)
+>Given a pattern and a string str, find if str follows the same pattern.
+>
+>Here follow means a full match, such that there is a **bijection** between a letter in pattern and a non-empty word in str.
+>
+>Examples:
+>pattern = "abba", str = "dog cat cat dog" should return true.
+>
+>pattern = "abba", str = "dog cat cat fish" should return false.
+>
+>pattern = "aaaa", str = "dog cat cat dog" should return false.
+>
+>pattern = "abba", str = "dog dog dog dog" should return false.
+>
+>Notes:
+You may assume pattern contains only lowercase letters, and str contains lowercase letters separated by a single space.
+
+**Note that it requires bijection, thus we need to check the match between a->b and b->a**
+
+```java
+public boolean wordPattern(String pattern, String str) {
+    String[] strs = str.split(" ");
+    if (strs.length != pattern.length()) {
+        return false;
+    }
+    Map<Character, String> map = new HashMap<>();
+    for (int i = 0; i < pattern.length(); i++) {
+        String temp = map.get(pattern.charAt(i));
+        if (temp == null) {
+            if (map.containsValue(strs[i])) {
+                return false;
+            }
+            map.put(pattern.charAt(i), strs[i]);
+        } else {
+            if (!temp.equals(strs[i])) {
+                return false;
+            }
+        }
+    } 
+    return true;
+}
+```
+<br>
+<br>
+###291 Word Pattern II](#291-word-pattern-ii)
+>Given a pattern and a string str, find if str follows the same pattern.
+>
+>Here follow means a full match, such that there is a bijection between a letter in pattern and a non-empty substring in str.
+>
+>Examples:
+>pattern = "abab", str = "redblueredblue" should return true.
+>pattern = "aaaa", str = "asdasdasdasd" should return true.
+>pattern = "aabb", str = "xyzabcxzyabc" should return false.
+>Notes:
+>You may assume both pattern and str contains only lowercase letters.
+
+
+```java
+public boolean wordPatternMatch(String pattern, String str) {
+    Map<Character, String> map = new HashMap<>();
+    return match(pattern, str, 0, 0, map);
+}
+
+private boolean match(String pattern, String str, int p, int s, Map<Character, String> map) {
+    if (p == pattern.length() || s == str.length()) {
+        return s == str.length() && p == pattern.length();
+    }
+    String temp = map.get(pattern.charAt(p));
+    if (temp != null) {
+        if (!str.startsWith(temp, s)) {
+            return false;
+        }
+        return match(pattern, str, p + 1, s + temp.length(), map);
+    }
+    for (int i = s; i < str.length(); i++) {
+        String cur = str.substring(s, i + 1);
+        if (map.containsValue(cur)) {
+            continue;
+        }
+        map.put(pattern.charAt(p), cur);
+        if (match(pattern, str, p + 1, i + 1, map)) {
+                return true;
+        }
+        map.remove(pattern.charAt(p));
+    }
+    return false;
+}
+
+```
+
+
+<br>
+<br>
+###292 Nim Game](#292-nim-game)
+
+>You are playing the following Nim Game with your friend: There is a heap of stones on the table, each time one of you take turns to remove 1 to 3 stones. The one who removes the last stone will be the winner. You will take the first turn to remove the stones.
+>
+>Both of you are very clever and have optimal strategies for the game. Write a function to determine whether you can win the game given the number of stones in the heap.
+>
+>For example, if there are 4 stones in the heap, then you will never win the game: no matter 1, 2, or 3 stones you remove, the last stone will always be removed by your friend.
+
+**Idea**:
+
+- 1 : true
+
+- 2 : true
+
+- 3 : true
+
+- 4 : false;
+
+- 5 : true;
+
+- 6 : true;
+
+- 7 : true;
+
+- 8 : false;
+
+- 9 : true;
+
+......
+
+
+**Solution 1**: 
+
+```java
+    public boolean canWinNim(int n) {
+        return !(n % 4 == 0);
+    }
+```
+
+<br>
+<br>
+
+###293 Flip Game](#293-flip-game)
+
+>You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two **consecutive** "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
+>
+>Write a function to compute all possible states of the string after one valid move.
+>
+>For example, given s = "++++", after one move, it may become one of the following states:
+>
+[
+  "--++",
+  "+--+",
+  "++--"
+]
+
+```java
+public List<String> generatePossibleNextMoves(String s) {
+    List<String> res = new ArrayList<>();
+    for (int i = 0; i < s.length(); i++) {
+        if (s.charAt(i) == '+' && (i < s.length() - 1 && s.charAt(i + 1) == '+')) {
+            res.add(s.substring(0, i) + "--" + s.substring(i + 2));
+        }
+    }
+    return res;
+}
+```
+
+<br>
+<br>
+###294 Flip Game II](#294-flip-game)
+
+>You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two consecutive "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
+>
+>Write a function to determine if the starting player can guarantee a win.
+>
+>For example, given s = "++++", return true. The starting player can guarantee a win by flipping the middle "++" to become "+--+".
+
+**Idea**: Try all possible moves in the Flip Game I, if one case dfs return true, return true.
+
+```java
+public boolean canWin(String s) {
+    for (int i = 0; i < s.length(); i++) {
+        if (s.charAt(i) == '+' && (i < s.length() - 1 && s.charAt(i + 1) == '+')) {
+             if (!canWin(s.substring(0, i) + "--" + s.substring(i + 2))) {
+                 return true;
+             }
+        }
+    }
+    return false;
+}
+```
+<br>
+<br>
+###295 Find Median from Data Stream](#295-find-median-from-data-stream)
+
+>Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
+>
+>Examples: 
+>[2,3,4] , the median is 3
+>
+>[2,3], the median is (2 + 3) / 2 = 2.5
+>
+>Design a data structure that supports the following two operations:
+>
+>void addNum(int num) - Add a integer number from the data stream to the data structure.
+double findMedian() - Return the median of all elements so far.
+For example:
+>
+add(1)
+add(2)
+findMedian() -> 1.5
+add(3) 
+findMedian() -> 2
+
+**Idea**: use two heaps, store the smaller half and larger half. Also, size difference of these two should be <= 1.
+
+```java
+class MedianFinder {
+    private PriorityQueue<Integer> minQueue = new PriorityQueue<>(); /*Larger half*/
+    private PriorityQueue<Integer> maxQueue = new PriorityQueue(10, Collections.reverseOrder()); /*Smaller half*/
+    
+    // Adds a number into the data structure.
+    public void addNum(int num) {
+        if (minQueue.isEmpty() || num >= minQueue.peek()) {
+            minQueue.offer(num);
+        } else{
+            maxQueue.offer(num);
+        }
+        if (maxQueue.size() > minQueue.size()) {
+            minQueue.offer(maxQueue.poll());
+        } else if (minQueue.size() - maxQueue.size() > 1) {
+            maxQueue.offer(minQueue.poll());
+        }
+    }
+
+    // Returns the median of current data stream
+    public double findMedian() {
+        int size = minQueue.size() + maxQueue.size();
+        if (size == 0) {
+            return 0.0;
+        } else if (size % 2 == 0) {
+            return (minQueue.peek() + maxQueue.peek()) / (double) 2;
+        } else {
+            return (double) minQueue.peek();
+        }
+    }
+};
+```
+
+
+<br>
+<br>
+###296 Best Meeting Point](#296-best-meeting-point)
+
+>A group of two or more people wants to meet and minimize the total travel distance. You are given a 2D grid of values 0 or 1, where each 1 marks the home of someone in the group. The distance is calculated using Manhattan Distance, where distance(p1, p2) = |p2.x - p1.x| + |p2.y - p1.y|.
+
+<pre>
+For example, given three people living at (0,0), (0,4), and (2,2):
+
+1 - 0 - 0 - 0 - 1
+|   |   |   |   |
+0 - 0 - 0 - 0 - 0
+|   |   |   |   |
+0 - 0 - 1 - 0 - 0
+The point (0,2) is an ideal meeting point, as the total travel distance of 2+2+2=6 is minimal. So return 6.
+
+</pre>
+
+**Idea**: Because distance(p1, p2) = |p2.x - p1.x| + |p2.y - p1.y|. So we can calculate the x distance and y distance seperately. 
+
+So this problem reduced to find a point in one dimensional line, so that other points to it's distance is minimum.
+
+```java
+    public int minTotalDistance(int[][] grid) {
+        List<Integer> rows = new ArrayList<>();
+        List<Integer> cols = new ArrayList<>();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 1) {
+                    rows.add(i);
+                    cols.add(j);
+                }
+            }
+        }
+        return getDistance(rows) + getDistance(cols);
+    }
+    private int getDistance(List<Integer> list) {
+        Collections.sort(list);
+        int l = 0;
+        int r = list.size() - 1;
+        int res = 0;
+        while (l < r) {
+            res += list.get(r--) - list.get(l++);
+        }
+        return res;
+    }
+```
+
+
+
 
 <br>
 <br>
