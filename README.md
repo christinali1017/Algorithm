@@ -280,6 +280,7 @@
 * [294 Flip Game II](#294-flip-game)
 * [295 Find Median from Data Stream](#295-find-median-from-data-stream)
 * [296 Best Meeting Point](#296-best-meeting-point)
+* [297 Serialize and Deserialize Binary Tree](#297-serialize-and-deserialize-binary-tree)
 
 ###Others
 
@@ -20110,7 +20111,7 @@ public int findCelebrity(int n) {
 
 <br>
 <br>
-###278 First Bad Version](#278-first-bad-version)
+###278 First Bad Version
 
 >You are a product manager and currently leading a team to develop a new product. Unfortunately, the latest version of your product fails the quality check. Since each version is developed based on the previous version, all the versions after a bad version are also bad.
 >
@@ -20149,7 +20150,7 @@ public class Solution extends VersionControl {
 <br>
 <br>
 
-###279 Perfect Squares](#279-perfect-squares)
+###279 Perfect Squares
 
 >Given a positive integer n, find the least number of perfect square numbers (for example, 1, 4, 9, 16, ...) which sum to n.
 >
@@ -20174,7 +20175,7 @@ public int numSquares(int n) {
 
 <br>
 <br>
-###280 Wiggle Sort](#280-wiggle-sort)
+###280 Wiggle Sort
 
 >Given an unsorted array nums, reorder it in-place such that nums[0] <= nums[1] >= nums[2] <= nums[3]....
 >
@@ -20210,7 +20211,7 @@ A good way to replace "i % 2 == 1 && nums[i] < nums[i - 1]) || (i % 2 == 0 && nu
 
 <br>
 <br>
-###281 Zigzag Iterator](#281-zigzag-iterator)
+###281 Zigzag Iterator
 
 >Given two 1d vectors, implement an iterator to return their elements alternately.
 >
@@ -20308,7 +20309,7 @@ public class ZigzagIterator {
 ```
 <br>
 <br>
-###282 Expression Add Operators](#282-expression-add-operators)
+###282 Expression Add Operators
 
 >Given a string that contains only digits 0-9 and a target value, return all possibilities to add binary operators (not unary) +, -, or * between the digits so they evaluate to the target value.
 >
@@ -20361,7 +20362,7 @@ Examples:
 ```
 <br>
 <br>
-###283 Move Zeroes](#283-move-zeroes)
+###283 Move Zeroes
 >Given an array nums, write a function to move all 0's to the end of it while maintaining the relative order of the non-zero elements.
 >
 >For example, given nums = [0, 1, 0, 3, 12], after calling your function, nums should be [1, 3, 12, 0, 0].
@@ -20388,7 +20389,7 @@ public void moveZeroes(int[] nums) {
 
 <br>
 <br>
-###284 Peeking Iterator](#284-peeking-iterator)
+###284 Peeking Iterator
 
 >Given an Iterator class interface with methods: next() and hasNext(), design and implement a PeekingIterator that support the peek() operation -- it essentially peek() at the element that will be returned by the next call to next().
 >
@@ -20447,7 +20448,7 @@ class PeekingIterator implements Iterator<Integer> {
 
 <br>
 <br>
-###285 Inorder Successor in BST](#285-inorder0-successor-in-bst)
+###285 Inorder Successor in BST
 >Given a binary search tree and a node in it, find the in-order successor of that node in the BST.
 
 >Note: If the given node has no in-order successor in the tree, return null.
@@ -20477,7 +20478,7 @@ private TreeNode succ(TreeNode root, TreeNode p) {
 
 <br>
 <br>
-###286 Walls and Gates](#286-walls-and-gates)
+###286 Walls and Gates
 
 >You are given a m x n 2D grid initialized with these three possible values.
 
@@ -20541,7 +20542,7 @@ private void bfs(int[][] rooms, Queue<int[]> queue) {
 
 <br>
 <br>
-###287 Find the Duplicate Number](#287-find-the-duplicate-number)
+###287 Find the Duplicate Number
 
 >Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), prove that at least one duplicate number must exist. Assume that there is only one duplicate number, find the duplicate one.
 >
@@ -20607,7 +20608,7 @@ public int findDuplicate(int[] nums) {
 
 <br>
 <br>
-###288 Unique Word Abbreviation](#288-unique-word-abbreviation)
+###288 Unique Word Abbreviation
 An abbreviation of a word follows the form <first letter><number><last letter>. Below are some examples of word abbreviations:
 <pre>
 >a) it                      --> it    (no abbreviation)
@@ -20669,7 +20670,7 @@ public class ValidWordAbbr {
 
 <br>
 <br>
-###289 Game of Life](#289-game-of-life)
+###289 Game of Life
 
 >According to the Wikipedia's article: "The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970."
 >
@@ -20758,7 +20759,7 @@ private int getLive(int[][] board, int row, int col) {
 
 <br>
 <br>
-###290 Word Pattern](#290-word-pattern)
+###290 Word Pattern
 >Given a pattern and a string str, find if str follows the same pattern.
 >
 >Here follow means a full match, such that there is a **bijection** between a letter in pattern and a non-empty word in str.
@@ -20802,7 +20803,7 @@ public boolean wordPattern(String pattern, String str) {
 ```
 <br>
 <br>
-###291 Word Pattern II](#291-word-pattern-ii)
+###291 Word Pattern II
 >Given a pattern and a string str, find if str follows the same pattern.
 >
 >Here follow means a full match, such that there is a bijection between a letter in pattern and a non-empty substring in str.
@@ -20851,7 +20852,7 @@ private boolean match(String pattern, String str, int p, int s, Map<Character, S
 
 <br>
 <br>
-###292 Nim Game](#292-nim-game)
+###292 Nim Game
 
 >You are playing the following Nim Game with your friend: There is a heap of stones on the table, each time one of you take turns to remove 1 to 3 stones. The one who removes the last stone will be the winner. You will take the first turn to remove the stones.
 >
@@ -20893,7 +20894,7 @@ private boolean match(String pattern, String str, int p, int s, Map<Character, S
 <br>
 <br>
 
-###293 Flip Game](#293-flip-game)
+###293 Flip Game
 
 >You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two **consecutive** "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
 >
@@ -20921,7 +20922,7 @@ public List<String> generatePossibleNextMoves(String s) {
 
 <br>
 <br>
-###294 Flip Game II](#294-flip-game)
+###294 Flip Game II
 
 >You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two consecutive "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
 >
@@ -20945,7 +20946,7 @@ public boolean canWin(String s) {
 ```
 <br>
 <br>
-###295 Find Median from Data Stream](#295-find-median-from-data-stream)
+###295 Find Median from Data Stream
 
 >Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
 >
@@ -21004,7 +21005,7 @@ class MedianFinder {
 
 <br>
 <br>
-###296 Best Meeting Point](#296-best-meeting-point)
+###296 Best Meeting Point
 
 >A group of two or more people wants to meet and minimize the total travel distance. You are given a 2D grid of values 0 or 1, where each 1 marks the home of someone in the group. The distance is calculated using Manhattan Distance, where distance(p1, p2) = |p2.x - p1.x| + |p2.y - p1.y|.
 
@@ -21053,6 +21054,76 @@ So this problem reduced to find a point in one dimensional line, so that other p
 
 
 
+<br>
+<br>
+
+###297 Serialize and Deserialize Binary Tree
+
+>Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
+>
+>Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.
+>
+>For example, you may serialize the following tree
+
+<pre>
+    1
+   / \
+  2   3
+     / \
+    4   5
+</pre>
+>
+>as "[1,2,3,null,null,4,5]", just the same as how LeetCode OJ serializes a binary tree. You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
+Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
+
+
+**Preorder**:
+
+```java
+public class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        if (root == null){
+            return "";   
+        }
+        StringBuilder res = new StringBuilder();
+        preorder(root, res);
+        return res.toString().trim();
+    }
+    
+    private void preorder(TreeNode root, StringBuilder res) {
+        if (root == null) {
+            res.append("# ");
+        } else {
+            res.append(root.val + " ");
+            preorder(root.left, res);
+            preorder(root.right, res);
+        }
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        if (data.length() == 0) {
+            return null;
+        }
+        return createTree(new StringTokenizer(data, " "));
+    }
+    private TreeNode createTree(StringTokenizer tokens) {
+        if (!tokens.hasMoreTokens()) {
+            return null;
+        }
+        String val = tokens.nextToken();
+        if (!val.equals("#")) {
+            TreeNode root = new TreeNode(Integer.parseInt(val));
+            root.left = createTree(tokens);
+            root.right = createTree(tokens);
+            return root;
+        }
+        return null;
+    }
+}
+```
 <br>
 <br>
 
