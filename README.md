@@ -650,7 +650,7 @@ There is another solution use primitive string methods, such as indexOf, subStri
 
 
 
-**Attention**: There are cases when one array is really longer than the other one, so we need to check the length of k/2 and length of array. Otherwise, there might be indexoutofbound exception. 
+**Attention**: There are cases when one array is really longer than the other one, so we need compare k/2 and length of array. Otherwise, there might be indexoutofbound exception. 
 
 
 ```java
@@ -4023,7 +4023,7 @@ isMatch("aab", "c*a*b") → false
             while(i < s.length()){
                 if(helper(s, p, i++, j+1)) return true;
             }
-            return helper(s, p, i, j+1);
+            return false;
         }
     }
 
@@ -4032,6 +4032,33 @@ isMatch("aab", "c*a*b") → false
 <br>
 
 **DP solution**: Two dimensional array.
+
+From end ot begining:
+```java
+public boolean isMatch(String s, String p) {
+    boolean[][] arr = new boolean[p.length() + 1][s.length() + 1];
+    arr[p.length()][s.length()] = true;
+    for (int i = p.length() - 1; i >= 0; i--) {
+        if (p.charAt(i) != '*') {
+            break;
+        } else {
+            arr[i][s.length()] = true;
+        }
+    }
+    for (int i = p.length() - 1; i >= 0; i--) {
+        for (int j = s.length() - 1; j >= 0; j--) {
+            if (s.charAt(j) == p.charAt(i) || p.charAt(i) == '?') {
+                arr[i][j] = arr[i + 1][j + 1];
+            } else if (p.charAt(i) == '*') {
+                arr[i][j] = arr[i][j + 1] || arr[i + 1][j] || arr[i + 1][j + 1];
+            }
+        }
+    }
+    return arr[0][0];
+}
+```
+
+From begining to end.
 
 ```java
     public boolean isMatch(String s, String p) {
@@ -13255,7 +13282,8 @@ public class Solution {
     if (stack.isEmpty()) {
       return null;
     }
-    if (stack.peek() <= minStack.peek()) {
+
+    if (stack.peek() <= minStack.peek()) { // Or if (stack.peek().equals(minStack.peek())). Because it's integer we can not use ==
       minStack.pop();
     }
     return stack.pop();
@@ -13490,22 +13518,28 @@ is reversed to
 
 **Ambiguity:**What if n exceeds the buf's length? 
 ```java
-	/* read 4 characters each time, return the exact number of characters read. */
-	int read(char[] buf);
-	public int read(char[] buf, int n){
-		char[] buffer = new char[4];
-		int count = 0;
-		int current = 0;
-		int needAdd = 0;
-		while(true){
-			current = read(buffer);
-			if(current == 0 || n == count) return count;
-			needAdd = Math.min(n-count, current);
-			for(int i = 0; i < needAdd; i++){
-				buf[count++] =  buffer[i];
-			}
-		}
-	}
+/* The read4 API is defined in the parent class Reader4.
+      int read4(char[] buf); */
+
+public class Solution extends Reader4 {
+    /**
+     * @param buf Destination buffer
+     * @param n   Maximum number of characters to read
+     * @return    The number of characters read
+     */
+    public int read(char[] buf, int n) {
+        int count = 0;
+        char[] arr = new char[4];
+        int cur = read4(arr);
+        while (count < n && cur != 0) {
+            for (int i = 0; i < cur && count < n; i++) {
+                buf[count++] = arr[i];
+            }
+            cur = read4(arr);
+        }
+        return count;
+    }
+}
 ```	
 
 
@@ -13529,25 +13563,35 @@ is reversed to
 **Idea:** Because the read function maybe called multiple times, so at the next call, there might be some data remain in the read4 buffer due to the up amount data of n at each readN bytes call. So we need to keep track of the state of read 4 buffer. If there remains data at read4 buffer at the call, we need start from that position instead of call read4 function. 
 
 ```java
-	/* read 4 characters each time, return the exact number of characters read. */
-	int read(char[] buf);
-	int read4Ptr = 0;
-	int read4Count = 0;
-	char[] buffer = new char[4];
-	public int read(char[] buf, int n){	
-		int count = 0;
-		while(true){
-			if(read4Ptr == 0){
-				read4Count = read(buffer);
-			}
-			if(read4Count == 0 || n == count) return count;
-			while(count < n && read4Ptr < read4Count){
-				buf[count++] =  buffer[read4Ptr++];
-			}
-			read4Ptr = read4Ptr%read4Count;
-			
-		}
-	}
+/* The read4 API is defined in the parent class Reader4.
+      int read4(char[] buf); */
+
+public class Solution extends Reader4 {
+    /**
+     * @param buf Destination buffer
+     * @param n   Maximum number of characters to read
+     * @return    The number of characters read
+     */
+    char[] arr = new char[4];
+    int read4Ptr = 0;
+    int read4Count = 0;
+    public int read(char[] buf, int n) {
+        int count = 0;
+        while (count < n) {
+            if (read4Ptr == 0) {
+                read4Count = read4(arr);
+            }
+            if (read4Count == 0) {
+                break;
+            }
+            for (; read4Ptr < read4Count && count < n; read4Ptr++) {
+                buf[count++] = arr[read4Ptr];
+            }
+            read4Ptr = read4Ptr % read4Count;
+        }
+        return count;
+    }
+}
 ```	
 
 
@@ -13566,87 +13610,33 @@ is reversed to
 
 **Solution && time complexity:**	Time complexity: O(n), map contains only two elements. Here, we can use two variables to replace the hashmap, if we extend the problem to k characters, then hashmap maybe more convenient 
 
-```java
-	public String subString(String s){
-		int start = 0; // start of longest substring
-		int end = 0;   // end of longest substring
-		int j = 0;     // start of slide window
-		int max = 0;
-		Map<Character, Integer> map = new HashMap<Character, Integer>();
-		for(int i = 0; i < s.length(); i++){
-			//check: contains <= 2 characters && substring ends at the end 
-			if(i == s.length()-1 && map.size() <= 2 && map.containsKey(s.charAt(i))){
-				if(end == 0) return s;
-				else{
-					if(max < s.length() - j){
-						start = j;
-						end = s.length()-1;	
-					}
-				}
-			}
-			if(map.size() == 2 && !map.containsKey(s.charAt(i))){
-				if(max < i - j){
-					max = i - j ;
-					start = j;
-					end = i-1;
-				}
-				j = s.length();
-				char needToRemove = ' ';
-				for(char c : map.keySet()){
-					if(j > map.get(c)){
-						j = map.get(c);
-						needToRemove = c;
-					}
-				}
-				j++;
-				map.remove(needToRemove);
-			}
-				map.put(s.charAt(i), i);
-		}
-		return s.substring(start, end+1);
-	
-	
-```	
-
-**Another way**: This is **not as fast as** the method above. If we encounter the third different element, we can find back from this element and reset the start window to make it contains only two different elements.
+**Update** 10/27/2015
 
 ```java
-	public String subStr(String s){
-		if(s == null || s.length() == 0) return s;
-		Map<Character, Integer> map = new HashMap<Character, Integer>();
-		int start = 0;
-		int max = 0;
-		int end = 0;
-		int j = 0;
-		for(int i = 0; i < s.length(); i++){
-			if(i == s.length()-1 && map.size() <= 2 && map.containsKey(s.charAt(i))){
-				if(end == 0) return s;
-				else{
-					if(max < s.length() - j){
-						start = j;
-						end = s.length()-1;	
-					}
-				}
-			}
-			if(!map.containsKey(s.charAt(i)) && map.size() == 2){
-				if(i - j > max){
-					start = j;
-					end = i-1;
-					max = i-j;
-				}
-				int temp = i-1;
-				char c = s.charAt(temp);
-				while(temp >= 0 && s.charAt(temp) == c) temp--;
-				j = temp + 1;
-				map.remove(s.charAt(temp));
-			}
-			map.put(s.charAt(i), i);
-		}
-		return j == 0 ? s : s.substring(start, end+1);
-		
-	}
-
+public int lengthOfLongestSubstringTwoDistinct(String s) {
+    int res = 0;
+    int start = 0;
+    Map<Character, Integer> map = new HashMap<>();
+    for (int i = 0; i < s.length(); i++) {
+        if (map.size() == 2 && !map.containsKey(s.charAt(i))) {
+            res = Math.max(res, i - start);
+            int j = s.length();
+            char temp = ' ';
+            for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+                if (j > entry.getValue()) {
+                    j = entry.getValue();
+                    temp = entry.getKey();
+                }
+            }
+            map.remove(temp);
+            start = j + 1;
+        }
+        map.put(s.charAt(i), i);
+    }
+    return Math.max(res, s.length() - start);
+}
 ```
+
 **Extention:** Find the longest substring contains at most k unique elements. Idea is much similar with k = 2. When we encounter the k+1 character, we need to calculate the length of string do related operations and move slide window, let it contains only k-1 different characters, add the k+1 character, and keep going.  
 
 **Time Complexity:** O(k * n)
@@ -14024,20 +14014,17 @@ Check if the end - start > 1, if true, add range. Otherwise, continue.
 
 
 ```java
-public List<String> findMissingRanges(int[] vals, int lower, int upper) {
+public List<String> findMissingRanges(int[] nums, int lower, int upper) {
+    int start = lower - 1;
     List<String> res = new ArrayList<>();
-    int start = lower;
-    for (int i = 0; i <= vals.length; i++) {
-        int end = (i == vals.length) ? upper + 1: vals[i];
+    for (int i = 0; i <= nums.length; i++) {
+        int end = (i == nums.length) ? upper + 1 : nums[i];
         if (end > start + 1) {
-            res.add(getRangeString(start, end));
+            res.add(end - start == 2 ? "" + (start + 1) : ((start + 1) + "->" + (end - 1)));
         }
         start = end;
     }
     return res;
-}
-private String getRangeString(int start, int end) {
-    return (end - start == 2) ? ("" + (start + 1)) : (start + 1) + "->" + (end - 1);
 }
 ```
 
@@ -16508,7 +16495,14 @@ private int robLine(int[] nums, int start, int end) {
 >sGiven "abcd", return "dcbabcd".
 
 
-**Brute force** TLE:
+**Brute force** TLE. 
+
+This method uses the primitive strings matching. Suppose s (text), p (pattern)
+
+- if s[i] = p[j] i++, j++
+- otherwise i = i - (j - 1), j = 0.
+
+
 ```java
 public String shortestPalindrome(String s) {
     int i = 0;
@@ -16528,7 +16522,24 @@ public String shortestPalindrome(String s) {
 }
 ```
 
-**Accepted**:
+**Accepted**:  From https://leetcode.com/discuss/51223/my-7-lines-recursive-java-solution
+
+We need to find the characters that can not be pair with other character in the string and can not be the middle of the final palindrome. 
+
+We use the following loop to find the above characters.
+
+```java
+int i = 0;
+for (int j = s.length() - 1; j >= 0; j--) {
+    if (s.charAt(j) == s.charAt(i)) {
+        i++;
+    }
+}
+```
+
+When the loop ends, s.charAt(i) can not be paired with other char or be the middle of the final palindrome. So we need to padding char in front of s to pair with s.charAt(i), and to satisfy palindrome, we also need to padding the chars after i to the front of s.
+
+
 
 ```java
 public String shortestPalindrome(String s) {
@@ -18779,7 +18790,7 @@ public int minMeetingRooms(Interval[] intervals) {
 }
 ```
 
-**Solution**: combine unoverlapping intervals. The total number of result intervals is the min room number.
+**Solution 2**: combine unoverlapping intervals. The total number of result intervals is the min room number.
 
 Note that in the below solution, when use priorityqueue and modify the value of top elements, we can not just modify it. We need to poll, change, offer again. Otherwise, simply change the value the priorityqueue will not reajust the order. 
 
@@ -20307,6 +20318,42 @@ public class ZigzagIterator {
     }
 }
 ```
+
+**Hanlde K lists**: Use deque to store all iterators, when next(), get element from the beginning iterator in queue, then remove iterator from begining. If size() > 1, then add iterator to end of deque after next(). 
+
+```java
+public class ZigzagIterator {
+    private Deque<Iterator<Integer>> iterators;
+    
+    public ZigzagIterator(List<Integer> v1, List<Integer> v2) {
+        iterators = new LinkedList<>();
+        if (v1.size() > 0) {
+            iterators.add(v1.iterator());
+        }
+        if (v2.size() > 0) {
+            iterators.add(v2.iterator());
+        }
+    }
+
+    public int next() {
+        if (!hasNext()) {
+            return -1;
+        }
+        Iterator<Integer> temp = iterators.poll();
+        int res = temp.next();
+        if (temp.hasNext()) {
+            iterators.offerLast(temp);
+        }
+        return res;
+    }
+
+    public boolean hasNext() {
+        return iterators.size() > 0;
+    }
+}
+
+```
+
 <br>
 <br>
 ###282 Expression Add Operators
@@ -21253,6 +21300,8 @@ Considering the three cases int he following picture:
 
 
 **Solution 3**: Time complexity:O(n)
+
+T(n) = 2 * T(n/2) + lgn Use master theory, T(n) = O(n)
 
 Take row-based as an example
 
