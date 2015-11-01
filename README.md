@@ -211,7 +211,7 @@
 * [224 Basic Calculator](#224-basic-calculator)
 * [225 Implement Stack using Queues](#225-implement-stack-using-queues)
 * [226 Invert Binary Tree](#226-invert-binary-tree)
-* [227 Basic Calculator II](#227-basic-calculator)
+* [227 Basic Calculator II](#227-basic-calculator-ii)
 * [228 Summary Ranges](#228-summary-ranges)
 * [229 Majority Element II](#229-majority-element-ii)
 * [230 Kth Smallest Element in a BST](#230-kth-smallest-element-in-a-bst)
@@ -281,6 +281,7 @@
 * [295 Find Median from Data Stream](#295-find-median-from-data-stream)
 * [296 Best Meeting Point](#296-best-meeting-point)
 * [297 Serialize and Deserialize Binary Tree](#297-serialize-and-deserialize-binary-tree)
+* [298 Binary Tree Longest Consecutive Sequence](#298-binary-tree-longest-consecutive-sequence)
 
 ###Others
 
@@ -320,6 +321,8 @@
 * [34 Hamming distance](#34-hamming-distance)
 * [35 Find a pair with given sum in a Balanced BST](#35-Find-a-pair-with-given-sum-in-a-Balanced-BST)
 * [36 Sliding window maximum](#36-sliding-window-maximum)
+* [37 Put Chair](#37-put-chair)
+* [38 Post Office Problem](#38-post-office-problem)
 
 
 
@@ -15972,10 +15975,10 @@ public class Trie {
 ```java
 class TrieNode {
     // Initialize your data structure here.
-    public Map<Character, TrieNode> edges;
-    public boolean isLeaf; //check if a trienode is a leaf node
+    public Map<Character, TrieNode> neighbors;
+    public boolean isLeaf;
     public TrieNode() {
-        edges = new HashMap<Character, TrieNode>(); // all possible sons
+        neighbors = new HashMap<>();    
     }
 }
 
@@ -15987,20 +15990,18 @@ public class Trie {
     }
 
     // Inserts a word into the trie.
-   public void insert(String word) {
-        Map<Character, TrieNode> edges = root.edges;
-        for(int i=0; i<word.length(); i++){
+    public void insert(String word) {
+        Map<Character, TrieNode> neighbors = root.neighbors;
+        for (int i = 0; i < word.length(); i++) {
             char c = word.charAt(i);
-            TrieNode current = null;
-            if(edges.containsKey(c)){
-                current = edges.get(c);
-            }else{
-                current = new TrieNode();
-                edges.put(c, current);
+            TrieNode temp = neighbors.get(c);
+            if (temp == null) {
+                temp = new TrieNode();
             }
-            edges = current.edges;
+            neighbors.put(c, temp);
+            neighbors = temp.neighbors;
             if (i == word.length() - 1) {
-                current.isLeaf = true;
+                temp.isLeaf = true;
             }
         }
     }
@@ -16008,33 +16009,36 @@ public class Trie {
     // Returns if the word is in the trie.
     public boolean search(String word) {
         TrieNode res = searchHelper(word);
-        return res == null ? false : res.isLeaf;
+        return res != null && res.isLeaf;
     }
-
 
     // Returns if there is any word in the trie
     // that starts with the given prefix.
     public boolean startsWith(String prefix) {
-       TrieNode res = searchHelper(prefix);
-       return res == null ? false : true;
+        TrieNode res = searchHelper(prefix);
+        return res != null;
     }
     
     private TrieNode searchHelper(String word) {
-        Map<Character, TrieNode> edges = root.edges;
+        Map<Character, TrieNode> neighbors = root.neighbors;
         TrieNode res = null;
         for (int i = 0; i < word.length(); i++) {
             char c = word.charAt(i);
-            if (edges.containsKey(c)) {
-                res = edges.get(c);
-                edges = res.edges;
-            } else {
+            res = neighbors.get(c);
+            if (res == null) {
                 return null;
+            } else {
+                neighbors = res.neighbors;
             }
         }
         return res;
     }
-    
 }
+
+// Your Trie object will be instantiated and called as such:
+// Trie trie = new Trie();
+// trie.insert("somestring");
+// trie.search("key");
 ```
 
 
@@ -21174,6 +21178,59 @@ public class Codec {
 <br>
 <br>
 
+###298 Binary Tree Longest Consecutive Sequence
+
+>Given a binary tree, find the length of the longest consecutive sequence path.
+>
+>The path refers to any sequence of nodes from some starting node to any node in the tree along the parent-child connections. The longest consecutive path need to be from parent to child (cannot be the reverse).
+
+<pre>
+For example,
+   1
+    \
+     3
+    / \
+   2   4
+        \
+         5
+Longest consecutive sequence path is 3-4-5, so return 3.
+   2
+    \
+     3
+    / 
+   2    
+  / 
+ 1
+Longest consecutive sequence path is 2-3,not3-2-1, so return 2
+
+</pre>
+
+
+```java
+    public int longestConsecutive(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int[] res = new int[1];
+        getSequence(root, res, 0, root.val - 2);
+        return res[0];
+    }
+    private void getSequence(TreeNode root, int[] res, int len, int pre) {
+        if (root == null) {
+            return;
+        }
+        len = root.val - pre == 1 ? len + 1 : 1;
+        res[0] = Math.max(res[0], len);
+        pre = root.val;
+        getSequence(root.left, res, len, pre);
+        getSequence(root.right, res, len, pre);
+    }
+```
+
+
+<br>
+<br>
+
 ##Similar questions from other sources.
 
 ###1 Search a 2D Matrix II
@@ -23431,3 +23488,201 @@ public int[] slidingMaximum(int[] A, int w) {
     return res;
 }
 ```
+
+<br>
+<br>
+
+###37 Put Chair
+
+>Given a gym with k pieces of equipment and some obstacles.  ‘E’ denotes a cell with equipment, ‘O’ denotes a cell with an obstacle, ' ' denotes a cell without any equipment or obstacle. Put a chair in gym such that distance sum from chair to all equipments is minimum.
+>
+>Assumptions
+>
+>There is at least one equipment in the gym
+>The given gym is represented by a char matrix of size M * N, where M >= 1 and N >= 1, it is guaranteed to be not null
+If there does not exist such place to put the chair, just return null (Java) empty vector (C++)
+Examples
+>
+>{ {'E', 'O', ' '},
+>
+>  {' ', 'E', ' '},
+>
+>  {' ', ' ',' ' }}
+>
+>we should put the chair at (1, 0), so that the sum of cost from the chair to the two equipments is 1 + 1 = 2, which is minimal.
+
+**Idea**:
+
+- With brute force, we can try each empty cell in the gym, and find the minimum cost position. Time : O(n ^ 2 * E * log V) = O(n ^ 2 * n ^ 2 * log n)
+
+- If the equipments is less compare with the total cells n^2, we can run dijkstra to find the cost from each equipments. Time : O(k * n ^2 * logn)
+
+
+```java
+public class Solution {
+  class Cell {
+    int x; 
+    int y;
+    public Cell(int x, int y) {
+      this.x = x;
+      this.y = y;
+    }
+  }
+  public List<Integer> putChair(char[][] gym) {
+    // write your solution here
+    assert(gym != null);
+    int[][] cost = new int[gym.length][gym[0].length];
+    for (int i = 0; i < gym.length; i++) {
+      for (int j = 0; j < gym[0].length; j++) {
+        if ('E' == gym[i][j]) {
+          //can not find place to put chair.
+          if (!bfs(gym, cost, i, j)) { 
+            return null;
+          }
+        }
+      }
+    }
+    return getPosition(gym, cost);
+  }
+  
+  /*Dijkstra to calculate the cost from a equipment to other cells*/
+  private boolean bfs(char[][] gym, int[][] cost, int x, int y) {
+    boolean[][] visited = new boolean[gym.length][gym[0].length];
+    Queue<Cell> queue = new LinkedList<>();
+    queue.offer(new Cell(x, y));
+    visited[x][y] = true;
+    int c = 0;
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      for (int i = 0; i < size; i++) {
+        Cell current = queue.poll();
+        cost[current.x][current.y] += c;
+        for (Cell neighbor : getNeighbors(current, gym)) {
+          if (!visited[neighbor.x][neighbor.y]) {
+            queue.add(neighbor);
+            visited[neighbor.x][neighbor.y] = true;
+          }
+        }
+      }
+      c++;
+    }
+    return checkValid(gym, visited);
+  }
+  
+  /*Get valid neighbors of position (x, y)*/
+  private List<Cell> getNeighbors(Cell current, char[][] gym) {
+    List<Cell> res = new ArrayList<>();
+    int[][] offsetArr = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    for (int[] offset : offsetArr) {
+      int x = current.x + offset[0];
+      int y = current.y + offset[1];
+      if (x < gym.length && x >= 0 && y < gym[0].length && y >= 0 && 'O' != gym[x][y]) {
+        res.add(new Cell(x, y));
+      }
+    }
+    return res;
+  }
+
+  /*check if we can reach to all equipments.*/
+  private boolean checkValid(char[][] gym, boolean[][] visited) {
+    for (int i = 0; i < gym.length; i++) {
+      for (int j = 0; j < gym[0].length; j++) {
+        if ('E' == gym[i][j] && !visited[i][j]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
+  /*Get position of chair with min cost*/
+  private List<Integer> getPosition(char[][] gym, int[][] cost) {
+    List<Integer> res = null;
+    for (int i = 0; i < gym.length; i++) {
+      for (int j = 0; j < gym[0].length; j++) {
+        if (' ' == gym[i][j]) {
+          if (null == res) {
+            res = new ArrayList<>();
+            res.add(i);
+            res.add(j);
+          } else {
+            if (cost[i][j] < cost[res.get(0)][res.get(1)]) {
+              res.set(0, i);
+              res.set(1, j);
+            }
+          }
+        }
+      }
+    }
+    return res;
+  }
+  
+}
+
+```
+
+###38 Post Office Problem
+
+
+>Problem: [http://www.lintcode.com/en/problem/post-office-problem/](http://www.lintcode.com/en/problem/post-office-problem/)
+
+Given n houses, pick k positions to build k post office so that the sum distance of each house to the nearest post office is the smallest.
+
+**Idea**: Use dynamic Programming.
+
+dp[i][j] represents the minimum cost of having i post offices in houses 0 - j
+
+Induction rule : dp[i][j] = Math.min(dp[i][j], dp[i - 1][k - 1] + cost of having one post office between k - j)
+
+It's easy to calculat the cost of 1 post office between [k, j]
+
+
+```java
+public class Solution {
+    /**
+     * @param A an integer array
+     * @param k an integer
+     * @return an integer
+     */
+    public int postOffice(int[] A, int k) {
+        // Write your code here
+        if (A.length == 0 || A.length <= k) {
+            return 0;
+        }
+        Arrays.sort(A);
+        int[][] costOne = costOfOnePostOffice(A);
+        int[][] cost = new int[k + 1][A.length + 1];
+        //initiate build one post office
+        for (int i = 1; i <= A.length; i++) {
+            cost[1][i] = costOne[1][i];
+        }
+        for (int i = 2; i <= k; i++) {
+            for (int j = i; j <= A.length; j++) {
+                cost[i][j] = Integer.MAX_VALUE;
+                for (int m = 0; m < j; m++) {
+                    cost[i][j] = Math.min(cost[i][j], cost[i - 1][m] + costOne[m + 1][j]);
+                }
+            }
+        }
+        return cost[k][A.length];
+    }
+    private int[][] costOfOnePostOffice(int[] A) {
+        int[][] res = new int[A.length + 1][A.length + 1];
+        for (int i = 1; i <= A.length; i++) {
+            for (int j = i + 1; j <= A.length; j++) {
+                int mid = i + (j - i) / 2; //build in the middle of all houses.
+                for (int k = i; k <= j; k++) {
+                    res[i][j] += Math.abs(A[k - 1] - A[mid - 1]);
+                }
+            }
+        }
+        return res;
+    }
+}
+
+```
+
+
+
+
+
