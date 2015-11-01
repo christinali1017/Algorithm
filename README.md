@@ -323,6 +323,7 @@
 * [36 Sliding window maximum](#36-sliding-window-maximum)
 * [37 Put Chair](#37-put-chair)
 * [38 Post Office Problem](#38-post-office-problem)
+* [39 Upvotes](#39-upvotes)
 
 
 
@@ -23681,7 +23682,144 @@ public class Solution {
 }
 
 ```
+<br>
+<br>
 
+###39 Upvotes
+
+>https://www.hackerrank.com/contests/quora-haqathon/challenges/upvotes/submissions/code/4149844
+
+**Idea**: Maintain the non-decreasing and non-increasing subranges of a window size of K, then moving window by one element each time. Update the first range and last range of the non-decreasing and non-increasing list.
+
+```java
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+ class Pair {
+        int start;
+        int end;
+        public Pair(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+        public String toString() {
+            return "[" + start + "," + end + "]";
+        }
+    }
+    public List<Long> upvotes(int[] arr, int k) {
+        List<List<Pair>> votes = getVotes(arr, k);
+        List<Pair> nonDesc = votes.get(0);
+        List<Pair> nonInc = votes.get(1);
+        List<Long> res = new ArrayList<>();
+        if (k <= 1) {
+            for (int i = 0; i < arr.length; i++) {
+                res.add(0l);
+            }
+            return res;
+        }
+        long inc = 0;
+        for (Pair p : nonDesc) {
+            inc += getSubrange(p);
+        }
+        long dec = 0;
+        for (Pair p : nonInc) {
+            dec += getSubrange(p);
+        }
+        res.add(inc - dec);
+        for (int i = k; i < arr.length; i++) {
+            if (nonDesc.size() > 0 && nonDesc.get(0).start == i - k) {
+                if (nonDesc.get(0).end - nonDesc.get(0).start > 1) {
+                    inc -= nonDesc.get(0).end - nonDesc.get(0).start;
+                    nonDesc.get(0).start++;
+                } else {
+                    nonDesc.remove(0);
+                    inc -= 1;
+                }
+            } 
+            if (nonInc.size() > 0 && nonInc.get(0).start == i - k) {
+                if (nonInc.get(0).end - nonInc.get(0).start > 1) {
+                    dec -= nonInc.get(0).end - nonInc.get(0).start;
+                    nonInc.get(0).start = i - k + 1;
+                } else {
+                    nonInc.remove(0);
+                    dec -= 1;
+                }
+            }
+            if (arr[i] >= arr[i - 1]) {
+                if (nonDesc.size() > 0 && nonDesc.get(nonDesc.size() - 1).end == i - 1) {
+                    nonDesc.get(nonDesc.size() - 1).end++;
+                    inc += nonDesc.get(nonDesc.size() - 1).end - nonDesc.get(nonDesc.size() - 1).start;
+                } else {
+                    nonDesc.add(new Pair(i - 1, i));
+                    inc += 1;
+                }
+            } 
+            if (arr[i] <= arr[i - 1]){
+                if (nonInc.size() > 0 && nonInc.get(nonInc.size() - 1).end == i - 1) {
+                    nonInc.get(nonInc.size() - 1).end++;
+                    dec += nonInc.get(nonInc.size() - 1).end - nonInc.get(nonInc.size() - 1).start;
+                } else {
+                    nonInc.add(new Pair(i - 1, i));
+                    dec += 1;
+                }
+            }
+            res.add(inc - dec);
+        }
+        return res;
+    }
+
+    /**Get non-increasing and non-deceasing subranges in the first window**/
+    public List<List<Pair>> getVotes(int[] arr, int k) {
+        List<Pair> nonDesc = new ArrayList<>();
+        List<Pair> nonInc = new ArrayList<>();
+        for (int i = 0; i < k - 1; i++) {
+            if (arr[i] >= arr[i + 1]) {
+                if (nonInc.size() > 0 && nonInc.get(nonInc.size() - 1).end == i) {
+                    nonInc.get(nonInc.size() - 1).end++;
+                } else {
+                    nonInc.add(new Pair(i, i + 1));
+                }
+            }
+            if (arr[i] <= arr[i + 1]){
+                 if (nonDesc.size() > 0 && nonDesc.get(nonDesc.size() - 1).end == i) {
+                     nonDesc.get(nonDesc.size() - 1).end++;
+                 } else {
+                     nonDesc.add(new Pair(i, i + 1));
+                 }
+             }
+        }
+        List<List<Pair>> res = new ArrayList<>();
+        res.add(nonDesc);
+        res.add(nonInc);
+        return res;
+    }
+
+    private long getSubrange(Pair p) {
+        long len = p.end - p.start;
+        return ((1 + len) * len) / 2;
+    }
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        int k = in.nextInt();
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = in.nextInt();
+        }
+        Solution s = new Solution();
+        List<Long> res = s.upvotes(arr, k);
+        for (long i : res) {
+            System.out.println(i);
+        }
+    }
+}
+```
 
 
 
