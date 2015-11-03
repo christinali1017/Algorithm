@@ -260,7 +260,7 @@
 * [274 H-Index](#274-h-index)
 * [275 H-Index II](#275-h-index-ii)
 * [276 Paint Fence](#276-Paint-fence)
-* [277 Find the Celebrity](#277-Find the Celebrity)
+* [277 Find the Celebrity](#277-find-the-celebrity)
 * [278 First Bad Version](#278-first-bad-version)
 * [279 Perfect Squares](#279-perfect-squares)
 * [280 Wiggle Sort](#280-wiggle-sort)
@@ -282,6 +282,7 @@
 * [296 Best Meeting Point](#296-best-meeting-point)
 * [297 Serialize and Deserialize Binary Tree](#297-serialize-and-deserialize-binary-tree)
 * [298 Binary Tree Longest Consecutive Sequence](#298-binary-tree-longest-consecutive-sequence)
+* [299 Bulls and Cows](#299-bulls-and-cows)
 
 ###Others
 
@@ -324,7 +325,8 @@
 * [37 Put Chair](#37-put-chair)
 * [38 Post Office Problem](#38-post-office-problem)
 * [39 Upvotes](#39-upvotes)
-
+* [40 Partition Sum](#40-partition-sum)
+* [41 Lexicographic paths](#41-lexicographic-paths)
 
 
 <br>
@@ -21232,6 +21234,83 @@ Longest consecutive sequence path is 2-3,not3-2-1, so return 2
 <br>
 <br>
 
+###299 Bulls and Cows
+
+>You are playing the following Bulls and Cows game with your friend: You write a 4-digit secret number and ask your friend to guess it. Each time your friend guesses a number, you give a hint. The hint tells your friend how many digits are in the correct positions (called "bulls") and how many digits are in the wrong positions (called "cows"). Your friend will use those hints to find out the secret number.
+>
+>For example:
+>
+>Secret number:  "1807"
+>Friend's guess: "7810"
+>Hint: 1 bull and 3 cows. (The bull is 8, the cows are 0, 1 and 7.)
+>Write a function to return a hint according to the secret number and friend's guess, use A to indicate the bulls and B to indicate the cows. In the above example, your function should return "1A3B".
+>
+>Please note that both secret number and friend's guess may contain duplicate digits, for example:
+>
+>Secret number:  "1123"
+>Friend's guess: "0111"
+>In this case, the 1st 1 in friend's guess is a bull, the 2nd or 3rd 1 is a cow, and your function should return "1A1B".
+>You may assume that the secret number and your friend's guess only contain digits, and their lengths are always equal.
+
+
+**Two pass with map**:
+
+```java
+public String getHint(String secret, String guess) {
+    Map<Character, Integer> map = new HashMap<>();
+    int bulls = 0;
+    int cows = 0;
+    for (int i = 0; i < secret.length(); i++) {
+        char c1 = secret.charAt(i);
+        char c2 = guess.charAt(i);
+        Integer count = map.get(secret.charAt(i));
+        map.put(secret.charAt(i), count == null ? 1 : count + 1);
+        if (c1 == c2) {
+            bulls++;
+            map.put(c1, map.get(c1) - 1);
+        }
+    }
+    for (int i = 0; i < secret.length(); i++) {
+        char c1 = secret.charAt(i);
+        char c2 = guess.charAt(i);
+        if (c1 != c2 && map.containsKey(c2) && map.get(c2) > 0) {
+            cows++;
+            map.put(c2, map.get(c2) - 1);
+        }
+    }
+    return bulls + "A" + cows + "B";
+}
+```
+
+**One pass**:
+
+```java
+public String getHint(String secret, String guess) {
+    int[] arr = new int[10];
+    int bulls = 0;
+    int cows = 0;
+    for (int i = 0; i < secret.length(); i++) {
+        int c1 = secret.charAt(i) - '0';
+        int c2 = guess.charAt(i) - '0';
+        if (c1 == c2) {
+            bulls++;
+        } else {
+            if (arr[c1] < 0) {
+                cows++;
+            }
+            if (arr[c2] > 0) {
+                cows++;
+            }
+            arr[c1]++;
+            arr[c2]--;
+        }
+    }
+    return bulls + "A" + cows + "B";
+}
+```
+<br>
+<br>
+
 ##Similar questions from other sources.
 
 ###1 Search a 2D Matrix II
@@ -23821,6 +23900,175 @@ public class Solution {
 }
 ```
 
+<br>
+<br>
+
+###40 Partition Sum
+
+> Check if a given set can be partitioned into two subsets such that the sum of elements in both subsets is same.
 
 
+**Brute force**: Recursively check if we can find a subset with sum (total sum) / 2. 
 
+
+```java
+    public boolean findPartition(int[] arr) {
+        int sum = 0;
+        for (int i : arr) {
+            sum += i;
+        }
+        if (sum % 2 != 0) {
+            return false;
+        }
+        return canPartition(arr, sum / 2, 0);
+    }
+    private boolean canPartition(int[] arr, int sum, int index) {
+        if (sum == 0) {
+            return true;
+        }
+        if (index == arr.length && sum != 0) {
+            return false;
+        }
+        return canPartition(arr, sum - arr[index], index + 1) ||
+               canPartition(arr, sum, index + 1);
+    }
+```
+
+**Dp solution**:
+
+```java
+public boolean findPartition(int[] arr) {
+    int sum = 0;
+    for (int i : arr) {
+        sum += i;
+    }
+    if (sum % 2 != 0) {
+        return false;
+    }
+    boolean[][] canPartition = new boolean[sum / 2 + 1][arr.length + 1];
+    for (int i = 0; i <= arr.length; i++) {
+        canPartition[0][i] = true;
+    }
+    for (int i = 1; i <= sum / 2; i++) {
+        for (int j = 1; j <= arr.length; j++) {
+            canPartition[i][j] |= canPartition[i][j - 1];
+            if (i >= arr[j - 1]) {
+                canPartition[i][j] |= canPartition[i - arr[j - 1]][j -1];
+            }
+        }
+    }
+    return canPartition[sum / 2][arr.length];
+}
+```
+
+<br>
+<br>
+
+###41 Lexicographic paths
+
+[https://www.hackerrank.com/contests/w9/challenges/lexicographic-steps](https://www.hackerrank.com/contests/w9/challenges/lexicographic-steps)
+
+>Krishnakant is standing at (0,0) in the Cartesian plane. He wants to go to the point (x,y) in the same plane using only horizontal and vertical moves of 1 unit. There are many ways of doing this, and he is writing down all such ways. Each way comprises of few H moves and few V moves. i.e. moves in horizontal and vertical direction respectively. For example, if Krishnakant wants to go to point (2,2) from point (0,0), HVHV is one of the possible ways.
+
+
+Given the value of K, he wants to know lexicographically Kth smallest way of going to (x,y) from (0,0).
+
+<pre>
+
+Input Format 
+The first line contains an integer T , i.e., number of test cases. 
+Next T lines will contain integers x,y and K.
+
+Output Format 
+For each test case, print lexicographically Kth smallest path.
+
+Constraints 
+1≤T≤100000 
+1≤x≤10 
+1≤y≤10 
+0≤K< number of paths
+
+Sample Input
+
+2
+2 2 2
+2 2 3
+Sample Output
+
+HVVH
+VHHV
+Explanation
+
+All the paths of going to (2,2) from (0,0) in lexicographically increasing order:
+
+
+0.HHVV
+1.HVHV
+2.HVVH
+3.VHHV
+4.VHVH
+5.VVHH
+
+</pre>
+
+**Idea**: For input (m, n), there are (m + n)! / (m! * n!) paths. 
+
+- If k + 1 > (m - 1 + n)! / ((m - 1)! * n!), then the first letter should be V, otherwise, the first letter is H.
+
+- Recursively adding m + n characters.
+
+
+```java
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+    
+    public static void kthPath(int steps, int m, int n, long k, StringBuilder s, int index) {
+        if (index == steps) {
+            return;
+        }
+        long factor = getFactor(m - 1, n);
+        if (factor < k) {
+            kthPath(steps, m, n - 1, k - factor, s.append("V"), index + 1);
+        } else {
+            if (m > 0) {
+                kthPath(steps, m - 1, n, k, s.append("H"), index + 1);
+            } else {
+                kthPath(steps, m, n - 1, k, s.append("V"), index + 1);
+            }
+        }
+    }
+
+    private static long getFactor(int m, int n) {
+        int small = m < n ? m : n;
+        int large = small == m ? n : m;
+        long num1 = 1;
+        long num2 = 1;
+        for (int i = 1; i <= small; i++) {
+            num1 *= i;
+            num2 *= (small + large - i + 1);
+        }
+        return num2 / num1;
+    }
+ 
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner in = new Scanner(System.in);
+        int cases = in.nextInt();
+        for (int i = 0; i < cases; i++) {
+            int m = in.nextInt();
+            int n = in.nextInt();
+            int k = in.nextInt();
+            StringBuilder s = new StringBuilder();
+            kthPath(m + n, m, n, k + 1, s, 0);
+            System.out.println(s);
+        }
+    }
+}
+```
+<br>
+<br>
