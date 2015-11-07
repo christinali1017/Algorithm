@@ -283,6 +283,8 @@
 * [297 Serialize and Deserialize Binary Tree](#297-serialize-and-deserialize-binary-tree)
 * [298 Binary Tree Longest Consecutive Sequence](#298-binary-tree-longest-consecutive-sequence)
 * [299 Bulls and Cows](#299-bulls-and-cows)
+* [300 Longest Increasing Subsequence](#300-longest-increasing-subsequence)
+* [301 Remove Invalid Parentheses](#301-remove-invalid-parentheses)
 
 ###Others
 
@@ -327,6 +329,7 @@
 * [39 Upvotes](#39-upvotes)
 * [40 Partition Sum](#40-partition-sum)
 * [41 Lexicographic paths](#41-lexicographic-paths)
+* [42 Power of 4](#42-power-of-4)
 
 
 <br>
@@ -838,6 +841,7 @@ class Solution:
 
 ###6 Zigzag Conversion
 >The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+
 <pre>
 
 P   A   H   N
@@ -1145,9 +1149,14 @@ Note: You may not slant the container.
 
 ###12 Integer to Roman
 
+
+>Given an integer, convert it to a roman numeral.
+
+>Input is guaranteed to be within the range from 1 to 3999.
+
 **Rules**:
 
-See detailed rules at [12 Integer to Roman](#12-integer-to-roman)
+See detailed rules at [13 Roman to Integer](#13-roman-to-integer)
 
 **Idea**: Just calculate each digit and append it to result string.
 
@@ -1250,11 +1259,6 @@ See detailed rules at [12 Integer to Roman](#12-integer-to-roman)
 
 
 ###13 Roman to Integer 
-
-
->Given an integer, convert it to a roman numeral.
-
->Input is guaranteed to be within the range from 1 to 3999.
 
 
 **Some rules about Roman**:
@@ -1428,7 +1432,7 @@ See detailed rules at [12 Integer to Roman](#12-integer-to-roman)
     	(-1, 0, 1)
     	(-1, -1, 2)
     
-**Idea**: We need to find the three numbers triplets that sum to 0. We can change to this problem to two subproblems. Target + (-target) = 0, num1 + num2 = - target.
+**Idea**: We need to find the three numbers triplets that sum to 0. We can change to this problem to two sum problems. Target + (-target) = 0, num1 + num2 = - target.
 Thus we can use the method in two sum to solve this problem. For each number num1 in the array, we find the other two numbers that sum to -num1. 
 
 We first need to sort the array, then use two pointers to find the two sum numbers sum to -num1.
@@ -1441,7 +1445,7 @@ We first need to sort the array, then use two pointers to find the two sum numbe
 
 1) Silly check: num is null or num's length less than 3
 
-2) *Duplication*: Both the threeSum and twoSum helper function need to check the duplication. If just need to check if the current is equal to the number before it. 
+2) *Duplication*: Both the threeSum and twoSum helper function need to check the duplication. We can check if the current is equal to the number before it. 
 
 3) Non-descending order
 
@@ -1791,9 +1795,6 @@ public class Solution {
     private boolean isValidFourSum(Pair el1, Pair el2) {
           return el1.secondIndex < el2.firstIndex;
     }
-    private boolean isSameValuePair(Pair el1, Pair el2, int[] nums) {
-        return nums[el1.firstIndex] == nums[el2.firstIndex] && nums[el1.secondIndex] == nums[el2.secondIndex];
-    }
 }
 
  ```
@@ -2048,7 +2049,7 @@ Use priorityqueue, add the head of k lists two queue, each time poll the smalles
 
 	PriorityQueue queue = new PriorityQueue(size, new Comparator<ListNode>(){
 		public int compare(ListNode arg1, ListNode arg2){
-			return arg1 - arg2;
+			return arg1.val - arg2.val;
 		}
 	});
 	
@@ -2490,7 +2491,9 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 **Related**: Remove spaces
 
-> eg: “   I     love MTV ” --> “I love MTV”
+> Remove spaces at begining and end, and leave only one space between each word.
+
+eg: “   I     love MTV ” --> “I love MTV”
 
 ```java
   public String removeSpaces(String input) {
@@ -2975,7 +2978,9 @@ For example. a permutation of 1 2 3 4 5 would be:
 >Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
 
 
-**Idea**: This problem has some similarities with the valid parentheses, we need to use the method in that problem to check if the current sequence of parentheses is valid. We use a stack to match the parentheses. The difference is that we store the **index** of the parenthese other than parenthese itself. Because there is only one type of parentheses, so it's ok to store just the index. 
+**Idea**: For a string of parentheses, if for each index, [0, i], number of "(" >= number of ")", then it is possible that it is a valid parentheses.
+
+This problem has some similarities with the valid parentheses, we need to use the method in that problem to check if the current sequence of parentheses is valid. We use a stack to match the parentheses. The difference is that we store the **index** of the parenthese other than parenthese itself. Because there is only one type of parentheses, so it's ok to store just the index. 
 
 Then how to calculate the longest valid parentheses? Like the valid parentheses problem, everytime, we encounter a '(', we push the current index. Then if the parentheses is ')', Obviously, if the stack is empty, then the previous parentheses sequence cannot be a valid parentheses, so we update the valid parentheses start position. Otherwise, we need to calculate the local longest parentheses. 
 
@@ -3120,7 +3125,7 @@ In the else if condition, we should use A[mid] >= A[l] other than A[mid] == A[l]
 
 **Idea**: We need to find the range in O(lgn), thus binary search comes to mind. We could use binary search to find the target, then for the left and right part, we do binary search again to find the left boundary and right boundary.
 
-The second solution is similar to the first one, the differce is that we do twice binary search to do the left boundary and right boundary. Remember to check the value of the two boundaries. Because in this method, we might not find the target element. 
+The second solution is similar to the first one, the difference is that we do twice binary search to do the left boundary and right boundary. Remember to check the value of the two boundaries, if the l boundary is greater than r, it means the target is not in the array.
 
 
 **Solution1**:
@@ -3330,6 +3335,8 @@ public int search(Dictionary dict, int target) {
 
 **Related: total occurrence**:
 
+Count how many times the target appear in a sorted array.
+
 ```java
   public int totalOccurrence(int[] array, int target) {
     // Write your solution here
@@ -3525,8 +3532,8 @@ public int search(Dictionary dict, int target) {
                         return true;
                     }
                 }
+                board[i][j] = '.';
             }
-            board[i][j] = '.';
             return false;
         }
         return solve(board, i, j + 1);
@@ -5514,8 +5521,13 @@ Note: Given n will be between 1 and 9 inclusive.
 **Idea**: for each begin character, it has (n-1)! permutations, k/(n-1)! we know the begin character
 	 
 	 
-**Attention**: How to decide add which num to the permutation? We use k/(n-1)!. There are boundary between permutation (n-1)! when add num to permutation. For example, n = 3, k = 4, k /(2!) = 2, should we add 2 or 3 to the permutation? 
-Thus k-- can simplify the index.  
+**Attention**: 
+
+- How to decide add which num to the permutation? We use k/(n-1)!. 
+
+- It's easier if we do k-1 / (n - 1)! Because k % (n - 1)! might be 0. 
+
+For example, n = 3, k = 4, k /(2!) = 2, n = 3, k = 5, k /(2!) = 2. For both cases k /(2!) = 2, we need to have special check to take care of it. Thus k-- can simplify the index.  
 
 **Java code**:
 
@@ -5535,7 +5547,6 @@ Thus k-- can simplify the index.
             factorial /= n;
             StringBuilder res = new StringBuilder();
             
-            /* to simplify the boundary, we can k--. Consider n = 4, k = 18, 18 / 6 = 3, then we need to add nums[i-1]*/ 
             k--;
             
             /*create permutation one digit per time*/
@@ -21311,6 +21322,55 @@ public String getHint(String secret, String guess) {
 <br>
 <br>
 
+
+###300 Longest Increasing Subsequence
+
+Given an unsorted array of integers, find the length of longest increasing subsequence.
+
+For example,
+Given [10, 9, 2, 5, 3, 7, 101, 18],
+The longest increasing subsequence is [2, 3, 7, 101], therefore the length is 4. Note that there may be more than one LIS combination, it is only necessary for you to return the length.
+
+Your algorithm should run in O(n2) complexity.
+
+Follow up: Could you improve it to O(n log n) time complexity?
+
+**Idea**: dp
+
+```java
+public int lengthOfLIS(int[] nums) {
+    int res = 0;
+    int[] dp = new int[nums.length + 1];
+    for (int i = 1; i <= nums.length; i++) {
+        dp[i] = 1;
+        res = Math.max(res, dp[i]);
+        for (int j = 1; j < i; j++) {
+            if (nums[j - 1] < nums[i - 1]) {
+                dp[i] = Math.max(dp[i], dp[j] + 1);
+                res = Math.max(res, dp[i]);
+            }
+        }
+    }
+    return res;
+ }
+```
+
+###301 Remove Invalid Parentheses
+
+>Remove the minimum number of invalid parentheses in order to make the input string valid. Return all possible results.
+>
+>Note: The input string may contain letters other than the parentheses ( and ).
+>
+>Examples:
+>"()())()" -> ["()()()", "(())()"]
+>
+>"(a)())()" -> ["(a)()()", "(a())()"]
+>
+>")(" -> [""]
+
+
+
+
 ##Similar questions from other sources.
 
 ###1 Search a 2D Matrix II
@@ -24072,3 +24132,35 @@ public class Solution {
 ```
 <br>
 <br>
+
+###42 Power of 4
+
+> Check if a long n is power of 4.
+
+**Idea**:
+
+Let's see some example of power of 4:
+
+- ..00001 1  4^0
+- ..00100 4  4^1
+- 0010000 16 4^2
+- 1000000 64 4^3
+
+From the above examples, we found that num has only one set bit. Also, the set bit should appear at even index. 0, 2, 4,.....
+
+The solution below first check if num is power of 2 by n & (n - 1). If num is power of 2 then n & (n - 1) should be 0
+
+Then (n & 0x5555555555555555l) != 0 make sure that there is a even index set bit.
+
+
+```java
+public boolean powerOf4(long n) {
+    if (n <= 0 || (n & (n - 1)) != 0) {
+        return false;
+    }
+    return (n & 0x5555555555555555l) != 0;
+}
+
+```
+
+**Another naive solution**: Iteratively check if n % 4 == 0 and change n = n /4 to next iteration.
