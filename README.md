@@ -285,6 +285,7 @@
 * [299 Bulls and Cows](#299-bulls-and-cows)
 * [300 Longest Increasing Subsequence](#300-longest-increasing-subsequence)
 * [301 Remove Invalid Parentheses](#301-remove-invalid-parentheses)
+* [302 Smallest Rectangle Enclosing Black Pixels](#302-smallest-rectangle-enclosing-black-pixels)
 
 ###Others
 
@@ -6450,6 +6451,20 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
  
  
  **Solution2**: Use matrix, O(lgn) time.
+
+ 
+
+<pre>
+[Fm+1 Fm ]   = [1 1] ^ m   (mod n)
+[Fm   Fm-1]    [1 0] 
+
+When m is large—say a 500-bit number—then we can calculate Fm (mod n) efficiently using the matrix form. T
+</pre>
+
+Thus we need to calculate [[1 1], [1, 0]] power of n. We can use divide and conqur.
+
+Be careful, in the following code, n % 2 == 1 occurs at most 2 times. If n is odd and greater than 1, it will occur
+2 times, otherwise, it only satisfies when n == 1.
  
  ```java
  
@@ -6487,8 +6502,6 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
     }
     
 ```
-
-**Solution 1: use stack.
 
 We see that the value of Fibonacci increases exponentially. If we use int, then we can only compute to F47, if we use long, we can compute to F96. So if our required numbers are big, it's unreasonable to use in/long as return value. We can use BigInteger in java. Eg:
 
@@ -7013,6 +7026,7 @@ Use method1 need two pass. Method 2 only need one pass.
 
 ###76 Minimum Window Substring
 >Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
 <pre>
 
 For example,
@@ -7752,7 +7766,7 @@ return 1->2->2->4->3->5.
 
 **Idea**: We need to preserve the original order, thus we can maintain two pointers, h1 and tail. h1 is the place we need to insert the element which smaller than x. tail is the end of the result list from which we add the elements equal or larger than x. 
 
-**Attention**: We need to 
+
 ```java
     public ListNode partition(ListNode head, int x) {
         if (head == null) {
@@ -11224,6 +11238,10 @@ private int sumPath(TreeNode root, int cur) {
 A region is captured by flipping all 'O's into 'X's in that surrounded region.
 
 For example,
+
+<pre>
+
+
 X X X X
 X O O X
 X X O X
@@ -11235,6 +11253,7 @@ X X X X
 X X X X
 X O X X
 
+</pre>
 **Idea**:
 
 Change all unsurrounded 'O' to other character, then fill surrounded 'O' with 'X'. Then change unsurrounded '0' back.
@@ -11481,7 +11500,7 @@ Induction rule: cut[i] = min(cut[i], cut[j - 1] + 1), if substring(j, i + 1) is 
 Note if j = 0, and isParlindrome[j][i] = true, then cut[i] = 0
 
 
-- *Solution 2*: combine the cut[] isParlindrome[][] together, then we only need n ^ 2, other then 2 * (n ^ 2) 
+- *Solution 2*: combine the cut[] isParlindrome[][] together, then we only need n ^ 2, other than 2 * (n ^ 2) 
 
 **Solution 1**:
 
@@ -11751,7 +11770,7 @@ for (j = i + 1; j < len; j++){
 
 Based on the following two ideas:
 
-1) if car can not reach from A to B, then car not start from A + 1, A + 2....B - 1 to B
+1) if car can not reach from A to B, then can not start from A + 1, A + 2....B - 1 to B
 
 2) if sum (gas[i] - cost[i]) >= 0, then there must have a solution.
 
@@ -12907,7 +12926,7 @@ private ListNode merge(ListNode h1, ListNode h2) {
 
 - Make sure to consider the same points ( x and y both the same)
 - Make sure to consider x1 = x2
-- Make sure when y1 = y2, don't use (y1 - y2)/(x1 - x2) to calculate the k, because they have twp values
+- Make sure when y1 = y2, don't use (y1 - y2)/(x1 - x2) to calculate the k, because they have two values
   **0.0 / -0.0**
 
 ```java
@@ -13061,7 +13080,7 @@ public String reverseWords(String input) {
 ```
 
 
-**Solution without use regular expresssion**:
+**Solution without using regular expresssion**:
 
 ```java
 public String reverseWords(String input) {
@@ -13199,7 +13218,7 @@ Time complexity: O(lgn)
 <br>
 <br>
 
-154 Find Minimum in Rotated Sorted Array
+###154 Find Minimum in Rotated Sorted Array
 
 
 >Follow up for "Find Minimum in Rotated Sorted Array":
@@ -14526,6 +14545,27 @@ public int titleToNumber(String s) {
 
 **Idea**: To find the number of trailing zeroes, we need to find the number of 2 and number od 5. Since the number of 2 is more than number of 5, thus we only need to count the number of 5. 
 
+How to calculate number of 5s?
+
+Let's try a few examples:
+
+Example 1: n = 100
+
+5 : 1
+10 : 1
+15 : 1
+20 : 1
+25 : 2
+30 : 1
+35 : 1
+40 : 1
+45 : 1
+50 : 2
+....
+125 : 3
+
+From the example, we know that number of 5s = n / 5 + n / 25 + n / 125
+
 Here is the solution.
 
 ```java
@@ -14710,6 +14750,58 @@ public int calculateMinimumHP(int[][] dungeon) {
 >
 >Note: The result may be very large, so you need to return a string instead of an integer.
 
+Here is a trick: how we decide the sequence of two number?
+
+The idea is that we need to put large digit as front as possible.
+
+In the above example: 9 should be put in the beginning.
+
+Then 5
+
+Then 34 
+
+Then 3
+
+Then 30.
+
+By comparing the value of concantenate numbers we can get the order of two numbers. 
+
+For example : 3 and 30 because 330 > 303, so 3 should be put at the left of 30
+
+34 and 3, because 343 > 334, thus 34 should be put at left.
+
+```java
+public String largestNumber(int[] nums) {
+    Integer[] list = new Integer[nums.length];
+    for (int i = 0; i < list.length; i++) {
+        list[i] = nums[i];
+    }
+    Arrays.sort(list, new Comparator<Integer>() {
+        public int compare(Integer e1, Integer e2) {
+            String s1 = String.valueOf(e1) + String.valueOf(e2);
+            String s2 = String.valueOf(e2) + String.valueOf(e1);
+            for (int i = 0; i < s1.length(); i++) {
+                char c1 = s1.charAt(i);
+                char c2 = s2.charAt(i);
+                if (c1 < c2) {
+                    return -1;
+                } else if (c1 > c2) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+    });
+    StringBuilder res = new StringBuilder();
+    for (int i = list.length - 1; i >= 0; i--) {
+        if (i == list.length - 1 && list[i] == 0) {
+            return "0";
+        }
+        res.append(list[i]);
+    }
+    return res.toString();
+}
+```
 <br>
 <br>
 	
@@ -15412,7 +15504,11 @@ public int numIslands(char[][] grid) {
 
 >For example, given the range [5, 7], you should return 4.
 
-**Idea**: what we need to do is to  find the similar bits of of m and n on the left side. For eample, if n = 111, m = 101, we need to find the similar part on the left side of m and n. Similar left side + Fill 0s on the right side is the result.
+**Idea**: what we need to do is to  find the similar bits of of m and n on the left side.
+
+ For eample, if n = 111, m = 101, the similar part on the left side is 1
+
+Similar left side + Fill 0s on the right side is the result.
 
 
 **Java code**:
@@ -15522,33 +15618,6 @@ class Solution:
 The `head` of this problem contains value. If it doesn't contains the value,
 declaration of `p` and `q` to `p, q = head, head->next`.
 
-Becareful if:
-- The node is `head`
-- The node is `tail`, which means `.next = None`
-- How to move the pointers ahead.
-
-**Java code**:
-
-```java
-
-    public ListNode removeElements(ListNode head, int val) {
-        if(head == null) return head;
-        ListNode fakeHead = new ListNode(-1);
-        fakeHead.next = head;
-        ListNode pre = fakeHead;
-        while(head != null){
-            if(head.val == val){
-                pre.next = head.next;
-                head = pre.next;
-            }else{
-                pre = head;
-                head = head.next;
-            }
-        }
-        return fakeHead.next;
-    }
-
-```
 **python**:
 
 ``` python
@@ -15579,6 +15648,35 @@ class Solution:
                 p, q = q, q.next
                 
         return head
+```
+
+
+Be careful if:
+- The node is `head`
+- The node is `tail`, which means `.next = None`
+- How to move the pointers ahead.
+
+**Java code**:
+
+```java
+
+    public ListNode removeElements(ListNode head, int val) {
+        if(head == null) return head;
+        ListNode fakeHead = new ListNode(-1);
+        fakeHead.next = head;
+        ListNode pre = fakeHead;
+        while(head != null){
+            if(head.val == val){
+                pre.next = head.next;
+                head = pre.next;
+            }else{
+                pre = head;
+                head = head.next;
+            }
+        }
+        return fakeHead.next;
+    }
+
 ```
 
 
@@ -17007,11 +17105,11 @@ Look at the following picture:
 
 ![completetree](https://wishyouhappy.github.io/pictures/completetree.png)
 
-For a complete tree, it's easier to find the height of a tree or subtree. We can divide the count work into two parts. COunt the nodes in the left subtree and count the node in the right subtree, then sum them. 
+For a complete tree, it's easier to find the height of a tree or subtree. We can divide the count work into two parts. Count the nodes in the left subtree and count the node in the right subtree, then sum them. 
 
 How can we determine how many nodes to add?
 
-In the figure above, we can first check if height of subtree root at 2 is equal tp height of subtree rooted at 3. There are two cases:
+In the figure above, we can first check if height of subtree root at 2 is equal to height of subtree rooted at 3. There are two cases:
 
 - 1) If it doesn't equal, then we know that right subtree's last level is empty. So we add 2 ^ (height of right subtree) - 1 + 1(parent). And go to the left subtree. **Note that in this case, the right subtree is full, but its height is 1 smaller than the height of the left subtree. 
 
@@ -17027,7 +17125,9 @@ Let's go over the above figure.
 
 - 4) count = 10; root = 2, height(left) = height(right) = 0. It's case 2. so count += 2 ^ 0 - 1 + 1 = 11. root = root.right = null.
 
-- 5) count = 11; root = null. Stop, return 11. 
+- 5) count = 11; root = null. Stop, return 11.
+
+**Also, note that since the tree is complete tree, when calculate height, we just need to go to left. Because the hheight of left child >= right child.** 
 
 **Solution**:
 
@@ -21368,7 +21468,115 @@ public int lengthOfLIS(int[] nums) {
 >
 >")(" -> [""]
 
+**Idea**:
 
+Remove parenthese at each position, check if it is valid. 
+
+Note:
+
+- If given string is already valid, just return the input string.
+- we need to return all valid strings that has the same length. A easy way to achieve this is queue
+- Remember to check already visited string. This can saves us lots of time.
+
+```java
+    public List<String> removeInvalidParentheses(String s) {
+        if (isValid(s)) {
+            List<String> arr = new ArrayList<>();
+            arr.add(s);
+            return arr;
+        }
+        Set<String> res = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+        queue.offer(s);
+        visited.add(s);
+        while (!queue.isEmpty()) {
+            boolean find = false;
+            int size = queue.size();
+            for (int j = 0; j < size; j++) {
+                String cur = queue.poll();
+                for (int i = 0; i < cur.length(); i++) {
+                    String candidate = new StringBuilder(cur).deleteCharAt(i).toString();
+                    if (isValid(candidate)) {
+                        res.add(candidate);
+                        find = true;
+                    } else if (!visited.contains(candidate)) {
+                        queue.offer(candidate);
+                        visited.add(candidate);
+                    }
+                }
+            }
+            if (find) {
+                return new ArrayList<String>(res);
+            }
+            
+        }
+        return new ArrayList<String>(res);
+    }
+    private boolean isValid(String s) {
+        int left = 0;
+        int right = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '(') {
+                left++;
+            } else if (c == ')') {
+                right++;
+            }
+            if (right > left) {
+                return false;
+            }
+        }
+        return left == right;
+    }
+```
+
+###302 Smallest Rectangle Enclosing Black Pixels
+>An image is represented by a binary matrix with 0 as a white pixel and 1 as a black pixel. The black pixels are connected, i.e., there is only one black region. Pixels are connected horizontally and vertically. Given the location (x, y) of one of the black pixels, return the area of the smallest (axis-aligned) rectangle that encloses all black pixels.
+>
+>For example, given the following image:
+
+<pre>
+[
+  "0010",
+  "0110",
+  "0100"
+]
+
+
+and x = 0, y = 2,
+Return 6.
+
+</pre>
+
+**Idea**: DFS and check l, r, u, b boundary.
+
+```java
+    public int minArea(char[][] image, int x, int y) {
+        int[] arr = {Integer.MAX_VALUE, 0, Integer.MAX_VALUE, 0};
+        if (image.length == 0 || image[0].length == 0) {
+            return 0;
+        }
+        dfs(image, x, y, arr);
+        return (arr[1] - arr[0] + 1) * (arr[3] - arr[2] + 1);
+    }
+    private void dfs(char[][] image, int x, int y, int[] arr) {
+        if (x < 0 || x >= image.length || y < 0 || y >= image[0].length || image[x][y] == '0') {
+            return;
+        }
+        image[x][y] = '0';
+        arr[0] = Math.min(arr[0], x);
+        arr[1] = Math.max(arr[1], x);
+        arr[2] = Math.min(arr[2], y);
+        arr[3] = Math.max(arr[3], y);
+        dfs(image, x - 1, y, arr);
+        dfs(image, x + 1, y, arr);
+        dfs(image, x, y - 1, arr);
+        dfs(image, x, y + 1, arr);
+    }
+```
+<br>
+<br>
 
 
 ##Similar questions from other sources.
