@@ -284,6 +284,7 @@
 * [301 Remove Invalid Parentheses](#301-remove-invalid-parentheses)
 * [302 Smallest Rectangle Enclosing Black Pixels](#302-smallest-rectangle-enclosing-black-pixels)
 * [303 Range Sum Query Immutable](#303=range-sum-query-immutable)
+* [304 Range Sum Query 2D Immutable](#304-range-sum-query-2d-immutable)
 
 
 ### 1 Two Sum
@@ -11831,7 +11832,7 @@ public int canCompleteCircuit(int[] gas, int[] cost) {
 
 ####136 Single Number
 
->Given an array of integers, every element appears three times except for one. Find that single one.
+>Given an array of integers, every element appears two times except for one. Find that single one.
 
 Note:
 Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
@@ -17812,25 +17813,65 @@ Return 6, because digit 1 occurred in the following numbers: 1, 10, 11, 12, 13.
 
 - 1900 -1999 : 100 + 19
 
-The idea of the solution below calculate number of one in each digit. For example, if n = 121
+We can sum the occur k at each digit(index).
 
-digit 1 = 12 + 1 : 1 11, 21 ...91, 101, 111, 121.
+For example, suppose N = 3121
 
-digit 10 = 20 : 10 - 19 110 - 119
+It has 4 digits. Thus result = count(digit 1th) + count(digit 10th) + count(digit 100th) + count(digit 1000th)
 
-digit 100 = 22 : 100 - 121 
+count(digit nth) = 
+<pre>
+- if digit nth == k, count = (number left of nth * nth) + (number right of nth) + 1
+- if digit nth < k, count = (number left of nth * nth)
+- if digit nth > k, count = (number left of nth + 1) * nth.
+</pre>
 
+The method below suit for count 1 - 9.
 
 ```java
 public int countDigitOne(int n) {
     int res = 0;
+    int k = 1; // count 1.
     int digit = 1;
-    int r = 1;
+    int right = 0;
     while (n > 0) {
-        int lastDigit = n % 10;
-        res += lastDigit >= 2 ? ((n / 10) + 1) * digit : (n / 10) * digit;
-        res += lastDigit == 1 ? r : 0;
-        r += lastDigit * digit;
+        int cur = n % 10;
+        res += (n / 10) * digit;
+        if (cur == k) {
+            res += right + 1;
+        } else if (cur > k) {
+            res += digit;
+        }
+        right += (n % 10) * digit;
+        digit *= 10;
+        n /= 10;
+    }
+    return res;
+}
+
+```
+
+If you want to count 0s, see the following code:
+
+```java
+public int digitCounts(int k, int n) {
+    // write your code here
+    int res = 0;
+    if (k == 0) {
+        res++;
+        k = 10;
+    }
+    int digit = 1;
+    int right = 0;
+    while (n > 0) {
+        int cur = n % 10;
+        res += (n / 10) * digit;
+        if (cur == k) {
+            res += right + 1;
+        } else if (cur > k) {
+            res += digit;
+        }
+        right += (n % 10) * digit;
         digit *= 10;
         n /= 10;
     }
@@ -21568,6 +21609,78 @@ public class NumArray {
 
     public int sumRange(int i, int j) {
         return sums[j + 1] - sums[i];
+    }
+}
+```
+
+<br>
+<br>
+
+
+###304 Range Sum Query 2D Immutable
+
+<pre>
+Given a 2D matrix matrix, find the sum of the elements inside the rectangle defined by its upper left corner (row1, col1) and lower right corner (row2, col2).
+
+Range Sum Query 2D
+The above rectangle (with the red border) is defined by (row1, col1) = (2, 1) and (row2, col2) = (4, 3), which contains sum = 8.
+
+Example:
+Given matrix = [
+  [3, 0, 1, 4, 2],
+  [5, 6, 3, 2, 1],
+  [1, 2, 0, 1, 5],
+  [4, 1, 0, 1, 7],
+  [1, 0, 3, 0, 5]
+]
+
+sumRegion(2, 1, 4, 3) -> 8
+sumRegion(1, 1, 2, 2) -> 11
+sumRegion(1, 2, 2, 4) -> 12
+Note:
+You may assume that the matrix does not change.
+There are many calls to sumRegion function.
+You may assume that row1 ≤ row2 and col1 ≤ col2.
+
+</pre>
+
+**Since matrix is immutable and sumRegion will be called multiple times, thus we matain sum[i][j] which represents the sum of rectangle [0 - i] [0- j]
+
+```java
+public class NumMatrix {
+    private int[][] sum;
+    public NumMatrix(int[][] matrix) {
+        if (matrix.length == 0 || matrix[0].length == 0) {
+            return;
+        }
+        sum = new int[matrix.length][matrix[0].length];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (i == 0 && j == 0) {
+                    sum[i][j] = matrix[i][j];
+                } else if (i == 0) {
+                    sum[i][j] = sum[i][j - 1] + matrix[i][j];
+                } else if (j == 0) {
+                    sum[i][j] = sum[i - 1][j] + matrix[i][j];
+                } else {
+                    sum[i][j] = sum[i][j - 1] + sum[i - 1][j] - sum[i - 1][j - 1] + matrix[i][j];
+                }
+            }
+        }
+    }
+
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        if (sum.length == 0 || sum[0].length == 0) {
+            return 0;
+        }
+        if (row1 == 0 && col1 == 0) {
+            return sum[row2][col2];
+        } else if (row1 == 0) {
+            return sum[row2][col2] - sum[row2][col1 - 1];
+        } else if (col1 == 0) {
+            return sum[row2][col2] - sum[row1 - 1][col2];
+        }
+        return sum[row2][col2] - sum[row1 - 1][col2] - (sum[row2][col1 - 1] - sum[row1 - 1][col1 - 1]);
     }
 }
 ```
