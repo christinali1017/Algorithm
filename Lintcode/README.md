@@ -6,7 +6,7 @@
 * [4 Maximum Subarray II](#4-maximum-subarray-ii)
 * [5 Maximum Subarray III](#5-maxinum-subarray-iii)
 * [6 Maximum Subarray Difference](#6-maximum-subarray-difference)
-
+* [7 Majority Number III](#7-majority-number-iii)
 ###1 A + B Problem
 ---
 
@@ -418,9 +418,95 @@ public int maxDiffSubArrays(ArrayList<Integer> nums) {
 
 ```
 
+<br>
+<br>
+
+###7 Majority Number III
+
+http://www.lintcode.com/en/problem/majority-number-iii/
+
+<pre>
+Given an array of integers and a number k, the majority number is the number that occurs more than 1/k of the size of the array.
+
+Find it.
+
+Have you met this question in a real interview? Yes
+Example
+Given [3,1,2,3,2,3,3,4,4,4] and k=3, return 3.
+
+Note
+There is only one majority number in the array.
+
+Challenge
+O(n) time and O(k) extra space
+</pre>
+
+See Majority Number I and Majority Number II by the following link under leetcode 
+
+https://github.com/wishyouhappy/Algorithm/blob/master/leetcode/README.md#229-majority-element-ii
 
 
+**Idea**: Same idea with Majority Number I and Majority Number II. Here we need to maintain k candidates. 
+To check the candidates easily, we maintain them in a map. 
 
+- If nums[i] exists in map, (count of nums[i])++
+- if map.size() < k, put candidate nums[i] into map
+- if one of candidate's count == 0, remove this candidate and add nums[i] to map
+- otherwise, decrease the count of all candidates in the map.
+
+```java
+public int majorityNumber(ArrayList<Integer> nums, int k) {
+        // write your code
+        Map<Integer, Integer> map =  new HashMap<>();
+        for (Integer num : nums) {
+            Integer count = map.get(num);
+            if (count != null) {
+                map.put(num, count + 1);
+            } else if (map.size() < k){
+                map.put(num, 1);
+            } else {
+                if (map.containsValue(0)) {
+                    removeZero(map);
+                    map.put(num, 1);
+                } else {
+                    decreaseCount(map);
+                }
+            }
+        }
+        int majorCount = nums.size() / k + 1;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (getCount(entry.getKey(), nums) >= majorCount) {
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
+    private void removeZero(Map<Integer, Integer> map) {
+        int removeKey = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == 0) {
+                removeKey = entry.getKey();
+                break;
+            }
+        }
+        map.remove(removeKey);
+    }
+    private void decreaseCount(Map<Integer, Integer> map) {
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            entry.setValue(entry.getValue() - 1);
+        }
+    }
+    private int getCount(int key, ArrayList<Integer> nums) {
+        int count = 0;
+        for (int num : nums) {
+            if (num == key) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+```
 
 
 
