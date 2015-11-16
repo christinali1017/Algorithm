@@ -1209,15 +1209,6 @@ public int largestSmaller(TreeNode root, int target) {
 
 ```
 
-###19 Delete In Binary Search Tree
-
-> Delete a node in binary search tree.
-
-```java
-
-```
-
-
 <br>
 <br>
 
@@ -1228,9 +1219,9 @@ public int largestSmaller(TreeNode root, int target) {
 
 **Idea**: First we need to find the node we need to delete. Then there are three cases:
 
-- Target does not has child, just delete it.
+- Target does not have child, just delete it.
 
-- Target has only one child, set target.parent.left/right = child.left/right
+- Target has only one child, set target.parent.left/right = target.left/right
 
 - Target has two children, if target.right.left == null, just set target.right.left = target.left. Otherwise, find the smallest element as the new root in target's right subtree.
 
@@ -1260,11 +1251,11 @@ public class Solution {
       root.right = delete(root.right, key);
       return root;
     } else {
-      return deleteNode(root, key);
+      return deleteNode(root);
     }
   }
   
-  private TreeNode deleteNode(TreeNode root, int key) {
+  private TreeNode deleteNode(TreeNode root) {
     if (root.left == null) {
       return root.right;
     } else if (root.right == null) {

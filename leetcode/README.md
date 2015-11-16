@@ -285,6 +285,7 @@
 * [302 Smallest Rectangle Enclosing Black Pixels](#302-smallest-rectangle-enclosing-black-pixels)
 * [303 Range Sum Query Immutable](#303=range-sum-query-immutable)
 * [304 Range Sum Query 2D Immutable](#304-range-sum-query-2d-immutable)
+* [305 Number of Islands II](#305-number-of-islands-ii)
 
 
 ### 1 Two Sum
@@ -21708,5 +21709,96 @@ public class NumMatrix {
 }
 ```
 
+<br>
+<br>
+
+###305 Number of Islands II
+
+<pre>
+A 2d grid map of m rows and n columns is initially filled with water. We may perform an addLand operation which turns the water at position (row, col) into a land. Given a list of positions to operate, count the number of islands after each addLand operation. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+Example:
+
+Given m = 3, n = 3, positions = [[0,0], [0,1], [1,2], [2,1]].
+Initially, the 2d grid grid is filled with water. (Assume 0 represents water and 1 represents land).
+
+0 0 0
+0 0 0
+0 0 0
+Operation #1: addLand(0, 0) turns the water at grid[0][0] into a land.
+
+1 0 0
+0 0 0   Number of islands = 1
+0 0 0
+Operation #2: addLand(0, 1) turns the water at grid[0][1] into a land.
+
+1 1 0
+0 0 0   Number of islands = 1
+0 0 0
+Operation #3: addLand(1, 2) turns the water at grid[1][2] into a land.
+
+1 1 0
+0 0 1   Number of islands = 2
+0 0 0
+Operation #4: addLand(2, 1) turns the water at grid[2][1] into a land.
+
+1 1 0
+0 0 1   Number of islands = 3
+0 1 0
+We return the result as an array: [1, 1, 2, 3]
+
+</pre>
+
+https://leetcode.com/problems/number-of-islands-ii/
+
+**Idea**: Union find. 
+
+Each time we add an island, increase islands by 1(suppose it is separated with other island) set root == x * cols + y, and set it's neighbor with same root. 
+
+Then when adding islands, if we find root[neighbor] != root[current point], we decrease island by 1. Because we know that these two points are connected, we only need to increase islands by 1. Since we have already add 1 in previous steps when adding neighbor. 
+
+For example, in the above example,
+
+when addLand(0, 0), number of islands = 1. ids[0] = 0, we also set it's neighbors' id to 0. So ids[1] = 0 ids[3] = 0. 
+when addLand(0, 1), number of islands = 2. ids[1] = 1. Since root(1) != root(0). So number of islands decrease to 1. 
+
+Here is the solution.
+
+
+```java
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        int[] ids = new int[m * n];
+        Arrays.fill(ids, -1);
+        List<Integer> res = new ArrayList<>();
+        for (int[] p : positions) {
+            res.add(getIslands(ids, p, res, m, n));
+        }
+        return res;
+    }
+    private int getIslands(int[] ids, int[] p, List<Integer> res, int m, int n) {
+        int[][] offset = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int islands = res.isEmpty() ? 1 : res.get(res.size() - 1) + 1;
+        ids[p[0] * n + p[1]] = p[0] * n + p[1];
+        for (int[] arr : offset) {
+            int x = p[0] + arr[0];
+            int y = p[1] + arr[1];
+            if (x >= 0 && x < m && y >= 0 && y < n && ids[x * n + y] != -1) {
+                int root1 = getRoot(ids, p[0] * n + p[1]);
+                int root2 = getRoot(ids, x * n + y);
+                if (root1 != root2) {
+                    islands--;
+                }
+                ids[root1] = root2;
+            }
+        }
+        return islands;
+    }
+    private int getRoot(int[] ids, int i) {
+        while (ids[i] != i) {
+            i = ids[i];
+        }
+        return i;
+    }
+```
 <br>
 <br>

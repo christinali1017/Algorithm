@@ -7,6 +7,11 @@
 * [5 Maximum Subarray III](#5-maxinum-subarray-iii)
 * [6 Maximum Subarray Difference](#6-maximum-subarray-difference)
 * [7 Majority Number III](#7-majority-number-iii)
+* [8 Previous Permutation](#8-previous-permutation)
+* [9 Longest Common Subsequence](#9-longest-common-subsequence)
+* [10 k Sum](#10-k-sum)
+* [11 k Sum II](#11-k-sum-ii)
+
 ###1 A + B Problem
 ---
 
@@ -508,10 +513,177 @@ public int majorityNumber(ArrayList<Integer> nums, int k) {
 
 ```
 
+<br>
+<br>
+
+###8 Previous Permutation
+http://www.lintcode.com/en/problem/previous-permutation/
+
+<pre>
+Given a list of integers, which denote a permutation.
+
+Find the previous permutation in ascending order.
+
+Have you met this question in a real interview? Yes
+Example
+For [1,3,2,3], the previous permutation is [1,2,3,3]
+
+For [1,2,3,4], the previous permutation is [4,3,2,1]
+
+Note
+The list may contains duplicate integers.
+</pre>
+
+**Idea**: 
+
+- From index = nums.size() - 2, find the first index that nums[index] > nums[index + 1]
+
+- From i = nums.size() - 1, find the first i that nums[i] < nums[index]
+
+- Swap nums[i] nums[index]
+
+- reverse elements from index + 1 to the end of the array.
+
+```java
+    public ArrayList<Integer> previousPermuation(ArrayList<Integer> nums) {
+		// write your code
+		if (nums == null || nums.size() <= 1) {
+		    return nums;
+		}
+		int index = nums.size() - 2;
+		while (index >= 0 && nums.get(index) <= nums.get(index + 1)) {
+		    index--;
+		}
+		if (index == -1) {
+		    Collections.reverse(nums);
+		    return nums;
+		}
+		int i = nums.size() - 1;
+		while (i >= 0 && nums.get(index) <= nums.get(i)) {
+		    i--;
+		}
+		Collections.swap(nums, i, index);
+		reverse(nums, index + 1);
+		return nums;
+    }
+    private void reverse(ArrayList<Integer> nums, int index) {
+        int i = index; 
+        int j = nums.size() - 1;
+        while (i < j) {
+            Collections.swap(nums, i++, j--);
+        }
+    }
+```
+
+<br>
+<br>
+
+###9 Longest Common Subsequence
+
+http://www.lintcode.com/en/problem/longest-common-subsequence/
+
+<pre>
+Given two strings, find the longest common subsequence (LCS).
+
+Your code should return the length of LCS.
+
+Have you met this question in a real interview? Yes
+Example
+For "ABCD" and "EDCA", the LCS is "A" (or "D", "C"), return 1.
+
+For "ABCD" and "EACB", the LCS is "AC", return 2.
+</pre>
+
+**Idea**: DP
+
+```java
+public int longestCommonSubsequence(String A, String B) {
+    // write your code here
+    int[][] dp = new int[A.length() + 1][B.length() + 1];
+    for (int i = 0; i < A.length(); i++) {
+        for (int j = 0; j < B.length(); j++) {
+            if (A.charAt(i) == B.charAt(j)) {
+                dp[i + 1][j + 1] = dp[i][j] + 1;
+            } else {
+                dp[i + 1][j + 1] = Math.max(dp[i][j + 1], dp[i + 1][j]);
+            }
+        }
+    }
+    return dp[A.length()][B.length()];
+}
+```
+
+<br>
+<br>
+
+###10 k Sum
+
+http://www.lintcode.com/en/problem/k-sum/
+
+<pre>
+Given n distinct positive integers, integer k (k <= n) and a number target.
+
+Find k numbers where sum is target. Calculate how many solutions there are?
+
+Have you met this question in a real interview? Yes
+Example
+Given [1,2,3,4], k = 2, target = 5.
+
+There are 2 solutions: [1,4] and [2,3].
+
+Return 2.
+
+</pre>
+
+**Idea**: In 11 k Sum II, we solve it like combination sum because we need to know all the combinations.
+
+Here in this problem, we only want to know the number of solutions. Thus we can solve it with dp.
 
 
 
 
+<br>
+<br>
 
+###11 k Sum II
+
+http://www.lintcode.com/en/problem/k-sum-ii/#
+
+
+<pre>
+Given n unique integers, number k (1<=k<=n)  and target. Find all possible k integers where their sum is target.
+
+Have you met this question in a real interview? Yes
+Example
+Given [1,2,3,4], k=2, target=5, [1,4] and [2,3] are possible solutions.
+</pre>
+
+**Idea**: Combination sum. Recursively add one element each until k elements is added and sum is target.
+
+```java
+public ArrayList<ArrayList<Integer>> kSumII(int A[], int k, int target) {
+    // write your code here
+    ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+    sumHelper(res, A, 0, k, target, new ArrayList<Integer>());
+    return res;
+}
+private void sumHelper(ArrayList<ArrayList<Integer>> res, int[] A, int index, int k, int target, ArrayList<Integer> cur) {
+    if (cur.size() == k) {
+        if (target == 0) {
+            res.add(new ArrayList<Integer>(cur));
+        }
+        return;
+    }
+    if (target <= 0) {
+        return;
+    }
+    for (int i = index; i < A.length; i++) {
+        cur.add(A[i]);
+        sumHelper(res, A, i + 1, k, target - A[i], cur);
+        cur.remove(cur.size() - 1);
+    }
+}
+
+```
 
 
