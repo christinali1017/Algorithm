@@ -11,6 +11,8 @@
 * [9 Longest Common Subsequence](#9-longest-common-subsequence)
 * [10 k Sum](#10-k-sum)
 * [11 k Sum II](#11-k-sum-ii)
+* [12 Minimum Adjustment Cost](#12-minimum-adjustment-cost)
+* [13 Backpack](#13-backpack)
 
 ###1 A + B Problem
 ---
@@ -687,3 +689,139 @@ private void sumHelper(ArrayList<ArrayList<Integer>> res, int[] A, int index, in
 ```
 
 
+<br>
+<br>
+
+###12 Minimum Adjustment Cost
+
+http://www.lintcode.com/en/problem/minimum-adjustment-cost/#
+
+<pre>
+Given an integer array, adjust each integers so that the difference of every adjacent integers are not greater than a given number target.
+
+If the array before adjustment is A, the array after adjustment is B, you should minimize the sum of |A[i]-B[i]|
+
+Have you met this question in a real interview? Yes
+Example
+Given [1,4,2,3] and target = 1, one of the solutions is [2,3,2,3], the adjustment cost is 2 and it's minimal.
+
+Return 2.
+</pre>
+
+**Idea**: DP, min[i][j] represents when A[i] change to val, satisfy that  all neighbors in A[0-i] have difference <= target
+
+Since there is a range, that is, all numbers after change should in [1, 100]. We can try all the numbers in each range for each number in A[i]. Find the min in all the valid adjusted sequences.
+
+For each spot in A[i], if we adjust its value to j, then the valid A[i] is in 
+
+```java
+[Math.max(0, j - target), Math.min(maxInt, j + target]
+```
+
+Thus the induction rule of dp is:
+
+```java
+min[i + 1][j] = Math.min(min[i + 1][j], min[i][k] + Math.abs(A.get(i) - j)), k is between [Math.max(0, j - target), Math.min(maxInt, j + target]
+```
+
+
+```java
+public int MinAdjustmentCost(ArrayList<Integer> A, int target) {
+    // min[i][j] represents when A[i] change to val, satisfy all neighbors have difference <= target
+    int maxInt = 100;
+    int[][] min = new int[A.size() + 1][maxInt + 1];
+    for (int i = 0; i < A.size(); i++) {
+        for (int j = 0; j <= maxInt; j++) {
+            min[i + 1][j] = Integer.MAX_VALUE;
+            int diff = Math.abs(A.get(i) - j);
+            int start = Math.max(0, j - target);
+            int end = Math.min(maxInt, j + target);
+            for (int k = start; k <= end; k++) {
+                min[i + 1][j] = Math.min(min[i + 1][j], min[i][k] + diff);
+            }
+        }
+    }
+    return getMin(min);
+}
+private int getMin(int[][] min) {
+    int res = min[min.length - 1][0];
+    for (int i = 1; i < min[0].length; i++) {
+        res = Math.min(res, min[min.length - 1][i]);
+    }
+    return res;
+}
+```
+
+
+<br>
+<br>
+
+
+###13 Backpack
+
+http://www.lintcode.com/en/problem/backpack/#
+
+
+<pre>
+Given n items with size Ai, an integer m denotes the size of a backpack. How full you can fill this backpack?
+
+Have you met this question in a real interview? Yes
+Example
+If we have 4 items with size [2, 3, 5, 7], the backpack size is 11, we can select [2, 3, 5], so that the max size we can fill this backpack is 10. If the backpack size is 12. we can select [2, 3, 7] so that we can fulfill the backpack.
+
+You function should return the max size we can fill in the given backpack.
+
+Note
+You can not divide any item into small pieces.
+
+Challenge
+O(n x m) time and O(m) memory.
+
+O(n x m) memory is also acceptable if you do not know how to optimize memory.
+
+</pre>
+
+**Idea**: dp
+
+- res[i + 1][j] represents max weight by choosing from first i items and total weight <= j. 
+- iterate all items, check if we can or can not choose the current item.
+  * if j < A[i], we can not choose the current item
+  * otherwise, we update res[i + 1][j] with Math.max(res[i][j], res[i][j - A[i]] + A[i])
+
+
+```java
+    public int backPack(int m, int[] A) {
+        // res[i + 1][j] represents max weight by choosing from first i items and total weight <= j. 
+        int[][] res = new int[A.length + 1][m + 1];
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j <= m; j++) {
+                if (j < A[i]) {
+                    res[i + 1][j] = res[i][j]; // j < A[i], can not pick A[i]
+                } else {
+                    res[i + 1][j] = Math.max(res[i][j], res[i][j - A[i]] + A[i]);
+                }
+            }
+        }
+        return res[A.length][m];
+    }
+```
+
+Change to one dimensional:
+
+Two notes:
+
+- Here inner loop should begin from m, then decrease. We need to avoid override values that will be used later
+- We only need to loop from m to A[i], because when j < A[i], res[j] does not change.
+
+```java
+public int backPack(int m, int[] A) {
+    // res[j] represents max weight by choosing from first i items and total weight <= j. 
+    int[] res = new int[m + 1];
+    for (int i = 0; i < A.length; i++) {
+        for (int j = m; j >= A[i]; j--) {
+            res[j] = Math.max(res[j], res[j - A[i]] + A[i]);
+        }
+    }
+    return res[m];
+}
+```
