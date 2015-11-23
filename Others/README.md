@@ -1468,26 +1468,6 @@ public int minCost(int[] stones) {
   }
 ```
 
-
-    List<List<Integer>> res = new ArrayList<List<Integer>>();
-    combinations(target, coins, 0, new ArrayList<Integer>(), res);
-    return res;
-  }
-  private void combinations(int target, int[] coins, int index, List<Integer> cur, List<List<Integer>> res) {
-    if (index == coins.length - 1) {
-      if (target % coins[coins.length - 1] == 0) {
-        cur.add(target / coins[coins.length - 1]);
-        res.add(new ArrayList<Integer>(cur));
-        cur.remove(cur.size() - 1);
-      }
-      return;
-    }
-    for (int i = 0, num = target/ coins[index]; i <= num; i++) {
-      cur.add(i);
-      combinations(target - i * coins[index], coins, index + 1, cur, res);
-      cur.remove(cur.size() - 1);
-    }
-
 <br>
 <br>
 

@@ -13,6 +13,18 @@
 * [11 k Sum II](#11-k-sum-ii)
 * [12 Minimum Adjustment Cost](#12-minimum-adjustment-cost)
 * [13 Backpack](#13-backpack)
+* [14 Backpack II](#14-backpack-ii)
+* [15 Max Tree](#15-max-tree)
+* [16 Hash Function](#16-hash-function)
+* [17 Rehashing](#17-rehashing)
+* [18 Heapify](#18-heapify)
+* [19 Subarray Sum Closest](#19-subarray-sum-closest)
+* [20 Fast Power](#20-fast-power)
+* [21 Route Between Two Nodes in Graph](#21-route-between-two-nodes-in-graph)
+* [22 Interleaving Positive and Negative Numbers](#22-interleaving-positive-and-negative-numbers)
+* [23 Binary Representation](#23-binary-representation)
+* [24 Delete Digits](#-24-delete-digits)
+
 
 ###1 A + B Problem
 ---
@@ -825,3 +837,786 @@ public int backPack(int m, int[] A) {
     return res[m];
 }
 ```
+
+<br>
+<br>
+
+
+###14 Backpack II
+
+http://www.lintcode.com/en/problem/backpack-ii/#
+
+<pre>
+Given n items with size Ai and value Vi, and a backpack with size m. What's the maximum value can you put into the backpack?
+
+Have you met this question in a real interview? Yes
+Example
+Given 4 items with size [2, 3, 5, 7] and value [1, 5, 2, 4], and a backpack with size 10. The maximum value is 9.
+
+Note
+You cannot divide item into small pieces and the total size of items you choose should smaller or equal to m.
+
+Challenge
+O(n x m) memory is acceptable, can you do it in O(m) memory?
+</pre>
+**Idea**: Change the max weight to max value in **13 Backpack**. Here res[i + 1][j] represents max value by choosing from first i items and total weight <= j. 
+
+**O(n x m) memory**:
+```java
+    public int backPackII(int m, int[] A, int V[]) {
+        // res[i + 1][j] represents max value by choosing from first i items and total weight <= j. 
+        int[][] res = new int[A.length + 1][m + 1];
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j <= m; j++) {
+                if (j < A[i]) {
+                    res[i + 1][j] = res[i][j]; // j < A[i], can not pick A[i]
+                } else {
+                    res[i + 1][j] = Math.max(res[i][j], res[i][j - A[i]] + V[i]);
+                }
+            }
+        }
+        return res[A.length][m];
+    }
+```
+
+**O(m)memory**:
+
+```java
+    public int backPackII(int m, int[] A, int V[]) {
+        // res[j] represents max value by choosing from first i items and total weight <= j. 
+        int[] res = new int[m + 1];
+        for (int i = 0; i < A.length; i++) {
+            for (int j = m; j >= A[i]; j--) {
+                res[j] = Math.max(res[j], res[j - A[i]] + V[i]);
+            }
+        }
+        return res[m];
+    }
+```
+
+###15 Max Tree
+
+http://www.lintcode.com/en/problem/max-tree/
+
+<pre>
+Given an integer array with no duplicates. A max tree building on this array is defined as follow:
+
+The root is the maximum number in the array
+The left subtree and right subtree are the max trees of the subarray divided by the root number.
+Construct the max tree by the given array.
+
+Have you met this question in a real interview? Yes
+Example
+Given [2, 5, 6, 0, 3, 1], the max tree constructed by this array is:
+
+    6
+   / \
+  5   3
+ /   / \
+2   0   1
+Challenge
+O(n) time and memory.
+</pre>
+
+
+**Recursion**: stackoverflow on the last use case
+
+Time : if tree is balanced, O(nlgn). Worst case O(n ^ 2)
+
+```java
+    public TreeNode maxTree(int[] A) {
+        return createTree(A, 0, A.length - 1);
+    }
+    private TreeNode createTree(int[] A, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        int index = getMax(A, start, end);
+        TreeNode root = new TreeNode(A[index]);
+        root.left = createTree(A, start, index - 1);
+        root.right = createTree(A, index + 1, end);
+        return root;
+    }
+    private int getMax(int[] A, int start, int end) {
+        int max = start;
+        for (int i = start + 1; i <= end; i++) {
+            if (A[i] > A[max]) {
+                max = i;
+            }
+        }
+        return max;
+    }
+```
+
+**Using stack**: O(N) time
+
+Here, in the stack, value from bottom to top is decreasing. 
+
+If the value keep increasing, we know all previous values are on the left subtree of the current value. If at some where it begin decreasing, we know this decreasing value must on the right subtree of the previous value.
+
+```java
+public TreeNode maxTree(int[] A) {
+    Deque<TreeNode> stack = new LinkedList<>();
+    for (int num : A) {
+        TreeNode cur = new TreeNode(num);
+        while (!stack.isEmpty() && cur.val > stack.peek().val) {
+            cur.left = stack.pop();
+        }
+        if (!stack.isEmpty()) {
+            stack.peek().right = cur;
+        }
+        stack.push(cur);
+    }
+    TreeNode res = stack.pop();
+    while (!stack.isEmpty()) {
+        res = stack.pop();
+    }
+    return res;
+}
+
+```
+<br>
+<br>
+
+
+###16 Hash Function
+
+http://www.lintcode.com/en/problem/hash-function/
+
+<pre>
+In data structure Hash, hash function is used to convert a string(or any other type) into an integer smaller than hash size and bigger or equal to zero. The objective of designing a hash function is to "hash" the key as unreasonable as possible. A good hash function can avoid collision as less as possible. A widely used hash function algorithm is using a magic number 33, consider any string as a 33 based big integer like follow:
+
+hashcode("abcd") = (ascii(a) * 333 + ascii(b) * 332 + ascii(c) *33 + ascii(d)) % HASH_SIZE 
+
+                              = (97* 333 + 98 * 332 + 99 * 33 +100) % HASH_SIZE
+
+                              = 3595978 % HASH_SIZE
+
+here HASH_SIZE is the capacity of the hash table (you can assume a hash table is like an array with index 0 ~ HASH_SIZE-1).
+
+Given a string as a key and the size of hash table, return the hash value of this key.f
+
+
+
+Have you met this question in a real interview? Yes
+Example
+For key="abcd" and size=100, return 78
+
+Clarification
+For this problem, you are not necessary to design your own hash algorithm or consider any collision issue, you just need to implement the algorithm as described.
+</pre>
+
+**Idea**: If we simply follow the instructions above, we might have overflow problem. Because (ascii(a) * 333 + ascii(b) * 332 + ascii(c) *33 + ascii(d)) + ..... can be really large.
+
+Luckily, there are some property of arithmetic modular:
+https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/modular-addition-and-subtraction
+
+- **(A + B) mod C = (A mod C + B mod C) mod C**
+- **(A - B) mod C = (A mod C - B mod C) mod C**
+- **(A * B) mod C = (A mod C * B mod C) mod C**
+- **A^B mod C = ( (A mod C)^B ) mod C**
+
+Thus, by using **(A + B) mod C = (A mod C + B mod C) mod C**, each time after we add a new char, we do mod to avoid overflow.
+
+```java
+res = res * 33 + (int) c;
+res %= HASH_SIZE;
+```
+
+```java
+public int hashCode(char[] key,int HASH_SIZE) {
+    long res = 0;
+    for (char c : key) {
+        res = res * 33 + (int) c;
+        res %= HASH_SIZE;
+    }
+    return (int) res;
+}
+```
+<br>
+<br>
+
+###17 Rehashing
+
+http://www.lintcode.com/en/problem/rehashing/#
+
+<pre>
+The size of the hash table is not determinate at the very beginning. If the total size of keys is too large (e.g. size >= capacity / 10), we should double the size of the hash table and rehash every keys. Say you have a hash table looks like below:
+
+size=3, capacity=4
+
+[null, 21, 14, null]
+       ↓    ↓
+       9   null
+       ↓
+      null
+The hash function is:
+
+int hashcode(int key, int capacity) {
+    return key % capacity;
+}
+here we have three numbers, 9, 14 and 21, where 21 and 9 share the same position as they all have the same hashcode 1 (21 % 4 = 9 % 4 = 1). We store them in the hash table by linked list.
+
+rehashing this hash table, double the capacity, you will get:
+
+size=3, capacity=8
+
+index:   0    1    2    3     4    5    6   7
+hash : [null, 9, null, null, null, 21, 14, null]
+Given the original hash table, return the new hash table after rehashing .
+
+Have you met this question in a real interview? Yes
+Example
+Given [null, 21->9->null, 14->null, null],
+
+return [null, 9->null, null, null, null, 21->null, 14->null, null]
+
+Note
+For negative integer in hash table, the position can be calculated as follow:
+
+C++/Java: if you directly calculate -4 % 3 you will get -1. You can use function: **a % b = (a % b + b) % b to make it is a non negative integer**.
+Python: you can directly use -1 % 3, you will get 2 automatically.
+
+</pre>
+
+```java
+public ListNode[] rehashing(ListNode[] hashTable) {
+    ListNode[] newTable = new ListNode[hashTable.length * 2];
+    for (ListNode node : hashTable) {
+        hash(node, newTable);
+    }
+    return newTable;
+}
+private void hash(ListNode node, ListNode[] newTable) {
+    int size = newTable.length;
+    while (node != null) {
+        ListNode temp = node.next;
+        int index = node.val >= 0 
+                ? (node.val % size) : (((node.val % size) + size) % size);
+        ListNode head = newTable[index];
+        if (head == null) {
+            newTable[index] = node;
+        } else {
+            while (head.next != null) {
+                head = head.next;
+            }
+            head.next = node;
+        }
+        node.next = null;
+        node = temp;
+    }
+}
+
+```
+
+<br>
+<br>
+
+###18 Heapify
+
+http://www.lintcode.com/en/problem/heapify/
+
+<pre>
+Given an integer array, heapify it into a min-heap array.
+
+For a heap array A, A[0] is the root of heap, and for each A[i], A[i * 2 + 1] is the left child of A[i] and A[i * 2 + 2] is the right child of A[i].
+Have you met this question in a real interview? Yes
+Example
+Given [3,2,1,4,5], return [1,2,3,4,5] or any legal heap array.
+
+Challenge
+O(n) time complexity
+
+Clarification
+What is heap?
+
+Heap is a data structure, which usually have three methods: push, pop and top. where "push" add a new element the heap, "pop" delete the minimum/maximum element in the heap, "top" return the minimum/maximum element.
+
+What is heapify?
+Convert an unordered integer array into a heap array. If it is min-heap, for each element A[i], we will get A[i * 2 + 1] >= A[i] and A[i * 2 + 2] >= A[i].
+
+What if there is a lot of solutions?
+Return any of them.
+</pre>
+
+**Recursive**: perform heapifydown for  index i = A.length / 2 - 1 to 0.
+
+heapifyDown: swap parent with the smallest of left and right child. 
+
+
+```java
+    public void heapify(int[] A) {
+        for (int i = A.length / 2 - 1; i >= 0; i--) {
+            heapifyDown(i, A);
+        }
+    }
+    
+    private void heapifyDown(int index, int[] A) {
+        if (isLeaf(index, A)) {
+            return;
+        }
+        int smallest = index;
+        if (index * 2 + 1 < A.length && A[index * 2 + 1] < A[index]) {
+            smallest = index * 2 + 1;
+        }
+        if (index * 2 + 2 < A.length && A[index * 2 + 2] < A[smallest]) {
+            smallest = index * 2 + 2;
+        }
+        if (smallest != index) {
+            swap(index, smallest, A);
+            heapifyDown(smallest, A);
+        }
+    }
+    
+    private void swap(int i, int j, int[] A) {
+        int temp = A[i];
+        A[i] = A[j];
+        A[j] = temp;
+    }
+    
+    private boolean isLeaf(int i, int[] A) {
+        return i * 2 + 1 >= A.length;
+    }
+```
+
+**Iterative**:
+
+
+```java
+    public void heapify(int[] A) {
+        for (int i = A.length / 2 - 1; i >= 0; i--) {
+            heapifyDown(i, A);
+        }
+    }
+    
+    private void heapifyDown(int index, int[] A) {
+        while (!isLeaf(index, A)) {
+            int smallest = index;
+            if (index * 2 + 1 < A.length && A[index * 2 + 1] < A[index]) {
+                smallest = index * 2 + 1;
+            }
+            if (index * 2 + 2 < A.length && A[index * 2 + 2] < A[smallest]) {
+                smallest = index * 2 + 2;
+            }
+            if (smallest != index) {
+                swap(index, smallest, A);
+                index = smallest;
+            } else {
+                break;
+            }
+        }
+    }
+    
+    private void swap(int i, int j, int[] A) {
+        int temp = A[i];
+        A[i] = A[j];
+        A[j] = temp;
+    }
+    
+    private boolean isLeaf(int i, int[] A) {
+        return i * 2 + 1 >= A.length;
+    }
+```
+
+
+###20 Subarray Sum Closest
+
+http://www.lintcode.com/en/problem/subarray-sum-closest/
+
+<pre>
+Given an integer array, find a subarray with sum closest to zero. Return the indexes of the first number and last number.
+
+Have you met this question in a real interview? Yes
+Example
+Given [-3, 1, 1, -3, 5], return [0, 2], [1, 3], [1, 1], [2, 2] or [0, 4].
+
+
+</pre>
+
+
+**O(n^2) solution**:
+- calcualte sums array, sums[i] = sum(arr[0] + arr[1] + .... + arr[i]). O(n)
+- two for loop check each subarray. O(n^2)
+
+
+```java
+public ArrayList<Integer> subarraySumClosest(int[] nums) {
+    int[] sums = new int[nums.length];
+    for (int i = 0; i < nums.length; i++) {
+        sums[i] = i == 0 ? nums[i] : sums[i - 1] + nums[i];
+    }
+    int start = 0;
+    int end = 0;
+    int diff = Integer.MAX_VALUE;
+    for (int i = 0; i < sums.length; i++) {
+        for (int j = i; j < sums.length; j++) {
+            if (Math.abs(sums[j] - sums[i] + nums[i]) < diff) {
+                diff = Math.abs(sums[j] - sums[i] + nums[i]);
+                start = i;
+                end = j;
+            }
+        }
+    }
+    ArrayList<Integer> res = new ArrayList<>();
+    res.add(start);
+    res.add(end);
+    return res;
+}
+```
+
+**O(nlgn) solution**:
+
+- After we have sums array, sums[i] = sum(arr[0] + arr[1] + .... + arr[i]). O(n)
+- sort sums array. O(nlgn)
+- check adjacent sums[i] and sums[i + 1]. The closest to 0 subarray must in the adjacent sums[i]. O(n)
+  **Here since we need to sort sums, thus the index is disordered, thus we need to record the original index for each sum element.**
+
+Also, note that before sort sums[i] - sums[j] = {arr[j + 1], arr[j + 2] ... arr[i]}. It doesnot include arr[j]. 
+Thus when calculate start index of subarray, remember to plus 1 to the index of sum.
+
+```java
+    class Pair {
+        int index;
+        int sum;
+        Pair(int index, int sum) {
+            this.index = index;
+            this.sum = sum;
+        }
+    }
+    public ArrayList<Integer> subarraySumClosest(int[] nums) {
+        Pair[] sums = new Pair[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            sums[i] = i == 0 
+                ? new Pair(i, nums[i]) : new Pair(i, sums[i - 1].sum + nums[i]);
+        }
+        Arrays.sort(sums, new Comparator<Pair>() {
+            public int compare(Pair e1, Pair e2) {
+                return e1.sum - e2.sum;
+            }
+        });
+        return findClosest(sums);
+    }
+    private ArrayList<Integer> findClosest(Pair[] sums) {
+        int start = -1;
+        int end = 0;
+        int diff = Integer.MAX_VALUE;
+        for (int i = 1; i < sums.length; i++) {
+            if (Math.abs(sums[i].sum - sums[i - 1].sum) < diff) {
+                start = Math.min(sums[i - 1].index, sums[i].index);
+                end = Math.max(sums[i - 1].index, sums[i].index);
+                diff = Math.abs(sums[i].sum - sums[i - 1].sum);
+            }
+        }
+        ArrayList<Integer> res = new ArrayList<>();
+        res.add(start + 1);
+        res.add(end);
+        return res;
+    }
+```
+
+<br>
+<br>
+
+###20 Fast Power
+
+http://www.lintcode.com/en/problem/fast-power/#
+
+<pre>
+Calculate the an % b where a, b and n are all 32bit integers.
+
+Have you met this question in a real interview? Yes
+Example
+For 231 % 3 = 2
+
+For 1001000 % 1000 = 0
+
+Challenge
+O(logn)
+</pre>
+
+
+**Idea**:  **(A * B) mod C = (A mod C * B mod C) mod C**
+
+```java
+public int fastPower(int a, int b, int n) {
+    if (n == 0) {
+        return 1 % b;
+    } else if (n == 1) {
+        return a % b;
+    }
+    long half = fastPower(a, b, n / 2) % b;
+    long res = (half * half) % b; 
+    if (n % 2 == 1) {
+        res = (res * (a % b)) % b;
+    }
+    return (int) res;
+}
+```
+
+
+
+
+<br>
+<br>
+
+###21 Route Between Two Nodes in Graph
+http://www.lintcode.com/en/problem/route-between-two-nodes-in-graph/#
+
+<pre>
+Medium Route Between Two Nodes in Graph Show result 
+
+35% Accepted
+Given a directed graph, design an algorithm to find out whether there is a route between two nodes.
+
+Have you met this question in a real interview? Yes
+Example
+Given graph:
+
+A----->B----->C
+ \     |
+  \    |
+   \   |
+    \  v
+     ->D----->E
+for s = B and t = E, return true
+
+for s = D and t = C, return false
+</pre>
+
+
+```java
+public boolean hasRoute(ArrayList<DirectedGraphNode> graph, 
+                        DirectedGraphNode s, DirectedGraphNode t) {
+    Set<DirectedGraphNode> visited = new HashSet<>();
+    return findRoute(s, visited, graph, t);
+}
+private boolean findRoute(DirectedGraphNode node, Set<DirectedGraphNode> visited, ArrayList<DirectedGraphNode> graph, DirectedGraphNode t) {
+    if (node == t) {
+        return true;
+    }
+    visited.add(node);
+    for (DirectedGraphNode temp : node.neighbors) {
+        if (temp == t) {
+            return true;
+        }
+        if (!visited.contains(temp)) {
+             if (findRoute(temp, visited, graph, t)) {
+                 return true;
+             }
+        } 
+    }
+    return false;
+}
+```
+<br>
+<br>
+
+###22 Interleaving Positive and Negative Numbers
+
+http://www.lintcode.com/en/problem/interleaving-positive-and-negative-numbers/#
+
+<pre>
+    
+Given an array with positive and negative integers. Re-range it to interleaving with positive and negative integers.
+
+Have you met this question in a real interview? Yes
+Example
+Given [-1, -2, -3, 4, 5, 6], after re-range, it will be [-1, 5, -2, 4, -3, 6] or any other reasonable answer.
+
+Note
+You are not necessary to keep the original order of positive integers or negative integers.  
+</pre>
+
+**Idea**: First partition the array, so that positive and negative numbers are on the left side or right side of the array.
+
+Then interleaving positive and negative numbers by swaping.
+
+Note: We need to check if there are more negative numbers or positive numbers.
+
+If positive numbers > negative numbers, we should interleaving like positive negative positive .......negative positive
+
+Otherwise, we should interleaving like  negative positive .......negative positive negative.
+
+```java
+public void rerange(int[] A) {
+    int index = partition(A);
+    int count = Math.min(A.length - index, index);
+    int start = count == index ? 0 : 1;
+    for (int i = start; i < count * 2 + start; i += 2) {
+        swap(A, i, index++);
+    }
+}
+
+private int partition(int[] A) {
+    int l = 0;
+    for (int i = 0; i < A.length; i++) {
+        if (A[i] < 0) {
+            swap(A, i, l++);
+        }
+    }
+    return l;
+}
+
+private void swap(int[] A, int i, int j) {
+    int temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
+}
+```
+
+<br>
+<br>
+
+
+
+###23 Binary Representation
+
+
+http://www.lintcode.com/en/problem/binary-representation/
+
+
+<pre>
+Given a (decimal - e.g. 3.72) number that is passed in as a string, return the binary representation that is passed in as a string. If the fractional part of the number can not be represented accurately in binary with at most 32 characters, return ERROR.
+
+Have you met this question in a real interview? Yes
+Example
+For n = "3.72", return "ERROR".
+
+For n = "3.5", return "11.1".
+</pre>
+
+Special case: 1.0 return 1
+
+```java
+    public String binaryRepresentation(String n) {
+        StringBuilder res = new StringBuilder();
+        int index = n.indexOf(".");
+        if (index != -1) {
+            res.append(Long.toBinaryString(Long.parseLong(n.substring(0, index))));
+            double decimal = Double.parseDouble(n.substring(index));
+            if (0.0 == decimal) {
+                return res.toString();
+            }
+            res.append(".");
+            String decimalString = decimalToBinary(decimal);
+            if (decimalString.length() > 32) {
+                return "ERROR";
+            }
+            res.append(decimalString);
+        }
+        return res.toString();
+    }
+    
+    private String decimalToBinary(double f) {
+        StringBuilder res = new StringBuilder();
+        double i = 1;
+        while (i <= 33 && f != 0) {
+            double temp = Math.pow(0.5, i++);
+            if (f >= temp) {
+                res.append("1");
+                f -= temp;
+            } else {
+                res.append("0");
+            }
+        }
+        return res.toString();
+    }
+
+```
+
+In the above code, convert integer to String we use Long.toBinaryString(). We can implement our own to binary string method.
+
+```java
+private String toBinaryString(long n) {
+    if (n == 0) {
+        return "0";
+    }
+    StringBuilder res = new StringBuilder();
+    while (n > 0) {
+        res.append(n % 2);
+        n /= 2;
+    }
+    return res.reverse().toString();
+}
+```
+
+<br>
+<br>
+
+###24 Delete Digits
+
+http://www.lintcode.com/en/problem/delete-digits/#
+
+<pre>
+Given string A representative a positive integer which has N digits, remove any k digits of the number, the remaining digits are arranged according to the original order to become a new positive integer.
+
+Find the smallest integer after remove k digits.
+
+N <= 240 and k <= N,
+
+Have you met this question in a real interview? Yes
+Example
+Given an integer A = "178542", k = 4
+
+return a string "12"
+</pre>
+
+**Idea**: Each time we delete a digit, we need to find the first decreasing digit, then delete it. This can make sure that the number is the smallest after delete this digit.
+
+
+```java
+public String DeleteDigits(String A, int k) {
+    for (int i = 0; i < k; i++) {
+        for (int j = 0; j < A.length(); j++) {
+            if (j == A.length() - 1 || A.charAt(j) > A.charAt(j + 1)) {
+                A = A.substring(0, j) + A.substring(j + 1);
+                break;
+            }
+        }
+    }
+    int i = 0;
+    while (A.charAt(i) == '0' && i != A.length() - 1) {
+        i++;
+    }
+    return A.substring(i);
+}
+```
+
+The above method takes O(N * K). We can reduce the time to O(N) by using an increasing stack. The stack helps us avoiding find decreasing digit each time from begining.
+
+
+```java
+    public String DeleteDigits(String A, int k) {
+        Deque<Character> deque = new LinkedList<>();
+        int count = 0;
+        for (int j = 0; j < A.length(); j++) {
+           if (deque.isEmpty() || A.charAt(j) >= deque.peek() || count >= k) {
+               deque.push(A.charAt(j));
+           } else {
+               deque.pop();
+               j--;
+               count++;
+           }
+        }
+        while (count++ < k) {
+            deque.pop();
+        }
+        StringBuilder res = new StringBuilder();
+        boolean leadingZero = true;
+        while (!deque.isEmpty()) {
+            char c = deque.pollLast();
+            if (c != '0') {
+                leadingZero = false;
+            }
+            if (!leadingZero) {
+                res.append(c);
+            }
+        }
+        if (res.length() == 0) {
+            res.append("0");
+        }
+        return res.toString();
+    }
+```
+<br>
+<br>
