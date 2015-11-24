@@ -24,7 +24,14 @@
 * [22 Interleaving Positive and Negative Numbers](#22-interleaving-positive-and-negative-numbers)
 * [23 Binary Representation](#23-binary-representation)
 * [24 Delete Digits](#-24-delete-digits)
-
+* [25 Wood cut](#25-wood-cut)
+* [26 Segment Tree Build](#26-segment-tree-build)
+* [27 Segment Tree Query](#27-segment-tree-query)
+* [28 Segment Tree Modify](#28-segment-tree-modify)
+* [29 Interval Minimum Number](29-interval-minimum-number)
+* [30 Interval Sum](#30-interval-sum)
+* [31 Interval Sum II](#31-interval-sum-ii)
+* [32 Segment Tree Query II](#32-segment-tree-query-ii)
 
 ###1 A + B Problem
 ---
@@ -1620,3 +1627,652 @@ The above method takes O(N * K). We can reduce the time to O(N) by using an incr
 ```
 <br>
 <br>
+
+###25 Wood cut
+http://www.lintcode.com/en/problem/wood-cut/
+
+<pre>
+Given n pieces of wood with length L[i] (integer array). Cut them into small pieces to guarantee you could have equal or more than k pieces with the same length. What is the longest length you can get from the n pieces of wood? Given L & k, return the maximum length of the small pieces.
+
+Have you met this question in a real interview? Yes
+Example
+For L=[232, 124, 456], k=7, return 114.
+</pre>
+
+**Idea**: Binary search. Find len so that getPieces(len) >= k && getPieces(len + 1) < k.
+
+```java
+    public int woodCut(int[] L, int k) {
+        int max = Integer.MIN_VALUE;
+        for (int len : L) {
+            max = Math.max(max, len);
+        }
+        int l = 1;
+        int r = max;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            int pieces = getPieces(L, mid);
+            int p2 = getPieces(L, mid + 1);
+            if (pieces >= k && p2 < k) {
+                return mid;
+            } else if (pieces < k) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;   
+            }
+        }
+        return 0;
+    }
+    
+    private int getPieces(int[] L, int len) {
+        int res = 0;
+        for (int num : L) {
+            res += num / len;
+        }
+        return res;
+    }
+```
+
+<br>
+<br>
+
+###26 Segment Tree Build
+
+http://www.lintcode.com/en/problem/segment-tree-build/
+
+<pre>
+The structure of Segment Tree is a binary tree which each node has two attributes start and end denote an segment / interval.
+
+start and end are both integers, they should be assigned in following rules:
+
+The root's start and end is given by build method.
+The left child of node A has start=A.left, end=(A.left + A.right) / 2.
+The right child of node A has start=(A.left + A.right) / 2 + 1, end=A.right.
+if start equals to end, there will be no children for this node.
+Implement a build method with two parameters start and end, so that we can create a corresponding segment tree with every node has the correct start and end value, return the root of this segment tree.
+
+Have you met this question in a real interview? Yes
+Example
+Given start=0, end=3. The segment tree will be:
+
+               [0,  3]
+             /        \
+      [0,  1]           [2, 3]
+      /     \           /     \
+   [0, 0]  [1, 1]     [2, 2]  [3, 3]
+Given start=1, end=6. The segment tree will be:
+
+               [1,  6]
+             /        \
+      [1,  3]           [4,  6]
+      /     \           /     \
+   [1, 2]  [3,3]     [4, 5]   [6,6]
+   /    \           /     \
+[1,1]   [2,2]     [4,4]   [5,5]
+Clarification
+Segment Tree (a.k.a Interval Tree) is an advanced data structure which can support queries like:
+
+which of these intervals contain a given point
+which of these points are in a given interval
+See wiki:
+Segment Tree
+Interval Tree
+</pre>
+Definition of SegmentTreeNode:
+
+```java
+/**
+ * 
+ * public class SegmentTreeNode {
+ *     public int start, end;
+ *     public SegmentTreeNode left, right;
+ *     public SegmentTreeNode(int start, int end) {
+ *         this.start = start, this.end = end;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+```
+Solution:
+
+```java
+public SegmentTreeNode build(int start, int end) {
+    if (start > end) {
+        return null;
+    }
+    SegmentTreeNode root = new SegmentTreeNode(start, end);        
+    if (start == end) {
+        return root;
+    }
+    int mid = start + (end - start) / 2;
+    root.left = build(start, mid);
+    root.right = build(mid + 1, end);
+    return root;
+}
+```
+
+<br>
+
+<br>
+
+
+###27 Segment Tree Query
+
+http://www.lintcode.com/en/problem/segment-tree-query/
+
+<pre>
+For an integer array (index from 0 to n-1, where n is the size of this array), in the corresponding SegmentTree, each node stores an extra attribute max to denote the maximum number in the interval of the array (index from start to end).
+
+Design a query method with three parameters root, start and end, find the maximum number in the interval [start, end] by the given root of segment tree.
+
+Have you met this question in a real interview? Yes
+Example
+For array [1, 4, 2, 3], the corresponding Segment Tree is:
+
+                  [0, 3, max=4]
+                 /             \
+          [0,1,max=4]        [2,3,max=3]
+          /         \        /         \
+   [0,0,max=1] [1,1,max=4] [2,2,max=2], [3,3,max=3]
+query(root, 1, 1), return 4
+
+query(root, 1, 2), return 4
+
+query(root, 2, 3), return 3
+
+query(root, 0, 2), return 4
+
+Note
+It is much easier to understand this problem if you finished Segment Tree Build first.
+</pre>
+
+Definition of SegmentTreeNode:
+```java
+/**
+ * Definition of SegmentTreeNode:
+ * public class SegmentTreeNode {
+ *     public int start, end, max;
+ *     public SegmentTreeNode left, right;
+ *     public SegmentTreeNode(int start, int end, int max) {
+ *         this.start = start;
+ *         this.end = end;
+ *         this.max = max
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+
+ ```
+
+```java
+public int query(SegmentTreeNode root, int start, int end) {
+    if (root == null || start > root.end || end < root.start) {
+        return 0;
+    }
+    if (root.start >= start && root.end <= end) {
+        return root.max;
+    }
+    return Math.max(query(root.left, start, end), query(root.right, start, end));
+}
+```
+
+
+<br>
+<br>
+
+
+###28 Segment Tree Modify
+
+http://www.lintcode.com/en/problem/segment-tree-modify/
+
+<pre>
+For a Maximum Segment Tree, which each node has an extra value max to store the maximum value in this node's interval.
+
+Implement a modify function with three parameter root, index and value to change the node's value with [start, end] = [index, index] to the new given value. Make sure after this change, every node in segment tree still has the max attribute with the correct value.
+
+Have you met this question in a real interview? Yes
+Example
+For segment tree:
+
+                      [1, 4, max=3]
+                    /                \
+        [1, 2, max=2]                [3, 4, max=3]
+       /              \             /             \
+[1, 1, max=2], [2, 2, max=1], [3, 3, max=0], [4, 4, max=3]
+if call modify(root, 2, 4), we can get:
+
+                      [1, 4, max=4]
+                    /                \
+        [1, 2, max=4]                [3, 4, max=3]
+       /              \             /             \
+[1, 1, max=2], [2, 2, max=4], [3, 3, max=0], [4, 4, max=3]
+or call modify(root, 4, 0), we can get:
+
+                      [1, 4, max=2]
+                    /                \
+        [1, 2, max=2]                [3, 4, max=0]
+       /              \             /             \
+[1, 1, max=2], [2, 2, max=1], [3, 3, max=0], [4, 4, max=0]
+Note
+We suggest you finish problem Segment Tree Build and Segment Tree Query first.
+
+Challenge
+Do it in O(h) time, h is the height of the segment tree.
+</pre>
+Definition of SegmentTreeNode:
+```java
+/**
+ * Definition of SegmentTreeNode:
+ * public class SegmentTreeNode {
+ *     public int start, end, max;
+ *     public SegmentTreeNode left, right;
+ *     public SegmentTreeNode(int start, int end, int max) {
+ *         this.start = start;
+ *         this.end = end;
+ *         this.max = max
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+```
+
+```java
+public void modify(SegmentTreeNode root, int index, int value) {
+    if (root == null || root.start > index || root.end < index) {
+        return;
+    }
+    if (root.start == root.end) { //root.start = root.end = index
+        root.max = value;
+        return;
+    }
+    int mid = root.start + (root.end - root.start) / 2;
+    if (index <= mid) {
+        modify(root.left, index, value);
+    } else {
+        modify(root.right, index, value);
+    }
+    root.max = Math.max(root.left.max, root.right.max);
+}
+```
+
+<br>
+<br>
+
+###29 Interval Minimum Number
+
+http://www.lintcode.com/en/problem/interval-minimum-number/
+
+<pre>
+Given an integer array (index from 0 to n-1, where n is the size of this array), and an query list. Each query has two integers [start, end]. For each query, calculate the minimum number between index start and end in the given array, return the result list.
+
+Have you met this question in a real interview? Yes
+Example
+For array [1,2,7,8,5], and queries [(1,2),(0,4),(2,4)], return [2,1,5]
+
+Note
+We suggest you finish problem Segment Tree Build, Segment Tree Query and Segment Tree Modify first.
+
+Challenge
+O(logN) time for each query
+
+</pre>
+
+
+**Idea**: segmentation tree
+
+```java
+/**
+ * Definition of Interval:
+ * public classs Interval {
+ *     int start, end;
+ *     Interval(int start, int end) {
+ *         this.start = start;
+ *         this.end = end;
+ *     }
+ */
+public class Solution {
+    /**
+     *@param A, queries: Given an integer array and an query list
+     *@return: The result list
+     */
+    public ArrayList<Integer> intervalMinNumber(int[] A, 
+                                                ArrayList<Interval> queries) {
+        Node root = buildTree(0, A.length - 1, A);
+        ArrayList<Integer> res = new ArrayList<>();
+        for (Interval i : queries) {
+            res.add(queryMin(i.start, i.end, root));
+        }
+        return res;
+    }
+    
+    private int queryMin(int start, int end, Node root) {
+        if (root == null || start > root.end || end < root.start) {
+            return Integer.MAX_VALUE;
+        }
+        if (root.start >= start && root.end <= end) {
+            return root.min;
+        }
+        return Math.min(queryMin(start, end, root.left), queryMin(start, end, root.right));
+    }
+    
+    private Node buildTree(int start, int end, int[] A) {
+        if (start > end) {
+            return null;
+        }
+        if (start == end) {
+            return new Node(start, end, A[start]);
+        }
+        Node root = new Node(start, end, 0);
+        int mid = start + (end - start) / 2;
+        root.left = buildTree(start, mid, A);
+        root.right = buildTree(mid + 1, end, A);
+        if (root.left == null) {
+            root.min = root.left.min;
+        } else if (root.right == null) {
+            root.min = root.right.min;
+        } else {
+            root.min = Math.min(root.left.min, root.right.min);
+        }
+        return root;
+    }
+}
+
+class Node {
+    public int start, end, min;
+    public Node left, right;
+    public Node(int start, int end, int min) {
+        this.start = start;
+        this.end = end;
+        this.min = min;
+        this.left = this.right = null;
+    }
+}
+
+```
+
+<br>
+<br>
+
+###30 Interval Sum
+
+http://www.lintcode.com/en/problem/interval-sum/
+
+<pre>
+Given an integer array (index from 0 to n-1, where n is the size of this array), and an query list. Each query has two integers [start, end]. For each query, calculate the sum number between index start and end in the given array, return the result list.
+
+Have you met this question in a real interview? Yes
+Example
+For array [1,2,7,8,5], and queries [(0,4),(1,2),(2,4)], return [23,9,20]
+
+Note
+We suggest you finish problem Segment Tree Build, Segment Tree Query and Segment Tree Modify first.
+
+Challenge
+O(logN) time for each query
+</pre>
+
+**Idea**: change the min to sum in the segment tree Node class.
+
+```java
+/**
+ * Definition of Interval:
+ * public classs Interval {
+ *     int start, end;
+ *     Interval(int start, int end) {
+ *         this.start = start;
+ *         this.end = end;
+ *     }
+ */
+public class Solution {
+    /**
+     *@param A, queries: Given an integer array and an query list
+     *@return: The result list
+     */
+    public ArrayList<Long> intervalSum(int[] A, 
+                                       ArrayList<Interval> queries) {
+        Node root = buildTree(0, A.length - 1, A);
+        ArrayList<Long> res = new ArrayList<>();
+        for (Interval i : queries) {
+            res.add(querySum(i.start, i.end, root));
+        }
+        return res;
+    }
+    private long querySum(int start, int end, Node root) {
+        if (root == null || start > root.end || end < root.start) {
+            return 0;
+        }
+        if (root.start >= start && root.end <= end) {
+            return root.sum;
+        }
+        return querySum(start, end, root.left) + querySum(start, end, root.right);
+    }
+    
+    private Node buildTree(int start, int end, int[] A) {
+        if (start > end) {
+            return null;
+        }
+        if (start == end) {
+            return new Node(start, end, A[start]);
+        }
+        Node root = new Node(start, end, 0);
+        int mid = start + (end - start) / 2;
+        root.left = buildTree(start, mid, A);
+        root.right = buildTree(mid + 1, end, A);
+        if (root.left == null) {
+            root.sum = root.left.sum;
+        } else if (root.right == null) {
+            root.sum = root.right.sum;
+        } else {
+            root.sum = root.left.sum + root.right.sum;
+        }
+        return root;
+    }
+}
+
+class Node {
+    public int start, end;
+    public long sum;
+    public Node left, right;
+    public Node(int start, int end, long sum) {
+        this.start = start;
+        this.end = end;
+        this.sum = sum;
+        this.left = this.right = null;
+    }
+}
+
+```
+
+<br>
+<br>
+
+###31 Interval Sum II
+
+http://www.lintcode.com/en/problem/interval-sum-ii/
+
+<pre>
+Given an integer array in the construct method, implement two methods query(start, end) and modify(index, value):
+
+For query(start, end), return the sum from index start to index end in the given array.
+For modify(index, value), modify the number in the given index to value
+Have you met this question in a real interview? Yes
+Example
+Given array A = [1,2,7,8,5].
+
+query(0, 2), return 10.
+modify(0, 4), change A[0] from 1 to 4.
+query(0, 1), return 6.
+modify(2, 1), change A[2] from 7 to 1.
+query(2, 4), return 14.
+Note
+We suggest you finish problem Segment Tree Build, Segment Tree Query and Segment Tree Modify first.
+
+Challenge
+O(logN) time for query and modify.
+</pre>
+
+```java
+public class Solution {
+    /* you may need to use some attributes here */
+    private Node root;
+
+    /**
+     * @param A: An integer array
+     */
+    public Solution(int[] A) {
+        root = buildTree(0, A.length - 1, A);
+    }
+    
+    /**
+     * @param start, end: Indices
+     * @return: The sum from start to end
+     */
+    public long query(int start, int end) {
+        return querySum(start, end, root);
+    }
+    
+    /**
+     * @param index, value: modify A[index] to value.
+     */
+    public void modify(int index, int value) {
+        modifyValue(root, index, value);
+    }
+    
+    private void modifyValue(Node root, int index, int value) {
+        if (root == null || root.start > index || root.end < index) {
+            return;
+        }
+        if (root.start == root.end) {
+            root.sum = value;
+            return;
+        }
+        int mid = root.start + (root.end - root.start) / 2;
+        if (index <= mid) {
+            modifyValue(root.left, index, value);
+        } else {
+            modifyValue(root.right, index, value);
+        }
+        if (root.left == null) {
+            root.sum = root.right.sum;
+        } else if (root.right == null) {
+            root.sum = root.left.sum;
+        } else {
+            root.sum = root.left.sum + root.right.sum;
+        }
+        
+    }
+    
+    private long querySum(int start, int end, Node root) {
+        if (root == null || start > root.end || end < root.start) {
+            return 0;
+        }
+        if (root.start >= start && root.end <= end) {
+            return root.sum;
+        }
+        return querySum(start, end, root.left) + querySum(start, end, root.right);
+    }
+    
+    private Node buildTree(int start, int end, int[] A) {
+        if (start > end) {
+            return null;
+        }
+        if (start == end) {
+            return new Node(start, end, A[start]);
+        }
+        Node root = new Node(start, end, 0);
+        int mid = start + (end - start) / 2;
+        root.left = buildTree(start, mid, A);
+        root.right = buildTree(mid + 1, end, A);
+        if (root.left == null) {
+            root.sum = root.left.sum;
+        } else if (root.right == null) {
+            root.sum = root.right.sum;
+        } else {
+            root.sum = root.left.sum + root.right.sum;
+        }
+        return root;
+    }
+}
+
+class Node {
+    public int start, end;
+    public long sum;
+    public Node left, right;
+    public Node(int start, int end, long sum) {
+        this.start = start;
+        this.end = end;
+        this.sum = sum;
+        this.left = this.right = null;
+    }
+}
+
+
+```
+
+<br>
+<br>
+
+
+###32 Segment Tree Query II
+
+
+http://www.lintcode.com/en/problem/segment-tree-query-ii/
+
+<pre>
+For an array, we can build a SegmentTree for it, each node stores an extra attribute count to denote the number of elements in the the array which value is between interval start and end. (The array may not fully filled by elements)
+
+Design a query method with three parameters root, start and end, find the number of elements in the in array's interval [start, end] by the given root of value SegmentTree.
+
+Have you met this question in a real interview? Yes
+Example
+For array [0, 2, 3], the corresponding value Segment Tree is:
+
+                     [0, 3, count=3]
+                     /             \
+          [0,1,count=1]             [2,3,count=2]
+          /         \               /            \
+   [0,0,count=1] [1,1,count=0] [2,2,count=1], [3,3,count=1]
+query(1, 1), return 0
+
+query(1, 2), return 1
+
+query(2, 3), return 2
+
+query(0, 2), return 2
+
+Note
+It is much easier to understand this problem if you finished Segment Tree Buildand Segment Tree Query first.
+</pre>
+
+```java
+/**
+ * Definition of SegmentTreeNode:
+ * public class SegmentTreeNode {
+ *     public int start, end, count;
+ *     public SegmentTreeNode left, right;
+ *     public SegmentTreeNode(int start, int end, int count) {
+ *         this.start = start;
+ *         this.end = end;
+ *         this.count = count;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+public class Solution {
+    /**
+     *@param root, start, end: The root of segment tree and 
+     *                         an segment / interval
+     *@return: The count number in the interval [start, end]
+     */
+    public int query(SegmentTreeNode root, int start, int end) {
+        if (root == null || start > root.end || end < root.start) {
+            return 0;
+        }
+        if (root.start >= start && root.end <= end) {
+            return root.count;
+        }
+        return query(root.left, start, end) + query(root.right, start, end);
+    }
+}
+
+```
