@@ -42,6 +42,7 @@
 * [40 Partition Sum](#40-partition-sum)
 * [41 Lexicographic paths](#41-lexicographic-paths)
 * [42 Power of 4](#42-power-of-4)
+* [43 Mod five iterator](#43-mod-five-iterator)
 
 
 ###1 Search a 2D Matrix II
@@ -2806,3 +2807,65 @@ public boolean powerOf4(long n) {
 ```
 
 **Another naive solution**: Iteratively check if n % 4 == 0 and change n = n /4 to next iteration.
+
+
+<br>
+
+<br>
+
+###43 Mod five iterator
+
+Give random number iterator, implement iterator that is multiple of 5.
+
+```java
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+class RandomIterator {
+    private Iterator<Integer> iterator;
+    RandomIterator(List<Integer> lst) {
+        iterator = lst.iterator();
+    }
+    public Integer next() {
+        return iterator.next();
+    }
+
+    public boolean hasNext() {
+        return iterator.hasNext();
+    }
+}
+
+public class ModFiveIterator extends RandomIterator {
+
+    private Integer next;
+
+    private boolean updateFlag = true;
+
+    ModFiveIterator(List<Integer> lst) {
+        super(lst);
+    }
+
+    public Integer next() {
+        if (hasNext()) {
+            updateFlag = true;
+            return next;
+        }
+        return null;
+    }
+
+    public boolean hasNext() {
+        if (!super.hasNext()) {
+            return false;
+        }
+        if (updateFlag) {
+            next = super.next();
+            while (super.hasNext() && next % 5 != 0) {
+                next = super.next();
+            }
+            updateFlag = false;
+        }
+        return  next % 5 == 0;
+    }
+}
+```

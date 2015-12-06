@@ -32,6 +32,14 @@
 * [30 Interval Sum](#30-interval-sum)
 * [31 Interval Sum II](#31-interval-sum-ii)
 * [32 Segment Tree Query II](#32-segment-tree-query-ii)
+* [33 Sliding Window Median](#33-Sliding Window Median)
+* [34 Count of Smaller Number](#34-count-of-smaller-number)
+* [35 Expression Evalulation](#35-expression-evalulation)
+* [36 Expression Tree Build](#36-expression-tree-build)
+* [37 Convert Expression to Polish Notation](#37-convert-expression-to-polish-notation)
+* [38 Convert Expression to Reverse Polish Notation](38-convert-expression-to-reverse-polish-notation)
+* [39 Find Peak Element II](#39-find-peak-element-ii)
+* [40 Print Numbers by Recursion](#40-print-numbers-by-recursion)
 
 ###1 A + B Problem
 ---
@@ -2276,3 +2284,723 @@ public class Solution {
 }
 
 ```
+
+<br>
+<br>
+
+###33-Sliding Window Median
+
+http://www.lintcode.com/en/problem/sliding-window-median/
+
+
+<pre>
+Given an array of n integer, and a moving window(size k), move the window at each iteration from the start of the array, find the median of the element inside the window at each moving. (**If there are even numbers in the array, return the N/2-th number after sorting the element in the window**. )
+
+Have you met this question in a real interview? Yes
+Example
+For array [1,2,7,8,5], moving window size k = 3. return [2,7,7]
+
+At first the window is at the start of the array like this
+
+[ | 1,2,7 | ,8,5] , return the median 2;
+
+then the window move one step forward.
+
+[1, | 2,7,8 | ,5], return the median 7;
+
+then the window move one step forward again.
+
+[1,2, | 7,8,5 | ], return the median 7;
+
+Challenge
+O(nlog(n)) time
+</pre>
+
+**Idea**: Difference between this problem and data stream median is that we need to remove the leftmost element in the sliding window from heap when we move the sliding window.
+
+Also, each time we pick element from maxHeap, because it says: "If there are even numbers in the array, return the N/2-th number after sorting the element in the window".
+
+```java
+    public ArrayList<Integer> medianSlidingWindow(int[] nums, int k) {
+        ArrayList<Integer> res = new ArrayList<>();
+        PriorityQueue<Integer> minQueue = new PriorityQueue<>();
+        PriorityQueue<Integer> maxQueue = new PriorityQueue<>(10, Collections.reverseOrder());
+        int count = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (minQueue.isEmpty() || nums[i] >= minQueue.peek()) {
+                minQueue.offer(nums[i]);
+            } else {
+                maxQueue.offer(nums[i]);
+            }
+            if (minQueue.size() > maxQueue.size()) {
+                maxQueue.offer(minQueue.poll());
+            } else if (maxQueue.size() - minQueue.size() > 1) {
+                minQueue.offer(maxQueue.poll());
+            }
+            if (count < k) {
+                count++;
+            }
+            if (count == k) {
+                res.add(maxQueue.peek());
+                removeLeft(nums[i - k + 1], minQueue, maxQueue);
+            }
+        }
+        return res;
+    }
+    
+    private void removeLeft(int num, PriorityQueue<Integer> minQueue, PriorityQueue<Integer> maxQueue) {
+        if (!maxQueue.isEmpty() && maxQueue.peek() >= num) {
+            maxQueue.remove(num);
+        } else {
+            minQueue.remove(num);
+        }
+    }
+```
+
+
+<br>
+<br>
+
+###34 Count of Smaller Number
+
+http://www.lintcode.com/en/problem/count-of-smaller-number/#
+
+<pre>
+Give you an integer array (index from 0 to n-1, where n is the size of this array, value from 0 to 10000) and an query list. For each query, give you an integer, return the number of element in the array that are smaller than the given integer.
+
+Have you met this question in a real interview? Yes
+Example
+For array [1,2,7,8,5], and queries [1,8,5], return [0,4,2]
+
+Note
+We suggest you finish problem Segment Tree Build and Segment Tree Query II first.
+
+Challenge
+Could you use three ways to do it.
+
+Just loop
+Sort and binary search
+Build Segment Tree and Search.
+</pre>
+
+**Sort and binary search**:
+
+```java
+public ArrayList<Integer> countOfSmallerNumber(int[] A, int[] queries) {
+    Arrays.sort(A);
+    ArrayList<Integer> res = new ArrayList<>();
+    for (int num : queries) {
+        res.add(search(num, A));
+    }
+    return res;
+}
+
+private int search(int num, int[] A) {
+    int l = 0;
+    int r = A.length - 1;
+    while (l <= r) {
+        int mid = l + (r - l) / 2;
+        if (A[mid] >= num) {
+            r = mid - 1;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return l;
+}
+```
+
+<br>
+<br>
+
+
+###35 Expression Evalulation
+
+http://www.lintcode.com/en/problem/expression-evaluation/
+
+
+<pre>
+
+Given an expression string array, return the final result of this expression
+
+Have you met this question in a real interview? Yes
+Example
+For the expression 2*6-(23+7)/(1+2),
+input is
+
+[
+  "2", "*", "6", "-", "(",
+  "23", "+", "7", ")", "/",
+  (", "1", "+", "2", ")"
+],
+return 2
+
+Note
+The expression contains only integer, +, -, *, /, (, ).
+
+</pre>
+
+**Solution**: 
+
+Maintain two stacks, one for numbers, one for operators.
+
+Each time, when 
+
+- "(", push to operator stack
+- ")", pop from operator stack and calculate until we encounter "(". Pop "(" from stack.
+- "*" or "-" or "/" or "+", if current priority > priority (operator stack.peek()), push operator to operator stack
+  otherwise, pop from operator stack and compute until operator stack is empty or current priority > priority (operator stack.peek()). After all is done, push the current oprator to operator stack.
+- number: push to number stack.
+
+At the end, if number stack is not empty, then result is stack.pop().
+
+
+```java
+public class Solution {
+    private Deque<Integer> nums = new LinkedList<>();
+    private Deque<String> ops = new LinkedList<>();
+
+    public int evaluateExpression(String[] expression) {
+        if (expression == null || expression.length == 0) {
+            return 0;
+        }
+        for (String s : expression) {
+            if ("(".equals(s)) {
+                ops.push(s);
+            } else if (")".equals(s)) {
+                computeBetweenBrackets(); //compute expression between ()
+            } else if (isOp(s)) {
+                computeHigherOps(s); //compute until priority(s) > priority(ops.peek())
+            } else {
+                nums.push(Integer.parseInt(s));
+            }
+        }
+        while (!ops.isEmpty()) {
+            nums.push(compute(nums.pop(), nums.pop(), ops.pop()));
+        }
+        return nums.isEmpty() ? 0 : nums.pop();
+    }
+    
+    private void computeHigherOps(String s) {
+        int priority = getPriority(s);
+        while (!ops.isEmpty() && getPriority(ops.peek()) >= priority) {
+            nums.push(compute(nums.pop(), nums.pop(), ops.pop()));
+        }
+        ops.push(s);
+    }
+    
+    private void computeBetweenBrackets() {
+        while (!ops.peek().equals("(")) {
+            nums.push(compute(nums.pop(), nums.pop(), ops.pop()));
+        }
+        ops.pop();
+    }
+    
+    private boolean isOp(String s) {
+        return "+".equals(s) || "-".equals(s) || "*".equals(s) || "/".equals(s);
+    }
+    
+    private int getPriority(String op) {
+        if ("(".equals(op)) {
+            return 0;
+        } else if ("+".equals(op) || "-".equals(op)) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+    
+    private int compute(int n1, int n2, String op) {
+        switch (op) {
+            case "+": return n2 + n1;
+            case "-": return n2 - n1;
+            case "/": return n2 / n1;
+            case "*": return n2 * n1;
+            default: return 0;
+        }
+    }
+};
+
+```
+
+<br>
+<br>
+
+
+###36 Expression Tree Build
+
+http://www.lintcode.com/en/problem/expression-tree-build/
+
+<pre>
+The structure of Expression Tree is a binary tree to evaluate certain expressions.
+All leaves of the Expression Tree have an number string value. All non-leaves of the Expression Tree have an operator string value.
+
+Now, given an expression array, build the expression tree of this expression, return the root of this expression tree.
+
+Have you met this question in a real interview? Yes
+Example
+For the expression (2*6-(23+7)/(1+2)) (which can be represented by ["2" "*" "6" "-" "(" "23" "+" "7" ")" "/" "(" "1" "+" "2" ")"]). 
+The expression tree will be like
+
+                 [ - ]
+             /          \
+        [ * ]              [ / ]
+      /     \           /         \
+    [ 2 ]  [ 6 ]      [ + ]        [ + ]
+                     /    \       /      \
+                   [ 23 ][ 7 ] [ 1 ]   [ 2 ] .
+After building the tree, you just need to return root node [-].
+
+Clarification
+See wiki:
+Expression Tree
+</pre>
+
+**Idea**: The process of expression tree build is the same with expression evaluation.
+
+Here we build subtree based on left operand, right operand, operator. But in the expression evaluation we compute the value based on left operand, right operand, operator.
+
+Maintain two stacks, one for nodes, one for operators.
+
+Each time, when 
+
+- "(", push to operator stack
+- ")", pop from operator stack and calculate until we encounter "(". Pop "(" from stack.
+- "*" or "-" or "/" or "+", if current priority > priority (operator stack.peek()), push operator to operator stack
+  otherwise, pop from operator stack and build subtree until operator stack is empty or current priority > priority (operator stack.peek()). After all is done, push the current oprator to operator stack.
+- number: create ExpressionTreeNode push to node stack.
+
+At the end, if node stack is not empty, then result is stack.pop().
+
+
+
+```java
+/**
+ * Definition of ExpressionTreeNode:
+ * public class ExpressionTreeNode {
+ *     public String symbol;
+ *     public ExpressionTreeNode left, right;
+ *     public ExpressionTreeNode(String symbol) {
+ *         this.symbol = symbol;
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+
+public class Solution {
+    private Deque<ExpressionTreeNode> nums = new LinkedList<>();
+    private Deque<String> ops = new LinkedList<>();
+    
+    public ExpressionTreeNode build(String[] expression) {
+        if (expression == null || expression.length == 0) {
+            return null;
+        }
+        for (String s : expression) {
+            if ("(".equals(s)) {
+                ops.push(s);
+            } else if (")".equals(s)) {
+                buildTreeBetweenBrackets(); 
+            } else if (isOp(s)) {
+                buildHigherOps(s); 
+            } else {
+                nums.push(new ExpressionTreeNode(s));
+            }
+        }
+        while (!ops.isEmpty()) {
+            nums.push(buildTree(nums.pop(), nums.pop(), ops.pop()));
+        }
+        return nums.isEmpty() ? null : nums.pop();
+    }
+    
+    private void buildHigherOps(String s) {
+        int priority = getPriority(s);
+        while (!ops.isEmpty() && getPriority(ops.peek()) >= priority) {
+            nums.push(buildTree(nums.pop(), nums.pop(), ops.pop()));
+        }
+        ops.push(s);
+    }
+    
+    private void buildTreeBetweenBrackets() {
+        while (!ops.peek().equals("(")) {
+            nums.push(buildTree(nums.pop(), nums.pop(), ops.pop()));
+        }
+        ops.pop();
+    }
+    
+    private boolean isOp(String s) {
+        return "+".equals(s) || "-".equals(s) || "*".equals(s) || "/".equals(s);
+    }
+    
+    private int getPriority(String op) {
+        if ("(".equals(op)) {
+            return 0;
+        } else if ("+".equals(op) || "-".equals(op)) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+    
+    private ExpressionTreeNode buildTree(ExpressionTreeNode r, ExpressionTreeNode l, String op) {
+       ExpressionTreeNode root = new ExpressionTreeNode(op);
+       root.left = l;
+       root.right = r;
+       return root;
+    }
+}
+
+```
+
+
+<br>
+<br>
+
+
+###37 Convert Expression to Polish Notation
+
+http://www.lintcode.com/en/problem/convert-expression-to-polish-notation/
+
+<pre>
+
+Given an expression string array, return the Polish notation of this expression. (remove the parentheses)
+
+Have you met this question in a real interview? Yes
+Example
+For the expression [(5 − 6) * 7] (which represented by ["(", "5", "−", "6", ")", "*", "7"]), the corresponding polish notation is [* - 5 6 7] (which the return value should be ["*", "−", "5", "6", "7"]).
+
+Clarification
+Definition of Polish Notation:
+
+http://en.wikipedia.org/wiki/Polish_notation
+http://baike.baidu.com/view/7857952.htm
+</pre>
+
+**Some terms**:
+
+- polish notation: prefix notation
+- infix notation
+- reverse polish notation: postfix notation
+
+
+An example of polish notation from wiki:
+
+```
+ ((15 ÷ (7 − (1 + 1))) × 3) − (2 + (1 + 1)) = 5  //infix
+
+
+− × ÷ 15 − 7 + 1 1 3 + 2 + 1 1 =
+− × ÷ 15 − 7 2     3 + 2 + 1 1 =
+− × ÷ 15 5         3 + 2 + 1 1 =
+− × 3              3 + 2 + 1 1 =
+− 9                  + 2 + 1 1 =
+− 9                  + 2 2     =
+− 9                  4         =
+5
+```
+
+**Idea**:
+
+Start from right to left, we need a stack to store operators.
+
+when 
+
+- operand, add to result.
+- when ")", push to stack
+- when "(", pop from stack and add to result until we get ")"
+- when "*" or "-" or "/" or "+", if priority(current operator) **>=** priority(stack.peek()), push current operator to stack. Otherwise, pop from stack and add to result until priority(current operator) **>=** priority(stack.peek()).
+
+At the end, we need to reverse the result list.
+
+
+Note that here pop from stack and add to result until priority(current operator) **>=** priority(stack.peek()) other than ">". See the following example:
+
+
+```
+Input
+["(","999","/","3","/","3","/","3",")","+","(","1","+","9","/","3",")"]
+Output
+["+","/","999","/","3","/","3","3","+","1","/","9","3"]
+Expected
+["+","/","/","/","999","3","3","3","+","1","/","9","3"]
+```
+
+```java
+public class Solution {
+    private Deque<String> ops = new LinkedList<>();
+
+    public ArrayList<String> convertToPN(String[] expression) {
+        if (expression == null || expression.length == 0) {
+            return null;
+        }
+        ArrayList<String> res = new ArrayList<>();
+        for (int i = expression.length - 1; i >= 0; i--) {
+            String s = expression[i];
+            if (")".equals(s)) {
+                ops.push(s);
+            } else if ("(".equals(s)) {
+                convertBetweenBrackets(res);
+            } else if (isOp(s)) {
+                convertHigherOps(s, res);
+            } else {
+                res.add(s);
+            }
+        }
+        while (!ops.isEmpty()) {
+            res.add(ops.pop());
+        }
+        Collections.reverse(res);
+        return res;
+    }
+    private void convertHigherOps(String s, ArrayList<String> res) {
+        int priority = getPriority(s);
+        while (!ops.isEmpty() && getPriority(ops.peek()) > priority) {
+            res.add(ops.pop());
+        }
+        ops.push(s);
+    }
+    
+    private void convertBetweenBrackets(ArrayList<String> res) {
+        while (!(")".equals(ops.peek()))) { 
+            res.add(ops.pop());
+        }
+        ops.pop();
+    }
+    private boolean isOp(String s) {
+        return "+".equals(s) || "-".equals(s) || "*".equals(s) || "/".equals(s);
+    }
+    
+    private int getPriority(String op) {
+        if (")".equals(op)) {
+            return 0;
+        } else if ("+".equals(op) || "-".equals(op)) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+}
+
+```
+
+
+<br>
+<br>
+
+###38 Convert Expression to Reverse Polish Notation
+
+http://www.lintcode.com/en/problem/convert-expression-to-reverse-polish-notation/
+
+<pre>
+Given an expression string array, return the Reverse Polish notation of this expression. (remove the parentheses)
+
+Have you met this question in a real interview? Yes
+Example
+For the expression [3 - 4 + 5] (which denote by ["3", "-", "4", "+", "5"]), return [3 4 - 5 +] (which denote by ["3", "4", "-", "5", "+"])
+</pre>
+
+**Idea**: the process is same with **Expression evaluation** and "Expression tree build".
+
+Here we maintain a operator stack.
+
+Each time, when 
+
+- "(", push to operator stack
+- ")", pop from operator stack and add to result list until we get "(". Pop "(" from stack.
+- "*" or "-" or "/" or "+", if current priority > priority (operator stack.peek()), push operator to operator stack
+  otherwise, pop from operator stack and add to result list until operator stack is empty or current priority > priority (operator stack.peek()). After all is done, push the current oprator to operator stack.
+- number: add to result list.
+
+
+
+
+```java
+
+public class Solution {
+    private Deque<String> ops = new LinkedList<>();
+
+    public ArrayList<String> convertToRPN(String[] expression) {
+        ArrayList<String> res = new ArrayList<>();
+        if (expression == null || expression.length == 0) {
+            return res;
+        }
+        for (String s : expression) {
+            if ("(".equals(s)) {
+                ops.push(s);
+            } else if (")".equals(s)) {
+                convertBetweenBrackets(res);
+            } else if (isOp(s)) {
+                computeHigherOps(res, s);
+            } else {
+                res.add(s);
+            }
+        }
+        while (!ops.isEmpty()) {
+            res.add(ops.pop());
+        }
+        return res;
+    }
+    
+    private void computeHigherOps(ArrayList<String> res, String s) {
+        int priority = getPriority(s);
+        while (!ops.isEmpty() && getPriority(ops.peek()) >= priority) {
+            res.add(ops.pop());
+        }
+        ops.push(s);
+    }
+    
+    private void convertBetweenBrackets(ArrayList<String> res) {
+        while (!ops.peek().equals("(")) {
+            res.add(ops.pop());
+        }
+        ops.pop();
+    }
+    
+    private boolean isOp(String s) {
+        return "+".equals(s) || "-".equals(s) || "*".equals(s) || "/".equals(s);
+    }
+    
+    private int getPriority(String op) {
+        if ("(".equals(op)) {
+            return 0;
+        } else if ("+".equals(op) || "-".equals(op)) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+}
+```
+<br>
+<br>
+
+###39 Find Peak Element II
+
+http://www.lintcode.com/en/problem/find-peak-element-ii/
+
+
+<pre>
+There is an integer matrix which has the following features:
+
+The numbers in adjacent positions are different.
+The matrix has n rows and m columns.
+For all i < m, A[0][i] < A[1][i] && A[n - 2][i] > A[n - 1][i].
+For all j < n, A[j][0] < A[j][1] && A[j][m - 2] > A[j][m - 1].
+We define a position P is a peek if:
+
+A[j][i] > A[j+1][i] && A[j][i] > A[j-1][i] && A[j][i] > A[j][i+1] && A[j][i] > A[j][i-1]
+Find a peak element in this matrix. Return the index of the peak.
+
+Example
+Given a matrix:
+
+[
+  [1 ,2 ,3 ,6 ,5],
+  [16,41,23,22,6],
+  [15,17,24,21,7],
+  [14,18,19,20,10],
+  [13,14,11,10,9]
+]
+return index of 41 (which is [1,1]) or index of 24 (which is [2,2])
+
+Note
+The matrix may contains multiple peeks, find any of them.
+
+Challenge
+Solve it in O(n+m) time.
+
+If you come up with an algorithm that you thought it is O(n log m) or O(m log n), can you prove it is actually O(n+m) or propose a similar but O(n+m) algorithm?
+
+</pre>
+
+**Binary search**: O(n * logm)
+
+```java
+    public List<Integer> findPeakII(int[][] A) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (A == null || A.length == 0 || A[0].length == 0) {
+            return res;
+        }
+        int l = 1;
+        int r = A.length - 2;
+        while (l <= r) {
+           int mid = l + (r - l) / 2;
+           int largestCol = getLargestCol(mid, A);
+           if (A[mid][largestCol] < A[mid - 1][largestCol]) {
+               r = mid - 1;
+           } else if (A[mid][largestCol] < A[mid + 1][largestCol]) {
+               l = mid + 1;
+           } else {
+               res.add(mid);
+               res.add(largestCol);
+               return res;
+           }
+        }
+        return res;
+    }
+    private int getLargestCol(int row, int[][] A) {
+        int col = 0;
+        for (int i = 0; i < A[row].length - 1; i++) {
+            if (A[row][i] > A[row][col]) {
+                col = i;
+            }
+        }
+        return col;
+    }
+
+```
+
+
+<br>
+<br>
+
+
+###40 Print Numbers by Recursion
+
+http://www.lintcode.com/en/problem/print-numbers-by-recursion/
+
+<pre>
+Print numbers from 1 to the largest number with N digits by recursion.
+
+Example
+Given N = 1, return [1,2,3,4,5,6,7,8,9].
+
+Given N = 2, return [1,2,3,4,5,6,7,8,9,10,11,12,...,99].
+
+Note
+It's pretty easy to do recursion like:
+
+recursion(i) {
+    if i > largest number:
+        return
+    results.add(i)
+    recursion(i + 1)
+}
+however this cost a lot of recursion memory as the recursion depth maybe very large. Can you do it in another way to recursive with at most N depth?
+</pre>
+
+**Idea**: In each recursion, print numbers with i digits.
+
+```java
+    public List<Integer> numbersByRecursion(int n) {
+        List<Integer> res = new ArrayList<>();
+        getNumbers(res, n);
+        return res;
+    }
+    private int getNumbers(List<Integer> res, int n) {
+        if (n <= 0) {
+            return 1;
+        }
+        int base = getNumbers(res, n - 1);
+        int factor = res.size() + 1;
+        for (int i = 1; i <= 9; i++) {
+            int begin = factor * i;
+            for (int j = 0; j < factor; j++) {
+                res.add(begin + j);
+            }
+        }
+        return base * 10;
+    }
+```
+
+<br>
+<br>
