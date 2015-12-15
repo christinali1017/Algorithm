@@ -286,6 +286,15 @@
 * [303 Range Sum Query Immutable](#303=range-sum-query-immutable)
 * [304 Range Sum Query 2D Immutable](#304-range-sum-query-2d-immutable)
 * [305 Number of Islands II](#305-number-of-islands-ii)
+* [306 Additive Number](#306-additive-number)
+* [307 Range Sum Query Mutable](307-range-sum-query-mutable)
+* [309 Best Time to Buy and Sell Stock with Cooldown](#309-best-time-to-buy-and-sell-stock-with-cooldown)
+* [310 Minumum Height Trees](#310-minimum-height-trees)
+* [312 Burst Balloons](#312-burst-balloons)
+* [313 Super Ugly Number](#313-super-ugly-number)
+* [315 Count of Smaller Numbers After Self](#315-count-of-smaller-numbers-after-self)
+* [316 Remove Duplicate Letters](#316-remove-duplicate-letters)
+* [318 Maximum Product of Word Lengths](#318-maximum-product-of-word-lengths)
 
 
 ### 1 Two Sum
@@ -21800,5 +21809,647 @@ Here is the solution.
         return i;
     }
 ```
+<br>
+<br>
+
+
+
+###306 Additive Number
+
+
+https://leetcode.com/problems/additive-number/
+
+
+<pre>
+Additive number is a string whose digits can form additive sequence.
+
+A valid additive sequence should contain at least three numbers. Except for the first two numbers, each subsequent number in the sequence must be the sum of the preceding two.
+
+For example:
+"112358" is an additive number because the digits can form an additive sequence: 1, 1, 2, 3, 5, 8.
+
+1 + 1 = 2, 1 + 2 = 3, 2 + 3 = 5, 3 + 5 = 8
+"199100199" is also an additive number, the additive sequence is: 1, 99, 100, 199.
+1 + 99 = 100, 99 + 100 = 199
+Note: Numbers in the additive sequence cannot have leading zeros, so sequence 1, 2, 03 or 1, 02, 3 is invalid.
+
+Given a string containing only digits '0'-'9', write a function to determine if it's an additive number.
+
+Follow up:
+How would you handle overflow for very large input integers?
+</pre>
+
+**Idea**:
+
+Select the first two number, recursively check if the following digits is additive sequence.
+
+Note:
+
+- Here, in this problem, the number might be out of Integer range, but inside of long range.
+- Take care of leading zeros.
+
+```java
+    public boolean isAdditiveNumber(String num) {
+        for (int i = 1; i <= num.length() - 2; i++) {
+            long num1 = Long.valueOf(num.substring(0, i));
+            for (int j = i + 1; j <= num.length() - 1; j++) {
+                long num2 = Long.valueOf(num.substring(i, j));
+                if (checkAdditive(num, j, num1, num2)) {
+                    return true;
+                }
+                if (num.charAt(i) == '0') {
+                    break;
+                }
+            }
+            if (num.length() > 0 && num.charAt(0) == '0') {
+                break;
+            }
+        }
+        return false;
+    }
+    
+    private boolean checkAdditive(String num, int index, long num1, long num2) {
+        if (index == num.length()) {
+            return true;
+        }
+        if (num.charAt(index) == '0') {
+            if (num1 + num2 == 0) {
+                return checkAdditive(num, index + 1, num2, 0);
+            }
+            return false;
+        } 
+        for (int i = index + 1; i <= num.length(); i++) {
+            long num3 = Long.valueOf(num.substring(index, i));
+            if (num1 + num2 == num3 && checkAdditive(num, i, num2, num3)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+```
+
+<br>
+<br>
+
+###307 Range Sum Query Mutable
+
+https://leetcode.com/problems/range-sum-query-mutable/
+
+<pre>
+Given an integer array nums, find the sum of the elements between indices i and j (i ≤ j), inclusive.
+
+The update(i, val) function modifies nums by updating the element at index i to val.
+Example:
+Given nums = [1, 3, 5]
+
+sumRange(0, 2) -> 9
+update(1, 2)
+sumRange(0, 2) -> 8
+Note:
+The array is only modifiable by the update function.
+You may assume the number of calls to update and sumRange function is distributed evenly.
+</pre>
+
+Same question : lintcode interval sum.8
+
+**Segment tree**:
+
+```java
+public class NumArray {
+    private Node root;
+    public NumArray(int[] nums) {
+        root = buildTree(0, nums.length - 1, nums);
+    }
+
+    void update(int i, int val) {
+        updateVal(root, i, val);
+    }
+    private void updateVal(Node root, int index, int val) {
+        if (root == null || root.start > index || root.end < index) {
+            return;
+        }
+        if (root.start == root.end) {
+            root.sum = val;
+            return;
+        }
+        int mid = root.start + (root.end - root.start) / 2;
+        if (index <= mid) {
+            updateVal(root.left, index, val);
+        } else {
+            updateVal(root.right, index, val);
+        }
+        if (root.left == null) {
+            root.sum = root.right.sum;
+        } else if (root.right == null) {
+            root.sum = root.left.sum;
+        } else {
+            root.sum = root.left.sum + root.right.sum;
+        }
+    }
+
+    public int sumRange(int i, int j) {
+        return querySum(i, j, root);
+    }
+    
+    private int querySum(int start, int end, Node root) {
+        if (root == null || start > root.end || end < root.start) {
+            return 0;
+        }
+        if (root.start >= start && root.end <= end) {
+            return root.sum;
+        }
+        return querySum(start, end, root.left) + querySum(start, end, root.right);
+    }
+    
+    private Node buildTree(int start, int end, int[] nums) {
+        if (start > end) {
+            return null;
+        }
+        if (start == end) {
+            return new Node(start, end, nums[start]);
+        }
+        Node root =  new Node(start, end, 0);
+        int mid = start + (end - start) / 2;
+        root.left = buildTree(start, mid, nums);
+        root.right = buildTree(mid + 1, end, nums);
+        if (root.left == null) {
+            root.sum = root.right.sum;
+        } else if (root.right == null) {
+            root.sum = root.left.sum;
+        } else {
+            root.sum = root.left.sum + root.right.sum;
+        }
+        return root;
+    }
+}
+
+class Node {
+    public int start, end;
+    public int sum;
+    public Node left, right;
+    public Node(int start, int end, int sum) {
+        this.start = start;
+        this.end = end;
+        this.sum = sum;
+        this.left = null;
+        this.right = null;
+    }
+}
+```
+
+
+**TLE**, sumrange, O(1), update O(n)
+
+```java
+public class NumArray {
+
+    private int[] sums;
+    public NumArray(int[] nums) {
+        sums = new int[nums.length + 1];
+        for (int i = 0; i < nums.length; i++) {
+            sums[i + 1] = sums[i] + nums[i];
+        }
+    }
+
+    void update(int i, int val) {
+        int diff = val - (sums[i + 1] - sums[i]); 
+        for (int j = i; j < sums.length - 1; j++) {
+            sums[j + 1] = sums[j + 1] + diff; 
+        }
+    }
+
+    public int sumRange(int i, int j) {
+        return sums[j + 1] - sums[i];
+    }
+}
+```
+
+
+
+<br>
+<br>
+
+###309 Best Time to Buy and Sell Stock with Cooldown
+
+
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+
+<pre>
+Say you have an array for which the ith element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times) with the following restrictions:
+
+You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+After you sell your stock, you cannot buy stock on next day. (ie, cooldown 1 day)
+Example:
+
+prices = [1, 2, 3, 0, 2]
+maxProfit = 3
+transactions = [buy, sell, cooldown, buy, sell]
+</pre>
+
+**Idea**: DP
+
+Induction rule:
+
+**buy[i] = max(buy[i - 1], sell[i-2] - prices[i])**
+
+**sell[i] = max(sell[i - 1], buy[i - 1] + prices[i])**
+
+buy[i] represents the max profit we can get if we have buyed a stock and not sell it yet at day i. The buyed stock can come from day i, i - 1...0. 
+
+sell[i] represents the max profit we can get if we have selled a stock and not buy another yet at day i. The selled stock can come from day i, i - 1...0
+
+Since we have 1 cooldown day after we sell a stock. For buy[i], there are two cases:
+
+- buy[i - 1] which means we can have a stock from previous days and not sell it yet
+- sell[i-2] - prices[i], which means we buy a stock at day i and day i - 1 must be a cooldown day. 
+
+Since we only use 2 previous days in the dp array, we can reduce it to O(1) space.
+
+Here is the solution:
+
+```java
+    public int maxProfit(int[] prices) {
+        int buy = Integer.MIN_VALUE;
+        int preBuy = 0;
+        int sell = 0;
+        int preSell = 0;
+        for (int num : prices) {
+            preBuy = buy;
+            buy = Math.max(preSell - num, buy);
+            preSell = sell;
+            sell = Math.max(preBuy + num, sell);
+        }
+        return Math.max(sell, buy);
+    }
+```
+
+
+<br>
+<br>
+
+
+###310 Minumum Height Trees
+
+https://leetcode.com/problems/minimum-height-trees/
+
+<pre>
+For a undirected graph with tree characteristics, we can choose any node as the root. The result graph is then a rooted tree. Among all possible rooted trees, those with minimum height are called minimum height trees (MHTs). Given such a graph, write a function to find all the MHTs and return a list of their root labels.
+
+Format
+The graph contains n nodes which are labeled from 0 to n - 1. You will be given the number n and a list of undirected edges (each edge is a pair of labels).
+
+You can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear together in edges.
+
+Example 1:
+
+Given n = 4, edges = [[1, 0], [1, 2], [1, 3]]
+
+        0
+        |
+        1
+       / \
+      2   3
+return [1]
+
+Example 2:
+
+Given n = 6, edges = [[0, 3], [1, 3], [2, 3], [4, 3], [5, 4]]
+
+     0  1  2
+      \ | /
+        3
+        |
+        4
+        |
+        5
+return [3, 4]
+
+Show Hint 
+Note:
+
+(1) According to the definition of tree on Wikipedia: “a tree is an undirected graph in which any two vertices are connected by exactly one path. In other words, any connected graph without simple cycles is a tree.”
+
+(2) The height of a rooted tree is the number of edges on the longest downward path between the root and a leaf.
+
+Credits:
+Special thanks to @peisi for adding this problem and creating all test cases.
+
+Subscribe to see which companies asked this question
+</pre>
+
+**Idea**:
+
+The graph is guaranteed with tree characteristics. To find the Minimum height tree, we need to find the longest path in the graph. If we choose the middle point of the path as root, the tree must have the minumum height.
+
+How to find the longest path? In this problem, we can use topological sort or bfs. But we don't really need to find the longest path, what we really need is the middle point of the longest path. 
+
+We can start from leave nodes of the tree, remove leave nodes at each iteration, the remain two or one node must be the root of minimum height tree. Even though there might be more than 1 longest path, they must share the same middle point. We can easily figure this out with the property of tree.
+
+Refer: https://leetcode.com/discuss/71804/java-layer-by-layer-bfs
+
+
+```java
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        List<Set<Integer>> neighbors = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            neighbors.add(new HashSet<Integer>());
+        }
+        for (int[] edge : edges) {
+            neighbors.get(edge[0]).add(edge[1]);
+            neighbors.get(edge[1]).add(edge[0]);
+        }
+        List<Integer> leaves = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (neighbors.get(i).size() == 1) {
+                leaves.add(i);
+            }
+        }
+        while (n > 2) {
+            n -= leaves.size();
+            List<Integer> temp = new ArrayList<>();
+            for (int i : leaves) {
+                int nb = neighbors.get(i).iterator().next();
+                neighbors.get(nb).remove(i);
+                if (neighbors.get(nb).size() == 1) {
+                    temp.add(nb);
+                }
+            }
+            leaves = temp;
+        }
+        //if there is only one node in the tree.
+        if (leaves.size() == 0) {
+            leaves.add(0);
+        }
+        return leaves;
+    }
+
+```
+<br>
+<br>
+
+###312 Burst Balloons
+
+https://leetcode.com/problems/burst-balloons/
+
+<pre>
+Given n balloons, indexed from 0 to n-1. Each balloon is painted with a number on it represented by array nums. You are asked to burst all the balloons. If the you burst balloon i you will get nums[left] * nums[i] * nums[right] coins. Here left and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
+
+Find the maximum coins you can collect by bursting the balloons wisely.
+
+Note: 
+(1) You may imagine nums[-1] = nums[n] = 1. They are not real therefore you can not burst them.
+(2) 0 ≤ n ≤ 500, 0 ≤ nums[i] ≤ 100
+
+Example:
+
+Given [3, 1, 5, 8]
+
+Return 167
+
+    nums = [3,1,5,8] --> [3,5,8] -->   [3,8]   -->  [8]  --> []
+   coins =  3*1*5      +  3*5*8    +  1*3*8      + 1*8*1   = 167
+</pre>
+
+**Idea**:
+
+The primitive approach, that is, try all possible burst sequence. The time complexity is O(n!)
+
+It asks for maximum coins, we can improve it by dynamic programming.
+
+Suppose dp[i][j] represents the maximum coins we can get by burst balloons between i and j.
+
+Induction rule: dp[i][j] = max(dp[i, k-1] + dp[k+1][j] + nums[i-1] * nums[j+1] * nums[k]), where k is in range of [i, j].
+
+
+```java
+public int maxCoins(int[] nums) {
+    int[] arr = new int[nums.length + 2];
+    for (int i = 1; i < arr.length - 1; i++) {
+        arr[i] = nums[i - 1];
+    }
+    arr[0] = 1;
+    arr[arr.length - 1] = 1;
+    
+    int[][] dp = new int[arr.length][arr.length];
+    for (int len = 1; len <= nums.length; len++) {
+        for (int l = 1; l <= nums.length - len + 1; l++) {
+            int r = l + len - 1;
+            int max = 0;
+            for (int i = l; i <= r; i++) {
+                int coins = dp[l][i - 1] + dp[i + 1][r] + arr[l - 1] * arr[r + 1] * arr[i];
+                max = Math.max(coins, max);
+            }
+            dp[l][r] = max;
+        }
+    }
+    return dp[1][nums.length];
+}
+```
+
+
+
+<br>
+<br>
+
+###313 Super Ugly Number
+
+https://leetcode.com/problems/super-ugly-number/
+
+<pre>
+Write a program to find the nth super ugly number.
+
+Super ugly numbers are positive numbers whose all prime factors are in the given prime list primes of size k. For example, [1, 2, 4, 7, 8, 13, 14, 16, 19, 26, 28, 32] is the sequence of the first 12 super ugly numbers given primes = [2, 7, 13, 19] of size 4.
+
+Note:
+(1) 1 is a super ugly number for any given primes.
+(2) The given numbers in primes are in ascending order.
+(3) 0 < k ≤ 100, 0 < n ≤ 106, 0 < primes[i] < 1000.
+
+</pre>
+
+
+**Idea**: This problem extend **Ugly number 2**. Here the factors are more than 3. We use the same approach. Here we stores the indices of all factors in the given list primes.
+
+```java
+    public int nthSuperUglyNumber(int n, int[] primes) {
+        int[] indices = new int[primes.length];
+        List<Integer> res = new ArrayList<>();
+        res.add(1);
+        while (res.size() < n) {
+            int next = Integer.MAX_VALUE;
+            for (int i = 0; i < primes.length; i++) {
+                next = Math.min(next, primes[i] * res.get(indices[i]));
+            }
+            res.add(next);
+            for (int i = 0; i < primes.length; i++) {
+                if (next == res.get(indices[i]) * primes[i]) {
+                    indices[i]++;
+                }
+            }
+        }
+        return res.get(res.size() - 1);
+    }
+```
+<br>
+<br>
+
+
+###315 Count of Smaller Numbers After Self
+
+https://leetcode.com/problems/count-of-smaller-numbers-after-self/
+
+<pre>
+You are given an integer array nums and you have to return a new counts array. The counts array has the property where counts[i] is the number of smaller elements to the right of nums[i].
+
+Example:
+
+Given nums = [5, 2, 6, 1]
+
+To the right of 5 there are 2 smaller elements (2 and 1).
+To the right of 2 there is only 1 smaller element (1).
+To the right of 6 there is 1 smaller element (1).
+To the right of 1 there is 0 smaller element.
+Return the array [2, 1, 1, 0].
+</pre>
+
+
+**Solution 1**: Begin from end of array, insert nums[i] into sorted array that contains number after index i. Time complexity : O(n ^ 2)
+
+```java
+public List<Integer> countSmaller(int[] nums) {
+    Integer[] res = new Integer[nums.length];
+    List<Integer> sortedList = new ArrayList<>();
+    for (int i = nums.length - 1; i >= 0; i--) {
+        int index = findInsertIndex(nums[i], sortedList);
+        res[i] = index;
+        sortedList.add(index, nums[i]);
+    }
+    return Arrays.asList(res);
+}
+
+private int findInsertIndex(int num, List<Integer> lst) {
+    int l = 0;
+    int r = lst.size() - 1;
+    while (l <= r) {
+        int mid = l + (r - l) / 2;
+        if (lst.get(mid) < num) {
+            l = mid + 1;
+        } else {
+            r = mid - 1;
+        }
+    }
+    return l;
+}
+```
+
+
+<br>
+<br>
+
+###316 Remove Duplicate Letters
+
+>https://leetcode.com/problems/remove-duplicate-letters/
+
+
+<pre>
+Given a string which contains only lowercase letters, remove duplicate letters so that every letter appear once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.
+
+Example:
+Given "bcabc"
+Return "abc"
+
+Given "cbacdcbc"
+Return "acdb"
+</pre>
+
+**Idea**:
+
+Find the last index of each character. Sort the indices. Choose the smallest and unadded char before each index.
+
+For example, s = "bcabc"
+
+- a : 2
+- b : 3
+- c : 4
+
+- So we first select the smallest char in "bca", smallest char is 'a' at index 2
+- Then select 'b' from "b" at index 3
+- Then select 'c' from "c" at index 4
+
+In example s = "cbacdcbc"
+
+- a : 2
+- d : 4
+- b : 6
+- c : 7
+
+- So first char 'a' from "cba" at index 2
+- second char 'c' from "cd" at index 3
+- third char 'd' from "d" at index 4
+- fourth char 'b' from "cbc" at index 6
+
+
+
+
+```java
+public String removeDuplicateLetters(String s) {
+    Map<Character, Integer> map = new HashMap<>();
+    for (int i = 0; i < s.length(); i++) {
+        map.put(s.charAt(i), i);
+    }
+    
+    StringBuilder res = new StringBuilder();
+    int l = 0;
+    int r = map.size() > 0 ? Collections.min(map.values()) : 0;
+    for (int i = 0, len = map.size(); i < len; i++) {
+        char next = Character.MAX_VALUE;
+        for (int j = l; j <= r; j++) {
+            if (s.charAt(j) < next && map.containsKey(s.charAt(j))) {
+                next = s.charAt(j);
+                l = j + 1;
+            }
+        }
+        res.append(next);
+        map.remove(next);
+        if (next == s.charAt(r)) {
+            r = map.size() > 0 ? Collections.min(map.values()) : 0;
+        }
+    }
+    return res.toString();
+}
+
+```
+
+<br>
+<br>
+
+
+
+###318 Maximum Product of Word Lengths
+
+https://leetcode.com/problems/maximum-product-of-word-lengths/
+
+<pre>
+Given a string array words, find the maximum value of length(word[i]) * length(word[j]) where the two words do not share common letters. You may assume that each word will contain only lower case letters. If no such two words exist, return 0.
+
+Example 1:
+Given ["abcw", "baz", "foo", "bar", "xtfn", "abcdef"]
+Return 16
+The two words can be "abcw", "xtfn".
+
+Example 2:
+Given ["a", "ab", "abc", "d", "cd", "bcd", "abcd"]
+Return 4
+The two words can be "ab", "cd".
+
+Example 3:
+Given ["a", "aa", "aaa", "aaaa"]
+Return 0
+No such pair of words.
+</pre>
+
 <br>
 <br>

@@ -2067,9 +2067,9 @@ public class Solution {
         root.left = buildTree(start, mid, A);
         root.right = buildTree(mid + 1, end, A);
         if (root.left == null) {
-            root.sum = root.left.sum;
-        } else if (root.right == null) {
             root.sum = root.right.sum;
+        } else if (root.right == null) {
+            root.sum = root.left.sum;
         } else {
             root.sum = root.left.sum + root.right.sum;
         }
@@ -2192,9 +2192,9 @@ public class Solution {
         root.left = buildTree(start, mid, A);
         root.right = buildTree(mid + 1, end, A);
         if (root.left == null) {
-            root.sum = root.left.sum;
-        } else if (root.right == null) {
             root.sum = root.right.sum;
+        } else if (root.right == null) {
+            root.sum = root.left.sum;
         } else {
             root.sum = root.left.sum + root.right.sum;
         }
