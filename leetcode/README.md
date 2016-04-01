@@ -5603,12 +5603,17 @@ This problem is much similar to fibonacci number or the climb steps. We can easi
 ```java
 
     public int uniquePaths(int m, int n) {
-        if (m == 0 && n == 0) {
-            return 1;
-        } else if (m < 0 || n < 0) {
+        return path(m, n, 1, 1);
+    }
+    
+    private int path(int m, int n, int i, int j) {
+        if (i > m || j > n) {
             return 0;
+        } 
+        if (i == m || j == n) {
+            return 1;
         }
-        return uniquePaths(m - 1, n) + uniquePaths(m, n - 1);
+        return path(m, n, i + 1, j) + path(m, n, i, j + 1);
     }
 
 
@@ -5627,25 +5632,17 @@ In dp, the initial value is really important. In this problem, how do we initial
 
 ```java
     public int uniquePaths(int m, int n) {
-        if (m < 0 || n < 0 || (m == 0 && n == 0)) {
-            return 0;
-        }
-        
-        int[][] dp = new int[m][n];
-        for (int i = 0; i < m; i++) {
-            dp[i][0] = 1;
-        }
-        for (int i = 0; i < n; i++) {
-            dp[0][i] = 1;
-        }
-        
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                dp[i][j] = dp[i-1][j] + dp[i][j-1];
-            }
-        }
-        
-        return dp[m-1][n-1];
+       int[][] dp = new int[m + 1][n + 1];
+       for (int i = 1; i <= m; i++) {
+           for (int j = 1; j <= n; j++) {
+               if (i == 1 || j == 1) {
+                   dp[i][j] = 1;
+               } else {
+                   dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+               }
+           }
+       }
+       return dp[m][n];
     }
 ```
 
@@ -5657,23 +5654,19 @@ In dp, the initial value is really important. In this problem, how do we initial
 In the above dp code, the formula is  dp[i][j] = dp[i-1][j] + dp[i][j-1]. We can easily find that dp[i][j] is only related to the previous line. Thus we can use an one dimensional array to solve this problem.
 
 ```java
-
-
- public int uniquePaths(int m, int n) {
-        if (m < 0 || n < 0 || (m == 0 && n == 0)) {
-            return 0;
-        }
-        
-        int[] dp = new int[n];
-        dp[0] = 1;
-        for (int i = 0; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                dp[j] = dp[j] + dp[j-1];
-            }
-        }
-        
-        return dp[n-1];
- }
+    public int uniquePaths(int m, int n) {
+       int[]dp = new int[n + 1];
+       for (int i = 1; i <= m; i++) {
+           for (int j = 1; j <= n; j++) {
+               if (j == 1) {
+                   dp[j] = 1;
+               } else {
+                   dp[j] = dp[j] + dp[j - 1];
+               }
+           }
+       }
+       return dp[n];
+    }
 
 
 ```
